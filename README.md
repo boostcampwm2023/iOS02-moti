@@ -41,6 +41,6 @@
 </br>
 
 # 문서
-| 팀 페이지 | 그라운드룰 | 기획/디자인 | 커밋 템플릿 | 이슈 템플릿 | 회의록 |
-|---|---|---|---|---|---|
-| [팀 페이지](https://jeong9216.notion.site/moti-003002603e5e49c48750d83668508c8e?pvs=4) | [그라운드룰](https://jeong9216.notion.site/abdf3f7229fe469186dcf11e2ba686bd?pvs=4) | [기획/디자인](https://www.figma.com/file/Qeluz7lzMO7igCvL26BymS/%EB%AA%A8%ED%8B%B0?type=design&node-id=0%3A1&mode=design&t=0no8SURD3YhZBxfp-1) | TODO | TODO | [회의록](https://jeong9216.notion.site/116f25437164432db1e34ab534fe8069?pvs=4) |
+| 팀 페이지 | 그라운드룰 | 기획/디자인 | 템플릿 | 회의록 |
+|---|---|---|---|---|
+| [팀 페이지](https://jeong9216.notion.site/moti-003002603e5e49c48750d83668508c8e?pvs=4) | [그라운드룰](https://jeong9216.notion.site/abdf3f7229fe469186dcf11e2ba686bd?pvs=4) | [기획/디자인](https://www.figma.com/file/Qeluz7lzMO7igCvL26BymS/%EB%AA%A8%ED%8B%B0?type=design&node-id=0%3A1&mode=design&t=0no8SURD3YhZBxfp-1) | [템플릿](https://jeong9216.notion.site/dc911fa357ef4063859d8650ba46e30a?pvs=4) | [회의록](https://jeong9216.notion.site/116f25437164432db1e34ab534fe8069?pvs=4) |
