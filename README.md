@@ -18,22 +18,22 @@
     </thead>
     <tbody align=center>
         <tr>
-            <td><img width="200" src="https://github.com/jeongju9216.png" /> </td>
-            <td><img width="200" src="https://github.com/looloolalaa.png" /> </td>
-            <td><img width="200" src="https://github.com/lsh23.png" /> </td>
-            <td><img width="200" src="https://github.com/Dltmd202.png" /> </td>
+            <td><a href="https://github.com/jeongju9216"><img width="200" src="https://github.com/jeongju9216.png" /></a></td>
+            <td><a href="https://github.com/looloolalaa"><img width="200" src="https://github.com/looloolalaa.png" /></a></td>
+            <td><a href="https://github.com/lsh23"><img width="200" src="https://github.com/lsh23.png" /></a></td>
+            <td><a href="https://github.com/Dltmd202"><img width="200" src="https://github.com/Dltmd202.png" /></a></td>
         </tr>
         <tr>
-            <td><a href="https://github.com/jeongju9216">@jeongju9216</a></td>
-            <td><a href="https://github.com/looloolalaa">@anyukyung</a></td>
-            <td><a href="https://github.com/lsh23">@hw-ani</a></td>
-            <td><a href="https://github.com/Dltmd202">@whipbaek</a></td>
+            <td>S022_유정주</td>
+            <td>S025_이기현</td>
+            <td>J102_이세형</td>
+            <td>J107_이승환</td>
         </tr>
         <tr>
-            <td>유정주</td>
-            <td>이기현</td>
-            <td>이세형</td>
-            <td>이승환</td>
+            <td><a href="dbwjdwn9216@gmail.com">dbwjdwn9216@gmail.com</a></td>
+            <td><a href="dlrlgus65@nate.com">dlrlgus65@nate.com</a></td>
+            <td><a href="shseoul14@gmail.com">shseoul14@gmail.com</a></td>
+            <td><a href="dltmd202@gmail.com">dltmd202@gmail.com</a></td>
         </tr>
     </tbody>
 </table>
