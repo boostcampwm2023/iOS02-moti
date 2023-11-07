@@ -5,7 +5,7 @@
 - 모티 앱은 **빠르고 간편하게** 사진 목표 달성을 기록할 수 있습니다 😊
 
 # 팀원 소개
-## iOS 파트...
+## iOS 파트
 
 <table>
   <tr>
@@ -72,12 +72,7 @@
 </table>
 
 
-# 협업 전략
-
-# 그라운드룰
-
-# 기획/디자인
-
-# 커밋 템플릿, 이슈 템플릿
-
-# 회의록/이슈/위키
+## 문서
+| 팀 페이지 | 그라운드룰 | 기획/디자인 | 커밋 템플릿 | 이슈 템플릿 | 회의록 |
+|---|---|---|---|---|---|
+| [팀 페이지](https://jeong9216.notion.site/moti-003002603e5e49c48750d83668508c8e?pvs=4) | [그라운드룰](https://jeong9216.notion.site/abdf3f7229fe469186dcf11e2ba686bd?pvs=4) | [기획/디자인](https://www.figma.com/file/Qeluz7lzMO7igCvL26BymS/%EB%AA%A8%ED%8B%B0?type=design&node-id=0%3A1&mode=design&t=0no8SURD3YhZBxfp-1) | TODO | TODO | [회의록](https://jeong9216.notion.site/116f25437164432db1e34ab534fe8069?pvs=4) |
