@@ -20,6 +20,7 @@
 
 /* Begin PBXFileReference section */
 		208B25F82AFBC0DF00B017BE /* Presentation */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Presentation; sourceTree = "<group>"; };
+		208B25FC2AFBC1FC00B017BE /* Data */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Data; sourceTree = "<group>"; };
 		20CC16852AFB72FE001E7ECE /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		9B5213892AFB63F100A8ED7E /* moti.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = moti.entitlements; sourceTree = "<group>"; };
 		9BDD6D4A2AFB303200B65102 /* moti.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = moti.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -46,6 +47,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		208B25FB2AFBC1C100B017BE /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				9BDD6D582AFB303400B65102 /* LaunchScreen.storyboard */,
+				9BDD6D4D2AFB303200B65102 /* AppDelegate.swift */,
+				9BDD6D4F2AFB303200B65102 /* SceneDelegate.swift */,
+			);
+			path = Application;
+			sourceTree = "<group>";
+		};
 		9BDD6D412AFB303200B65102 = {
 			isa = PBXGroup;
 			children = (
@@ -67,15 +78,14 @@
 		9BDD6D4C2AFB303200B65102 /* moti */ = {
 			isa = PBXGroup;
 			children = (
+				208B25FB2AFBC1C100B017BE /* Application */,
 				208B25F82AFBC0DF00B017BE /* Presentation */,
 				9BE384D82AFBBDFA00207BC4 /* Domain */,
+				208B25FC2AFBC1FC00B017BE /* Data */,
 				9B5213892AFB63F100A8ED7E /* moti.entitlements */,
-				9BDD6D4D2AFB303200B65102 /* AppDelegate.swift */,
-				9BDD6D4F2AFB303200B65102 /* SceneDelegate.swift */,
 				9BDD6D512AFB303200B65102 /* ViewController.swift */,
 				9BDD6D532AFB303200B65102 /* Main.storyboard */,
 				9BDD6D562AFB303400B65102 /* Assets.xcassets */,
-				9BDD6D582AFB303400B65102 /* LaunchScreen.storyboard */,
 				9BDD6D5B2AFB303400B65102 /* Info.plist */,
 			);
 			path = moti;
