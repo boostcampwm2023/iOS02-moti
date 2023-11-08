@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		208B25FA2AFBC11600B017BE /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = 208B25F92AFBC11600B017BE /* Presentation */; };
 		20CC16862AFB72FE001E7ECE /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 20CC16852AFB72FE001E7ECE /* .swiftlint.yml */; };
 		9BDD6D4E2AFB303200B65102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BDD6D4D2AFB303200B65102 /* AppDelegate.swift */; };
 		9BDD6D502AFB303200B65102 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BDD6D4F2AFB303200B65102 /* SceneDelegate.swift */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		208B25F82AFBC0DF00B017BE /* Presentation */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Presentation; sourceTree = "<group>"; };
 		20CC16852AFB72FE001E7ECE /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		9B5213892AFB63F100A8ED7E /* moti.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = moti.entitlements; sourceTree = "<group>"; };
 		9BDD6D4A2AFB303200B65102 /* moti.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = moti.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -36,6 +38,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				208B25FA2AFBC11600B017BE /* Presentation in Frameworks */,
 				9BE384DB2AFBBED800207BC4 /* Domain in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -64,6 +67,7 @@
 		9BDD6D4C2AFB303200B65102 /* moti */ = {
 			isa = PBXGroup;
 			children = (
+				208B25F82AFBC0DF00B017BE /* Presentation */,
 				9BE384D82AFBBDFA00207BC4 /* Domain */,
 				9B5213892AFB63F100A8ED7E /* moti.entitlements */,
 				9BDD6D4D2AFB303200B65102 /* AppDelegate.swift */,
@@ -103,6 +107,7 @@
 			name = moti;
 			packageProductDependencies = (
 				9BE384DA2AFBBED800207BC4 /* Domain */,
+				208B25F92AFBC11600B017BE /* Presentation */,
 			);
 			productName = moti;
 			productReference = 9BDD6D4A2AFB303200B65102 /* moti.app */;
@@ -417,6 +422,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		208B25F92AFBC11600B017BE /* Presentation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Presentation;
+		};
 		9BE384DA2AFBBED800207BC4 /* Domain */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Domain;
