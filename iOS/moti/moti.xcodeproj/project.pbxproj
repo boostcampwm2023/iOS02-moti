@@ -9,13 +9,13 @@
 /* Begin PBXBuildFile section */
 		208B25FA2AFBC11600B017BE /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = 208B25F92AFBC11600B017BE /* Presentation */; };
 		20CC16862AFB72FE001E7ECE /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 20CC16852AFB72FE001E7ECE /* .swiftlint.yml */; };
+		9BDADD492AFCC72500D08D9C /* AutoLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 9BDADD482AFCC72500D08D9C /* AutoLayout */; };
 		9BDD6D4E2AFB303200B65102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BDD6D4D2AFB303200B65102 /* AppDelegate.swift */; };
 		9BDD6D502AFB303200B65102 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BDD6D4F2AFB303200B65102 /* SceneDelegate.swift */; };
 		9BDD6D572AFB303400B65102 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9BDD6D562AFB303400B65102 /* Assets.xcassets */; };
 		9BDD6D5A2AFB303400B65102 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9BDD6D582AFB303400B65102 /* LaunchScreen.storyboard */; };
 		9BE384DB2AFBBED800207BC4 /* Domain in Frameworks */ = {isa = PBXBuildFile; productRef = 9BE384DA2AFBBED800207BC4 /* Domain */; };
 		9BE384E32AFCA7B100207BC4 /* Data in Frameworks */ = {isa = PBXBuildFile; productRef = 9BE384E22AFCA7B100207BC4 /* Data */; };
-		9BE384E52AFCA7B400207BC4 /* Autolayout in Frameworks */ = {isa = PBXBuildFile; productRef = 9BE384E42AFCA7B400207BC4 /* Autolayout */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +23,7 @@
 		208B25FC2AFBC1FC00B017BE /* Data */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Data; sourceTree = "<group>"; };
 		20CC16852AFB72FE001E7ECE /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		9B5213892AFB63F100A8ED7E /* moti.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = moti.entitlements; sourceTree = "<group>"; };
+		9BDADD452AFCB72800D08D9C /* Design */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Design; sourceTree = "<group>"; };
 		9BDD6D4A2AFB303200B65102 /* moti.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = moti.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9BDD6D4D2AFB303200B65102 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9BDD6D4F2AFB303200B65102 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -38,7 +39,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				208B25FA2AFBC11600B017BE /* Presentation in Frameworks */,
-				9BE384E52AFCA7B400207BC4 /* Autolayout in Frameworks */,
+				9BDADD492AFCC72500D08D9C /* AutoLayout in Frameworks */,
 				9BE384DB2AFBBED800207BC4 /* Domain in Frameworks */,
 				9BE384E32AFCA7B100207BC4 /* Data in Frameworks */,
 			);
@@ -80,6 +81,7 @@
 			children = (
 				9B5213892AFB63F100A8ED7E /* moti.entitlements */,
 				208B25FB2AFBC1C100B017BE /* Application */,
+				9BDADD452AFCB72800D08D9C /* Design */,
 				208B25F82AFBC0DF00B017BE /* Presentation */,
 				9BE384D82AFBBDFA00207BC4 /* Domain */,
 				208B25FC2AFBC1FC00B017BE /* Data */,
@@ -126,7 +128,7 @@
 				9BE384DA2AFBBED800207BC4 /* Domain */,
 				208B25F92AFBC11600B017BE /* Presentation */,
 				9BE384E22AFCA7B100207BC4 /* Data */,
-				9BE384E42AFCA7B400207BC4 /* Autolayout */,
+				9BDADD482AFCC72500D08D9C /* AutoLayout */,
 			);
 			productName = moti;
 			productReference = 9BDD6D4A2AFB303200B65102 /* moti.app */;
@@ -370,7 +372,7 @@
 				CODE_SIGN_ENTITLEMENTS = moti/moti.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 39;
 				DEVELOPMENT_TEAM = WPX8MV29XR;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -402,7 +404,7 @@
 				CODE_SIGN_ENTITLEMENTS = moti/moti.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 39;
 				DEVELOPMENT_TEAM = WPX8MV29XR;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -454,6 +456,10 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = Presentation;
 		};
+		9BDADD482AFCC72500D08D9C /* AutoLayout */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AutoLayout;
+		};
 		9BE384DA2AFBBED800207BC4 /* Domain */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Domain;
@@ -461,10 +467,6 @@
 		9BE384E22AFCA7B100207BC4 /* Data */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Data;
-		};
-		9BE384E42AFCA7B400207BC4 /* Autolayout */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Autolayout;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
