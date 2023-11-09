@@ -1,4 +1,5 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CamelSnakeNameStrategy } from './camel-snake-name-strategy';
 
 export const typeOrmModuleOptions = {
   imports: [ConfigModule],
@@ -14,6 +15,7 @@ export const typeOrmModuleOptions = {
       entities: ['dist/**/*.entity{.ts,.js}'],
       logging: true,
       synchronize: true,
+      namingStrategy: new CamelSnakeNameStrategy(),
     };
     return option;
   },
