@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		208B25FA2AFBC11600B017BE /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = 208B25F92AFBC11600B017BE /* Presentation */; };
+		208B25FF2AFCDE5900B017BE /* Launch in Frameworks */ = {isa = PBXBuildFile; productRef = 208B25FE2AFCDE5900B017BE /* Launch */; };
+		208B26012AFCF83F00B017BE /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = 208B26002AFCF83F00B017BE /* Common */; };
 		20CC16862AFB72FE001E7ECE /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 20CC16852AFB72FE001E7ECE /* .swiftlint.yml */; };
 		9BDADD492AFCC72500D08D9C /* AutoLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 9BDADD482AFCC72500D08D9C /* AutoLayout */; };
 		9BDD6D4E2AFB303200B65102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BDD6D4D2AFB303200B65102 /* AppDelegate.swift */; };
@@ -38,8 +39,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				208B25FA2AFBC11600B017BE /* Presentation in Frameworks */,
+				208B26012AFCF83F00B017BE /* Common in Frameworks */,
 				9BDADD492AFCC72500D08D9C /* AutoLayout in Frameworks */,
+				208B25FF2AFCDE5900B017BE /* Launch in Frameworks */,
 				9BE384DB2AFBBED800207BC4 /* Domain in Frameworks */,
 				9BE384E32AFCA7B100207BC4 /* Data in Frameworks */,
 			);
@@ -126,9 +128,10 @@
 			name = moti;
 			packageProductDependencies = (
 				9BE384DA2AFBBED800207BC4 /* Domain */,
-				208B25F92AFBC11600B017BE /* Presentation */,
 				9BE384E22AFCA7B100207BC4 /* Data */,
 				9BDADD482AFCC72500D08D9C /* AutoLayout */,
+				208B25FE2AFCDE5900B017BE /* Launch */,
+				208B26002AFCF83F00B017BE /* Common */,
 			);
 			productName = moti;
 			productReference = 9BDD6D4A2AFB303200B65102 /* moti.app */;
@@ -372,7 +375,7 @@
 				CODE_SIGN_ENTITLEMENTS = moti/moti.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 42;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = WPX8MV29XR;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -404,7 +407,7 @@
 				CODE_SIGN_ENTITLEMENTS = moti/moti.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 42;
+				CURRENT_PROJECT_VERSION = 45;
 				DEVELOPMENT_TEAM = WPX8MV29XR;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -452,9 +455,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		208B25F92AFBC11600B017BE /* Presentation */ = {
+		208B25FE2AFCDE5900B017BE /* Launch */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = Presentation;
+			productName = Launch;
+		};
+		208B26002AFCF83F00B017BE /* Common */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Common;
 		};
 		9BDADD482AFCC72500D08D9C /* AutoLayout */ = {
 			isa = XCSwiftPackageProductDependency;
