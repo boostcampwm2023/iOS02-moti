@@ -1,0 +1,33 @@
+name: Motimate BE CI
+
+on:
+  push:
+    branches: [ "develop", "main" ]
+  pull_request:
+    branches: [ "develop", "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: BE/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./BE
+      - name: Build
+        run: npm run build --if-present
+        working-directory: ./BE
+      - name: Run tests
+        run: npm test
+        working-directory: ./BE
