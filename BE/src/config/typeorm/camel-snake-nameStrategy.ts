@@ -13,9 +13,8 @@ export class CamelSnakeNameStrategy
     customName: string,
     embeddedPrefixes: string[],
   ): string {
-    return this.snakeCase(
-      embeddedPrefixes.concat(customName ? customName : propertyName).join('_'),
-    );
+    if (customName) return embeddedPrefixes.concat(customName).join('_');
+    return this.snakeCase(embeddedPrefixes.concat(propertyName).join('_'));
   }
 
   relationName(propertyName: string): string {
