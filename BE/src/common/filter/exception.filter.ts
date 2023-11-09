@@ -1,16 +1,15 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
-import { MotimateException } from '../exception/motimate.excpetion';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from "@nestjs/common";
 import { Request, Response } from 'express';
 
-@Catch(MotimateException)
+@Catch(HttpException)
 export class MotimateExceptionFilter
-  implements ExceptionFilter<MotimateException>
+  implements ExceptionFilter<HttpException>
 {
-  catch(exception: MotimateException, host: ArgumentsHost): any {
+  catch(exception: HttpException, host: ArgumentsHost): any {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    const status = exception.statusCode;
+    const status = exception.getStatus();
 
     response.status(status).json({
       statusCode: status,
