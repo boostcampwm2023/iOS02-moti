@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseTimeEntity } from '../../common/entities/base.entity';
 
 @Entity({ name: 'users' })
