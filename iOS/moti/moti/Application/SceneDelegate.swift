@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import Presentation
+import Launch
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         
-        window?.rootViewController = ViewController()
+        window?.rootViewController = LaunchViewController()
         window?.makeKeyAndVisible()
     }
 }
