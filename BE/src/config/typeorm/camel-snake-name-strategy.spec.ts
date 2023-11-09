@@ -1,5 +1,5 @@
 import { NamingStrategyInterface } from 'typeorm';
-import { CamelSnakeNameStrategy } from './camel-snake-nameStrategy';
+import { CamelSnakeNameStrategy } from './camel-snake-name-strategy';
 
 describe('CamelSnakeNameStrategy Test', () => {
   let stragegy: NamingStrategyInterface;

@@ -1,5 +1,5 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { CamelSnakeNameStrategy } from './camel-snake-nameStrategy';
+import { CamelSnakeNameStrategy } from './camel-snake-name-strategy';
 
 export const typeOrmModuleOptions = {
   imports: [ConfigModule],
