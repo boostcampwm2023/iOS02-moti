@@ -62,7 +62,6 @@ describe('CamelSnakeNameStrategy Test', () => {
 
     // when
     const transformed = stragegy.columnName(camelCase, undefined, ['Address']);
-    console.log(transformed);
 
     // then
     expect(transformed).toBe('address_street');
@@ -74,7 +73,6 @@ describe('CamelSnakeNameStrategy Test', () => {
 
     // when
     const transformed = stragegy.columnName(camelCase, 'STREET', ['Address']);
-    console.log(transformed);
 
     // then
     expect(transformed).toBe('Address_STREET');
@@ -86,7 +84,6 @@ describe('CamelSnakeNameStrategy Test', () => {
 
     // when
     const transformed = stragegy.relationName(camelCase);
-    console.log(transformed);
 
     // then
     expect(transformed).toBe('user_photo');
