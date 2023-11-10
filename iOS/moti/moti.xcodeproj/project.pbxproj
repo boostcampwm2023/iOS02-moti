@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		208B25FF2AFCDE5900B017BE /* Launch in Frameworks */ = {isa = PBXBuildFile; productRef = 208B25FE2AFCDE5900B017BE /* Launch */; };
-		208B26012AFCF83F00B017BE /* Common in Frameworks */ = {isa = PBXBuildFile; productRef = 208B26002AFCF83F00B017BE /* Common */; };
 		20CC16862AFB72FE001E7ECE /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 20CC16852AFB72FE001E7ECE /* .swiftlint.yml */; };
-		9BDADD492AFCC72500D08D9C /* AutoLayout in Frameworks */ = {isa = PBXBuildFile; productRef = 9BDADD482AFCC72500D08D9C /* AutoLayout */; };
+		9B3715DA2AFE2BA70041FCE7 /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = 9B3715D92AFE2BA70041FCE7 /* Presentation */; };
 		9BDD6D4E2AFB303200B65102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BDD6D4D2AFB303200B65102 /* AppDelegate.swift */; };
 		9BDD6D502AFB303200B65102 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BDD6D4F2AFB303200B65102 /* SceneDelegate.swift */; };
 		9BDD6D572AFB303400B65102 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9BDD6D562AFB303400B65102 /* Assets.xcassets */; };
@@ -39,10 +37,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				208B26012AFCF83F00B017BE /* Common in Frameworks */,
-				9BDADD492AFCC72500D08D9C /* AutoLayout in Frameworks */,
-				208B25FF2AFCDE5900B017BE /* Launch in Frameworks */,
 				9BE384DB2AFBBED800207BC4 /* Domain in Frameworks */,
+				9B3715DA2AFE2BA70041FCE7 /* Presentation in Frameworks */,
 				9BE384E32AFCA7B100207BC4 /* Data in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -129,9 +125,7 @@
 			packageProductDependencies = (
 				9BE384DA2AFBBED800207BC4 /* Domain */,
 				9BE384E22AFCA7B100207BC4 /* Data */,
-				9BDADD482AFCC72500D08D9C /* AutoLayout */,
-				208B25FE2AFCDE5900B017BE /* Launch */,
-				208B26002AFCF83F00B017BE /* Common */,
+				9B3715D92AFE2BA70041FCE7 /* Presentation */,
 			);
 			productName = moti;
 			productReference = 9BDD6D4A2AFB303200B65102 /* moti.app */;
@@ -300,7 +294,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -357,7 +351,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -375,8 +369,8 @@
 				CODE_SIGN_ENTITLEMENTS = moti/moti.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 45;
-				DEVELOPMENT_TEAM = WPX8MV29XR;
+				CURRENT_PROJECT_VERSION = 59;
+				DEVELOPMENT_TEAM = B3PWYBKFUK;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = moti/Resource/Info.plist;
@@ -384,12 +378,13 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.motimate.moti;
+				PRODUCT_BUNDLE_IDENTIFIER = kr.codesquad.boostcamp8.moti;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -407,8 +402,8 @@
 				CODE_SIGN_ENTITLEMENTS = moti/moti.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 45;
-				DEVELOPMENT_TEAM = WPX8MV29XR;
+				CURRENT_PROJECT_VERSION = 59;
+				DEVELOPMENT_TEAM = B3PWYBKFUK;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = moti/Resource/Info.plist;
@@ -416,12 +411,13 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.motimate.moti;
+				PRODUCT_BUNDLE_IDENTIFIER = kr.codesquad.boostcamp8.moti;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -455,17 +451,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		208B25FE2AFCDE5900B017BE /* Launch */ = {
+		9B3715D92AFE2BA70041FCE7 /* Presentation */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = Launch;
-		};
-		208B26002AFCF83F00B017BE /* Common */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = Common;
-		};
-		9BDADD482AFCC72500D08D9C /* AutoLayout */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = AutoLayout;
+			productName = Presentation;
 		};
 		9BE384DA2AFBBED800207BC4 /* Domain */ = {
 			isa = XCSwiftPackageProductDependency;

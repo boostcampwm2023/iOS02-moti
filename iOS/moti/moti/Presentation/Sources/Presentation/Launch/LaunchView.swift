@@ -7,9 +7,8 @@
 
 import UIKit
 import Design
-import AutoLayout
 
-public final class LaunchView: UIView {
+final class LaunchView: UIView {
     
     private let logoImageView = {
         let imageView = UIImageView(image: UIImage(named: "MotiLogoWhite"))
