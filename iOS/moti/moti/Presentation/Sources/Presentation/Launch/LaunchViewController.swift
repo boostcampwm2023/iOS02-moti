@@ -6,11 +6,9 @@
 //
 
 import UIKit
-import Common
 
-public final class LaunchViewController: BaseViewController<LaunchView> {
-    
-    public override func viewDidLoad() {
+final class LaunchViewController: BaseViewController<LaunchView> {
+    override func viewDidLoad() {
         super.viewDidLoad()
     }
 }

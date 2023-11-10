@@ -7,8 +7,9 @@
 
 import UIKit
 
+// 업데이트 생각해보기
 // MARK: - Default Autolayout
-public extension AutoLayoutWrapper {
+extension AutoLayoutWrapper {
     @discardableResult
     func width(
         equalTo anchor: NSLayoutAnchor<NSLayoutDimension>? = nil,
@@ -99,7 +100,7 @@ public extension AutoLayoutWrapper {
 }
 
 // MARK: - Custom Autolayout
-public extension AutoLayoutWrapper {
+extension AutoLayoutWrapper {
     @discardableResult
     func center(
         of parentView: UIView

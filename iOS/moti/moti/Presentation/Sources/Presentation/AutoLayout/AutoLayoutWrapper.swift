@@ -7,7 +7,7 @@
 
 import UIKit
 
-public struct AutoLayoutWrapper {
+struct AutoLayoutWrapper {
     let view: UIView
     
     init(view: UIView) {
@@ -15,11 +15,11 @@ public struct AutoLayoutWrapper {
     }
 }
 
-public protocol AutoLayoutCompatible: UIView {
+protocol AutoLayoutCompatible: UIView {
     var atl: AutoLayoutWrapper { get }
 }
 
-public extension AutoLayoutCompatible {
+extension AutoLayoutCompatible {
     var atl: AutoLayoutWrapper {
         return AutoLayoutWrapper(view: self)
     }
