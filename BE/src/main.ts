@@ -6,8 +6,10 @@ import { UnexpectedExceptionFilter } from './common/filter/unexpected-exception.
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalFilters(new MotimateExceptionFilter());
-  app.useGlobalFilters(new UnexpectedExceptionFilter());
+  app.useGlobalFilters(
+    new UnexpectedExceptionFilter(),
+    new MotimateExceptionFilter(),
+  );
 
   swaggerConfig(app);
   await app.listen(3000);
