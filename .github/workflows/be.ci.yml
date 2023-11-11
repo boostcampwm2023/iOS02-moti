@@ -17,6 +17,7 @@ jobs:
       DB_PASSWORD: "1234"
       DB_DATABASE: "motimate_test"
       DB_ENTITIES: "src/**/*.entity{.ts,.js}"
+      DB_LOGGING: false
 
     services:
       mysql:
