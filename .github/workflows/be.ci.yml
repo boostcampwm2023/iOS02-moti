@@ -9,6 +9,24 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DB: "mysql"
+      DB_HOST: "127.0.0.1"
+      DB_PORT: "13306"
+      DB_USERNAME: "root"
+      DB_PASSWORD: "1234"
+      DB_DATABASE: "motimate_test"
+      DB_ENTITIES: "src/**/*.entity{.ts,.js}"
+      DB_LOGGING: false
+
+    services:
+      mysql:
+        image: mysql:8.0.34
+        env:
+          MYSQL_ROOT_PASSWORD: 1234
+          MYSQL_DATABASE: "motimate_test"
+        ports:
+          - 13306:3306
 
     strategy:
       matrix:
