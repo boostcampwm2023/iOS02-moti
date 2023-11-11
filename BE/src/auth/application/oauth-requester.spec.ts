@@ -6,9 +6,10 @@ import { PublicKeysResponse } from '../index';
 import { FetchPublicKeyException } from '../exception/FetchPublicKeyException';
 
 describe('OauthRequester test', () => {
-  const configService = new ConfigService({});
-  const httpService = new HttpService();
-  const oauthRequester = new OauthRequester(configService, httpService);
+  const oauthRequester = new OauthRequester(
+    new ConfigService(),
+    new HttpService(),
+  );
 
   test('Apple ID Server로 부터 public key를 얻어온다.', async () => {
     // given
