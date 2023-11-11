@@ -12,7 +12,7 @@ jobs:
     env:
       DB: "mysql"
       DB_HOST: "127.0.0.1"
-      DB_PORT: "3307"
+      DB_PORT: "13306"
       DB_USERNAME: "root"
       DB_PASSWORD: "1234"
       DB_DATABASE: "motimate_test"
@@ -20,12 +20,12 @@ jobs:
 
     services:
       mysql:
-        image: mysql:8.1
+        image: mysql:8.0.34
         env:
           MYSQL_ROOT_PASSWORD: 1234
           MYSQL_DATABASE: "motimate_test"
         ports:
-          - 3307:3306
+          - 13306:3306
 
     strategy:
       matrix:
