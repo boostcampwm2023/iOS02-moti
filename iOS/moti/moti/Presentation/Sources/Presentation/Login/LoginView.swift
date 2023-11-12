@@ -7,7 +7,6 @@
 
 import UIKit
 import Design
-import AuthenticationServices
 
 final class LoginView: UIView {
     
@@ -19,7 +18,7 @@ final class LoginView: UIView {
     }()
     
     // 애플 로그인 버튼
-    private let appleLoginButton = ASAuthorizationAppleIDButton(type: .default, style: .whiteOutline)
+    private let appleLoginButton = AuthButtonFactory.makeAppleLoginButton()
     
     // MARK: - Init
     override init(frame: CGRect) {
@@ -47,9 +46,12 @@ final class LoginView: UIView {
     }
     
     private func setupAppleIDButton() {
+        let loginButtonHeight = 32.0
+        appleLoginButton.setValue(loginButtonHeight / 2, forKey: "cornerRadius")
+
         addSubview(appleLoginButton)
         appleLoginButton.atl
-            .size(width: 219, height: 32)
+            .size(width: 219, height: loginButtonHeight)
             .centerX(equalTo: self.safeAreaLayoutGuide.centerXAnchor)
             .bottom(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: -40)
     }
