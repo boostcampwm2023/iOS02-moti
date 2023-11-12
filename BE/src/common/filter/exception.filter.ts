@@ -18,7 +18,7 @@ export class MotimateExceptionFilter implements ExceptionFilter<HttpException> {
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message: exception.message,
+      message: exception.getResponse(),
     });
   }
 }
