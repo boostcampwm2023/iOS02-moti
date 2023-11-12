@@ -1,20 +1,22 @@
 import { InvalidTokenException } from '../exception/InValidTokenException.exception';
 
+interface IdentityTokenHeader {
+  kid: string;
+  alg: string;
+}
+interface IdentityTokenPayload {
+  iss: string;
+  aud: string;
+  exp: number;
+  iat: number;
+  sub: string;
+  c_hash: string;
+  auth_time: number;
+  nonce_supported: boolean;
+}
 export class IdentityToken {
-  header: {
-    kid: string;
-    alg: string;
-  };
-  payload: {
-    iss: string;
-    aud: string;
-    exp: number;
-    iat: number;
-    sub: string;
-    c_hash: string;
-    auth_time: number;
-    nonce_supported: boolean;
-  };
+  header: IdentityTokenHeader;
+  payload: IdentityTokenPayload;
   signature: string;
   jwt: string;
   constructor(token: string) {
