@@ -12,8 +12,8 @@ export const typeOrmModuleOptions = {
       username: configService.get('DB_USERNAME'),
       password: configService.get('DB_PASSWORD'),
       database: configService.get('DB_DATABASE'),
-      entities: ['dist/**/*.entity{.ts,.js}'],
-      logging: true,
+      entities: [configService.get('DB_ENTITIES')],
+      logging: configService.get('DB_LOGGING'),
       synchronize: true,
       namingStrategy: new CamelSnakeNameStrategy(),
     };
