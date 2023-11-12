@@ -102,6 +102,17 @@ extension AutoLayoutWrapper {
 // MARK: - Custom Autolayout
 extension AutoLayoutWrapper {
     @discardableResult
+    func size(
+        width: CGFloat,
+        height: CGFloat
+    ) -> Self {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.widthAnchor.constraint(equalToConstant: width).isActive = true
+        view.heightAnchor.constraint(equalToConstant: height).isActive = true
+        return self
+    }
+    
+    @discardableResult
     func center(
         of parentView: UIView
     ) -> Self {
