@@ -1,17 +1,17 @@
 //
-//  LaunchView.swift
-//  
+//  LoginView.swift
 //
-//  Created by Kihyun Lee on 11/9/23.
+//
+//  Created by 유정주 on 11/12/23.
 //
 
 import UIKit
 import Design
 
-final class LaunchView: UIView {
+final class LoginView: UIView {
     
     private let logoImageView = {
-        let imageView = UIImageView(image: MotiImage.logoWhite)
+        let imageView = UIImageView(image: MotiImage.logoBlue)
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -27,7 +27,7 @@ final class LaunchView: UIView {
     }
     
     private func setupUI() {
-        backgroundColor = .primaryBlue
+        backgroundColor = .systemBackground
         setupLogoImageView()
     }
     
