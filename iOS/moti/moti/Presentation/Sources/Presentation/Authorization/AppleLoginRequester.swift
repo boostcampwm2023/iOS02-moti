@@ -15,7 +15,7 @@ protocol AppleLoginRequesterDelegate: AnyObject {
 
 final class AppleLoginRequester: NSObject, LoginRequester {
     
-    let window: UIWindow
+    private var window: UIWindow
     weak var delegate: AppleLoginRequesterDelegate?
     
     init(window: UIWindow) {
