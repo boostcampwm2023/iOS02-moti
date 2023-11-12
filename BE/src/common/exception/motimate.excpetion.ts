@@ -2,7 +2,7 @@ import { HttpException } from '@nestjs/common';
 
 export interface ErrorCode {
   statusCode: number;
-  message: string;
+  message: string | object;
 }
 
 export class MotimateException extends HttpException {
