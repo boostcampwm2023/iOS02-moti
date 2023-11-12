@@ -3,7 +3,7 @@ import { BaseTimeEntity } from '../../common/entities/base.entity';
 
 @Entity({ name: 'users' })
 export class UsersEntity extends BaseTimeEntity {
-  @PrimaryGeneratedColumn({ type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
   id: number;
 
   @Column({ type: 'varchar', length: 320, nullable: false })
