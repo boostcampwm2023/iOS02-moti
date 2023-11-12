@@ -18,7 +18,7 @@ final class LoginView: UIView {
     }()
     
     // 애플 로그인 버튼
-    private let appleLoginButton = AuthButtonFactory.makeAppleLoginButton()
+    let appleLoginButton = AuthButtonFactory.makeAppleLoginButton()
     
     // MARK: - Init
     override init(frame: CGRect) {
@@ -46,12 +46,13 @@ final class LoginView: UIView {
     }
     
     private func setupAppleIDButton() {
-        let loginButtonHeight = 32.0
+        let ratio = 6.8
+        let loginButtonHeight = 48.0
         appleLoginButton.setValue(loginButtonHeight / 2, forKey: "cornerRadius")
 
         addSubview(appleLoginButton)
         appleLoginButton.atl
-            .size(width: 219, height: loginButtonHeight)
+            .size(width: loginButtonHeight * ratio, height: loginButtonHeight)
             .centerX(equalTo: self.safeAreaLayoutGuide.centerXAnchor)
             .bottom(equalTo: self.safeAreaLayoutGuide.bottomAnchor, constant: -40)
     }
