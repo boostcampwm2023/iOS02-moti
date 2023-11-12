@@ -34,8 +34,7 @@ final class LaunchView: UIView {
     private func setupLogoImageView() {
         addSubview(logoImageView)
         logoImageView.atl
-            .width(constant: 158)
-            .height(constant: 65)
+            .size(width: 158, height: 65)
             .center(of: self)
     }
 }

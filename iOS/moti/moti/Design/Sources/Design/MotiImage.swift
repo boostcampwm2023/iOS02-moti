@@ -10,8 +10,8 @@ import UIKit
 /// Motimate 팀이 제작한 이미지
 public enum MotiImage {
     /// 흰색 moti 로고
-    public static let logoWhite = UIImage(named: "MotiLogoWhite")
+    public static let logoWhite = UIImage(resource: .motiLogoWhite)
     
     /// 파란색 moti 로고
-    public static let logoBlue = UIImage(named: "MotiLogoBlue")
+    public static let logoBlue = UIImage(resource: .motiLogoBlue)
 }
