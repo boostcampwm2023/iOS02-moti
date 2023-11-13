@@ -16,7 +16,13 @@ struct VersionRepository: VersionRepositoryProtocol {
     }
     
     func fetchVersion() async throws -> Version {
-        let endpoint = MotiAPI.version
+//        let endpoint = MotiAPI.version
+//        
+//        let responseDTO = try await provider.request(with: endpoint, type: .self)
+//        guard let data = responseDTO.data else { throw NetworkError.decode }
+//        
+//        let versionDTO = try JSONDecoder().decode(VersionDTO.self, from: data)
+//        return versionDTO.toEntity()
+        return .init(latest: "", required: "", privacyPolicy: "")
     }
-    
 }

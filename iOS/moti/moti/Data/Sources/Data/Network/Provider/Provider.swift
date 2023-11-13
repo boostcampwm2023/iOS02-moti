@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 
 protocol ProviderProtocol {
     func request<R: Decodable, E: EndpointProtocol>(with endpoint: E, type: R.Type) async throws -> R
@@ -20,13 +19,11 @@ struct Provider: ProviderProtocol {
             throw NetworkError.url
         }
         
-        
         let (data, response) = try await session.data(for: urlRequest)
         guard let response = response as? HTTPURLResponse else { throw NetworkError.statusCode }
         switch response.statusCode {
         case 200..<300:
-            let output: ResponseDTO = try JSONDecoder().decode(ResponseDTO.self, from: data)
-            return 
+            return try JSONDecoder().decode(type, from: data)
         default:
             throw NetworkError.statusCode
         }

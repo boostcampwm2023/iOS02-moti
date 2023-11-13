@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct ResponseDTO: Codable {
-    let success: Bool?
-    let message: String?
-    let data: [String: Any]?
+protocol ResponseDTO: Codable {
+    var success: Bool? { get }
+    var message: String? { get }
 }
