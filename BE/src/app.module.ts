@@ -6,12 +6,14 @@ import { ConfigModule } from '@nestjs/config';
 import { typeOrmModuleOptions } from './config/typeorm';
 import { configServiceModuleOptions } from './config/config';
 import { AuthModule } from './auth/auth.module';
+import { TransactionModule } from './config/transaction-manager/transaction.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(configServiceModuleOptions),
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
     AuthModule,
+    TransactionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
