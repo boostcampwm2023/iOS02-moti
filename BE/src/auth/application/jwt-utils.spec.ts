@@ -9,7 +9,7 @@ describe('jwtUtils test', () => {
 
   test('publicKey로 jwt를 검증한다.', () => {
     // given
-    const identityToken =
+    const validIdentityToken =
       'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwiYXVkIjoiY29tLm1vdGltYXRlLm1vdGkiLCJleHAiOjE5MjA1OTkxNjgsImlhdCI6MTY5OTYxMjczMiwic3ViIjoiMTIzNDU2LjEyNTU5ZWUxNTkyYjQ0YWY5NzA1ZmRhYmYyOGFlMzhiLjEyMzQiLCJjX2hhc2giOiJxSkd3ZEhyNEZYb055Qllobm5vQ21RIiwiYXV0aF90aW1lIjoxNjk5NjEyNzMyLCJub25jZV9zdXBwb3J0ZWQiOnRydWV9.hGOMbHw4R5poeuGb8igU15oP_oS8otDNTKqR1AGlTpxbHDs5HX848B8WA1TOqiM7sBb5zWFXPmvkRHu39DnymP83vG9Vsrc__iVRh2-mxJRd_83ligkaEY4OaqpfIChYVjKyXCKFpds4na0AasjebnZzSdZnhmIBG4nvxU8UPsNyUjHDibXRB37GJIsyCgvUmdPJeTNszxQtZZnMAGy9RYSXmeX2-7OeA15QBneY1PJk3vnaBdlmLiChR4FpiX42271h3C-28XEjcfjnw6u4RiggmQnYcGOCGcSG-dKhaizKSanZ6bti21qNAAFW4R2BVRy8E65wndKagI3J_ENMQQ';
 
     const publicKey: PublicKey = {
@@ -22,12 +22,12 @@ describe('jwtUtils test', () => {
     };
 
     // when & then
-    jwtUtils.validate(identityToken, publicKey);
+    jwtUtils.validate(validIdentityToken, publicKey);
   });
 
   test('만료된 토큰인 경우 ExpiredTokenExceptionException 에러를 던진다.', () => {
     // given
-    const identityToken =
+    const expiredIdentityToken =
       'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwiYXVkIjoiY29tLm1vdGltYXRlLm1vdGkiLCJleHAiOjE2OTk2MTI3MzIsImlhdCI6MTY5OTYxMjczMiwic3ViIjoiMTIzNDU2LjEyNTU5ZWUxNTkyYjQ0YWY5NzA1ZmRhYmYyOGFlMzhiLjEyMzQiLCJjX2hhc2giOiJxSkd3ZEhyNEZYb055Qllobm5vQ21RIiwiYXV0aF90aW1lIjoxNjk5NjEyNzMyLCJub25jZV9zdXBwb3J0ZWQiOnRydWV9.piDCJw_KVoQqiYgYIfZ0FuoCvj6QYXMt4OV-QuqqsXt7WcMR2CQR6LOOIzscxRPCeWOdfyKaFoVEmm9fZB9G4CHvTlTLRtmWY8PxX14ZSwHv6qjCRoiNW4ruLVWrO4CDfZR3IyhyecWb-RtIeA4SIHTmtmOxpHMwzymuzFwuR6H8_ay-lXU2lLMDAPJvoHHKB_jhQedgLiPhrJAoBBnC5qoD9Z6wttRoRZzyLqEinslPJkFbGVjH-sHXmDfXT3Np-W7PqdWIEqD6hIUVjR8A51IaPMpVKnOV9Z1oxnhD80UaJNFLetlNs9Qj5zU-VLYgSSi8t9vPGav4KxsA3X4ptg';
 
     const publicKey: PublicKey = {
@@ -40,14 +40,14 @@ describe('jwtUtils test', () => {
     };
 
     // when & then
-    expect(() => jwtUtils.validate(identityToken, publicKey)).toThrow(
+    expect(() => jwtUtils.validate(expiredIdentityToken, publicKey)).toThrow(
       ExpiredTokenException,
     );
   });
 
   test('변조된 토큰인 경우 InvalidTokenException 에러를 던진다.', () => {
     // given
-    const identityToken =
+    const invalidIdentityToken =
       'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwiYXVkIjoiY29tLm1vdGltYXRlLm1vdGkiLCJleHAiOjE5MjA1OTkxNjgsImlhdCI6MTY5OTYxMjczMiwic3ViIjoiMTIzNDU2LjEyNTU5ZWUxNTkyYjQ0YWY5NzA1ZmRhYmYyOGFlMzhiLjEyMzQiLCJjX2hhc2giOiJxSkd3ZEhyNEZYb055Qllobm5vQ21RIiwiYXV0aF90aW1lIjoxNjk5NjEyNzMyLCJub25jZV9zdXBwb3J0ZWQiOnRydWV9.hGOMbHw4R5poeuGb8igU15oP_oS8otDNTKqR1AGlTpxbHDs5HX848B8WA1TOqiM7sBb5zWFXPmvkRHu39DnymP83vG9Vsrc__iVRh2-mxJRd_83ligkaEY4OaqpfIChYVjKyXCKFpds4na0AasjebnZzSdZnhmIBG4nvxU8UPsNyUjHDibXRB37GJIsyCgvUmdPJeTNszxQtZZnMAGy9RYSXmeX2-7OeA15QBneY1PJk3vnaBdlmLiChR4FpiX42271h3C-28XEjcfjnw6u4RiggmQnYcGOCGcSG-dKhaizKSanZ6bti21qNAAFW4R2BVRy8E65wndKagI3J_ENMQL';
 
     const publicKey: PublicKey = {
@@ -60,7 +60,7 @@ describe('jwtUtils test', () => {
     };
 
     // when & then
-    expect(() => jwtUtils.validate(identityToken, publicKey)).toThrow(
+    expect(() => jwtUtils.validate(invalidIdentityToken, publicKey)).toThrow(
       InvalidTokenException,
     );
   });
