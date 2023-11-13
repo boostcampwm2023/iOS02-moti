@@ -7,6 +7,7 @@ import {
   VERSION_NOT_FOUND,
 } from '../../common/exception/motimate.excpetion';
 import { MotiPolicyCreate } from '../dto/moti-policy-create';
+import { Transactional } from '../../config/transaction-manager';
 
 @Injectable()
 export class OperateService {
@@ -16,14 +17,16 @@ export class OperateService {
     return this.getLatestVersion();
   }
 
+  @Transactional()
   async initMotiPolicy(motiPolicyCreate: MotiPolicyCreate) {
     const currentPolicy = await this.motiVersionRepository.findLatestPolicy();
     if (currentPolicy) throw new MotimateException(VERSION_ALREADY_EXISTS);
 
     const initPolicy = motiPolicyCreate.toModel();
-    return this.motiVersionRepository.save(initPolicy);
+    return this.motiVersionRepository.savePolicy(initPolicy);
   }
 
+  @Transactional()
   private async getLatestVersion(): Promise<MotiPolicy> {
     const currentPolicy = await this.motiVersionRepository.findLatestPolicy();
     if (!currentPolicy) throw new MotimateException(VERSION_NOT_FOUND);
