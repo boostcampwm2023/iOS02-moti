@@ -22,4 +22,7 @@ public extension UIColor {
     
     /// BounceButton의 Highlight 상태 Title 색상
     static var bounceButtonHighlightTitleColor = UIColor(resource: .buttonHighlightedTitle)
+    
+    /// 배경 색상
+    static var motiBackground = UIColor(resource: .motiBackground)
 }

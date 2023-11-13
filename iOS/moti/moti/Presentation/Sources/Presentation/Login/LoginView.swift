@@ -33,7 +33,6 @@ final class LoginView: UIView {
     
     // MARK: - Setup
     private func setupUI() {
-        backgroundColor = .systemBackground
         setupLogoImageView()
         setupAppleIDButton()
     }
