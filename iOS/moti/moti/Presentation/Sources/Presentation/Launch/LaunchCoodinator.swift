@@ -7,6 +7,7 @@
 
 import UIKit
 import Core
+import Data
 
 public protocol LaunchCoodinatorDelegate: AnyObject {
     func successAutoLogin(_ coordinator: LaunchCoodinator)
@@ -24,7 +25,8 @@ public final class LaunchCoodinator: Coordinator {
     }
     
     public func start() {
-        let launchVC = LaunchViewController()
+        let launchVM = LaunchViewModel(fetchVersionUseCase: .init(repository: MockVersionRepository()))
+        let launchVC = LaunchViewController(viewModel: launchVM)
         launchVC.delegate = self
         navigationController.viewControllers = [launchVC]
     }
