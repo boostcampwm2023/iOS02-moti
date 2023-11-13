@@ -1,6 +1,6 @@
 import { Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { PrimaryColumn } from 'typeorm';
-import { UsersEntity } from './users.entity';
+import { UserEntity } from './user.entity';
 import { RoleEntity } from './role.entity';
 
 @Entity({ name: 'users_role' })
@@ -11,9 +11,9 @@ export class UsersRoleEntity {
   @PrimaryColumn({ type: 'int', nullable: false })
   roleId: number;
 
-  @ManyToOne(() => UsersEntity)
+  @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
-  user: UsersEntity;
+  user: UserEntity;
 
   @ManyToOne(() => RoleEntity)
   @JoinColumn({ name: 'role_id', referencedColumnName: 'id' })
