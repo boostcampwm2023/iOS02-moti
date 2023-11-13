@@ -6,12 +6,11 @@ import { typeOrmModuleOptions } from '../../config/typeorm';
 import { OperateModule } from '../operate.module';
 import { configServiceModuleOptions } from '../../config/config';
 import { MotiPolicy } from '../domain/moti-policy.domain';
-import { DataSource, QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 describe('MotiPolicyRepository Test', () => {
   let motiPolicyRepository: MotiPolicyRepository;
   let dataSource: DataSource;
-  let queryRunner: QueryRunner;
 
   beforeAll(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -26,19 +25,13 @@ describe('MotiPolicyRepository Test', () => {
 
     motiPolicyRepository = app.get<MotiPolicyRepository>(MotiPolicyRepository);
     dataSource = app.get<DataSource>(DataSource);
-    queryRunner = dataSource.createQueryRunner();
-  });
-
-  beforeEach(async () => {
-    await queryRunner.startTransaction();
   });
 
   afterEach(async () => {
-    await queryRunner.rollbackTransaction();
+    await motiPolicyRepository.delete({});
   });
 
   afterAll(async () => {
-    await queryRunner.release();
     await dataSource.destroy();
   });
 
@@ -48,7 +41,7 @@ describe('MotiPolicyRepository Test', () => {
     });
   });
 
-  it('savePolicy는 모티메이트 운영정책을 초기화한다.', async () => {
+  test('savePolicy는 모티메이트 운영정책을 초기화한다.', async () => {
     // given
     const initialPolicy = new MotiPolicy(
       '0.2.0',
@@ -67,7 +60,7 @@ describe('MotiPolicyRepository Test', () => {
     expect(motiPolicy.privacyPolicy).toBe('https://motimate.com/policy');
   });
 
-  it('findLatestPolicy는 가장 최근의 애플리케이션 규약을 조회한다.', async () => {
+  test('findLatestPolicy는 가장 최근의 애플리케이션 규약을 조회한다.', async () => {
     // given
     const initialPolicy = new MotiPolicy(
       '0.2.0',
@@ -86,7 +79,7 @@ describe('MotiPolicyRepository Test', () => {
     expect(motiPolicy.privacyPolicy).toBe('https://motimate.com/policy');
   });
 
-  it('fincLatestPolicy는 초기화되지 않은 상태에서 undefined을 반환한다.', async () => {
+  test('fincLatestPolicy는 초기화되지 않은 상태에서 undefined을 반환한다.', async () => {
     // given
     // when
     const motiPolicy = await motiPolicyRepository.findLatestPolicy();
