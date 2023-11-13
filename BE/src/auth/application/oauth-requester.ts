@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { PublicKeysResponse } from '../index';
-import { FetchPublicKeyException } from '../exception/FetchPublicKeyException';
+import { FetchPublicKeyException } from '../exception/fetch-public-key.exception';
 
 @Injectable()
 export class OauthRequester {

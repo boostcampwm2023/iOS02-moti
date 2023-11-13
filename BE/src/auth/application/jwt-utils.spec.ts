@@ -1,8 +1,8 @@
 import { JwtUtils } from './jwt-utils';
 import { JwtService } from '@nestjs/jwt';
 import { PublicKey } from '../index';
-import { ExpiredTokenExceptionException } from '../exception/ExpiredTokenExceptionException';
-import { InvalidTokenException } from '../exception/InValidTokenException.exception';
+import { InvalidTokenException } from '../exception/invalid-token.exception';
+import { ExpiredTokenException } from '../exception/expired-token.exception';
 
 describe('jwtUtils test', () => {
   const jwtUtils = new JwtUtils(new JwtService());
@@ -41,7 +41,7 @@ describe('jwtUtils test', () => {
 
     // when & then
     expect(() => jwtUtils.validate(identityToken, publicKey)).toThrow(
-      ExpiredTokenExceptionException,
+      ExpiredTokenException,
     );
   });
 

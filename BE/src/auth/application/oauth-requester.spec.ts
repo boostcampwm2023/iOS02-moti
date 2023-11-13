@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import axios from 'axios';
 import { PublicKeysResponse } from '../index';
-import { FetchPublicKeyException } from '../exception/FetchPublicKeyException';
+import { FetchPublicKeyException } from '../exception/fetch-public-key.exception';
 
 describe('OauthRequester test', () => {
   const oauthRequester = new OauthRequester(

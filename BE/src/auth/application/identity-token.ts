@@ -1,4 +1,4 @@
-import { InvalidTokenException } from '../exception/InValidTokenException.exception';
+import { InvalidTokenException } from '../exception/invalid-token.exception';
 
 interface IdentityTokenHeader {
   kid: string;

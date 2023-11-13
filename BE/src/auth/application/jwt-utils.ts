@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { PublicKey } from '../index';
 import { createPublicKey } from 'crypto';
-import { InvalidTokenException } from '../exception/InValidTokenException.exception';
-import { ExpiredTokenExceptionException } from '../exception/ExpiredTokenExceptionException';
+import { InvalidTokenException } from '../exception/invalid-token.exception';
+import { ExpiredTokenException } from '../exception/expired-token.exception';
 
 @Injectable()
 export class JwtUtils {
@@ -17,7 +17,7 @@ export class JwtUtils {
       });
     } catch (err) {
       if (err instanceof TokenExpiredError) {
-        throw new ExpiredTokenExceptionException();
+        throw new ExpiredTokenException();
       }
       if (err instanceof JsonWebTokenError) {
         throw new InvalidTokenException();
