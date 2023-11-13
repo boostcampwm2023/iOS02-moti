@@ -18,20 +18,14 @@ struct VersionDTO: Codable {
     let latest: String?
     let required: String?
     let privacyPolicy: String?
-    
-    func toEntity() -> Version {
-        return .init(
-            latest: latest ?? "",
-            required: required ?? "",
-            privacyPolicy: privacyPolicy ?? ""
+}
+
+extension Version {
+    init(dto: VersionDTO) {
+        self.init(
+            latest: dto.latest ?? "",
+            required: dto.required ?? "",
+            privacyPolicy: dto.privacyPolicy ?? ""
         )
     }
 }
-
-//extension Version {
-//    init(dto: VersionDTO) {
-//        self.latest = dto.latest ?? ""
-//        self.required = dto.required ?? ""
-//        self.privacyPolicy = dto.privacyPolicy ?? ""
-//    }
-//}

@@ -8,8 +8,11 @@
 import Foundation
 import Domain
 
-struct MockVersionRepository: VersionRepositoryProtocol {
-    func fetchVersion() async throws -> Version {
+public struct MockVersionRepository: VersionRepositoryProtocol {
+    
+    public init() { }
+    
+    public func fetchVersion() async throws -> Version {
         let json = """
         {
             "success": true,
@@ -23,9 +26,9 @@ struct MockVersionRepository: VersionRepositoryProtocol {
         """
         
         guard let testData = json.data(using: .utf8) else { throw NetworkError.decode }
-        
         let responseDTO = try JSONDecoder().decode(VersionResponseDTO.self, from: testData)
-        guard let version = responseDTO.data?.toEntity() else { throw NetworkError.decode }
-        return version
+        
+        guard let versionDTO = responseDTO.data else { throw NetworkError.decode }
+        return Version(dto: versionDTO)
     }
 }

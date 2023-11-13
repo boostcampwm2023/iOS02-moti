@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Combine
 
 protocol LaunchViewControllerDelegate: AnyObject {
     func viewControllerDidLogin(isSuccess: Bool)
@@ -13,16 +14,41 @@ protocol LaunchViewControllerDelegate: AnyObject {
 
 final class LaunchViewController: BaseViewController<LaunchView> {
     
+    // MARK: - Properties
     weak var delegate: LaunchViewControllerDelegate?
     
+    private let viewModel: LaunchViewModel
+    private var cancellables: Set<AnyCancellable> = []
+    
+    init(viewModel: LaunchViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError()
+    }
+    
+    // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        bind()
+        
+        try? viewModel.fetchVersion()
+    }
     
-        // 임시 화면 이동 코드
-        Task {
-            sleep(1)
-            delegate?.viewControllerDidLogin(isSuccess: true)
-            dismiss(animated: false)
-        }
+    private func bind() {
+        viewModel.$version
+            .dropFirst()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] version in
+                guard let self else { return }
+                
+                print(version)
+                delegate?.viewControllerDidLogin(isSuccess: false)
+                dismiss(animated: false)
+            }
+            .store(in: &cancellables)
+        
     }
 }

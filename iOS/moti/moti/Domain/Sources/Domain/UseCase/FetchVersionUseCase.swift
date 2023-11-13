@@ -7,14 +7,14 @@
 
 import Foundation
 
-struct FetchVersionUseCase {
+public struct FetchVersionUseCase {
     private let repository: VersionRepositoryProtocol
     
-    init(repository: VersionRepositoryProtocol) {
+    public init(repository: VersionRepositoryProtocol) {
         self.repository = repository
     }
     
-    func execute() async throws -> Version {
+    public func execute() async throws -> Version {
         return try await repository.fetchVersion()
     }
 }

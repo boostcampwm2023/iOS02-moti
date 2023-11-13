@@ -17,7 +17,7 @@ public final class LoginCoordinator: Coordinator {
     }
     
     public func start() {
-        let loginVC = LoginViewController()
+        let loginVC = LoginViewController()        
         navigationController.viewControllers = [loginVC]
     }
 }
