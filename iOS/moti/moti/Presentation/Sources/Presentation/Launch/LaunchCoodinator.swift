@@ -6,12 +6,36 @@
 //
 
 import UIKit
+import Core
 
-public final class LaunchCoodinator {
-    public init() { }
+public protocol LaunchCoodinatorDelegate: AnyObject {
+    func successAutoLogin(_ coordinator: LaunchCoodinator)
+    func failedAutoLogin(_ coordinator: LaunchCoodinator)
+}
+
+public final class LaunchCoodinator: Coordinator {
+    public var childCoordinators: [Coordinator] = []
+    public weak var delegate: LaunchCoodinatorDelegate?
     
-    public func launch(window: UIWindow) {
-        window.rootViewController = LaunchViewController()
-        window.makeKeyAndVisible()
+    public let navigationController: UINavigationController
+    
+    public init(navigationController: UINavigationController) {
+        self.navigationController = navigationController
+    }
+    
+    public func start() {
+        let launchVC = LaunchViewController()
+        launchVC.delegate = self
+        navigationController.viewControllers = [launchVC]
+    }
+}
+
+extension LaunchCoodinator: LaunchViewControllerDelegate {
+    func viewControllerDidLogin(isSuccess: Bool) {
+        if isSuccess {
+            delegate?.successAutoLogin(self)
+        } else {
+            delegate?.failedAutoLogin(self)
+        }
     }
 }

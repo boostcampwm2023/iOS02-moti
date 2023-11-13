@@ -10,7 +10,8 @@ import Presentation
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
-
+    var appCoordinator: AppCoordinator?
+    
     func scene(
         _ scene: UIScene,
         willConnectTo session: UISceneSession,
@@ -20,9 +21,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         
-        if let window {
-            let launchCoodinator = LaunchCoodinator()
-            launchCoodinator.launch(window: window)
-        }
+        let rootVC = UINavigationController()
+        appCoordinator = AppCoordinator(navigationController: rootVC)
+        appCoordinator?.start()
+        
+        window?.rootViewController = rootVC
+        window?.makeKeyAndVisible()
     }
 }
