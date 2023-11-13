@@ -15,4 +15,12 @@ export const ERROR_INFO = {
     statusCode: 401,
     message: '잘못된 토큰입니다.',
   },
+  POLICY_NOT_FOUND: {
+    statusCode: 500,
+    message: '운영정책을 조회할 수 없습니다.',
+  },
+  POLICY_ALREADY_EXISTS: {
+    statusCode: 500,
+    message: '이미 초기화된 모티메이트 운영정책입니다.',
+  },
 } as const;
