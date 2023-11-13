@@ -29,7 +29,7 @@ describe('MotiPolicyRepository Test', () => {
   });
 
   afterEach(async () => {
-    await motiPolicyRepository.delete({});
+    await dataSource.destroy();
   });
 
   describe('테스트 환경 확인', () => {
