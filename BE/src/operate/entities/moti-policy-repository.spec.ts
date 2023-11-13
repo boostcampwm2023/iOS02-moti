@@ -28,7 +28,7 @@ describe('MotiPolicyRepository Test', () => {
     dataSource = app.get<DataSource>(DataSource);
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await dataSource.destroy();
   });
 
