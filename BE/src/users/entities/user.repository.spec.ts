@@ -7,9 +7,11 @@ import { typeOrmModuleOptions } from '../../config/typeorm';
 import { User } from '../domain/user.domain';
 import { configServiceModuleOptions } from '../../config/config';
 import { UserEntity } from './user.entity';
+import { DataSource } from 'typeorm';
 
 describe('UserRepository test', () => {
   let usersRepository: UserRepository;
+  let dataSource: DataSource;
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
@@ -20,10 +22,15 @@ describe('UserRepository test', () => {
     }).compile();
 
     usersRepository = module.get<UserRepository>(UserRepository);
+    dataSource = module.get<DataSource>(DataSource);
   });
 
-  beforeEach(() => {
-    usersRepository.delete({});
+  beforeEach(async () => {
+    await usersRepository.delete({});
+  });
+
+  afterAll(async () => {
+    await dataSource.destroy();
   });
 
   test('userIdentifier로 user를 조회할 수 있다.', async () => {
