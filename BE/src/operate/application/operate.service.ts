@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { MotiPolicyRepository } from '../entities/moti-policy.repository';
 import { MotiPolicy } from '../domain/moti-policy.domain';
-import {
-  MotimateException,
-  VERSION_ALREADY_EXISTS,
-  VERSION_NOT_FOUND,
-} from '../../common/exception/motimate.excpetion';
 import { MotiPolicyCreate } from '../dto/moti-policy-create';
 import { Transactional } from '../../config/transaction-manager';
+import { PolicyAlreadyExistsException } from '../exception/policy-already-exists.exception';
+import { PolicyNotFoundException } from '../exception/policy-not-found.exception';
 
 @Injectable()
 export class OperateService {
@@ -20,7 +17,7 @@ export class OperateService {
   @Transactional()
   async initMotiPolicy(motiPolicyCreate: MotiPolicyCreate) {
     const currentPolicy = await this.motiVersionRepository.findLatestPolicy();
-    if (currentPolicy) throw new MotimateException(VERSION_ALREADY_EXISTS);
+    if (currentPolicy) throw new PolicyAlreadyExistsException();
 
     const initPolicy = motiPolicyCreate.toModel();
     return this.motiVersionRepository.savePolicy(initPolicy);
@@ -29,7 +26,7 @@ export class OperateService {
   @Transactional()
   private async getLatestVersion(): Promise<MotiPolicy> {
     const currentPolicy = await this.motiVersionRepository.findLatestPolicy();
-    if (!currentPolicy) throw new MotimateException(VERSION_NOT_FOUND);
+    if (!currentPolicy) throw new PolicyNotFoundException();
 
     return currentPolicy;
   }
