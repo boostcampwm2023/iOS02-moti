@@ -3,7 +3,7 @@ import { PrimaryColumn } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { RoleEntity } from './role.entity';
 
-@Entity({ name: 'users_role' })
+@Entity({ name: 'user_role' })
 export class UsersRoleEntity {
   @PrimaryColumn({ type: 'bigint', nullable: false })
   userId: number;

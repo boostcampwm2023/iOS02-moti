@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseTimeEntity } from '../../common/entities/base.entity';
 import { User } from '../domain/user.domain';
 
-@Entity({ name: 'users' })
+@Entity({ name: 'user' })
 export class UserEntity extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
