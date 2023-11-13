@@ -2,11 +2,13 @@ import { CustomRepository } from '../../config/typeorm/custom-repository.decorat
 import { MotiPolicyEntity } from './moti-policy.entity';
 import { Repository } from 'typeorm';
 import { MotiPolicy } from '../domain/moti-policy.domain';
+import { retrieveQueryRunner } from '../../config/transaction-manager';
 
 @CustomRepository(MotiPolicyEntity)
 export class MotiPolicyRepository extends Repository<MotiPolicyEntity> {
   async findLatestPolicy(): Promise<MotiPolicy> {
-    const versionEntity = await this.findOne({
+    const repository = this.getRepository();
+    const versionEntity = await repository.findOne({
       where: {},
       order: { latest: 'DESC' },
     });
@@ -14,8 +16,15 @@ export class MotiPolicyRepository extends Repository<MotiPolicyEntity> {
   }
 
   async savePolicy(motiPolicy: MotiPolicy): Promise<MotiPolicy> {
+    const repository = this.getRepository();
     const initPolicy = MotiPolicyEntity.from(motiPolicy);
-    const savedPolicy = await this.save(initPolicy);
-    return savedPolicy.toModel();
+    await repository.save(initPolicy);
+    return initPolicy.toModel();
+  }
+
+  private getRepository(): Repository<MotiPolicyEntity> {
+    return (
+      retrieveQueryRunner()?.manager.getRepository(MotiPolicyEntity) || this
+    );
   }
 }
