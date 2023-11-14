@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: [ubuntu-latest, self-hosted]
+    runs-on: self-hosted
     env:
       DB: "mysql"
       DB_HOST: "127.0.0.1"
