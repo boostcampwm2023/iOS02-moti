@@ -14,7 +14,8 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../Design"),
-        .package(path: "../Core")
+        .package(path: "../Core"),
+        .package(path: "../Data")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -23,7 +24,8 @@ let package = Package(
             name: "Presentation",
             dependencies: [
                 .product(name: "Design", package: "Design"),
-                .product(name: "Core", package: "Core")
+                .product(name: "Core", package: "Core"),
+                .product(name: "Data", package: "Data")
             ],
             path: "Sources"),
         .testTarget(

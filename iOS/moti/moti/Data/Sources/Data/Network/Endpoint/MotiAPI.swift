@@ -6,25 +6,33 @@
 //
 
 import Foundation
+import Domain
 
 enum MotiAPI: EndpointProtocol {
     case version
+    case login(requestValue: LoginRequestValue)
 }
 
 extension MotiAPI {
+    var version: String {
+        return "v1"
+    }
+    
     var baseURL: String {
-        return ""
+        return "https://www.motimate.site"
     }
     
     var path: String {
         switch self {
         case .version: return "/operate/policy"
+        case .login: return "/api/\(version)/auth/login"
         }
     }
     
     var method: HttpMethod {
         switch self {
         case .version: return .get
+        case .login: return .post
         }
     }
     
@@ -34,7 +42,10 @@ extension MotiAPI {
     
     var bodyParameters: Encodable? {
         switch self {
-        case .version: return nil
+        case .version: 
+            return nil
+        case .login(let requestValue):
+            return requestValue
         }
     }
     

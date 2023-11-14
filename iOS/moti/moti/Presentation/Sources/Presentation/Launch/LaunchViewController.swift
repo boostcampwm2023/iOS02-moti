@@ -46,7 +46,7 @@ final class LaunchViewController: BaseViewController<LaunchView> {
                 guard let self else { return }
                 
                 Logger.debug("version: \(version)")
-                delegate?.viewControllerDidLogin(isSuccess: true)
+                delegate?.viewControllerDidLogin(isSuccess: false)
                 dismiss(animated: false)
             }
             .store(in: &cancellables)
