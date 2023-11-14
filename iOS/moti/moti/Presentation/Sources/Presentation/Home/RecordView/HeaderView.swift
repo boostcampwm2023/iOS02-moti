@@ -71,15 +71,9 @@ final class HeaderView: UICollectionViewCell {
     }
     
     // MARK: - Method
-    func configure(category: String) {
+    func configure(category: String, title: String, date: String) {
         categoryLabel.text = category
-    }
-    
-    func configure(title: String) {
         titleLabel.text = title
-    }
-    
-    func configure(date: String) {
         dateLabel.text = "최근 달성일\n" + date
     }
     
@@ -88,4 +82,3 @@ final class HeaderView: UICollectionViewCell {
         dateLabel.backgroundColor = .lightGray
     }
 }
-
