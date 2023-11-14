@@ -20,6 +20,16 @@ jobs:
       DB_DATABASE: "motimate_test"
       DB_ENTITIES: "src/**/*.entity{.ts,.js}"
       DB_LOGGING: false
+      SWAGGER_TITLE: Motimate
+      SWAGGER_DESCRIPTION: The Motimate API Documents
+      SWAGGER_VERSION: 0.1.0
+      SWAGGER_TAG: motimate
+      APPLE_PUBLIC_KEY_URL: https://appleid.apple.com/auth/keys
+      JWT_SECRET: !@sehyeong!@
+      JWT_VALIDITY: 3600000
+      REFRESH_JWT_SECRET: !@sehyeongrefresh!@
+      REFRESH_JWT_VALIDITY: 604800000
+
 
     services:
       mysql:
