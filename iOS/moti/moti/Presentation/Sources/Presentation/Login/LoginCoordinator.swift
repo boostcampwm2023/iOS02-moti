@@ -7,6 +7,8 @@
 
 import UIKit
 import Core
+import Data
+import Domain
 
 public final class LoginCoordinator: Coordinator {
     public var childCoordinators: [Coordinator] = []
@@ -17,7 +19,9 @@ public final class LoginCoordinator: Coordinator {
     }
     
     public func start() {
-        let loginVC = LoginViewController()        
+        let loginUseCase = LoginUseCase(repository: MockLoginRepository())
+        let loginVM = LoginViewModel(loginUseCase: loginUseCase)
+        let loginVC = LoginViewController(viewModel: loginVM)
         navigationController.viewControllers = [loginVC]
     }
 }

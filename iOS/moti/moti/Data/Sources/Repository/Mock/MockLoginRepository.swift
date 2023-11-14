@@ -9,9 +9,11 @@ import Foundation
 import Domain
 import Core
 
-struct MockLoginRepository: LoginRepositoryProtocol {
+public struct MockLoginRepository: LoginRepositoryProtocol {
     
-    func login(requestValue: LoginRequestValue) async throws -> UserToken {
+    public init() { }
+    
+    public func login(requestValue: LoginRequestValue) async throws -> UserToken {
         Logger.info(MotiAPI.login(requestValue: requestValue))
         
         let json = """
