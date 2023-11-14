@@ -23,8 +23,8 @@ public struct MockLoginRepository: LoginRepositoryProtocol {
                 "accessToken": "testAccessToken",
                 "refreshToken": "testRefreshToken",
                 "user": {
-                    userCode: "ABCDEFG",
-                    avatar_url: "https://test.com",
+                    "userCode": "ABCDEFG",
+                    "avatar_url": "https://test.com",
                 }
             }
         }

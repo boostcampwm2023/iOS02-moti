@@ -45,11 +45,12 @@ final class LoginViewController: BaseViewController<LoginView> {
     
     private func bind() {
         viewModel.$userToken
+            .dropFirst()
             .receive(on: RunLoop.main)
             .sink { [weak self] userToken in
                 guard let self else { return }
                 
-                print(userToken)
+                Logger.debug(userToken)
             }
             .store(in: &cancellables)
     }
@@ -74,8 +75,8 @@ final class LoginViewController: BaseViewController<LoginView> {
 
 extension LoginViewController: AppleLoginRequesterDelegate {
     func success(token: String) {
-        // TODO: ViewModel로 전달
-        Logger.debug("token: \(token)")
+        Logger.debug("애플에서 전달된 token: \(token)")
+        viewModel.requestLogin(identityToken: token)
     }
     
     func failed(error: Error) {
