@@ -2,8 +2,10 @@ name: Motimate BE CI
 
 on:
   push:
+    paths: 'BE/**'
     branches: [ "develop", "main" ]
   pull_request:
+    paths: 'BE/**'
     branches: [ "develop", "main" ]
 
 jobs:
