@@ -26,4 +26,8 @@ final class CaptureCoordinator: Coordinator {
 //        captureVC.modalPresentationStyle = .fullScreen
         navigationController.present(captureVC, animated: true)
     }
+    
+    func finish(animated: Bool = true) {
+        parentCoordinator?.dismiss(child: self, animated: animated)
+    }
 }

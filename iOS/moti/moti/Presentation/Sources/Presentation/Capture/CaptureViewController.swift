@@ -10,10 +10,16 @@ import Core
 
 class CaptureViewController: UIViewController {
 
+    // MARK: - Properties
+    private weak var coordinator: CaptureCoordinator?
+    
+    // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
     }
 
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        coordinator?.finish()
+    }
 }
