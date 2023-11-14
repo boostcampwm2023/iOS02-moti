@@ -209,7 +209,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\n\nbuildNumber=$(git rev-list --all --count)\n\nagvtool new-version -all $((buildNumber))\n";
+			shellScript = "
+";
 		};
 		20CC16842AFB726A001E7ECE /* Run SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -384,7 +385,7 @@
 				CODE_SIGN_ENTITLEMENTS = moti/moti.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 201;
+				CURRENT_PROJECT_VERSION = 229;
 				DEVELOPMENT_TEAM = B3PWYBKFUK;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -417,7 +418,7 @@
 				CODE_SIGN_ENTITLEMENTS = moti/moti.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 201;
+				CURRENT_PROJECT_VERSION = 229;
 				DEVELOPMENT_TEAM = B3PWYBKFUK;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
