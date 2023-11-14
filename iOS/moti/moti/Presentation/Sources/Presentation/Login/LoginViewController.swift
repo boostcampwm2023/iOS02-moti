@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Core
 
 final class LoginViewController: BaseViewController<LoginView> {
 
@@ -48,13 +49,9 @@ final class LoginViewController: BaseViewController<LoginView> {
 extension LoginViewController: AppleLoginRequesterDelegate {
     func success(token: String) {
         // TODO: ViewModel로 전달
-        print("token: \(token)")
+        Logger.debug("token: \(token)")
     }
     
     func failed(error: Error) {
-        // TODO: 에러 처리
-        // 인증 취소 : AuthorizationError Code=1001
-        // 인증 실패 : ?
-        print(error)
     }
 }
