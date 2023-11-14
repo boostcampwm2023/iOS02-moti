@@ -10,10 +10,15 @@ import Design
 
 final class TabBarViewController: UITabBarController {
     
+    // MARK: - Views
+    private let captureTabItem = UIButton()
+    private let circleView = UIView()
+    
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        addTarget()
     }
     
     func setupViewControllers(with viewControllers: [UIViewController]) {
@@ -21,8 +26,24 @@ final class TabBarViewController: UITabBarController {
     }
     
     // MARK: - Actions
-    @objc private func captureTabItemClicked() {
+    private func addTarget() {
+        captureTabItem.addTarget(self, action: #selector(captureTabItemTouchDown), for: .touchDown)
+        captureTabItem.addTarget(self, action: #selector(captureTabItemTouchUp), for: .touchUpInside)
+    }
+    
+    @objc private func captureTabItemTouchDown() {
+        UIView.animate(withDuration: 0.2) {
+            let scale = CGAffineTransform(scaleX: 0.9, y: 0.9)
+            self.circleView.transform = scale
+        }
+    }
+    
+    @objc private func captureTabItemTouchUp() {
         selectedIndex = 1
+        
+        UIView.animate(withDuration: 0.2) {
+            self.circleView.transform = .identity
+        }
     }
 }
 
@@ -33,9 +54,11 @@ private extension TabBarViewController {
         tabBar.layer.cornerRadius = CornerRadius.big
         tabBar.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tabBar.backgroundColor = .motiBackground
+        tabBar.tintColor = .primaryBlue
         
         setupBorderView()
         setupCaptureTabItem()
+        setupCircleView()
     }
     
     func setupBorderView() {
@@ -57,17 +80,29 @@ private extension TabBarViewController {
     
     func setupCaptureTabItem() {
         let buttonSize: CGFloat = 75
-        let button = UIButton(frame: .zero)
+
+        captureTabItem.backgroundColor = .motiBackground
+        captureTabItem.layer.borderColor = UIColor.primaryBlue.cgColor
+        captureTabItem.layer.borderWidth = 6
+        captureTabItem.layer.cornerRadius = buttonSize / 2
         
-        button.backgroundColor = .primaryBlue
-        button.layer.cornerRadius = buttonSize / 2
-        
-        view.addSubview(button)
-        button.atl
+        view.addSubview(captureTabItem)
+        captureTabItem.atl
             .size(width: buttonSize, height: buttonSize)
             .centerX(equalTo: view.centerXAnchor)
             .bottom(equalTo: view.bottomAnchor, constant: -36)
+    }
+    
+    func setupCircleView() {
+        circleView.isUserInteractionEnabled = false
         
-        button.addTarget(self, action: #selector(captureTabItemClicked), for: .touchUpInside)
+        let circleSize: CGFloat = 59
+        circleView.backgroundColor = .primaryBlue
+        circleView.layer.cornerRadius = circleSize / 2
+        
+        view.addSubview(circleView)
+        circleView.atl
+            .size(width: circleSize, height: circleSize)
+            .center(of: captureTabItem)
     }
 }
