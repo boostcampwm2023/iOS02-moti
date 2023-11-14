@@ -33,6 +33,7 @@ final class RecordListViewModel {
     func fetchRecordList() throws {
         Task {
             records = try await fetchRecordListUseCase.execute()
+            updateDataSource(records: records)
         }
     }
 }

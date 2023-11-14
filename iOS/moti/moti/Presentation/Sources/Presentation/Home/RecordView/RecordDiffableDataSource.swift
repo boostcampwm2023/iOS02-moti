@@ -37,6 +37,8 @@ struct RecordDiffableDataSource {
         
         var snapshot = dataSource.snapshot()
         snapshot.appendItems(records, toSection: Section.main)
-        dataSource.apply(snapshot)
+        DispatchQueue.main.async {
+            dataSource.apply(snapshot)
+        }
     }
 }

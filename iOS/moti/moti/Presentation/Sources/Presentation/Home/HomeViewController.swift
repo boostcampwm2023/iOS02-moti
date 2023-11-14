@@ -14,7 +14,6 @@ final class HomeViewController: BaseViewController<HomeView> {
     // MARK: - Properties
     weak var coordinator: HomeCoordinator?
     private let recordListViewModel: RecordListViewModel
-    private var cancellables: Set<AnyCancellable> = []
     
     init(recordListViewModel: RecordListViewModel) {
         self.recordListViewModel = recordListViewModel
@@ -28,24 +27,12 @@ final class HomeViewController: BaseViewController<HomeView> {
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        bind()
         setupDataSource()
         
         try? recordListViewModel.fetchRecordList()
     }
     
     // MARK: - Setup
-    private func bind() {
-        recordListViewModel.$records
-            .receive(on: RunLoop.main)
-            .sink { [weak self] records in
-                guard let self else { return }
-                
-                self.recordListViewModel.updateDataSource(records: records)
-            }
-            .store(in: &cancellables)
-    }
-    
     private func setupDataSource() {
         layoutView.recordCollectionView.delegate = self
         let dataSource = RecordDiffableDataSource.DataSource(
@@ -72,9 +59,7 @@ final class HomeViewController: BaseViewController<HomeView> {
                 withReuseIdentifier: HeaderView.identifier,
                 for: indexPath) as? HeaderView
             
-            headerView?.configure(category: "다이어트")
-            headerView?.configure(title: "32회 달성")
-            headerView?.configure(date: "2023-11-03")
+            headerView?.configure(category: "다이어트", title: "32회 달성", date: "2023-11-03")
             return headerView
         }
         
