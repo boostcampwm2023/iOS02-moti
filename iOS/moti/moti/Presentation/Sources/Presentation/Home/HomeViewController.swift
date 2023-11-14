@@ -9,15 +9,15 @@ import UIKit
 import Combine
 import Core
 
-class HomeViewController: BaseViewController<HomeView> {
+final class HomeViewController: BaseViewController<HomeView> {
 
     // MARK: - Properties
     weak var coordinator: HomeCoordinator?
-    private let viewModel: RecordListViewModel
+    private let recordListViewModel: RecordListViewModel
     private var cancellables: Set<AnyCancellable> = []
     
     init(viewModel: RecordListViewModel) {
-        self.viewModel = viewModel
+        self.recordListViewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -31,18 +31,18 @@ class HomeViewController: BaseViewController<HomeView> {
         bind()
         setupDataSource()
         
-        try? viewModel.fetchRecordList()
+        try? recordListViewModel.fetchRecordList()
     }
     
     // MARK: - Setup
     private func bind() {
-        viewModel.$records
+        recordListViewModel.$records
             .receive(on: RunLoop.main)
             .sink { [weak self] records in
                 guard let self else { return }
                 
                 Logger.debug("records: \(records)")
-                self.viewModel.dataSource.update(with: records)
+                self.recordListViewModel.dataSource.update(with: records)
             }
             .store(in: &cancellables)
     }
@@ -81,9 +81,9 @@ class HomeViewController: BaseViewController<HomeView> {
         
         let diffableDataSource = RecordDiffableDataSource(dataSource: dataSource)
         
-        diffableDataSource.update(with: viewModel.records)
+        diffableDataSource.update(with: recordListViewModel.records)
         
-        viewModel.setupDataSource(diffableDataSource)
+        recordListViewModel.setupDataSource(diffableDataSource)
     }
 }
 

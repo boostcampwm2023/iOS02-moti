@@ -18,7 +18,7 @@ extension UICollectionView {
     
     func dequeueReusableCell<T: UICollectionViewCell>(for indexPath: IndexPath) -> T {
         guard let cell = dequeueReusableCell(withReuseIdentifier: T.identifier, for: indexPath) as? T else {
-            return .init() // TODO: Default Cell 설정
+            return .init()
         }
         return cell
     }
