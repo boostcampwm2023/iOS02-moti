@@ -10,11 +10,16 @@ import Core
 import Data
 
 public final class HomeCoordinator: Coordinator {
+    public let parentCoordinator: Coordinator?
     public var childCoordinators: [Core.Coordinator] = []
     public let navigationController: UINavigationController
     
-    public init(navigationController: UINavigationController) {
+    public init(
+        _ navigationController: UINavigationController,
+        _ parentCoordinator: Coordinator?
+    ) {
         self.navigationController = navigationController
+        self.parentCoordinator = parentCoordinator
     }
     
     public func start() {

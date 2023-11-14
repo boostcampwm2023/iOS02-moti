@@ -22,12 +22,17 @@ public final class TabBarCoordinator: Coordinator {
         }
     }
     
+    public let parentCoordinator: Coordinator?
     public var childCoordinators: [Coordinator] = []
     public let navigationController: UINavigationController
     private let tabBarController: TabBarViewController
     
-    public init(navigationController: UINavigationController) {
+    public init(
+        _ navigationController: UINavigationController,
+        _ parentCoordinator: Coordinator?
+    ) {
         self.navigationController = navigationController
+        self.parentCoordinator = parentCoordinator
         tabBarController = TabBarViewController()
         tabBarController.tabBarDelegate = self
     }
@@ -47,7 +52,7 @@ public final class TabBarCoordinator: Coordinator {
     }
   
     private func moveCaptureViewController() {
-        let captureCoordinator = CaptureCoordinator(navigationController: navigationController)
+        let captureCoordinator = CaptureCoordinator(navigationController, self)
         captureCoordinator.start()
         childCoordinators.append(captureCoordinator)
     }

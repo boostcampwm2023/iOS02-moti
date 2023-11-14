@@ -15,12 +15,16 @@ public protocol LaunchCoodinatorDelegate: AnyObject {
 }
 
 public final class LaunchCoodinator: Coordinator {
+    public let parentCoordinator: Coordinator?
     public var childCoordinators: [Coordinator] = []
-    public weak var delegate: LaunchCoodinatorDelegate?
-    
     public let navigationController: UINavigationController
     
-    public init(navigationController: UINavigationController) {
+    public weak var delegate: LaunchCoodinatorDelegate?
+    
+    public init(
+        _ navigationController: UINavigationController,
+        _ parentCoordinator: Core.Coordinator?) {
+        self.parentCoordinator = parentCoordinator
         self.navigationController = navigationController
     }
     

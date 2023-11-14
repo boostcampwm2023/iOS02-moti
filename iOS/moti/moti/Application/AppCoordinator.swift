@@ -10,11 +10,16 @@ import Presentation
 import Core
 
 final class AppCoordinator: Coordinator {
+    let parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     let navigationController: UINavigationController
     
-    init(navigationController: UINavigationController) {
+    init(
+        _ navigationController: UINavigationController,
+        _ parentCoordinator: Coordinator?
+    ) {
         self.navigationController = navigationController
+        self.parentCoordinator = parentCoordinator
     }
     
     func start() {
@@ -22,18 +27,18 @@ final class AppCoordinator: Coordinator {
     }
     
     func moveLaunchViewController() {
-        let launchCoordinator = LaunchCoodinator(navigationController: navigationController)
+        let launchCoordinator = LaunchCoodinator(navigationController, self)
         launchCoordinator.delegate = self
         start(coordinator: launchCoordinator)
     }
     
     func moveLoginViewController() {
-        let loginCoordinator = LoginCoordinator(navigationController: navigationController)
+        let loginCoordinator = LoginCoordinator(navigationController, self)
         start(coordinator: loginCoordinator)
     }
     
     func moveHomeViewController() {
-        let homeCoordinator = TabBarCoordinator(navigationController: navigationController)
+        let homeCoordinator = TabBarCoordinator(navigationController, self)
         start(coordinator: homeCoordinator)
     }
     
@@ -45,12 +50,10 @@ final class AppCoordinator: Coordinator {
 
 extension AppCoordinator: LaunchCoodinatorDelegate {
     func successAutoLogin(_ coordinator: LaunchCoodinator) {
-        childCoordinators = childCoordinators.filter { $0 !== coordinator }
         moveHomeViewController()
     }
     
     func failedAutoLogin(_ coordinator: LaunchCoodinator) {
-        childCoordinators = childCoordinators.filter { $0 !== coordinator }
         moveLoginViewController()
     }
 }
