@@ -11,6 +11,6 @@ export interface PublicKeysResponse {
 }
 
 export interface JwtClaim {
-  userIdentifier: string;
+  userCode: string;
 }
 export type Payload = { iat: number; exp: number } & JwtClaim;

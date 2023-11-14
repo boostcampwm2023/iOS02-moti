@@ -31,7 +31,7 @@ export class AuthService {
       (await this.registerUser(userIdentifier));
 
     const now = new Date();
-    const claim: JwtClaim = { userIdentifier };
+    const claim: JwtClaim = { userCode: user.userCode };
     const accessToken = this.jwtUtils.createToken(claim, now);
     const refreshToken = this.jwtUtils.createRefreshToken(claim, now);
     return new AppleLoginResponse(

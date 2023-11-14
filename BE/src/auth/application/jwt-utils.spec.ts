@@ -90,24 +90,24 @@ describe('jwtUtils test', () => {
 
   test('access token을 발급한다.', () => {
     // given
-    const claims = { userIdentifier: 'sehyeong' };
+    const claims = { userCode: 'A1B2C3D' };
     const issuedAt = new Date('2023-10-25T10:00:00');
     const accessToken = jwtUtils.createToken(claims, issuedAt);
 
     // when & then
     expect(accessToken).toEqual(
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWRlbnRpZmllciI6InNlaHllb25nIiwiaWF0IjoxNjk4MTk1NjAwLCJleHAiOjE2OTgxOTkyMDB9.yo7ZSJC4YzsLOG5VN3k-GYoYT83pAyWlhIP8zlxGk-Y',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6IkExQjJDM0QiLCJpYXQiOjE2OTgxOTU2MDAsImV4cCI6MTY5ODE5OTIwMH0.32XL-boBJVJjypbBTNCIM7Y_OyXynkBJQWHdjZqDhgU',
     );
     expect(jwtUtils.parsePayloads(accessToken)).toEqual({
       exp: 1698199200,
       iat: 1698195600,
-      userIdentifier: 'sehyeong',
+      userCode: 'A1B2C3D',
     });
   });
 
   test('만료된 access token인 경우 ExpiredTokenExceptionException 에러를 던진다.', () => {
     // given
-    const claims = { userIdentifier: 'sehyeong' };
+    const claims = { userCode: 'A1B2C3D' };
     const issuedAt = new Date('2022-10-25T10:00:00');
     const expiredAccessToken = jwtUtils.createToken(claims, issuedAt);
 
@@ -130,25 +130,25 @@ describe('jwtUtils test', () => {
 
   test('refresh token을 발급한다.', () => {
     // given
-    const claims = { userIdentifier: 'sehyeong' };
+    const claims = { userCode: 'A1B2C3D' };
     const issuedAt = new Date('2023-10-25T10:00:00');
 
     const refreshToken = jwtUtils.createRefreshToken(claims, issuedAt);
 
     // when & then
     expect(refreshToken).toEqual(
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWRlbnRpZmllciI6InNlaHllb25nIiwiaWF0IjoxNjk4MTk1NjAwLCJleHAiOjE2OTgxOTkyMDB9.wi9PlFz5d1LPL1UDe7Rhd3X5q3QMsmRXKyuAb6h5U-8',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6IkExQjJDM0QiLCJpYXQiOjE2OTgxOTU2MDAsImV4cCI6MTY5ODgwMDQwMH0.5k90PFImx0_67KcSmxLpMyysIWlL5RyWZNDhegIxPoA',
     );
     expect(jwtUtils.parsePayloads(refreshToken)).toEqual({
-      exp: 1698199200,
+      exp: 1698800400,
       iat: 1698195600,
-      userIdentifier: 'sehyeong',
+      userCode: 'A1B2C3D',
     });
   });
 
   test('만료된 refresh token인 경우 ExpiredTokenExceptionException 에러를 던진다.', () => {
     // given
-    const claims = { userIdentifier: 'sehyeong' };
+    const claims = { userCode: 'A1B2C3D' };
     const issuedAt = new Date('2022-10-25T10:00:00');
     const expiredRefreshToken = jwtUtils.createRefreshToken(claims, issuedAt);
 
