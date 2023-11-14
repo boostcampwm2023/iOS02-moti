@@ -9,7 +9,7 @@ import Foundation
 import Domain
 
 final class RecordListViewModel {
-    var dataSource: RecordDiffableDataSource
+    private var dataSource: RecordDiffableDataSource
     private let fetchRecordListUseCase: FetchRecordListUseCase
     
     @Published var records: [Record] = []
@@ -26,10 +26,13 @@ final class RecordListViewModel {
         self.dataSource = dataSource
     }
     
+    func updateDataSource(records: [Record]) {
+        dataSource.update(with: records)
+    }
+    
     func fetchRecordList() throws {
         Task {
             records = try await fetchRecordListUseCase.execute()
         }
     }
 }
-

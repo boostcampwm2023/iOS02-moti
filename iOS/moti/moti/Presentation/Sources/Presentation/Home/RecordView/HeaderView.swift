@@ -12,26 +12,20 @@ final class HeaderView: UICollectionViewCell {
     // MARK: - View
     private var categoryLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 24)
+        label.font = .medium
         return label
     }()
     
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 36)
-        return label
-    }()
-    
-    private var dateInfoLabel: UILabel = {
-        let label = UILabel()
-        label.text = "최근 달성일"
-        label.font = .systemFont(ofSize: 12)
+        label.font = .big
         return label
     }()
     
     private var dateLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 12)
+        label.numberOfLines = 2
+        label.font = .small
         return label
     }()
     
@@ -48,38 +42,32 @@ final class HeaderView: UICollectionViewCell {
     
     // MARK: - Setup
     private func setupUI() {
+        self.layer.borderColor = UIColor.red.cgColor
+        self.layer.borderWidth = 1
         setupCategoryLabel()
         setupTitleLabel()
         setupDateLabel()
-        setupDateInfoLabel()
     }
     
     private func setupCategoryLabel() {
         addSubview(categoryLabel)
         categoryLabel.atl
-            .top(equalTo: self.topAnchor, constant: 5)
-            .left(equalTo: self.leftAnchor, constant: 10)
+            .top(equalTo: self.safeAreaLayoutGuide.topAnchor)
+            .left(equalTo: self.safeAreaLayoutGuide.leftAnchor, constant: 10)
     }
     
     private func setupTitleLabel() {
         addSubview(titleLabel)
         titleLabel.atl
-            .top(equalTo: categoryLabel.bottomAnchor, constant: 10)
-            .left(equalTo: self.leftAnchor, constant: 10)
-    }
-    
-    private func setupDateInfoLabel() {
-        addSubview(dateInfoLabel)
-        dateInfoLabel.atl
-            .bottom(equalTo: dateLabel.topAnchor, constant: -10)
-            .right(equalTo: self.rightAnchor, constant: -10)
+            .top(equalTo: categoryLabel.bottomAnchor, constant: 5)
+            .left(equalTo: categoryLabel.leftAnchor)
     }
     
     private func setupDateLabel() {
         addSubview(dateLabel)
         dateLabel.atl
             .bottom(equalTo: titleLabel.bottomAnchor)
-            .right(equalTo: self.rightAnchor, constant: -10)
+            .right(equalTo: self.safeAreaLayoutGuide.rightAnchor, constant: -10)
     }
     
     // MARK: - Method
@@ -92,7 +80,7 @@ final class HeaderView: UICollectionViewCell {
     }
     
     func configure(date: String) {
-        dateLabel.text = date
+        dateLabel.text = "최근 달성일\n" + date
     }
     
     func showSkeleton() {
