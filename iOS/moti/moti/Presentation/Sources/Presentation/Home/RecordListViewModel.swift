@@ -12,7 +12,7 @@ final class RecordListViewModel {
     private var dataSource: RecordDiffableDataSource
     private let fetchRecordListUseCase: FetchRecordListUseCase
     
-    @Published var records: [Record] = []
+    var records: [Record] = []
     
     init(
         dataSource: RecordDiffableDataSource = .init(),

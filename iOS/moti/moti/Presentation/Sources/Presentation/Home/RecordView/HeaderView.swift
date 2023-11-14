@@ -16,8 +16,15 @@ final class HeaderView: UICollectionViewCell {
         return label
     }()
     
+    private var countLabel: UILabel = {
+        let label = UILabel()
+        label.font = .bigBold
+        return label
+    }()
+    
     private var titleLabel: UILabel = {
         let label = UILabel()
+        label.text = "달성"
         label.font = .big
         return label
     }()
@@ -42,9 +49,8 @@ final class HeaderView: UICollectionViewCell {
     
     // MARK: - Setup
     private func setupUI() {
-        self.layer.borderColor = UIColor.red.cgColor
-        self.layer.borderWidth = 1
         setupCategoryLabel()
+        setupCountLabel()
         setupTitleLabel()
         setupDateLabel()
     }
@@ -52,15 +58,22 @@ final class HeaderView: UICollectionViewCell {
     private func setupCategoryLabel() {
         addSubview(categoryLabel)
         categoryLabel.atl
-            .top(equalTo: self.safeAreaLayoutGuide.topAnchor)
+            .top(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 7)
             .left(equalTo: self.safeAreaLayoutGuide.leftAnchor, constant: 10)
+    }
+    
+    private func setupCountLabel() {
+        addSubview(countLabel)
+        countLabel.atl
+            .top(equalTo: categoryLabel.bottomAnchor, constant: 5)
+            .left(equalTo: categoryLabel.leftAnchor)
     }
     
     private func setupTitleLabel() {
         addSubview(titleLabel)
         titleLabel.atl
-            .top(equalTo: categoryLabel.bottomAnchor, constant: 5)
-            .left(equalTo: categoryLabel.leftAnchor)
+            .top(equalTo: countLabel.topAnchor)
+            .left(equalTo: countLabel.rightAnchor, constant: 5)
     }
     
     private func setupDateLabel() {
@@ -71,9 +84,9 @@ final class HeaderView: UICollectionViewCell {
     }
     
     // MARK: - Method
-    func configure(category: String, title: String, date: String) {
+    func configure(category: String, count: String, date: String) {
         categoryLabel.text = category
-        titleLabel.text = title
+        countLabel.text = count
         dateLabel.text = "최근 달성일\n" + date
     }
     

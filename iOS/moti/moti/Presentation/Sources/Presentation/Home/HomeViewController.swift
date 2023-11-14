@@ -59,7 +59,7 @@ final class HomeViewController: BaseViewController<HomeView> {
                 withReuseIdentifier: HeaderView.identifier,
                 for: indexPath) as? HeaderView
             
-            headerView?.configure(category: "다이어트", title: "32회 달성", date: "2023-11-03")
+            headerView?.configure(category: "다이어트", count: "32회", date: "2023-11-03")
             return headerView
         }
         
