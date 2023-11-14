@@ -1,9 +1,9 @@
 import { JwtUtils } from './jwt-utils';
-import { JwtService } from '@nestjs/jwt';
 import { PublicKey } from '../index';
 import { InvalidTokenException } from '../exception/invalid-token.exception';
 import { ExpiredTokenException } from '../exception/expired-token.exception';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 
 describe('jwtUtils test', () => {
   const jwtUtils = new JwtUtils(
@@ -91,7 +91,7 @@ describe('jwtUtils test', () => {
   test('access token을 발급한다.', () => {
     // given
     const claims = { userCode: 'A1B2C3D' };
-    const issuedAt = new Date('2023-10-25T10:00:00');
+    const issuedAt = new Date('2023-10-25T10:00:00+09:00');
     const accessToken = jwtUtils.createToken(claims, issuedAt);
 
     // when & then
@@ -108,9 +108,8 @@ describe('jwtUtils test', () => {
   test('만료된 access token인 경우 ExpiredTokenExceptionException 에러를 던진다.', () => {
     // given
     const claims = { userCode: 'A1B2C3D' };
-    const issuedAt = new Date('2022-10-25T10:00:00');
+    const issuedAt = new Date('2022-10-25T10:00:00+09:00');
     const expiredAccessToken = jwtUtils.createToken(claims, issuedAt);
-
     // when & then
     expect(() => jwtUtils.validateToken(expiredAccessToken)).toThrow(
       ExpiredTokenException,
@@ -131,10 +130,9 @@ describe('jwtUtils test', () => {
   test('refresh token을 발급한다.', () => {
     // given
     const claims = { userCode: 'A1B2C3D' };
-    const issuedAt = new Date('2023-10-25T10:00:00');
+    const issuedAt = new Date('2023-10-25T10:00:00+09:00');
 
     const refreshToken = jwtUtils.createRefreshToken(claims, issuedAt);
-
     // when & then
     expect(refreshToken).toEqual(
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6IkExQjJDM0QiLCJpYXQiOjE2OTgxOTU2MDAsImV4cCI6MTY5ODgwMDQwMH0.5k90PFImx0_67KcSmxLpMyysIWlL5RyWZNDhegIxPoA',
@@ -149,9 +147,8 @@ describe('jwtUtils test', () => {
   test('만료된 refresh token인 경우 ExpiredTokenExceptionException 에러를 던진다.', () => {
     // given
     const claims = { userCode: 'A1B2C3D' };
-    const issuedAt = new Date('2022-10-25T10:00:00');
+    const issuedAt = new Date('2022-10-25T10:00:00+09:00');
     const expiredRefreshToken = jwtUtils.createRefreshToken(claims, issuedAt);
-
     // when & then
     expect(() => jwtUtils.validateRefreshToken(expiredRefreshToken)).toThrow(
       ExpiredTokenException,
