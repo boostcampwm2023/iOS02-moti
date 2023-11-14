@@ -10,6 +10,10 @@ import Core
 
 class HomeViewController: UIViewController {
 
+    // MARK: - Properties
+    weak var coordinator: HomeCoordinator?
+    
+    // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
 
