@@ -64,4 +64,20 @@ describe('UserRepository test', () => {
       expect(nonExistByUserCode).toBe(false);
     });
   });
+
+  test('userCode로 user를 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = User.from('userIdentifier');
+      user.assignUserCode('A1B2C1D');
+      await usersRepository.saveUser(user);
+
+      // when
+      const findOne = await usersRepository.findOneByUserCode('A1B2C1D');
+
+      // then
+      expect(findOne.userCode).toBe('A1B2C1D');
+      expect(findOne.userIdentifier).toBe('userIdentifier');
+    });
+  });
 });

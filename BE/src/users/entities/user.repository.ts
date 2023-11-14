@@ -14,6 +14,14 @@ export class UserRepository extends Repository<UserEntity> {
     return userEntity?.toModel();
   }
 
+  async findOneByUserCode(userCode: string): Promise<User> {
+    const repository = this.getRepository();
+    const userEntity = await repository.findOneBy({
+      userCode: userCode,
+    });
+    return userEntity?.toModel();
+  }
+
   async saveUser(user: User): Promise<User> {
     const repository = this.getRepository();
     const userEntity = UserEntity.from(user);
