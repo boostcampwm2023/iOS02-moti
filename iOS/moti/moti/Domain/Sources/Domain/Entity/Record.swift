@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct Record: Hashable {
-    let id = UUID()
-    let category: String
-    let title: String
-    let imageURL: String
-    let body: String
-    let achieveCount: Int
-    let date: Date
+public struct Record: Hashable {
+    public let id = UUID()
+    public let category: String
+    public let title: String
+    public let imageURL: String
+    public let body: String
+    public let achieveCount: Int
+    public let date: Date
 }
