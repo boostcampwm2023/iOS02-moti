@@ -94,6 +94,7 @@ describe('jwtUtils test', () => {
     const issuedAt = new Date('2023-10-25T10:00:00');
     const accessToken = jwtUtils.createToken(claims, issuedAt);
 
+    console.log(accessToken);
     // when & then
     expect(accessToken).toEqual(
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6IkExQjJDM0QiLCJpYXQiOjE2OTgxOTU2MDAsImV4cCI6MTY5ODE5OTIwMH0.32XL-boBJVJjypbBTNCIM7Y_OyXynkBJQWHdjZqDhgU',
@@ -110,7 +111,7 @@ describe('jwtUtils test', () => {
     const claims = { userCode: 'A1B2C3D' };
     const issuedAt = new Date('2022-10-25T10:00:00');
     const expiredAccessToken = jwtUtils.createToken(claims, issuedAt);
-
+    console.log(expiredAccessToken);
     // when & then
     expect(() => jwtUtils.validateToken(expiredAccessToken)).toThrow(
       ExpiredTokenException,
@@ -134,7 +135,7 @@ describe('jwtUtils test', () => {
     const issuedAt = new Date('2023-10-25T10:00:00');
 
     const refreshToken = jwtUtils.createRefreshToken(claims, issuedAt);
-
+    console.log(refreshToken);
     // when & then
     expect(refreshToken).toEqual(
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6IkExQjJDM0QiLCJpYXQiOjE2OTgxOTU2MDAsImV4cCI6MTY5ODgwMDQwMH0.5k90PFImx0_67KcSmxLpMyysIWlL5RyWZNDhegIxPoA',
@@ -151,7 +152,7 @@ describe('jwtUtils test', () => {
     const claims = { userCode: 'A1B2C3D' };
     const issuedAt = new Date('2022-10-25T10:00:00');
     const expiredRefreshToken = jwtUtils.createRefreshToken(claims, issuedAt);
-
+    console.log(expiredRefreshToken);
     // when & then
     expect(() => jwtUtils.validateRefreshToken(expiredRefreshToken)).toThrow(
       ExpiredTokenException,
