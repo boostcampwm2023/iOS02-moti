@@ -25,6 +25,10 @@ export class JwtUtils {
   }
 
   createToken(claim: JwtClaim, from: Date) {
+    console.log(this.validityInMilliseconds);
+    console.log(typeof this.validityInMilliseconds);
+    console.log(this.refreshValidityInMilliseconds);
+    console.log(typeof this.refreshValidityInMilliseconds);
     const issuedAt = Math.floor(from.getTime() / 1000);
     const validity = Math.floor(
       new Date(from.getTime() + this.validityInMilliseconds).getTime() / 1000,
