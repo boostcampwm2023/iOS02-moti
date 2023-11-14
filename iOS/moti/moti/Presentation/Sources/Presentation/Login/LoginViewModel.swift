@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Core
 import Domain
 
 final class LoginViewModel {
@@ -22,7 +23,12 @@ final class LoginViewModel {
     func requestLogin(identityToken: String) {
         Task {
             let requestValue = LoginRequestValue(identityToken: identityToken)
-            userToken = try? await loginUseCase.excute(requestValue: requestValue)
+            do {
+                userToken = try await loginUseCase.excute(requestValue: requestValue)
+            } catch {
+                Logger.error(error)
+            }
+            
         }
     }
 }
