@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OperateService } from './operate.service';
 import { MotiPolicyCreate } from '../dto/moti-policy-create';
-import { MotimateException } from '../../common/exception/motimate.excpetion';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmModuleOptions } from '../../config/typeorm';
 import { OperateModule } from '../operate.module';
@@ -9,6 +8,10 @@ import { ConfigModule } from '@nestjs/config';
 import { configServiceModuleOptions } from '../../config/config';
 import { DataSource } from 'typeorm';
 import { transactionTest } from '../../../test/common/transaction-test';
+import { PolicyNotFoundException } from '../exception/policy-not-found.exception';
+import { MotimateException } from '../../common/exception/motimate.excpetion';
+import { MotiPolicyUpdate } from '../dto';
+import { MotiPolicyIdempotentUpdate } from '../dto/moti-policy-idempotent-update';
 
 describe('OperateService Test', () => {
   let operateService: OperateService;
@@ -69,13 +72,9 @@ describe('OperateService Test', () => {
 
       // when
       // then
-      try {
-        await operateService.initMotiPolicy(initialPolicy);
-      } catch (e) {
-        expect(e).toBeInstanceOf(MotimateException);
-        expect(e.status).toBe(500);
-        expect(e.message).toBe('이미 초기화된 모티메이트 운영정책입니다.');
-      }
+      await expect(
+        operateService.initMotiPolicy(initialPolicy),
+      ).rejects.toThrow(MotimateException);
     });
   });
 
@@ -84,13 +83,9 @@ describe('OperateService Test', () => {
       // given
       // when
       // then
-      try {
-        await operateService.retrieveMotimateOperation();
-      } catch (e) {
-        expect(e).toBeInstanceOf(MotimateException);
-        expect(e.status).toBe(500);
-        expect(e.message).toBe('운영정책을 조회할 수 없습니다.');
-      }
+      await expect(operateService.retrieveMotimateOperation()).rejects.toThrow(
+        PolicyNotFoundException,
+      );
     });
   });
 
@@ -112,5 +107,87 @@ describe('OperateService Test', () => {
       expect(motiPolicy.required).toBe('0.1.0');
       expect(motiPolicy.privacyPolicy).toBe('https://motimate.com/policy');
     });
+  });
+
+  describe('updateMotiPolicy는 모티메이트 운영정책을 업데이트한다.', () => {
+    it('updatePolicy가 인터페이스 형태로 운영정책을 업데이트할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const initialPolicy = new MotiPolicyCreate(
+          '0.2.0',
+          '0.1.0',
+          'https://motimate.com/policy',
+        );
+        await operateService.initMotiPolicy(initialPolicy);
+
+        // when
+        const updatePolicy: MotiPolicyUpdate = {
+          latest: '0.3.0',
+          required: '0.2.0',
+        };
+        const motiPolicy = await operateService.updateMotiPolicy(updatePolicy);
+
+        // then
+        expect(motiPolicy).toBeDefined();
+        expect(motiPolicy.latest).toBe('0.3.0');
+        expect(motiPolicy.required).toBe('0.2.0');
+        expect(motiPolicy.privacyPolicy).toBe('https://motimate.com/policy');
+      });
+    });
+
+    it('updatePolicy가 MotiPolicyIdempotentUpdate로 멱등적으로 운영정책을 업데이트할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const initialPolicy = new MotiPolicyCreate(
+          '0.2.0',
+          '0.1.0',
+          'https://motimate.com/policy',
+        );
+        await operateService.initMotiPolicy(initialPolicy);
+
+        // when
+        const updatePolicy: MotiPolicyIdempotentUpdate =
+          new MotiPolicyIdempotentUpdate(
+            '0.4.0',
+            '0.3.0',
+            'https://motimate.com/policy2',
+          );
+        const motiPolicy = await operateService.updateMotiPolicy(updatePolicy);
+
+        // then
+        expect(motiPolicy).toBeDefined();
+        expect(motiPolicy.latest).toBe('0.4.0');
+        expect(motiPolicy.required).toBe('0.3.0');
+        expect(motiPolicy.privacyPolicy).toBe('https://motimate.com/policy2');
+      });
+    });
+
+    it('updatePolicy가 MotiPolicyPartialUpdate로 부분적으로 운영정책을 업데이트할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const initialPolicy = new MotiPolicyCreate(
+          '0.5.0',
+          '0.1.0',
+          'https://motimate.com/policy',
+        );
+        await operateService.initMotiPolicy(initialPolicy);
+
+        // when
+        const updatePolicy: MotiPolicyIdempotentUpdate =
+          new MotiPolicyIdempotentUpdate(
+            undefined,
+            '0.3.0',
+            'https://motimate.com/policy2',
+          );
+        const motiPolicy = await operateService.updateMotiPolicy(updatePolicy);
+
+        // then
+        expect(motiPolicy).toBeDefined();
+        expect(motiPolicy.latest).toBe('0.5.0');
+        expect(motiPolicy.required).toBe('0.3.0');
+        expect(motiPolicy.privacyPolicy).toBe('https://motimate.com/policy2');
+      });
+    });
+
   });
 });

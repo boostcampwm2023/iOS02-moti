@@ -4,8 +4,28 @@ import { QueryRunner } from 'typeorm';
 
 export const TRANSACTIONAL_KEY = Symbol('TRANSACTIONAL');
 
-export function Transactional(): MethodDecorator {
-  return applyDecorators(SetMetadata(TRANSACTIONAL_KEY, true));
+export interface TransactionalMetadata {
+  isTransactional: boolean;
+  readonly: boolean;
+}
+
+export interface TransactionalOptions {
+  readonly: boolean;
+}
+
+const defaultOptions: TransactionalOptions = {
+  readonly: false,
+};
+
+export function Transactional(
+  options: TransactionalOptions = defaultOptions,
+): MethodDecorator {
+  return applyDecorators(
+    SetMetadata(TRANSACTIONAL_KEY, {
+      isTransactional: true,
+      readonly: options.readonly,
+    }),
+  );
 }
 
 export const queryRunnerLocalStorage = new AsyncLocalStorage<{
