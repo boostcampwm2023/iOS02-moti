@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class HeaderView: UICollectionReusableView {
+final class HeaderView: UICollectionViewCell {
     
     // MARK: - View
     private var categoryLabel: UILabel = {
@@ -50,36 +50,36 @@ final class HeaderView: UICollectionReusableView {
     private func setupUI() {
         setupCategoryLabel()
         setupTitleLabel()
-        setupDateInfoLabel()
         setupDateLabel()
+        setupDateInfoLabel()
     }
     
     private func setupCategoryLabel() {
         addSubview(categoryLabel)
         categoryLabel.atl
-            .top(equalTo: self.topAnchor, constant: 10)
+            .top(equalTo: self.topAnchor, constant: 5)
             .left(equalTo: self.leftAnchor, constant: 10)
     }
     
     private func setupTitleLabel() {
         addSubview(titleLabel)
         titleLabel.atl
-            .top(equalTo: categoryLabel.bottomAnchor, constant: 15)
+            .top(equalTo: categoryLabel.bottomAnchor, constant: 10)
             .left(equalTo: self.leftAnchor, constant: 10)
     }
     
     private func setupDateInfoLabel() {
         addSubview(dateInfoLabel)
         dateInfoLabel.atl
-            .top(equalTo: self.topAnchor, constant: 30)
-            .right(equalTo: self.rightAnchor, constant: -20)
+            .bottom(equalTo: dateLabel.topAnchor, constant: -10)
+            .right(equalTo: self.rightAnchor, constant: -10)
     }
     
     private func setupDateLabel() {
         addSubview(dateLabel)
         dateLabel.atl
-            .top(equalTo: dateInfoLabel.bottomAnchor, constant: 10)
-            .right(equalTo: self.rightAnchor, constant: -20)
+            .bottom(equalTo: titleLabel.bottomAnchor)
+            .right(equalTo: self.rightAnchor, constant: -10)
     }
     
     // MARK: - Method
