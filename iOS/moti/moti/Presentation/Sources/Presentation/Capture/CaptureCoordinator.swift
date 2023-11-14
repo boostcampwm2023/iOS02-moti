@@ -9,17 +9,26 @@ import UIKit
 import Core
 
 final class CaptureCoordinator: Coordinator {
+    var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
-    
     var navigationController: UINavigationController
     
-    init(navigationController: UINavigationController) {
+    init(
+        _ navigationController: UINavigationController,
+        _ parentCoordinator: Coordinator?
+    ) {
         self.navigationController = navigationController
+        self.parentCoordinator = parentCoordinator
     }
     
     func start() {
         let captureVC = CaptureViewController()
+        captureVC.coordinator = self
 //        captureVC.modalPresentationStyle = .fullScreen
         navigationController.present(captureVC, animated: true)
+    }
+    
+    func finish(animated: Bool = true) {
+        parentCoordinator?.dismiss(child: self, animated: animated)
     }
 }
