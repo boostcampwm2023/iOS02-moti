@@ -7,6 +7,7 @@
 
 import UIKit
 import Combine
+import Core
 
 protocol LaunchViewControllerDelegate: AnyObject {
     func viewControllerDidLogin(isSuccess: Bool)
@@ -44,7 +45,7 @@ final class LaunchViewController: BaseViewController<LaunchView> {
             .sink { [weak self] version in
                 guard let self else { return }
                 
-                print(version)
+                Logger.debug("version: \(version)")
                 delegate?.viewControllerDidLogin(isSuccess: false)
                 dismiss(animated: false)
             }
