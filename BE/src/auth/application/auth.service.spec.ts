@@ -13,6 +13,8 @@ import { typeOrmModuleOptions } from '../../config/typeorm';
 import { UserCodeGenerator } from './user-code-generator';
 import { AppleLoginRequest } from '../dto/apple-login-request.dto';
 import { configServiceModuleOptions } from '../../config/config';
+import { RefreshAuthRequestDto } from '../dto/refresh-auth-request.dto';
+import { User } from '../../users/domain/user.domain';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -59,5 +61,21 @@ describe('AuthService', () => {
     expect(response.user).toBeDefined();
     expect(response.accessToken).toBeDefined();
     expect(response.refreshToken).toBeDefined();
+  });
+
+  test('refreshToken을 통해 새로운 accessToken을 발급한다.', async () => {
+    // given
+    const user = User.from('userIdentifier');
+    user.assignUserCode('A1B2C3D');
+    const refreshAuthRequest = new RefreshAuthRequestDto(
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6IkExQjJDM0QiLCJpYXQiOjE2OTgxOTU2MDAsImV4cCI6MTk5ODgwMDQwMH0.BtQwWinZKan0j5lTLR1PStGBf3AsBWvMNJF0P1WysD0',
+    );
+
+    // when
+    const response = await authService.refresh(user, refreshAuthRequest);
+
+    // then
+    expect(response.user).toBeDefined();
+    expect(response.accessToken).toBeDefined();
   });
 });

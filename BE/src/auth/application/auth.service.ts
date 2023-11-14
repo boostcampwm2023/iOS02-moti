@@ -9,6 +9,8 @@ import { JwtUtils } from './jwt-utils';
 import { JwtClaim } from '../index';
 import { AppleLoginResponse } from '../dto/apple-login-response.dto';
 import { UserDto } from '../../users/dto/user.dto';
+import { RefreshAuthRequestDto } from '../dto/refresh-auth-request.dto';
+import { RefreshAuthResponseDto } from '../dto/refresh-auth-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -46,5 +48,15 @@ export class AuthService {
     const userCode = await this.userCodeGenerator.generate();
     newUser.assignUserCode(userCode);
     return await this.usersRepository.saveUser(newUser);
+  }
+
+  async refresh(user: User, refreshAuthRequestDto: RefreshAuthRequestDto) {
+    // Todo redis를 통해 refreshToken 조회해서 유효확인 로직 추가 필요
+    const refreshToken = refreshAuthRequestDto.refreshToken;
+    this.jwtUtils.validateRefreshToken(refreshToken);
+    const payloads = this.jwtUtils.parsePayloads(refreshToken);
+    const claim: JwtClaim = { userCode: payloads.userCode };
+    const accessToken = this.jwtUtils.createToken(claim, new Date());
+    return new RefreshAuthResponseDto(UserDto.from(user), accessToken);
   }
 }
