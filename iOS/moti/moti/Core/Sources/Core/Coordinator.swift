@@ -18,17 +18,22 @@ public protocol Coordinator: AnyObject {
     )
 
     func start()
-    func pop(child: Coordinator?, animated: Bool)
-    func dismiss(child: Coordinator?, animated: Bool)
+    func finish(animated: Bool)
+    func pop(child: Coordinator, animated: Bool)
+    func dismiss(child: Coordinator, animated: Bool)
 }
 
 public extension Coordinator {
-    func pop(child: Coordinator?, animated: Bool = true) {
+    func finish(animated: Bool = true) {
+        parentCoordinator?.pop(child: self, animated: animated)
+    }
+    
+    func pop(child: Coordinator, animated: Bool = true) {
         childCoordinators = childCoordinators.filter { $0 !== child }
         navigationController.popViewController(animated: animated)
     }
     
-    func dismiss(child: Coordinator?, animated: Bool = true) {
+    func dismiss(child: Coordinator, animated: Bool = true) {
         childCoordinators = childCoordinators.filter { $0 !== child }
         navigationController.dismiss(animated: animated)
     }
