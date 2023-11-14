@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { OperateService } from './operate.service';
 import { MotiPolicyCreate } from '../dto/moti-policy-create';
-import { MotimateException } from '../../common/exception/motimate.excpetion';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmModuleOptions } from '../../config/typeorm';
 import { OperateModule } from '../operate.module';
@@ -9,6 +8,8 @@ import { ConfigModule } from '@nestjs/config';
 import { configServiceModuleOptions } from '../../config/config';
 import { DataSource } from 'typeorm';
 import { transactionTest } from '../../../test/common/transaction-test';
+import { PolicyNotFoundException } from '../exception/policy-not-found.exception';
+import { MotimateException } from '../../common/exception/motimate.excpetion';
 
 describe('OperateService Test', () => {
   let operateService: OperateService;
@@ -69,13 +70,9 @@ describe('OperateService Test', () => {
 
       // when
       // then
-      try {
-        await operateService.initMotiPolicy(initialPolicy);
-      } catch (e) {
-        expect(e).toBeInstanceOf(MotimateException);
-        expect(e.status).toBe(500);
-        expect(e.message).toBe('이미 초기화된 모티메이트 운영정책입니다.');
-      }
+      await expect(
+        operateService.initMotiPolicy(initialPolicy),
+      ).rejects.toThrow(MotimateException);
     });
   });
 
@@ -84,13 +81,9 @@ describe('OperateService Test', () => {
       // given
       // when
       // then
-      try {
-        await operateService.retrieveMotimateOperation();
-      } catch (e) {
-        expect(e).toBeInstanceOf(MotimateException);
-        expect(e.status).toBe(500);
-        expect(e.message).toBe('운영정책을 조회할 수 없습니다.');
-      }
+      await expect(operateService.retrieveMotimateOperation()).rejects.toThrow(
+        PolicyNotFoundException,
+      );
     });
   });
 
