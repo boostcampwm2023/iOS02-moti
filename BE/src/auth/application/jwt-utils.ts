@@ -22,6 +22,9 @@ export class JwtUtils {
     this.refreshValidityInMilliseconds = configService.get<number>(
       'REFRESH_JWT_VALIDITY',
     );
+
+    console.log(this.secretKey);
+    console.log(this.refreshSecretKey);
   }
 
   createToken(claim: JwtClaim, from: Date) {
