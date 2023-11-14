@@ -7,6 +7,7 @@
 
 import UIKit
 import Core
+import Data
 
 public final class HomeCoordinator: Coordinator {
     public let parentCoordinator: Coordinator?
@@ -22,9 +23,9 @@ public final class HomeCoordinator: Coordinator {
     }
     
     public func start() {
-        let homeVC = HomeViewController()
+        let recordListVM = RecordListViewModel(fetchRecordListUseCase: .init(repository: MockRecordListRepository()))
+        let homeVC = HomeViewController(recordListViewModel: recordListVM)
         homeVC.coordinator = self
-        
         navigationController.viewControllers = [homeVC]
     }
 }

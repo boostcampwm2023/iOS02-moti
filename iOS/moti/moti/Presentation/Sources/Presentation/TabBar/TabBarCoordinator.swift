@@ -8,6 +8,7 @@
 import UIKit
 import Design
 import Core
+import Data
 
 public final class TabBarCoordinator: Coordinator {
     enum TabItemType: CaseIterable {
@@ -61,7 +62,8 @@ public final class TabBarCoordinator: Coordinator {
 // MARK: - Make Child ViewControllers
 private extension TabBarCoordinator {
     func makeIndividualTabPage() -> UINavigationController {
-        let homeVC = HomeViewController()
+        let recordListVM = RecordListViewModel(fetchRecordListUseCase: .init(repository: MockRecordListRepository()))
+        let homeVC = HomeViewController(recordListViewModel: recordListVM)
         
         homeVC.tabBarItem.image = SymbolImage.individualTabItem
         homeVC.tabBarItem.title = TabItemType.individual.title

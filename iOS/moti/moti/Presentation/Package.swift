@@ -15,6 +15,7 @@ let package = Package(
     dependencies: [
         .package(path: "../Design"),
         .package(path: "../Core"),
+        .package(path: "../Domain"),
         .package(path: "../Data")
     ],
     targets: [
@@ -25,6 +26,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Design", package: "Design"),
                 .product(name: "Core", package: "Core"),
+                .product(name: "Domain", package: "Domain"),
                 .product(name: "Data", package: "Data")
             ],
             path: "Sources"),
