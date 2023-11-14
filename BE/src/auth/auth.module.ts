@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { JwtModule } from '@nestjs/jwt';
 import { CustomTypeOrmModule } from '../config/typeorm/custom-typeorm.module';
@@ -9,12 +9,14 @@ import { OauthRequester } from './application/oauth-requester';
 import { JwtUtils } from './application/jwt-utils';
 import { UserRepository } from '../users/entities/user.repository';
 import { UserCodeGenerator } from './application/user-code-generator';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
     HttpModule,
     JwtModule.register({}),
     CustomTypeOrmModule.forCustomRepository([UserRepository]),
+    forwardRef(() => UsersModule),
   ],
   controllers: [AuthController],
   providers: [
@@ -24,5 +26,6 @@ import { UserCodeGenerator } from './application/user-code-generator';
     JwtUtils,
     UserCodeGenerator,
   ],
+  exports: [JwtUtils],
 })
 export class AuthModule {}
