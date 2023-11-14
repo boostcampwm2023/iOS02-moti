@@ -11,12 +11,7 @@ import Core
 
 public struct MockLoginRepository: LoginRepositoryProtocol {
     
-    public init() { }
-    
-    public func login(requestValue: LoginRequestValue) async throws -> UserToken {
-        Logger.info(MotiAPI.login(requestValue: requestValue))
-        
-        let json = """
+    private var json = """
         {
             "success": true,
             "data": {
@@ -29,6 +24,15 @@ public struct MockLoginRepository: LoginRepositoryProtocol {
             }
         }
         """
+    
+    public init() { }
+    
+    public init(json: String) {
+        self.json = json
+    }
+    
+    public func login(requestValue: LoginRequestValue) async throws -> UserToken {
+        Logger.info(MotiAPI.login(requestValue: requestValue))
         
         guard let testData = json.data(using: .utf8) else { throw NetworkError.decode }
         let responseDTO = try JSONDecoder().decode(LoginResponseDTO.self, from: testData)
