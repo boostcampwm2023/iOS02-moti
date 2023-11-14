@@ -24,6 +24,7 @@ final class HeaderView: UICollectionReusableView {
     
     private var dateInfoLabel: UILabel = {
         let label = UILabel()
+        label.text = "최근 달성일"
         label.font = .systemFont(ofSize: 12)
         return label
     }()
