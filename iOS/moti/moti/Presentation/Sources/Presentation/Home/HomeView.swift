@@ -20,7 +20,7 @@ final class HomeView: UIView {
     lazy var recordCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCompositionalLayout())
         collectionView.backgroundColor = .motiBackground
-        collectionView.register(RecordCollectionViewCell.self, forCellWithReuseIdentifier: RecordCollectionViewCell.identifier)
+        collectionView.register(with: RecordCollectionViewCell.self)
         collectionView.register(with: HeaderView.self, elementKind: UICollectionView.elementKindSectionHeader)
         return collectionView
     }()
@@ -52,7 +52,7 @@ final class HomeView: UIView {
         addSubview(recordCollectionView)
         recordCollectionView.atl
             .width(equalTo: self.widthAnchor)
-            .top(equalTo: categoryCollectionView.bottomAnchor, constant: 10)
+            .top(equalTo: categoryCollectionView.bottomAnchor)
             .bottom(equalTo: self.bottomAnchor, constant: -10)
     }
 }
