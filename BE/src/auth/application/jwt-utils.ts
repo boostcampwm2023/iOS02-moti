@@ -22,9 +22,6 @@ export class JwtUtils {
     this.refreshValidityInMilliseconds = configService.get<number>(
       'REFRESH_JWT_VALIDITY',
     );
-
-    console.log(this.secretKey);
-    console.log(this.refreshSecretKey);
   }
 
   createToken(claim: JwtClaim, from: Date) {
@@ -37,6 +34,9 @@ export class JwtUtils {
       iat: issuedAt,
       exp: validity,
     };
+    console.log(payload);
+    console.log(this.secretKey);
+    console.log(this.validityInMilliseconds);
     return this.jwtService.sign(payload, { secret: this.secretKey });
   }
 
@@ -64,6 +64,9 @@ export class JwtUtils {
       iat: issuedAt,
       exp: validity,
     };
+    console.log(payload);
+    console.log(this.refreshSecretKey);
+    console.log(this.refreshValidityInMilliseconds);
     return this.jwtService.sign(payload, { secret: this.refreshSecretKey });
   }
   validateRefreshToken(token: string) {
