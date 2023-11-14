@@ -169,4 +169,15 @@ describe('jwtUtils test', () => {
       InvalidTokenException,
     );
   });
+
+  test('test 용 ', () => {
+    // given
+    const testToken =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6IkExQjJDM0QiLCJpYXQiOjE2OTgxOTU2MDAsImV4cCI6MTY5ODE5OTIwMH0.32XL-boBJVJjypbBTNCIM7Y_OyXynkBJQWHdjZqDhgU';
+    // when & then
+    const testToken2 =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6IkExQjJDM0QiLCJpYXQiOjE2OTgxOTU2MDAsImV4cCI6MTY5ODE5OTIwMH0.32XL-boBJVJjypbBTNCIM7Y_OyXynkBJQWHdjZqDhgU';
+
+    expect(testToken).toEqual(testToken2);
+  });
 });
