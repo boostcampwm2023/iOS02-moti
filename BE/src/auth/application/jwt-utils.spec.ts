@@ -1,20 +1,29 @@
 import { JwtUtils } from './jwt-utils';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { PublicKey } from '../index';
 import { InvalidTokenException } from '../exception/invalid-token.exception';
 import { ExpiredTokenException } from '../exception/expired-token.exception';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+import { configServiceModuleOptions } from '../../config/config';
 
 describe('jwtUtils test', () => {
-  const jwtUtils = new JwtUtils(
-    new JwtService(),
-    new ConfigService({
-      JWT_SECRET: '!@testsecret!@',
-      JWT_VALIDITY: 3600000,
-      REFRESH_JWT_SECRET: '!@testrefreshsecret!@',
-      REFRESH_JWT_VALIDITY: 604800000,
-    }),
-  );
+  let jwtUtils: JwtUtils;
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        JwtModule.register({}),
+        ConfigModule.forRoot(configServiceModuleOptions),
+      ],
+      providers: [JwtUtils],
+    }).compile();
+
+    jwtUtils = module.get<JwtUtils>(JwtUtils);
+  });
+
+  test('authService, oauthHandler가 정의되어 있어야 한다.', () => {
+    expect(jwtUtils).toBeDefined();
+  });
 
   test('publicKey로 jwt를 검증한다.', () => {
     // given
@@ -96,7 +105,7 @@ describe('jwtUtils test', () => {
 
     // when & then
     expect(accessToken).toEqual(
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6IkExQjJDM0QiLCJpYXQiOjE2OTgxOTU2MDAsImV4cCI6MTY5ODE5OTIwMH0.32XL-boBJVJjypbBTNCIM7Y_OyXynkBJQWHdjZqDhgU',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6IkExQjJDM0QiLCJpYXQiOjE2OTgxOTU2MDAsImV4cCI6MTY5ODE5OTIwMH0.JCWUvSYbhOyc8B30SRxvfBenh98gbJvs2eNGxSBW-QQ',
     );
     expect(jwtUtils.parsePayloads(accessToken)).toEqual({
       exp: 1698199200,
@@ -110,7 +119,6 @@ describe('jwtUtils test', () => {
     const claims = { userCode: 'A1B2C3D' };
     const issuedAt = new Date('2022-10-25T10:00:00');
     const expiredAccessToken = jwtUtils.createToken(claims, issuedAt);
-
     // when & then
     expect(() => jwtUtils.validateToken(expiredAccessToken)).toThrow(
       ExpiredTokenException,
@@ -134,10 +142,9 @@ describe('jwtUtils test', () => {
     const issuedAt = new Date('2023-10-25T10:00:00');
 
     const refreshToken = jwtUtils.createRefreshToken(claims, issuedAt);
-
     // when & then
     expect(refreshToken).toEqual(
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6IkExQjJDM0QiLCJpYXQiOjE2OTgxOTU2MDAsImV4cCI6MTY5ODgwMDQwMH0.5k90PFImx0_67KcSmxLpMyysIWlL5RyWZNDhegIxPoA',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6IkExQjJDM0QiLCJpYXQiOjE2OTgxOTU2MDAsImV4cCI6MTY5ODgwMDQwMH0.0M7py_4K4-wggaVnglFhU88dNGIOc0vnXl7KWskFd60',
     );
     expect(jwtUtils.parsePayloads(refreshToken)).toEqual({
       exp: 1698800400,
@@ -151,7 +158,6 @@ describe('jwtUtils test', () => {
     const claims = { userCode: 'A1B2C3D' };
     const issuedAt = new Date('2022-10-25T10:00:00');
     const expiredRefreshToken = jwtUtils.createRefreshToken(claims, issuedAt);
-
     // when & then
     expect(() => jwtUtils.validateRefreshToken(expiredRefreshToken)).toThrow(
       ExpiredTokenException,
