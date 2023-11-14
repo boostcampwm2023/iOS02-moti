@@ -7,9 +7,13 @@
 
 import XCTest
 @testable import Domain
+@testable import Data
 
 final class LoginUseCaseTests: XCTestCase {
 
+    private let sourceUser = User(code: "ABCDEFG", avatarURL: URL(string: "https://test.com"))
+    private let testToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9"
+    
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -23,13 +27,12 @@ final class LoginUseCaseTests: XCTestCase {
         let loginUseCase = LoginUseCase(repository: mockRepository)
         
         let expectation = XCTestExpectation(description: "test_로그인에_성공하면_user_생성")
-        let source = User(code: "000000", avatarURL: "test")
 
         Task {
-            let result = try await loginUseCase.excute()
+            let result = try await loginUseCase.excute(requestValue: .init(identityToken: testToken))
             expectation.fulfill()
             
-            XCTAssertEqual(result, source)
+            XCTAssertEqual(result, sourceUser)
         }
         
         wait(for: [expectation], timeout: 3)
@@ -40,10 +43,9 @@ final class LoginUseCaseTests: XCTestCase {
         let loginUseCase = LoginUseCase(repository: mockRepository)
         
         let expectation = XCTestExpectation(description: "test_로그인에_실패하면_user가_nil")
-        let source = User(code: "000000", avatarURL: "test")
 
         Task {
-            let result = try? await loginUseCase.excute()
+            let result = try? await loginUseCase.excute(requestValue: .init(identityToken: testToken))
             expectation.fulfill()
             
             XCTAssertNil(result)
