@@ -16,8 +16,8 @@ final class HomeViewController: BaseViewController<HomeView> {
     private let recordListViewModel: RecordListViewModel
     private var cancellables: Set<AnyCancellable> = []
     
-    init(viewModel: RecordListViewModel) {
-        self.recordListViewModel = viewModel
+    init(recordListViewModel: RecordListViewModel) {
+        self.recordListViewModel = recordListViewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -41,8 +41,7 @@ final class HomeViewController: BaseViewController<HomeView> {
             .sink { [weak self] records in
                 guard let self else { return }
                 
-                Logger.debug("records: \(records)")
-                self.recordListViewModel.dataSource.update(with: records)
+                self.recordListViewModel.updateDataSource(records: records)
             }
             .store(in: &cancellables)
     }
