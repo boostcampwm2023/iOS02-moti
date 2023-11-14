@@ -15,8 +15,8 @@ let package = Package(
     dependencies: [
         .package(path: "../Design"),
         .package(path: "../Core"),
-        .package(path: "../Data"),
-        .package(path: "../Domain")
+        .package(path: "../Domain"),
+        .package(path: "../Data")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
