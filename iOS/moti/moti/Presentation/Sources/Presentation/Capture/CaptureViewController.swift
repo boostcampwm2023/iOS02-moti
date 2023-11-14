@@ -1,18 +1,19 @@
 //
-//  HomeViewController.swift
+//  CaptureViewController.swift
 //  
 //
-//  Created by 유정주 on 11/13/23.
+//  Created by 유정주 on 11/14/23.
 //
 
 import UIKit
 import Core
 
-class HomeViewController: UIViewController {
+class CaptureViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
     }
+
 }

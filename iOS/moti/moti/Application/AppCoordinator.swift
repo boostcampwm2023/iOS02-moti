@@ -33,7 +33,7 @@ final class AppCoordinator: Coordinator {
     }
     
     func moveHomeViewController() {
-        let homeCoordinator = HomeCoordinator(navigationController: navigationController)
+        let homeCoordinator = TabBarCoordinator(navigationController: navigationController)
         start(coordinator: homeCoordinator)
     }
     
