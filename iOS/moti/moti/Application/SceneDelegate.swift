@@ -22,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         
         let rootVC = UINavigationController()
-        appCoordinator = AppCoordinator(navigationController: rootVC)
+        appCoordinator = AppCoordinator(rootVC, nil)
         appCoordinator?.start()
         
         window?.rootViewController = rootVC

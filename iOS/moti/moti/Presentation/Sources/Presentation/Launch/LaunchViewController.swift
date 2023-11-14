@@ -16,6 +16,7 @@ protocol LaunchViewControllerDelegate: AnyObject {
 final class LaunchViewController: BaseViewController<LaunchView> {
     
     // MARK: - Properties
+    weak var coordinator: LaunchCoodinator?
     weak var delegate: LaunchViewControllerDelegate?
     
     private let viewModel: LaunchViewModel
@@ -46,8 +47,11 @@ final class LaunchViewController: BaseViewController<LaunchView> {
                 guard let self else { return }
                 
                 Logger.debug("version: \(version)")
+                
+                sleep(1)
+                
                 delegate?.viewControllerDidLogin(isSuccess: false)
-                dismiss(animated: false)
+                coordinator?.dismiss(child: coordinator, animated: false)
             }
             .store(in: &cancellables)
         

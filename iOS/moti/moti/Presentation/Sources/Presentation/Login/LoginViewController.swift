@@ -12,6 +12,7 @@ import Combine
 final class LoginViewController: BaseViewController<LoginView> {
 
     // MARK: - Properties
+    private weak var coordinator: LoginCoordinator?
     private var appleLoginRequester: AppleLoginRequester?
     private let viewModel: LoginViewModel
     private var cancellables: Set<AnyCancellable> = []
