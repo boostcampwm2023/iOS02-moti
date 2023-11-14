@@ -29,7 +29,9 @@ export class UserEntity extends BaseTimeEntity {
     const user = new User();
     user.id = this.id;
     user.avatarUrl = this.avatarUrl;
+    user.userIdentifier = this.userIdentifier;
     user.userCode = this.userCode;
     user.id = this.id;
+    return user;
   }
 }
