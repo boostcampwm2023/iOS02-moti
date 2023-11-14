@@ -29,23 +29,28 @@ public final class TabBarCoordinator: Coordinator {
     public init(navigationController: UINavigationController) {
         self.navigationController = navigationController
         tabBarController = TabBarViewController()
+        tabBarController.tabBarDelegate = self
     }
     
     public func start() {
         configureTabBarControllers(with: [
             makeIndividualTabPage(),
-            makeCaptureTabPage(),
             makeGroupTabPage()
         ])
         
         navigationController.viewControllers = [tabBarController]
     }
-    
-    // MARK: - TabBar ViewControllers 설정
+
+    // TabBar VC 설정
     private func configureTabBarControllers(with viewControllers: [UIViewController]) {
         tabBarController.setupViewControllers(with: viewControllers)
     }
-    
+  
+    private func moveCaptureViewController() {
+        let captureCoordinator = CaptureCoordinator(navigationController: navigationController)
+        captureCoordinator.start()
+        childCoordinators.append(captureCoordinator)
+    }
 }
 
 // MARK: - Make Child ViewControllers
@@ -59,17 +64,18 @@ private extension TabBarCoordinator {
         return UINavigationController(rootViewController: homeVC)
     }
     
-    func makeCaptureTabPage() -> UINavigationController {
-        let captureVC = CaptureViewController()
-        return UINavigationController(rootViewController: captureVC)
-    }
-    
-    func makeGroupTabPage() -> UINavigationController  {
+    func makeGroupTabPage() -> UINavigationController {
         let groupListVC = GroupListViewController()
         
         groupListVC.tabBarItem.image = SymbolImage.groupTabItem
         groupListVC.tabBarItem.title = TabItemType.group.title
         
         return UINavigationController(rootViewController: groupListVC)
+    }
+}
+
+extension TabBarCoordinator: TabBarViewControllerDelegate {
+    func captureButtonDidClicked() {
+        moveCaptureViewController()
     }
 }
