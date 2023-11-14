@@ -23,6 +23,7 @@ final class CaptureCoordinator: Coordinator {
     
     func start() {
         let captureVC = CaptureViewController()
+        captureVC.coordinator = self
 //        captureVC.modalPresentationStyle = .fullScreen
         navigationController.present(captureVC, animated: true)
     }

@@ -11,7 +11,7 @@ import Core
 class CaptureViewController: UIViewController {
 
     // MARK: - Properties
-    private weak var coordinator: CaptureCoordinator?
+    weak var coordinator: CaptureCoordinator?
     
     // MARK: - Life Cycles
     override func viewDidLoad() {

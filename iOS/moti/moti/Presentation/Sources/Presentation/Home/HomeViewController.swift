@@ -11,6 +11,8 @@ import Core
 
 class HomeViewController: BaseViewController<HomeView> {
 
+    // MARK: - Properties
+    weak var coordinator: HomeCoordinator?
     private let viewModel: RecordListViewModel
     private var cancellables: Set<AnyCancellable> = []
     

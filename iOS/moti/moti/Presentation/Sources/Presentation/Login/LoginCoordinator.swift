@@ -27,6 +27,8 @@ public final class LoginCoordinator: Coordinator {
         let loginUseCase = LoginUseCase(repository: MockLoginRepository())
         let loginVM = LoginViewModel(loginUseCase: loginUseCase)
         let loginVC = LoginViewController(viewModel: loginVM)
+        loginVC.coordinator = self
+        
         navigationController.viewControllers = [loginVC]
     }
 }
