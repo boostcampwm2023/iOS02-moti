@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Core
 
 class CaptureViewController: UIViewController {
 
@@ -13,6 +14,11 @@ class CaptureViewController: UIViewController {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        Logger.debug("Capture: " + #function)
     }
 
 }

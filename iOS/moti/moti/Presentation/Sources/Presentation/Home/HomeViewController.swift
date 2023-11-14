@@ -83,6 +83,11 @@ class HomeViewController: BaseViewController<HomeView> {
         
         viewModel.setupDataSource(diffableDataSource)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        Logger.debug("Home " + #function)
+    }
 
 }
 
