@@ -5,7 +5,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MotiPolicyCreate } from '../dto/moti-policy-create';
 import { ApiData } from '../../common/api/api-data';
 
-@Controller('operate')
+@Controller('/api/v1/operate')
 @ApiTags('운영 API')
 export class OperateController {
   constructor(private readonly operateService: OperateService) {}
