@@ -9,7 +9,8 @@ import UIKit
 
 public extension UIFont {
     static let small = UIFont.systemFont(ofSize: 12)
-    static let medium = UIFont.systemFont(ofSize: 24)
-    static let big = UIFont.systemFont(ofSize: 36)
-    static let bigBold = UIFont.boldSystemFont(ofSize: 36)
+    static let medium = UIFont.systemFont(ofSize: 14)
+    static let large = UIFont.systemFont(ofSize: 24)
+    static let xlarge = UIFont.systemFont(ofSize: 36)
+    static let xlargeBold = UIFont.boldSystemFont(ofSize: 36)
 }

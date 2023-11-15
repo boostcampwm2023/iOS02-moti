@@ -1,5 +1,5 @@
 //
-//  Record.swift
+//  Achievement.swift
 //
 //
 //  Created by Kihyun Lee on 11/14/23.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Record: Hashable {
+public struct Achievement: Hashable {
     public let id: String
     public let category: String
     public let title: String

@@ -1,5 +1,5 @@
 //
-//  RecordCollectionViewCell.swift
+//  AchievementCollectionViewCell.swift
 //
 //
 //  Created by Kihyun Lee on 11/14/23.
@@ -7,13 +7,16 @@
 
 import UIKit
 import Jeongfisher
+import Design
 
-final class RecordCollectionViewCell: UICollectionViewCell {
-    static let cellHeight: CGFloat = 130
-    private static let placeholder = UIImage(systemName: "photo")?.withTintColor(.lightGray, renderingMode: .alwaysOriginal)
+final class AchievementCollectionViewCell: UICollectionViewCell {
+    private let imageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
     
-    private let imageView = UIImageView()
-    
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -24,27 +27,27 @@ final class RecordCollectionViewCell: UICollectionViewCell {
         setupUI()
     }
     
+    // MARK: - Setup
     private func setupUI() {
         addSubview(imageView)
         imageView.atl
             .all(of: self)
     }
     
-    private func reset() {
+    // MARK: - Methods
+    override func prepareForReuse() {
+        super.prepareForReuse()
         imageView.image = nil
     }
     
     func configure(imageURL: String) {
-        reset()
-
         if let url = URL(string: imageURL) {
-            imageView.jf.setImage(with: url, placeHolder: Self.placeholder)
+            imageView.jf.setImage(with: url)
         }
     }
     
     func showSkeleton() {
         imageView.backgroundColor = .lightGray
-        imageView.image = Self.placeholder
     }
     
     func hideSkeleton() {

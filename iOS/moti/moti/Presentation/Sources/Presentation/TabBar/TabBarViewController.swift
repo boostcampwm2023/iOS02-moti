@@ -35,7 +35,8 @@ final class TabBarViewController: UITabBarController {
     // MARK: - Actions
     private func addTarget() {
         captureButton.addTarget(self, action: #selector(captureButtonTouchDown), for: .touchDown)
-        captureButton.addTarget(self, action: #selector(captureButtonTouchUp), for: .touchUpInside)
+        captureButton.addTarget(self, action: #selector(captureButtonTouchUpInside), for: .touchUpInside)
+        captureButton.addTarget(self, action: #selector(captureButtonTouchUpOutside), for: .touchUpOutside)
     }
     
     @objc private func captureButtonTouchDown() {
@@ -45,9 +46,15 @@ final class TabBarViewController: UITabBarController {
         }
     }
     
-    @objc private func captureButtonTouchUp() {
+    @objc private func captureButtonTouchUpInside() {
         tabBarDelegate?.captureButtonDidClicked()
         
+        UIView.animate(withDuration: 0.2) {
+            self.circleView.transform = .identity
+        }
+    }
+    
+    @objc private func captureButtonTouchUpOutside() {
         UIView.animate(withDuration: 0.2) {
             self.circleView.transform = .identity
         }
