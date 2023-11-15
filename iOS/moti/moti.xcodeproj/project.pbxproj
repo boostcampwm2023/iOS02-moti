@@ -21,10 +21,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2088517B2B045EBE00B8EF9F /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
 		208B25F82AFBC0DF00B017BE /* Presentation */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Presentation; sourceTree = "<group>"; };
 		208B25FC2AFBC1FC00B017BE /* Data */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Data; sourceTree = "<group>"; };
 		20CC16852AFB72FE001E7ECE /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
-		9B1597972B0449BC0021C580 /* Secret.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secret.xcconfig; sourceTree = "<group>"; };
 		9B5213892AFB63F100A8ED7E /* moti.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = moti.entitlements; sourceTree = "<group>"; };
 		9BBD72512B01FE9C00148175 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		9BBD72572B0201FC00148175 /* Core */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Core; sourceTree = "<group>"; };
@@ -68,8 +68,8 @@
 		9BDD6D412AFB303200B65102 = {
 			isa = PBXGroup;
 			children = (
+				2088517B2B045EBE00B8EF9F /* Secret.xcconfig */,
 				20CC16852AFB72FE001E7ECE /* .swiftlint.yml */,
-				9B1597972B0449BC0021C580 /* Secret.xcconfig */,
 				9BDD6D4C2AFB303200B65102 /* moti */,
 				9BDD6D4B2AFB303200B65102 /* Products */,
 				9BE384D92AFBBED800207BC4 /* Frameworks */,
@@ -360,7 +360,7 @@
 		};
 		9BDD6D5F2AFB303400B65102 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9B1597972B0449BC0021C580 /* Secret.xcconfig */;
+			baseConfigurationReference = 2088517B2B045EBE00B8EF9F /* Secret.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -394,7 +394,7 @@
 		};
 		9BDD6D602AFB303400B65102 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9B1597972B0449BC0021C580 /* Secret.xcconfig */;
+			baseConfigurationReference = 2088517B2B045EBE00B8EF9F /* Secret.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

@@ -41,4 +41,3 @@ enum HttpMethod: String {
     case patch = "PATCH"
     case delete = "DELETE"
 }
-

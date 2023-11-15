@@ -25,4 +25,7 @@ public extension UIColor {
     
     /// 배경 색상
     static var motiBackground = UIColor(resource: .motiBackground)
+    
+    /// 일반 버튼이 눌렸을 때 색상
+    static var normalButtonHighlightColor = UIColor(resource: .skyBlue)
 }

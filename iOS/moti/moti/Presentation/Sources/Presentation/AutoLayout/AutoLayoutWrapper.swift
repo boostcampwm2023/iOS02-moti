@@ -9,10 +9,6 @@ import UIKit
 
 struct AutoLayoutWrapper {
     let view: UIView
-    
-    init(view: UIView) {
-        self.view = view
-    }
 }
 
 protocol AutoLayoutCompatible: UIView {
