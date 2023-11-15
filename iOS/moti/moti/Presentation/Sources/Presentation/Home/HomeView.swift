@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Design
 
 final class HomeView: UIView {
     

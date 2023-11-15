@@ -12,20 +12,20 @@ final class HeaderView: UICollectionViewCell {
     // MARK: - View
     private var categoryLabel: UILabel = {
         let label = UILabel()
-        label.font = .medium
+        label.font = .large
         return label
     }()
     
     private var countLabel: UILabel = {
         let label = UILabel()
-        label.font = .bigBold
+        label.font = .xlargeBold
         return label
     }()
     
     private var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "달성"
-        label.font = .big
+        label.font = .xlarge
         return label
     }()
     
