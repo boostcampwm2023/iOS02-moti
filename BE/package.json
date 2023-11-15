@@ -13,11 +13,11 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "NODE_ENV=production node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "NODE_ENV=test jest",
-    "test:watch": "NODE_ENV=test jest --watch",
-    "test:cov": "NOE_ENV=test jest --coverage",
+    "test": "NODE_ENV=test jest --maxWorkers=1 --forceExit --detectOpenHandles",
+    "test:watch": "NODE_ENV=test jest --maxWorkers=1 --forceExit --detectOpenHandles --watch",
+    "test:cov": "NOE_ENV=test jest --maxWorkers=1 --forceExit --detectOpenHandles --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --maxWorkers=1 --forceExit --detectOpenHandles --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.1",

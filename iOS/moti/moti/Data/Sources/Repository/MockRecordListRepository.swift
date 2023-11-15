@@ -1,5 +1,5 @@
 //
-//  MockRecordListRepository.swift
+//  MockAchievementListRepository.swift
 //
 //
 //  Created by Kihyun Lee on 11/14/23.
@@ -8,9 +8,9 @@
 import Foundation
 import Domain
 
-public struct MockRecordListRepository: RecordListRepositoryProtocol {
+public struct MockAchievementListRepository: AchievementListRepositoryProtocol {
     public init() { }
-    public func fetchRecordList() async throws -> [Record] {
+    public func fetchAchievementList() async throws -> [Achievement] {
         let json = """
         {
             "success": true,
@@ -57,9 +57,9 @@ public struct MockRecordListRepository: RecordListRepositoryProtocol {
         """
         
         guard let testData = json.data(using: .utf8) else { throw NetworkError.decode }
-        let recordListResponseDTO = try JSONDecoder().decode(RecordListResponseDTO.self, from: testData)
+        let achievementListResponseDTO = try JSONDecoder().decode(AchievementListResponseDTO.self, from: testData)
         
-        guard let recordListResponseDTO = recordListResponseDTO.data else { throw NetworkError.decode }
-        return recordListResponseDTO.map { Record(dto: $0) }
+        guard let achievementDTO = achievementListResponseDTO.data else { throw NetworkError.decode }
+        return achievementDTO.map { Achievement(dto: $0) }
     }
 }

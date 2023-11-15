@@ -1,14 +1,30 @@
-import { Repository } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { CustomRepository } from '../../config/typeorm/custom-repository.decorator';
+import { User } from '../domain/user.domain';
+import { TransactionalRepository } from '../../config/transaction-manager/transactional-repository';
 
 @CustomRepository(UserEntity)
-export class UserRepository extends Repository<UserEntity> {
-  async findOneByUserIdentifier(userIdentifier: string) {
-    return this.findOneBy({ userIdentifier: userIdentifier });
+export class UserRepository extends TransactionalRepository<UserEntity> {
+  async findOneByUserIdentifier(userIdentifier: string): Promise<User> {
+    const userEntity = await this.repository.findOneBy({
+      userIdentifier: userIdentifier,
+    });
+    return userEntity?.toModel();
   }
 
-  existByUserCode(userCode: string) {
-    return this.exist({ where: { userCode: userCode } });
+  async findOneByUserCode(userCode: string): Promise<User> {
+    const userEntity = await this.repository.findOneBy({
+      userCode: userCode,
+    });
+    return userEntity?.toModel();
+  }
+
+  async saveUser(user: User): Promise<User> {
+    const userEntity = UserEntity.from(user);
+    const saved = await this.repository.save(userEntity);
+    return saved.toModel();
+  }
+  async existByUserCode(userCode: string) {
+    return await this.repository.exist({ where: { userCode: userCode } });
   }
 }

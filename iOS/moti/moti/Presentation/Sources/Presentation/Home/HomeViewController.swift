@@ -13,10 +13,10 @@ final class HomeViewController: BaseViewController<HomeView> {
 
     // MARK: - Properties
     weak var coordinator: HomeCoordinator?
-    private let recordListViewModel: RecordListViewModel
+    private let viewModel: HomeViewModel
     
-    init(recordListViewModel: RecordListViewModel) {
-        self.recordListViewModel = recordListViewModel
+    init(viewModel: HomeViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -27,18 +27,26 @@ final class HomeViewController: BaseViewController<HomeView> {
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupDataSource()
+        setupAchievementDataSource()
+        setupCategoryDataSource()
         
-        try? recordListViewModel.fetchRecordList()
+        try? viewModel.fetchAchievementList()
+        viewModel.fetchCategories()
+        
+        // TODO: 카테고리 리스트 API를 받았을 때 실행시켜야 함. 지금은 임시로 0.1초 후에 실행
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+            self.layoutView.categoryCollectionView.selectItem(at: [0, 0], animated: false, scrollPosition: .init())
+            self.collectionView(self.layoutView.categoryCollectionView.self, didSelectItemAt: IndexPath(item: 0, section: 0))
+        })
     }
     
     // MARK: - Setup
-    private func setupDataSource() {
-        layoutView.recordCollectionView.delegate = self
-        let dataSource = RecordDiffableDataSource.DataSource(
-            collectionView: layoutView.recordCollectionView,
+    private func setupAchievementDataSource() {
+        layoutView.achievementCollectionView.delegate = self
+        let dataSource = HomeViewModel.AchievementDataSource.DataSource(
+            collectionView: layoutView.achievementCollectionView,
             cellProvider: { collectionView, indexPath, item in
-                let cell: RecordCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
+                let cell: AchievementCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
                 
                 if item.id.isEmpty {
                     cell.showSkeleton()
@@ -63,17 +71,43 @@ final class HomeViewController: BaseViewController<HomeView> {
             return headerView
         }
         
-        let diffableDataSource = RecordDiffableDataSource(dataSource: dataSource)
+        let diffableDataSource = HomeViewModel.AchievementDataSource(dataSource: dataSource)
+        viewModel.setupAchievementDataSource(diffableDataSource)
+    }
+    
+    private func setupCategoryDataSource() {
+        layoutView.categoryCollectionView.delegate = self
+        let dataSource = HomeViewModel.CategoryDataSource.DataSource(
+            collectionView: layoutView.categoryCollectionView,
+            cellProvider: { collectionView, indexPath, item in
+                let cell: CategoryCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
+                cell.configure(with: item)
+                return cell
+            }
+        )
         
-        diffableDataSource.update(with: recordListViewModel.records)
-        
-        recordListViewModel.setupDataSource(diffableDataSource)
+        let diffableDataSource = HomeViewModel.CategoryDataSource(dataSource: dataSource)
+        viewModel.setupCategoryDataSource(diffableDataSource)
     }
 }
 
 extension HomeViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell else { return }
+
+        // 눌렸을 때 Bounce 적용
+        // Highlight에만 적용하면 Select에서는 적용이 안 되서 별도로 적용함
+        UIView.animate(withDuration: 0.08, animations: {
+            cell.applyHighlightUI()
+            let scale = CGAffineTransform(scaleX: 0.97, y: 0.97)
+            cell.transform = scale
+        }, completion: { _ in
+            cell.transform = .identity
+        })
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard let cell = cell as? RecordCollectionViewCell else { return }
+        guard let cell = cell as? AchievementCollectionViewCell else { return }
         cell.cancelDownloadImage()
     }
 }

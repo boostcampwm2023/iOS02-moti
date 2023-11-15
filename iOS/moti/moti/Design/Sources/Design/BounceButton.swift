@@ -10,7 +10,7 @@ import UIKit
 open class BounceButton: UIButton {
     open override var isHighlighted: Bool {
         didSet {
-            isHighlighted ? hightlightAnimation() : nonhighlightAnimation()
+            isHighlighted ? hightlight() : normal()
         }
     }
     
@@ -34,35 +34,18 @@ open class BounceButton: UIButton {
         setTitleColor(.buttonTitleColor, for: .normal)
         setTitleColor(.bounceButtonHighlightTitleColor, for: .highlighted)
         
-        updateButtonColor()
+        self.applyNormalUI()
     }
     
-    private func updateButtonColor() {
-        if isHighlighted {
-            backgroundColor = .primaryBlue
-            layer.borderColor = UIColor.primaryBlue.cgColor
-        } else {
-            backgroundColor = .primaryGray
-            layer.borderColor = UIColor.primaryDarkGray.cgColor
-        }
+    private func hightlight() {
+        bounceAnimation(with: { [weak self] in
+            self?.applyHighlightUI()
+        })
     }
     
-    private func hightlightAnimation() {
-        UIView.animate(withDuration: animationDuration) {
-            self.updateButtonColor()
-            
-            // 95%로 크기를 줄임
-            let scale = CGAffineTransform(scaleX: 0.95, y: 0.95)
-            self.transform = scale
-        }
-    }
-    
-    private func nonhighlightAnimation() {
-        UIView.animate(withDuration: animationDuration) {
-            self.updateButtonColor()
-            
-            // 원래의 크기로 되돌림
-            self.transform = .identity
-        }
+    private func normal() {
+        normalAnimation(with: { [weak self] in
+            self?.applyNormalUI()
+        })
     }
 }

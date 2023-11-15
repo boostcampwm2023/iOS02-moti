@@ -8,13 +8,13 @@
 import Foundation
 import Domain
 
-struct RecordListResponseDTO: ResponseDTO {
+struct AchievementListResponseDTO: ResponseDTO {
     var success: Bool?
     var message: String?
-    var data: [RecordDTO]?
+    var data: [AchievementDTO]?
 }
 
-struct RecordDTO: Codable {
+struct AchievementDTO: Codable {
     let id: String?
     let category: String?
     let title: String?
@@ -24,8 +24,8 @@ struct RecordDTO: Codable {
     let date: String?
 }
 
-extension Record {
-    init(dto: RecordDTO) {
+extension Achievement {
+    init(dto: AchievementDTO) {
         self.init(
             id: dto.id ?? "",
             category: dto.category ?? "",
