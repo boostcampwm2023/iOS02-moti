@@ -13,7 +13,7 @@ import { ApiData } from '../../common/api/api-data';
 import { AuthenticatedUser } from '../../auth/decorator/athenticated-user.decorator';
 import { User } from '../../users/domain/user.domain';
 import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
-import { CategoryResponse } from '../domain/category.response';
+import { CategoryResponse } from '../dto/category.response';
 
 @Controller('/api/v1/category')
 @ApiTags('카테고리 API')
