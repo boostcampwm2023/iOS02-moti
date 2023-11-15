@@ -7,48 +7,27 @@
 
 import UIKit
 import Core
+import Design
 
-class CaptureViewController: UIViewController {
+final class CaptureViewController: UIViewController {
 
     // MARK: - Properties
     weak var coordinator: CaptureCoordinator?
     
-    // MARK: - View
-    private let cancelButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("취소", for: .normal)
-        button.setTitleColor(.primaryBlue, for: .normal)
-        button.setTitleColor(.normalButtonHighlightColor, for: .highlighted)
-        return button
-    }()
-    
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupUI()
     }
     
     // MARK: - Methods
     private func setupUI() {
         view.backgroundColor = .motiBackground
-        setupCancelButton()
-        addTarget()
-    }
-    
-    private func setupCancelButton() {
-        view.addSubview(cancelButton)
-        cancelButton.atl
-            .top(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: 20)
-            .left(equalTo: self.view.safeAreaLayoutGuide.leftAnchor, constant: 15)
-    }
-    
-    private func addTarget() {
-        cancelButton.addTarget(self, action: #selector(leftButtonAction), for: .touchUpInside)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(leftButtonAction))
     }
     
     @objc private func leftButtonAction() {
-        print("left button!")
+        coordinator?.finish()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
