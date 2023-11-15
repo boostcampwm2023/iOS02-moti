@@ -5,7 +5,7 @@ import { retrieveQueryRunner } from './index';
 export class TransactionalRepository<
   Entity extends ObjectLiteral,
 > extends Repository<Entity> {
-  get repository() {
+  get repository(): Repository<Entity> {
     return retrieveQueryRunner()?.manager.getRepository(this.target) || this;
   }
 }
