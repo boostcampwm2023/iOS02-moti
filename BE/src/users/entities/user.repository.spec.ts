@@ -40,8 +40,6 @@ describe('UserRepository test', () => {
       const findOne =
         await usersRepository.findOneByUserIdentifier('userIdentifier');
 
-      console.log(findOne);
-
       // then
       expect(findOne.userIdentifier).toBe('userIdentifier');
     });
