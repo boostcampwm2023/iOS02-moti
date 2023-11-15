@@ -12,21 +12,23 @@ open class NormalButton: UIButton {
         super.init(frame: .zero)
         setTitle(title, for: .normal)
         setImage(image, for: .normal)
-        setupUI()
+        setTitleColor(.primaryBlue, for: .normal)
+        setTitleColor(.normalButtonHighlightColor, for: .highlighted)
+        configuration = .plain()
+        configuration?.imagePlacement = .top
+        configuration?.imagePadding = 10
     }
     
-    public override init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
-        setupUI()
     }
     
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupUI()
     }
     
-    private func setupUI() {
-        setTitleColor(.primaryBlue, for: .normal)
-        setTitleColor(.normalButtonHighlightColor, for: .highlighted)
+    public func setColor(_ color: UIColor) {
+        setTitleColor(color, for: .normal)
+        tintColor = color
     }
 }
