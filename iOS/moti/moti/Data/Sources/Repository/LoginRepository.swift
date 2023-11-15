@@ -23,5 +23,4 @@ struct LoginRepository: LoginRepositoryProtocol {
         return UserToken(dto: userTokenDTO)
     }
     
-    
 }

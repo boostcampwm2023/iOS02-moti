@@ -16,6 +16,8 @@ class CaptureViewController: UIViewController {
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        Logger.debug("촬영 화면 로드!")
     }
 
     override func viewDidDisappear(_ animated: Bool) {

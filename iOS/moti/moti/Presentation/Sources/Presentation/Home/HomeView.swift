@@ -59,7 +59,7 @@ final class HomeView: UIView {
 
 private extension HomeView {
     func makeCompositionalLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+        let layout = UICollectionViewCompositionalLayout { (_, _) -> NSCollectionLayoutSection? in
             
             let itemPadding: CGFloat = 1
             let itemSize = NSCollectionLayoutSize(
@@ -73,8 +73,6 @@ private extension HomeView {
                 heightDimension: .absolute(RecordCollectionViewCell.cellHeight))
             
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item, item, item])
-//            iOS 16
-//            let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
             
             let section = NSCollectionLayoutSection(group: group)
             let headerSize = NSCollectionLayoutSize(

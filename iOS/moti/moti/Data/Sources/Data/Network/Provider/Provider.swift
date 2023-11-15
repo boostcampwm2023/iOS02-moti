@@ -29,4 +29,3 @@ struct Provider: ProviderProtocol {
         }
     }
 }
-
