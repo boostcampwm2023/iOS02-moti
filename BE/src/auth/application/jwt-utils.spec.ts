@@ -1,11 +1,24 @@
 import { JwtUtils } from './jwt-utils';
-import { JwtService } from '@nestjs/jwt';
 import { PublicKey } from '../index';
 import { InvalidTokenException } from '../exception/invalid-token.exception';
 import { ExpiredTokenException } from '../exception/expired-token.exception';
+import { ConfigModule } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { Test, TestingModule } from '@nestjs/testing';
+import { configServiceModuleOptions } from '../../config/config';
 
 describe('jwtUtils test', () => {
-  const jwtUtils = new JwtUtils(new JwtService());
+  let jwtUtils: JwtUtils;
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot(configServiceModuleOptions),
+        JwtModule.register({}),
+      ],
+      providers: [JwtUtils],
+    }).compile();
+    jwtUtils = module.get<JwtUtils>(JwtUtils);
+  });
 
   test('publicKey로 jwt를 검증한다.', () => {
     // given
@@ -67,7 +80,6 @@ describe('jwtUtils test', () => {
 
   test('IdentityToken에서 payloads를 파싱한다. ', () => {
     // given
-    const jwtUtils = new JwtUtils(new JwtService());
     const identityToken =
       'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwiYXVkIjoiY29tLm1vdGltYXRlLm1vdGkiLCJleHAiOjE5MjA1OTkxNjgsImlhdCI6MTY5OTYxMjczMiwic3ViIjoiMTIzNDU2LjEyNTU5ZWUxNTkyYjQ0YWY5NzA1ZmRhYmYyOGFlMzhiLjEyMzQiLCJjX2hhc2giOiJxSkd3ZEhyNEZYb055Qllobm5vQ21RIiwiYXV0aF90aW1lIjoxNjk5NjEyNzMyLCJub25jZV9zdXBwb3J0ZWQiOnRydWV9.hGOMbHw4R5poeuGb8igU15oP_oS8otDNTKqR1AGlTpxbHDs5HX848B8WA1TOqiM7sBb5zWFXPmvkRHu39DnymP83vG9Vsrc__iVRh2-mxJRd_83ligkaEY4OaqpfIChYVjKyXCKFpds4na0AasjebnZzSdZnhmIBG4nvxU8UPsNyUjHDibXRB37GJIsyCgvUmdPJeTNszxQtZZnMAGy9RYSXmeX2-7OeA15QBneY1PJk3vnaBdlmLiChR4FpiX42271h3C-28XEjcfjnw6u4RiggmQnYcGOCGcSG-dKhaizKSanZ6bti21qNAAFW4R2BVRy8E65wndKagI3J_ENMQQ';
 
@@ -77,6 +89,84 @@ describe('jwtUtils test', () => {
     // then
     expect(payloads['sub']).toEqual(
       '123456.12559ee1592b44af9705fdabf28ae38b.1234',
+    );
+  });
+
+  test('access token을 발급한다.', () => {
+    // given
+    const claims = { userCode: 'A1B2C3D' };
+    const issuedAt = new Date('2023-10-25T10:00:00+09:00');
+    const accessToken = jwtUtils.createToken(claims, issuedAt);
+
+    // when & then
+    expect(accessToken).toEqual(
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6IkExQjJDM0QiLCJpYXQiOjE2OTgxOTU2MDAsImV4cCI6MTY5ODE5OTIwMH0.JCWUvSYbhOyc8B30SRxvfBenh98gbJvs2eNGxSBW-QQ',
+    );
+    expect(jwtUtils.parsePayloads(accessToken)).toEqual({
+      exp: 1698199200,
+      iat: 1698195600,
+      userCode: 'A1B2C3D',
+    });
+  });
+
+  test('만료된 access token인 경우 ExpiredTokenExceptionException 에러를 던진다.', () => {
+    // given
+    const claims = { userCode: 'A1B2C3D' };
+    const issuedAt = new Date('2022-10-25T10:00:00+09:00');
+    const expiredAccessToken = jwtUtils.createToken(claims, issuedAt);
+    // when & then
+    expect(() => jwtUtils.validateToken(expiredAccessToken)).toThrow(
+      ExpiredTokenException,
+    );
+  });
+
+  test('변조된 access token인 경우 InvalidTokenException 에러를 던진다.', () => {
+    // given
+    const invalidAccessToken =
+      'ayJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWRlbnRpZmllciI6InNlaHllb25nIiwiaWF0IjoxNjk4MTk1NjAwLCJleHAiOjE2OTgxOTkyMDB9.GpLoCMUHISM4oik5_Ar9izFNdUGBLMKf4uh0GLUqMtY';
+
+    // when & then
+    expect(() => jwtUtils.validateToken(invalidAccessToken)).toThrow(
+      InvalidTokenException,
+    );
+  });
+
+  test('refresh token을 발급한다.', () => {
+    // given
+    const claims = { userCode: 'A1B2C3D' };
+    const issuedAt = new Date('2023-10-25T10:00:00+09:00');
+
+    const refreshToken = jwtUtils.createRefreshToken(claims, issuedAt);
+    // when & then
+    expect(refreshToken).toEqual(
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6IkExQjJDM0QiLCJpYXQiOjE2OTgxOTU2MDAsImV4cCI6MTY5ODgwMDQwMH0.0M7py_4K4-wggaVnglFhU88dNGIOc0vnXl7KWskFd60',
+    );
+    expect(jwtUtils.parsePayloads(refreshToken)).toEqual({
+      exp: 1698800400,
+      iat: 1698195600,
+      userCode: 'A1B2C3D',
+    });
+  });
+
+  test('만료된 refresh token인 경우 ExpiredTokenExceptionException 에러를 던진다.', () => {
+    // given
+    const claims = { userCode: 'A1B2C3D' };
+    const issuedAt = new Date('2022-10-25T10:00:00+09:00');
+    const expiredRefreshToken = jwtUtils.createRefreshToken(claims, issuedAt);
+    // when & then
+    expect(() => jwtUtils.validateRefreshToken(expiredRefreshToken)).toThrow(
+      ExpiredTokenException,
+    );
+  });
+
+  test('변조된 refresh token인 경우 InvalidTokenException 에러를 던진다.', () => {
+    // given
+    const InvalidRefreshToken =
+      'ayJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWRlbnRpZmllciI6InNlaHllb25nIiwiaWF0IjoxNjk4MTk1NjAwLCJleHAiOjE2OTgxOTkyMDB9.p9gJmNmunOKRh6KBj0gZM-PcxO2auuZ7TMd7sfSTF_s';
+
+    // when & then
+    expect(() => jwtUtils.validateRefreshToken(InvalidRefreshToken)).toThrow(
+      InvalidTokenException,
     );
   });
 });

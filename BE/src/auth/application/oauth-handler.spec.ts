@@ -11,7 +11,7 @@ describe('OauthHandler test', () => {
     new ConfigService(),
     new HttpService(),
   );
-  const jwtUtils = new JwtUtils(new JwtService());
+  const jwtUtils = new JwtUtils(new JwtService(), new ConfigService());
   const oauthHandler = new OauthHandler(oauthRequester, jwtUtils);
 
   test('apple ID 서버로 부터 public key를 가져와서 identityToken을 검증한다.', async () => {

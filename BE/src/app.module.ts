@@ -8,11 +8,13 @@ import { configServiceModuleOptions } from './config/config';
 import { AuthModule } from './auth/auth.module';
 import { TransactionModule } from './config/transaction-manager/transaction.module';
 import { OperateModule } from './operate/operate.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(configServiceModuleOptions),
     TypeOrmModule.forRootAsync(typeOrmModuleOptions),
+    UsersModule,
     AuthModule,
     TransactionModule,
     OperateModule,
