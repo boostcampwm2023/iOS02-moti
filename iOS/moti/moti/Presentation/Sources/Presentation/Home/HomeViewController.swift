@@ -27,15 +27,15 @@ final class HomeViewController: BaseViewController<HomeView> {
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupDataSource()
+        setupAchievementDataSource()
         
         try? viewModel.fetchAchievementList()
     }
     
     // MARK: - Setup
-    private func setupDataSource() {
+    private func setupAchievementDataSource() {
         layoutView.achievementCollectionView.delegate = self
-        let dataSource = AchievementDiffableDataSource.DataSource(
+        let dataSource = HomeViewModel.AchievementDataSource.DataSource(
             collectionView: layoutView.achievementCollectionView,
             cellProvider: { collectionView, indexPath, item in
                 let cell: AchievementCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
@@ -63,11 +63,8 @@ final class HomeViewController: BaseViewController<HomeView> {
             return headerView
         }
         
-        let diffableDataSource = AchievementDiffableDataSource(dataSource: dataSource)
-        
-        diffableDataSource.update(with: viewModel.achievements)
-        
-        viewModel.setupDataSource(diffableDataSource)
+        let diffableDataSource = HomeViewModel.AchievementDataSource(dataSource: dataSource)
+        viewModel.setupAchievementDataSource(diffableDataSource)
     }
 }
 
