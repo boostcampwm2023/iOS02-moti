@@ -10,7 +10,13 @@ import Core
 import Data
 import Domain
 
+public protocol LoginCoordinatorDelegate: AnyObject {
+    func finishLogin(token: UserToken)
+}
+
 public final class LoginCoordinator: Coordinator {
+    public weak var delegate: LoginCoordinatorDelegate?
+    
     public let parentCoordinator: Coordinator?
     public var childCoordinators: [Coordinator] = []
     public let navigationController: UINavigationController
@@ -28,7 +34,14 @@ public final class LoginCoordinator: Coordinator {
         let loginVM = LoginViewModel(loginUseCase: loginUseCase)
         let loginVC = LoginViewController(viewModel: loginVM)
         loginVC.coordinator = self
+        loginVC.delegate = self
         
         navigationController.viewControllers = [loginVC]
+    }
+}
+
+extension LoginCoordinator: LoginViewControllerDelegate {
+    func didLogin(token: UserToken) {
+        delegate?.finishLogin(token: token)
     }
 }
