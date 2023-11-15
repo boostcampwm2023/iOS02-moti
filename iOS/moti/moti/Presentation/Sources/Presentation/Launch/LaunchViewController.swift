@@ -46,11 +46,18 @@ final class LaunchViewController: BaseViewController<LaunchView> {
             .sink { [weak self] version in
                 guard let self else { return }
                 
-                Logger.debug("version: \(version)")
-                
                 sleep(1)
+                viewModel.fetchToken()
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$isSuccessLogin
+            .dropFirst()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isSuccessLogin in
+                guard let self else { return }
                 
-                delegate?.viewControllerDidLogin(isSuccess: false)
+                delegate?.viewControllerDidLogin(isSuccess: isSuccessLogin)
                 coordinator?.finish(animated: false)
             }
             .store(in: &cancellables)

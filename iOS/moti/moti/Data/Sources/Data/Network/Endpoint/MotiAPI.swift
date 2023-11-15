@@ -11,6 +11,7 @@ import Domain
 enum MotiAPI: EndpointProtocol {
     case version
     case login(requestValue: LoginRequestValue)
+    case autoLogin(requestValue: AutoLoginRequestValue)
 }
 
 extension MotiAPI {
@@ -18,14 +19,15 @@ extension MotiAPI {
         return "v1"
     }
     
-    var baseURL: String {        
+    var baseURL: String {
         return Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as! String
     }
     
     var path: String {
         switch self {
         case .version: return "/operate/policy"
-        case .login: return "/api/\(version)/auth/login"
+        case .login: return "/auth/login"
+        case .autoLogin: return "/auth/refresh"
         }
     }
     
@@ -33,6 +35,7 @@ extension MotiAPI {
         switch self {
         case .version: return .get
         case .login: return .post
+        case .autoLogin: return .post
         }
     }
     
@@ -46,10 +49,24 @@ extension MotiAPI {
             return nil
         case .login(let requestValue):
             return requestValue
+        case .autoLogin(let requestValue):
+            return requestValue
         }
     }
     
     var headers: [String: String]? {
-        return nil
+        switch self {
+        case .version:
+            return nil
+        case .login:
+            return nil
+        case .autoLogin:
+            // TODO: Keychain Storage로 변경
+            if let accessToken = UserDefaults.standard.string(forKey: "accessToken") {
+                return ["Authorization": "Bearer \(accessToken)"]
+            } else {
+                return nil
+            }
+        }
     }
 }

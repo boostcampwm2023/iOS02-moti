@@ -27,19 +27,19 @@ final class AppCoordinator: Coordinator {
         moveLaunchViewController()
     }
     
-    func moveLaunchViewController() {
+    private func moveLaunchViewController() {
         let launchCoordinator = LaunchCoodinator(navigationController, self)
         launchCoordinator.delegate = self
         start(coordinator: launchCoordinator)
     }
     
-    func moveLoginViewController() {
+    private func moveLoginViewController() {
         let loginCoordinator = LoginCoordinator(navigationController, self)
         loginCoordinator.delegate = self
         start(coordinator: loginCoordinator)
     }
     
-    func moveHomeViewController() {
+    private func moveHomeViewController() {
         let homeCoordinator = TabBarCoordinator(navigationController, self)
         start(coordinator: homeCoordinator)
     }

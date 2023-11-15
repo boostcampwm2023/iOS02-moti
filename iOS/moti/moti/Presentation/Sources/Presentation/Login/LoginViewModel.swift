@@ -25,10 +25,17 @@ final class LoginViewModel {
             let requestValue = LoginRequestValue(identityToken: identityToken)
             do {
                 userToken = try await loginUseCase.excute(requestValue: requestValue)
+                if let token = userToken {
+                    saveToken(token)
+                }
             } catch {
                 Logger.error(error)
             }
-            
         }
+    }
+    
+    func saveToken(_ token: UserToken) {
+        UserDefaults.standard.setValue(token.refreshToken, forKey: "refreshToken")
+        UserDefaults.standard.setValue(token.accessToken, forKey: "accessToken")
     }
 }
