@@ -23,8 +23,8 @@ public final class HomeCoordinator: Coordinator {
     }
     
     public func start() {
-        let recordListVM = RecordListViewModel(fetchRecordListUseCase: .init(repository: MockRecordListRepository()))
-        let homeVC = HomeViewController(recordListViewModel: recordListVM)
+        let homeVM = HomeViewModel(fetchAchievementListUseCase: .init(repository: MockAchievementListRepository()))
+        let homeVC = HomeViewController(viewModel: homeVM)
         homeVC.coordinator = self
         navigationController.viewControllers = [homeVC]
     }

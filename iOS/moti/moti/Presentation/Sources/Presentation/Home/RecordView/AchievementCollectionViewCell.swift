@@ -1,5 +1,5 @@
 //
-//  RecordCollectionViewCell.swift
+//  AchievementCollectionViewCell.swift
 //
 //
 //  Created by Kihyun Lee on 11/14/23.
@@ -8,7 +8,7 @@
 import UIKit
 import Jeongfisher
 
-final class RecordCollectionViewCell: UICollectionViewCell {
+final class AchievementCollectionViewCell: UICollectionViewCell {
     static let cellHeight: CGFloat = 130
     private static let placeholder = UIImage(systemName: "photo")?.withTintColor(.lightGray, renderingMode: .alwaysOriginal)
     

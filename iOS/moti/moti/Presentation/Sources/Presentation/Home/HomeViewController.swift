@@ -13,10 +13,10 @@ final class HomeViewController: BaseViewController<HomeView> {
 
     // MARK: - Properties
     weak var coordinator: HomeCoordinator?
-    private let recordListViewModel: RecordListViewModel
+    private let viewModel: HomeViewModel
     
-    init(recordListViewModel: RecordListViewModel) {
-        self.recordListViewModel = recordListViewModel
+    init(viewModel: HomeViewModel) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -29,16 +29,16 @@ final class HomeViewController: BaseViewController<HomeView> {
         super.viewDidLoad()
         setupDataSource()
         
-        try? recordListViewModel.fetchRecordList()
+        try? viewModel.fetchAchievementList()
     }
     
     // MARK: - Setup
     private func setupDataSource() {
-        layoutView.recordCollectionView.delegate = self
-        let dataSource = RecordDiffableDataSource.DataSource(
-            collectionView: layoutView.recordCollectionView,
+        layoutView.achievementCollectionView.delegate = self
+        let dataSource = AchievementDiffableDataSource.DataSource(
+            collectionView: layoutView.achievementCollectionView,
             cellProvider: { collectionView, indexPath, item in
-                let cell: RecordCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
+                let cell: AchievementCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
                 
                 if item.id.isEmpty {
                     cell.showSkeleton()
@@ -63,17 +63,17 @@ final class HomeViewController: BaseViewController<HomeView> {
             return headerView
         }
         
-        let diffableDataSource = RecordDiffableDataSource(dataSource: dataSource)
+        let diffableDataSource = AchievementDiffableDataSource(dataSource: dataSource)
         
-        diffableDataSource.update(with: recordListViewModel.records)
+        diffableDataSource.update(with: viewModel.achievements)
         
-        recordListViewModel.setupDataSource(diffableDataSource)
+        viewModel.setupDataSource(diffableDataSource)
     }
 }
 
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard let cell = cell as? RecordCollectionViewCell else { return }
+        guard let cell = cell as? AchievementCollectionViewCell else { return }
         cell.cancelDownloadImage()
     }
 }

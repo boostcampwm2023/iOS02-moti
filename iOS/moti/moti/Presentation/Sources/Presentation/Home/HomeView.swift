@@ -17,10 +17,10 @@ final class HomeView: UIView {
     }()
     
     // 달성 기록 리스트 컬렉션 뷰
-    lazy var recordCollectionView: UICollectionView = {
+    lazy var achievementCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCompositionalLayout())
         collectionView.backgroundColor = .motiBackground
-        collectionView.register(with: RecordCollectionViewCell.self)
+        collectionView.register(with: AchievementCollectionViewCell.self)
         collectionView.register(with: HeaderView.self, elementKind: UICollectionView.elementKindSectionHeader)
         return collectionView
     }()
@@ -37,7 +37,7 @@ final class HomeView: UIView {
     
     private func setupUI() {
         setupCategoryCollectionView()
-        setupRecordCollectionView()
+        setupAchievementCollectionView()
     }
     
     private func setupCategoryCollectionView() {
@@ -48,9 +48,9 @@ final class HomeView: UIView {
             .top(equalTo: self.topAnchor, constant: 120)
     }
     
-    private func setupRecordCollectionView() {
-        addSubview(recordCollectionView)
-        recordCollectionView.atl
+    private func setupAchievementCollectionView() {
+        addSubview(achievementCollectionView)
+        achievementCollectionView.atl
             .width(equalTo: self.widthAnchor)
             .top(equalTo: categoryCollectionView.bottomAnchor)
             .bottom(equalTo: self.bottomAnchor, constant: -10)
@@ -70,7 +70,7 @@ private extension HomeView {
 
             let groupSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .absolute(RecordCollectionViewCell.cellHeight))
+                heightDimension: .absolute(AchievementCollectionViewCell.cellHeight))
             
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item, item, item])
 //            iOS 16
