@@ -37,6 +37,7 @@ final class LaunchViewController: BaseViewController<LaunchView> {
         bind()
         
         try? viewModel.fetchVersion()
+        viewModel.fetchToken()
     }
     
     private func bind() {
@@ -50,7 +51,22 @@ final class LaunchViewController: BaseViewController<LaunchView> {
                 
                 sleep(1)
                 
-                delegate?.viewControllerDidLogin(isSuccess: true)
+                
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$token
+            .dropFirst()
+            .receive(on: RunLoop.main)
+            .sink { [weak self] userToken in
+                guard let self else { return }
+                
+                if let userToken = userToken {
+                    delegate?.viewControllerDidLogin(isSuccess: true)
+                } else {
+                    delegate?.viewControllerDidLogin(isSuccess: false)
+                }
+                
                 coordinator?.finish(animated: false)
             }
             .store(in: &cancellables)
