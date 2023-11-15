@@ -1,4 +1,11 @@
-import {Body, Controller, HttpCode, HttpStatus, Post, UseGuards} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { CategoryService } from '../application/category.service';
 import { CategoryCreate } from '../dto/category-create';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -6,6 +13,7 @@ import { ApiData } from '../../common/api/api-data';
 import { AuthenticatedUser } from '../../auth/decorator/athenticated-user.decorator';
 import { User } from '../../users/domain/user.domain';
 import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
+import { CategoryResponse } from '../domain/category.response';
 
 @Controller('/api/v1/category')
 @ApiTags('카테고리 API')
@@ -27,6 +35,6 @@ export class CategoryController {
       categoryCreate,
       user,
     );
-    return ApiData.success(category);
+    return ApiData.success(CategoryResponse.from(category));
   }
 }
