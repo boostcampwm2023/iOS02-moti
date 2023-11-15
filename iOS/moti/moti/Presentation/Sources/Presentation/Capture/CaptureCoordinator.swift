@@ -26,7 +26,7 @@ final class CaptureCoordinator: Coordinator {
         captureVC.coordinator = self
         
         let navVC = UINavigationController(rootViewController: captureVC)
-//        navVC.modalPresentationStyle = .fullScreen
+        navVC.modalPresentationStyle = .fullScreen
         navigationController.present(navVC, animated: true)
     }
     
