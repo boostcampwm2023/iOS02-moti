@@ -9,6 +9,7 @@ import UIKit
 
 final class HomeView: UIView {
     
+    // MARK: - Views
     // 카테고리 리스트 컬렉션 뷰
     let categoryCollectionView = {
         let collectionView = UIView()
@@ -17,14 +18,15 @@ final class HomeView: UIView {
     }()
     
     // 달성 기록 리스트 컬렉션 뷰
-    lazy var achievementCollectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCompositionalLayout())
+    private(set) lazy var achievementCollectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeAchievementCollectionView())
         collectionView.backgroundColor = .motiBackground
         collectionView.register(with: AchievementCollectionViewCell.self)
         collectionView.register(with: HeaderView.self, elementKind: UICollectionView.elementKindSectionHeader)
         return collectionView
     }()
     
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -35,6 +37,7 @@ final class HomeView: UIView {
         setupUI()
     }
     
+    // MARK: - Setup
     private func setupUI() {
         setupCategoryCollectionView()
         setupAchievementCollectionView()
@@ -45,7 +48,7 @@ final class HomeView: UIView {
         categoryCollectionView.atl
             .width(equalTo: self.widthAnchor)
             .height(constant: 50)
-            .top(equalTo: self.topAnchor, constant: 120)
+            .top(equalTo: self.safeAreaLayoutGuide.topAnchor)
     }
     
     private func setupAchievementCollectionView() {
@@ -53,43 +56,31 @@ final class HomeView: UIView {
         achievementCollectionView.atl
             .width(equalTo: self.widthAnchor)
             .top(equalTo: categoryCollectionView.bottomAnchor)
-            .bottom(equalTo: self.bottomAnchor, constant: -10)
+            .bottom(equalTo: self.bottomAnchor)
     }
 }
 
 private extension HomeView {
-    func makeCompositionalLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
-            
-            let itemPadding: CGFloat = 1
-            let itemSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0 / 3),
-                heightDimension: .fractionalHeight(1.0))
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            item.contentInsets = NSDirectionalEdgeInsets(top: itemPadding, leading: itemPadding, bottom: itemPadding, trailing: itemPadding)
-
-            let groupSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .absolute(AchievementCollectionViewCell.cellHeight))
-            
-            let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item, item, item])
-//            iOS 16
-//            let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 1)
-            
-            let section = NSCollectionLayoutSection(group: group)
-            let headerSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .estimated(96))
-            let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-                layoutSize: headerSize,
-                elementKind: UICollectionView.elementKindSectionHeader,
-                alignment: .top)
-
-            section.boundarySupplementaryItems = [sectionHeader]
-            section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-            return section
-        }
+    func makeAchievementCollectionView() -> UICollectionViewLayout {
+        let itemPadding: CGFloat = 1
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0 / 3),
+            heightDimension: .fractionalHeight(1))
+        let itemInset = NSDirectionalEdgeInsets(top: itemPadding, leading: itemPadding, bottom: itemPadding, trailing: itemPadding)
         
-        return layout
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: itemSize.widthDimension)
+        
+        let headerSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(96))
+        
+        return CompositionalLayoutFactory.makeVerticalCompositionalLayout(
+            itemSize: itemSize,
+            itemInset: itemInset,
+            groupSize: groupSize,
+            subitemCount: 3,
+            sectionHeaderSize: headerSize)
     }
 }
