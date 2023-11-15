@@ -18,8 +18,8 @@ extension MotiAPI {
         return "v1"
     }
     
-    var baseURL: String {
-        return "https://www.motimate.site"
+    var baseURL: String {        
+        return Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as! String
     }
     
     var path: String {
