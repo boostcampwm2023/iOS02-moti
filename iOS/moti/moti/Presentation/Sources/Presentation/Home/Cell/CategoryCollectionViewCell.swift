@@ -20,7 +20,6 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    // Highlighted 상태일 때 Bounce 애니메이션 적용
     override var isHighlighted: Bool {
         didSet {
             if isHighlighted {
@@ -54,21 +53,28 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
     }
     
     private func setupUI() {
-        contentView.layer.masksToBounds = true
-        contentView.layer.cornerRadius = contentView.frame.height / 2
+        self.applyNormalUI()
+        self.layer.cornerRadius = CornerRadius.big
         
         addSubview(label)
         label.atl
-            .all(of: self)
+            .centerY(equalTo: centerYAnchor)
+            .left(equalTo: leftAnchor, constant: 10)
+            .right(equalTo: rightAnchor, constant: -10)
     }
     
     // MARK: - Methods
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        isSelected = false
+    func configure(with title: String) {
+        label.text = title
     }
     
-    func configure(with title: String) {
-        
+    override func applyHighlightUI() {
+        super.applyHighlightUI()
+        label.textColor = .bounceButtonHighlightTitleColor
+    }
+    
+    override func applyNormalUI() {
+        super.applyNormalUI()
+        label.textColor = .buttonTitleColor
     }
 }

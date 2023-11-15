@@ -8,17 +8,19 @@
 import UIKit
 
 public extension UIView {
-    func applyHighlightUI() {
+    @objc open func applyHighlightUI() {
         backgroundColor = .primaryBlue
         layer.borderColor = UIColor.primaryBlue.cgColor
+        layer.borderWidth = 1
     }
     
-    func applyNormalUI() {
+    @objc open func applyNormalUI() {
         backgroundColor = .primaryGray
         layer.borderColor = UIColor.primaryDarkGray.cgColor
+        layer.borderWidth = 1
     }
     
-    func bounceAnimation(
+    open func bounceAnimation(
         scale: CGFloat = 0.95,
         duration: CGFloat = 0.08,
         with animation: (() -> Void)? = nil
@@ -30,7 +32,7 @@ public extension UIView {
         }
     }
     
-    func normalAnimation(
+    open func normalAnimation(
         duration: CGFloat = 0.08,
         with animation: (() -> Void)? = nil
     ) {

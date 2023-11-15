@@ -12,9 +12,10 @@ final class HomeView: UIView {
     
     // MARK: - Views
     // 카테고리 리스트 컬렉션 뷰
-    let categoryCollectionView = {
-        let collectionView = UIView()
-        collectionView.backgroundColor = .blue
+    private(set) lazy var categoryCollectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCategoryCollectionView())
+        collectionView.backgroundColor = .motiBackground
+        collectionView.register(with: CategoryCollectionViewCell.self)
         return collectionView
     }()
     
@@ -48,7 +49,7 @@ final class HomeView: UIView {
         addSubview(categoryCollectionView)
         categoryCollectionView.atl
             .width(equalTo: self.widthAnchor)
-            .height(constant: 50)
+            .height(constant: 37)
             .top(equalTo: self.safeAreaLayoutGuide.topAnchor)
     }
     
@@ -83,5 +84,18 @@ private extension HomeView {
             groupSize: groupSize,
             subitemCount: 3,
             sectionHeaderSize: headerSize)
+    }
+    
+    func makeCategoryCollectionView() -> UICollectionViewLayout {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .estimated(44),
+            heightDimension: .fractionalHeight(1))
+        
+        let groupEdgeSpacing = NSCollectionLayoutEdgeSpacing(leading: .fixed(5), top: .none, trailing: .none, bottom: .none)
+
+        return CompositionalLayoutFactory.makeHorizontalCompositionalLayout(
+            itemSize: itemSize,
+            groupSize: itemSize,
+            groupEdgeSpacing: groupEdgeSpacing)
     }
 }
