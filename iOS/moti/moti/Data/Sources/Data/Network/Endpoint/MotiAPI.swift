@@ -19,7 +19,7 @@ extension MotiAPI {
         return "v1"
     }
     
-    var baseURL: String {        
+    var baseURL: String {
         return Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as! String
     }
     
@@ -27,7 +27,7 @@ extension MotiAPI {
         switch self {
         case .version: return "/operate/policy"
         case .login: return "/auth/login"
-        case .autoLogin: return "auth/refresh"
+        case .autoLogin: return "/auth/refresh"
         }
     }
     
@@ -55,6 +55,18 @@ extension MotiAPI {
     }
     
     var headers: [String: String]? {
-        return nil
+        switch self {
+        case .version:
+            return nil
+        case .login:
+            return nil
+        case .autoLogin:
+            // TODO: Keychain Storage로 변경
+            if let accessToken = UserDefaults.standard.string(forKey: "accessToken") {
+                return ["Authorization": "Bearer \(accessToken)"]
+            } else {
+                return nil
+            }
+        }
     }
 }
