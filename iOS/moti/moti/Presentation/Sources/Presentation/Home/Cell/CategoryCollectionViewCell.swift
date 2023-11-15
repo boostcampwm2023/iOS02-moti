@@ -23,13 +23,9 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
     override var isHighlighted: Bool {
         didSet {
             if isHighlighted {
-                bounceAnimation(with: { [weak self] in
-                    self?.applyHighlightUI()
-                })
+                bounceAnimation()
             } else {
-                normalAnimation(with: { [weak self] in
-                    self?.applyNormalUI()
-                })
+                normalAnimation()
             }
         }
     }

@@ -18,11 +18,26 @@ final class HomeViewModel {
     private let fetchAchievementListUseCase: FetchAchievementListUseCase
     
     private var categories: [String] = [
-        "글자 크기가",
-        "다른 문자열입니다.",
-        "글자",
-        "크기가 다른",
-        "문자열"
+        "글자 크기가1",
+        "다른 문자열입니다.2",
+        "글자3",
+        "크기가 다른4",
+        "문자열5",
+        "글자 크기가6",
+        "다른 문자열입니다.7",
+        "글자8",
+        "크기가 다른9",
+        "문자열10",
+        "글자 크기가11",
+        "다른 문자열입니다.12",
+        "글자13",
+        "크기가 다른14",
+        "문자열15",
+        "글자 크기가16",
+        "다른 문자열입니다.17",
+        "글자18",
+        "크기가 다른19",
+        "문자열20"
     ]
     private var achievements: [Achievement] = []
     

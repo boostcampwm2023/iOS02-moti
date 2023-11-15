@@ -32,6 +32,12 @@ final class HomeViewController: BaseViewController<HomeView> {
         
         try? viewModel.fetchAchievementList()
         viewModel.fetchCategories()
+        
+        // TODO: 카테고리 리스트 API를 받았을 때 실행시켜야 함. 지금은 임시로 0.1초 후에 실행
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+            self.layoutView.categoryCollectionView.selectItem(at: [0, 0], animated: false, scrollPosition: .init())
+            self.collectionView(self.layoutView.categoryCollectionView.self, didSelectItemAt: IndexPath(item: 0, section: 0))
+        })
     }
     
     // MARK: - Setup
@@ -93,7 +99,7 @@ extension HomeViewController: UICollectionViewDelegate {
         // Highlight에만 적용하면 Select에서는 적용이 안 되서 별도로 적용함
         UIView.animate(withDuration: 0.08, animations: {
             cell.applyHighlightUI()
-            let scale = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            let scale = CGAffineTransform(scaleX: 0.97, y: 0.97)
             cell.transform = scale
         }, completion: { _ in
             cell.transform = .identity
