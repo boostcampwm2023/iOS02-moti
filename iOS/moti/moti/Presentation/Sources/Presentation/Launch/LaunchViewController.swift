@@ -50,7 +50,7 @@ final class LaunchViewController: BaseViewController<LaunchView> {
                 
                 sleep(1)
                 
-                delegate?.viewControllerDidLogin(isSuccess: true)
+                delegate?.viewControllerDidLogin(isSuccess: false)
                 coordinator?.finish(animated: false)
             }
             .store(in: &cancellables)

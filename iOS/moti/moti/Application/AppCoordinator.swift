@@ -8,6 +8,7 @@
 import UIKit
 import Presentation
 import Core
+import Domain
 
 final class AppCoordinator: Coordinator {
     let parentCoordinator: Coordinator?
@@ -34,6 +35,7 @@ final class AppCoordinator: Coordinator {
     
     func moveLoginViewController() {
         let loginCoordinator = LoginCoordinator(navigationController, self)
+        loginCoordinator.delegate = self
         start(coordinator: loginCoordinator)
     }
     
@@ -55,5 +57,12 @@ extension AppCoordinator: LaunchCoodinatorDelegate {
     
     func failedAutoLogin(_ coordinator: LaunchCoodinator) {
         moveLoginViewController()
+    }
+}
+
+extension AppCoordinator: LoginCoordinatorDelegate {
+    func finishLogin(token: UserToken) {
+        Logger.info("Success Login. 홈 화면으로 이동")
+        moveHomeViewController()
     }
 }
