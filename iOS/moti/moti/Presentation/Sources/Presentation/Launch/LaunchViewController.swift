@@ -37,7 +37,6 @@ final class LaunchViewController: BaseViewController<LaunchView> {
         bind()
         
         try? viewModel.fetchVersion()
-        viewModel.fetchToken()
     }
     
     private func bind() {
@@ -47,26 +46,18 @@ final class LaunchViewController: BaseViewController<LaunchView> {
             .sink { [weak self] version in
                 guard let self else { return }
                 
-                Logger.debug("version: \(version)")
-                
                 sleep(1)
-                
-                
+                viewModel.fetchToken()
             }
             .store(in: &cancellables)
         
-        viewModel.$token
+        viewModel.$isSuccessLogin
             .dropFirst()
             .receive(on: RunLoop.main)
-            .sink { [weak self] userToken in
+            .sink { [weak self] isSuccessLogin in
                 guard let self else { return }
                 
-                if let userToken = userToken {
-                    delegate?.viewControllerDidLogin(isSuccess: true)
-                } else {
-                    delegate?.viewControllerDidLogin(isSuccess: false)
-                }
-                
+                delegate?.viewControllerDidLogin(isSuccess: isSuccessLogin)
                 coordinator?.finish(animated: false)
             }
             .store(in: &cancellables)

@@ -7,36 +7,65 @@
 
 import Foundation
 import Domain
+import Core
 
 final class LaunchViewModel {
     
     private let fetchVersionUseCase: FetchVersionUseCase
+    private let autoLoginUseCase: AutoLoginUseCase
     
     @Published private(set) var version: Version?
-    @Published private(set) var refreshToken: String?
+    @Published private(set) var isSuccessLogin = false
+    private var token: UserToken?
     
-    init(fetchVersionUseCase: FetchVersionUseCase) {
+    init(
+        fetchVersionUseCase: FetchVersionUseCase,
+        autoLoginUseCase: AutoLoginUseCase
+    ) {
         self.fetchVersionUseCase = fetchVersionUseCase
+        self.autoLoginUseCase = autoLoginUseCase
     }
     
     func fetchVersion() throws {
         Task {
             version = try await fetchVersionUseCase.execute()
+            Logger.debug("version: \(String(describing: version))")
         }
     }
     
     func fetchToken() {
         // Keychain 저장소로 변경
-        self.refreshToken = UserDefaults.standard.string(forKey: "refreshToken")
-        
-//        token = UserToken(
-//            accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6Ilk0Q0Y1NDciLCJpYXQiOjE3MDAwNDUzOTMsImV4cCI6MTcwMDA0ODk5M30.PpzAaYuAQ262bZ9Ix0D85578xxRrb08e5SxlwxNr53E",
-//            refreshToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyQ29kZSI6Ilk0Q0Y1NDciLCJpYXQiOjE3MDAwNDUzOTMsImV4cCI6MTcwMDY1MDE5M30.H6t0xZyK0OlFurEv9XO25D6ggwdUscIBd5LY4gFXC3g",
-//            user: User(code: "Y4CF547", avatarURL: nil)
-//        )
+        if let refreshToken = UserDefaults.standard.string(forKey: "refreshToken") {
+            Logger.debug("refreshToken으로 자동 로그인 시도")
+            requestAutoLogin(using: refreshToken)
+        } else {
+            Logger.debug("자동 로그인 실패")
+            isSuccessLogin = false
+        }
     }
     
-    func login() {
-        
+    func requestAutoLogin(using refreshToken: String) {
+        Task {
+            do {
+                let requestValue = AutoLoginRequestValue(refreshToken: refreshToken)
+                let token = try await autoLoginUseCase.excute(requestValue: requestValue)
+                saveToken(token)
+                isSuccessLogin = true
+            } catch {
+                isSuccessLogin = false
+                Logger.error(error)
+            }
+        }
+    }
+    
+    // TODO: UserDefaultsStorage로 변경해서 UseCase로 사용하기
+    func saveToken(_ token: UserToken) {
+        UserDefaults.standard.setValue(token.refreshToken, forKey: "refreshToken")
+        UserDefaults.standard.setValue(token.accessToken, forKey: "accessToken")
+    }
+    
+    func resetToken() {
+        UserDefaults.standard.removeObject(forKey: "refreshToken")
+        UserDefaults.standard.removeObject(forKey: "accessToken")
     }
 }

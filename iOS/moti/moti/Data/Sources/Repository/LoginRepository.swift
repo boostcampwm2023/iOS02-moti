@@ -23,4 +23,11 @@ struct LoginRepository: LoginRepositoryProtocol {
         return UserToken(dto: userTokenDTO)
     }
     
+    func autoLogin(requestValue: AutoLoginRequestValue) async throws -> UserToken {
+        let endpoint = MotiAPI.autoLogin(requestValue: requestValue)
+        let responseDTO = try await provider.request(with: endpoint, type: LoginResponseDTO.self)
+        
+        guard let userTokenDTO = responseDTO.data else { throw NetworkError.decode }
+        return UserToken(dto: userTokenDTO)
+    }
 }

@@ -11,6 +11,7 @@ import Domain
 enum MotiAPI: EndpointProtocol {
     case version
     case login(requestValue: LoginRequestValue)
+    case autoLogin(requestValue: AutoLoginRequestValue)
 }
 
 extension MotiAPI {
@@ -25,7 +26,8 @@ extension MotiAPI {
     var path: String {
         switch self {
         case .version: return "/operate/policy"
-        case .login: return "/api/\(version)/auth/login"
+        case .login: return "/auth/login"
+        case .autoLogin: return "auth/refresh"
         }
     }
     
@@ -33,6 +35,7 @@ extension MotiAPI {
         switch self {
         case .version: return .get
         case .login: return .post
+        case .autoLogin: return .post
         }
     }
     
@@ -45,6 +48,8 @@ extension MotiAPI {
         case .version: 
             return nil
         case .login(let requestValue):
+            return requestValue
+        case .autoLogin(let requestValue):
             return requestValue
         }
     }
