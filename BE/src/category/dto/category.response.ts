@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Category } from './category.domain';
+import { Category } from '../domain/category.domain';
 
 export class CategoryResponse {
   @ApiProperty({ description: '카테고리 이름' })
