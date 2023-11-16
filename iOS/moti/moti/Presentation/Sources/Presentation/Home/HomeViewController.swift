@@ -8,6 +8,7 @@
 import UIKit
 import Combine
 import Core
+import Design
 
 final class HomeViewController: BaseViewController<HomeView> {
 
@@ -27,6 +28,7 @@ final class HomeViewController: BaseViewController<HomeView> {
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupAchievementDataSource()
         setupCategoryDataSource()
         

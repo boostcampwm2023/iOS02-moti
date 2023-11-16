@@ -8,5 +8,6 @@
 import Foundation
 
 public protocol LoginRepositoryProtocol {
+    func autoLogin(requestValue: AutoLoginRequestValue) async throws -> UserToken
     func login(requestValue: LoginRequestValue) async throws -> UserToken
 }
