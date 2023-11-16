@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2064660C2B0319B200EE0714 /* Jeongfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 2064660B2B0319B200EE0714 /* Jeongfisher */; };
 		20CC16862AFB72FE001E7ECE /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 20CC16852AFB72FE001E7ECE /* .swiftlint.yml */; };
 		9B3715DA2AFE2BA70041FCE7 /* Presentation in Frameworks */ = {isa = PBXBuildFile; productRef = 9B3715D92AFE2BA70041FCE7 /* Presentation */; };
 		9BA349EA2B0202A90048928D /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 9BA349E92B0202A90048928D /* Core */; };
@@ -47,7 +46,6 @@
 				9BA349EA2B0202A90048928D /* Core in Frameworks */,
 				9B3715DA2AFE2BA70041FCE7 /* Presentation in Frameworks */,
 				9BE384E32AFCA7B100207BC4 /* Data in Frameworks */,
-				2064660C2B0319B200EE0714 /* Jeongfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,7 +135,6 @@
 				9BE384E22AFCA7B100207BC4 /* Data */,
 				9B3715D92AFE2BA70041FCE7 /* Presentation */,
 				9BA349E92B0202A90048928D /* Core */,
-				2064660B2B0319B200EE0714 /* Jeongfisher */,
 			);
 			productName = moti;
 			productReference = 9BDD6D4A2AFB303200B65102 /* moti.app */;
@@ -168,7 +165,6 @@
 			);
 			mainGroup = 9BDD6D412AFB303200B65102;
 			packageReferences = (
-				2064660A2B0319B200EE0714 /* XCRemoteSwiftPackageReference "Jeongfisher" */,
 			);
 			productRefGroup = 9BDD6D4B2AFB303200B65102 /* Products */;
 			projectDirPath = "";
@@ -449,23 +445,7 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		2064660A2B0319B200EE0714 /* XCRemoteSwiftPackageReference "Jeongfisher" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/jeongju9216/Jeongfisher.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		2064660B2B0319B200EE0714 /* Jeongfisher */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 2064660A2B0319B200EE0714 /* XCRemoteSwiftPackageReference "Jeongfisher" */;
-			productName = Jeongfisher;
-		};
 		9B3715D92AFE2BA70041FCE7 /* Presentation */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Presentation;
