@@ -26,13 +26,11 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     let previewLayer = AVCaptureVideoPreviewLayer()
     let preview = UIView()
     
-    // Shutter Button
-    let shutterButton = CaptureButton()
-    
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        addTargets()
         
         checkCameraPermissions()
     }
@@ -45,7 +43,10 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     // MARK: - Methods
     private func setupUI() {
         setupPreview()
-        setupShutterButton()
+    }
+    
+    private func addTargets() {
+        layoutView.shutterButton.addTarget(self, action: #selector(didClickedShutterButton), for: .touchUpInside)
     }
     
     private func setupPreview() {
@@ -60,17 +61,6 @@ final class CaptureViewController: BaseViewController<CaptureView> {
         // PreviewLayer를 Preview 에 넣기
         previewLayer.backgroundColor = UIColor.lightGray.cgColor
         preview.layer.addSublayer(previewLayer)
-    }
-    
-    private func setupShutterButton() {
-        // 카메라 셔터 버튼
-        view.addSubview(shutterButton)
-        shutterButton.atl
-            .size(width: CaptureButton.defaultSize, height: CaptureButton.defaultSize)
-            .centerX(equalTo: view.centerXAnchor)
-            .bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -36)
-        
-        shutterButton.addTarget(self, action: #selector(didClickedShutterButton), for: .touchUpInside)
     }
 
     private func checkCameraPermissions() {

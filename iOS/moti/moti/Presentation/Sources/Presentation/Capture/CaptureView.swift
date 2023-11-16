@@ -14,6 +14,8 @@ final class CaptureView: UIView {
     private let photoButton = NormalButton(title: "앨범에서 선택", image: SymbolImage.photo)
     private let cameraSwitchingButton = NormalButton(title: "카메라 전환", image: SymbolImage.iphone)
     
+    let shutterButton = CaptureButton() // VC에서 액션을 달아주기 위해 private 제거
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -28,6 +30,7 @@ final class CaptureView: UIView {
     private func setupUI() {
         setupPhotoButton()
         setupCameraSwitchingButton()
+        setupShutterButton()
     }
     
     private func setupPhotoButton() {
@@ -44,5 +47,13 @@ final class CaptureView: UIView {
         cameraSwitchingButton.atl
             .bottom(equalTo: photoButton.bottomAnchor)
             .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -15)
+    }
+    
+    private func setupShutterButton() {
+        addSubview(shutterButton)
+        shutterButton.atl
+            .size(width: CaptureButton.defaultSize, height: CaptureButton.defaultSize)
+            .centerX(equalTo: centerXAnchor)
+            .bottom(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -36)
     }
 }
