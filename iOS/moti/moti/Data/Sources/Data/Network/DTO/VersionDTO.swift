@@ -8,7 +8,7 @@
 import Foundation
 import Domain
 
-struct VersionResponseDTO: ResponseDTO {
+struct VersionResponseDTO: ReponseDataDTO, CustomStringConvertible {
     var success: Bool?
     var message: String?
     var data: VersionDTO?

@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol Requestable {
+public protocol Requestable {
     var baseURL: String { get }
     var path: String { get }
     var method: HttpMethod { get }
