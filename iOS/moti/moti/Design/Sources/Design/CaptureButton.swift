@@ -45,8 +45,6 @@ public final class CaptureButton: UIButton {
     
     // MARK: - Setup
     private func setupUI() {
-        translatesAutoresizingMaskIntoConstraints = false
-
         backgroundColor = .motiBackground
         layer.borderColor = UIColor.primaryBlue.cgColor
         layer.borderWidth = 6
