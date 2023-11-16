@@ -1,0 +1,63 @@
+name: Motimate BE CI
+
+on:
+  push:
+    paths: 'BE/**'
+    branches: [ "develop", "main" ]
+  pull_request:
+    paths: 'BE/**'
+    branches: [ "develop", "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DB: "mysql"
+      DB_HOST: "127.0.0.1"
+      DB_PORT: "13306"
+      DB_USERNAME: "root"
+      DB_PASSWORD: "1234"
+      DB_DATABASE: "motimate_test"
+      DB_ENTITIES: "src/**/*.entity{.ts,.js}"
+      DB_LOGGING: false
+      SWAGGER_TITLE: "Motimate"
+      SWAGGER_DESCRIPTION: "The Motimate API Documents"
+      SWAGGER_VERSION: "0.1.0"
+      SWAGGER_TAG: "motimate"
+      APPLE_PUBLIC_KEY_URL: "https://appleid.apple.com/auth/keys"
+      JWT_SECRET: "!@sehyeong!@"
+      JWT_VALIDITY: 3600000
+      REFRESH_JWT_SECRET: "!@sehyeongrefresh!@"
+      REFRESH_JWT_VALIDITY: 604800000
+
+
+    services:
+      mysql:
+        image: mysql:8.0.34
+        env:
+          MYSQL_ROOT_PASSWORD: 1234
+          MYSQL_DATABASE: "motimate_test"
+        ports:
+          - 13306:3306
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: BE/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./BE
+      - name: Build
+        run: npm run build --if-present
+        working-directory: ./BE
+      - name: Run tests
+        run: npm test
+        working-directory: ./BE
