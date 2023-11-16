@@ -21,46 +21,17 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     // Photo Output
     let output = AVCapturePhotoOutput()
     
-    // Video Preview
-    let previewTopPadding: CGFloat = 100
-    let previewLayer = AVCaptureVideoPreviewLayer()
-    let preview = UIView()
-    
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
         addTargets()
         
         checkCameraPermissions()
     }
     
-    override func viewDidLayoutSubviews() {
-        // 프리뷰 레이어 조정
-        previewLayer.frame = preview.bounds
-    }
-    
     // MARK: - Methods
-    private func setupUI() {
-        setupPreview()
-    }
-    
     private func addTargets() {
         layoutView.shutterButton.addTarget(self, action: #selector(didClickedShutterButton), for: .touchUpInside)
-    }
-    
-    private func setupPreview() {
-        // 카메라 Preview
-        view.addSubview(preview)
-        preview.atl
-            .height(constant: UIScreen.main.bounds.size.width)
-            .top(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: previewTopPadding)
-            .left(equalTo: view.safeAreaLayoutGuide.leftAnchor)
-            .right(equalTo: view.safeAreaLayoutGuide.rightAnchor)
-        
-        // PreviewLayer를 Preview 에 넣기
-        previewLayer.backgroundColor = UIColor.lightGray.cgColor
-        preview.layer.addSublayer(previewLayer)
     }
 
     private func checkCameraPermissions() {
@@ -99,8 +70,8 @@ final class CaptureViewController: BaseViewController<CaptureView> {
                 session.addOutput(output)
             }
             
-            previewLayer.videoGravity = .resizeAspectFill
-            previewLayer.session = session
+            layoutView.previewLayer.videoGravity = .resizeAspectFill
+            layoutView.previewLayer.session = session
             
             DispatchQueue.global().async {
                 session.startRunning()
@@ -136,14 +107,8 @@ extension CaptureViewController: AVCapturePhotoCaptureDelegate {
         Logger.debug("이미지 용량: \(data.count / 1000) KB\n")
         
         // 카메라 세션 끊기, 끊지 않으면 여러번 사진 찍기 가능
-         session?.stopRunning()
+        session?.stopRunning()
         
-        let imageView = UIImageView(image: image)
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        
-        view.addSubview(imageView)
-        imageView.atl
-            .all(of: preview)
+        layoutView.replacePreview(with: image)
     }
 }

@@ -7,12 +7,18 @@
 
 import UIKit
 import Design
+import AVFoundation
 
 final class CaptureView: UIView {
     
     // MARK: - Views
     private let photoButton = NormalButton(title: "앨범에서 선택", image: SymbolImage.photo)
     private let cameraSwitchingButton = NormalButton(title: "카메라 전환", image: SymbolImage.iphone)
+    
+    // Video Preview
+    let previewTopPadding: CGFloat = 100
+    let previewLayer = AVCaptureVideoPreviewLayer()
+    let preview = UIView()
     
     let shutterButton = CaptureButton() // VC에서 액션을 달아주기 위해 private 제거
     
@@ -26,11 +32,19 @@ final class CaptureView: UIView {
         setupUI()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        // 프리뷰 레이어 조정
+        previewLayer.frame = preview.bounds
+    }
+    
     // MARK: - Methods
     private func setupUI() {
         setupPhotoButton()
         setupCameraSwitchingButton()
         setupShutterButton()
+        setupPreview()
     }
     
     private func setupPhotoButton() {
@@ -55,5 +69,29 @@ final class CaptureView: UIView {
             .size(width: CaptureButton.defaultSize, height: CaptureButton.defaultSize)
             .centerX(equalTo: centerXAnchor)
             .bottom(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -36)
+    }
+    
+    func replacePreview(with image: UIImage) {
+        let imageView = UIImageView(image: image)
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        
+        addSubview(imageView)
+        imageView.atl
+            .all(of: preview)
+    }
+    
+    private func setupPreview() {
+        // 카메라 Preview
+        addSubview(preview)
+        preview.atl
+            .height(constant: UIScreen.main.bounds.size.width)
+            .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: previewTopPadding)
+            .left(equalTo: safeAreaLayoutGuide.leftAnchor)
+            .right(equalTo: safeAreaLayoutGuide.rightAnchor)
+        
+        // PreviewLayer를 Preview 에 넣기
+        previewLayer.backgroundColor = UIColor.lightGray.cgColor
+        preview.layer.addSublayer(previewLayer)
     }
 }
