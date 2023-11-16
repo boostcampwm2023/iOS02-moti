@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { TransactionModule } from './config/transaction-manager/transaction.module';
 import { OperateModule } from './operate/operate.module';
 import { UsersModule } from './users/users.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UsersModule } from './users/users.module';
     AuthModule,
     TransactionModule,
     OperateModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
