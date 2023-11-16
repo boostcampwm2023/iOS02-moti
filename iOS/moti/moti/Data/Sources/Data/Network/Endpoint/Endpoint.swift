@@ -7,15 +7,15 @@
 
 import Foundation
 
-protocol EndpointProtocol: Requestable { }
+public protocol EndpointProtocol: Requestable { }
 
-struct Endpoint: EndpointProtocol {
-    private(set) var baseURL: String
-    private(set) var path: String
-    private(set) var method: HttpMethod
-    private(set) var queryParameters: Encodable?
-    private(set) var bodyParameters: Encodable?
-    private(set) var headers: [String: String]?
+public struct Endpoint: EndpointProtocol {
+    public var baseURL: String
+    public var path: String
+    public var method: HttpMethod
+    public var queryParameters: Encodable?
+    public var bodyParameters: Encodable?
+    public var headers: [String: String]?
     
     init(
         baseURL: String,
@@ -34,7 +34,7 @@ struct Endpoint: EndpointProtocol {
     }
 }
 
-enum HttpMethod: String {
+public enum HttpMethod: String {
     case get = "GET"
     case post = "POST"
     case put = "PUT"

@@ -30,7 +30,7 @@ public final class LoginCoordinator: Coordinator {
     }
     
     public func start() {
-        let loginUseCase = LoginUseCase(repository: MockLoginRepository())
+        let loginUseCase = LoginUseCase(repository: LoginRepository())
         let loginVM = LoginViewModel(loginUseCase: loginUseCase)
         let loginVC = LoginViewController(viewModel: loginVM)
         loginVC.coordinator = self

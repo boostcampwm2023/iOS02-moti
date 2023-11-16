@@ -20,7 +20,7 @@ extension MotiAPI {
     }
     
     var baseURL: String {
-        return Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as! String
+        return Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as! String + "/api/v1"
     }
     
     var path: String {
@@ -55,18 +55,20 @@ extension MotiAPI {
     }
     
     var headers: [String: String]? {
+        var header = ["Content-Type": "application/json"]
+        
         switch self {
         case .version:
-            return nil
+            break
         case .login:
-            return nil
+            break
         case .autoLogin:
             // TODO: Keychain Storage로 변경
             if let accessToken = UserDefaults.standard.string(forKey: "accessToken") {
-                return ["Authorization": "Bearer \(accessToken)"]
-            } else {
-                return nil
+                header["Authorization"] = "Bearer \(accessToken)"
             }
         }
+        
+        return header
     }
 }
