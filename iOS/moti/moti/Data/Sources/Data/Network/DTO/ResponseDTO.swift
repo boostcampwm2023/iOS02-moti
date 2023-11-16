@@ -7,12 +7,12 @@
 
 import Foundation
 
-public protocol ResponseDTO: Decodable, CustomStringConvertible {
+public protocol ResponseDTO: Codable, CustomStringConvertible {
     var success: Bool? { get }
     var message: String? { get }
 }
 
-public protocol ReponseDataDTO: ResponseDTO {
+public protocol ResponseDataDTO: ResponseDTO {
     associatedtype T: Codable
     var data: T? { get }
 }
@@ -24,7 +24,7 @@ extension ResponseDTO {
     }
 }
 
-extension ReponseDataDTO {
+extension ResponseDataDTO {
     var description: String {
         if let data = data {
             return "success: \(success ?? false)\n" +

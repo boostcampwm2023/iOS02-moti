@@ -14,23 +14,41 @@ public protocol ProviderProtocol {
 
 public struct Provider: ProviderProtocol {
     private let session: URLSession
+    private let encoder: JSONEncoder = {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        return encoder
+    }()
+    private let decoder = JSONDecoder()
     
     public init(session: URLSession = URLSession.shared) {
         self.session = session
     }
     
     public func request<R: ResponseDTO, E: Requestable>(with endpoint: E, type: R.Type) async throws -> R {
-        Logger.network("[Request]\n\(endpoint)")
         guard let urlRequest = try? endpoint.makeURLRequest() else {
             throw NetworkError.url
+        }
+
+        Logger.network("[Request(\(endpoint.method.rawValue)) \(endpoint.path)]")
+        if let requestBody = urlRequest.httpBody,
+           let jsonString = String(data: requestBody, encoding: .utf8) {
+            Logger.network("[요청 데이터]\n\(jsonString)")
         }
         
         let (data, response) = try await session.data(for: urlRequest)
         guard let response = response as? HTTPURLResponse else { throw NetworkError.response }
         
-        let body = try JSONDecoder().decode(type, from: data)
-        Logger.network("[Response]\n\(body)")
-        switch response.statusCode {
+        let statusCode = response.statusCode
+        let body = try decoder.decode(type, from: data)
+        
+        Logger.network("[Response(\(statusCode))]")
+        if let encodingData = try? encoder.encode(body),
+           let jsonString = String(data: encodingData, encoding: .utf8) {
+            Logger.network("[응답 데이터]\n\(jsonString)")
+        }
+        
+        switch statusCode {
         case 200..<300:
             return body
         default:

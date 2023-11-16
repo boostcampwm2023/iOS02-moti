@@ -24,7 +24,9 @@ extension Requestable {
         urlRequest.httpMethod = method.rawValue
         
         if let bodyParameters {
-            let encodedBodyData = try JSONEncoder().encode(bodyParameters)
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            let encodedBodyData = try encoder.encode(bodyParameters)
             urlRequest.httpBody = encodedBodyData
         }
         
