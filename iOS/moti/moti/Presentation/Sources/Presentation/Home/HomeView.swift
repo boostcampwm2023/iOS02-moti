@@ -27,6 +27,8 @@ final class HomeView: UIView {
     // 카테고리 리스트 컬렉션 뷰
     private(set) lazy var categoryCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCategoryCollectionView())
+        // 세로로 스크롤이 안 되도록 설정
+        collectionView.alwaysBounceVertical = false
         collectionView.backgroundColor = .motiBackground
         collectionView.register(with: CategoryCollectionViewCell.self)
         return collectionView
