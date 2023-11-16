@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IPasswordEncoder, PasswordEncoder } from './password-encoder';
-import { BcryptPasswordEncoder } from './bcrypt-password-encoder';
+import { IPasswordEncoder } from './password-encoder';
 
 @Injectable()
 export class PlainTextPasswordEncoder implements IPasswordEncoder {
@@ -12,11 +11,3 @@ export class PlainTextPasswordEncoder implements IPasswordEncoder {
     return Promise.resolve(password);
   }
 }
-
-export const passwordEncoderProviderOptions = {
-  provide: PasswordEncoder,
-  useClass:
-    process.env.NODE_ENV !== 'production'
-      ? PlainTextPasswordEncoder
-      : BcryptPasswordEncoder,
-};
