@@ -98,28 +98,27 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     private func setupCamera() {
         // 세션을 만들고 input, output 연결
         let session = AVCaptureSession()
-        if let device = AVCaptureDevice.default(for: .video) {
-            do {
-                let input = try AVCaptureDeviceInput(device: device)
-                if session.canAddInput(input) {
-                    session.addInput(input)
-                }
-                
-                if session.canAddOutput(output) {
-                    session.addOutput(output)
-                }
-                
-                previewLayer.videoGravity = .resizeAspectFill
-                previewLayer.session = session
-                
-                DispatchQueue.global().async {
-                    session.startRunning()
-                }
-                self.session = session
-                    
-            } catch {
-                Logger.debug(error)
+        guard let device = AVCaptureDevice.default(for: .video) else { return }
+        do {
+            let input = try AVCaptureDeviceInput(device: device)
+            if session.canAddInput(input) {
+                session.addInput(input)
             }
+            
+            if session.canAddOutput(output) {
+                session.addOutput(output)
+            }
+            
+            previewLayer.videoGravity = .resizeAspectFill
+            previewLayer.session = session
+            
+            DispatchQueue.global().async {
+                session.startRunning()
+            }
+            self.session = session
+                
+        } catch {
+            Logger.debug(error)
         }
     }
     
