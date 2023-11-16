@@ -6,13 +6,13 @@
 //
 
 import UIKit
-import Jeongfisher
 import Design
 
 final class AchievementCollectionViewCell: UICollectionViewCell {
     private let imageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         return imageView
     }()
     
@@ -41,9 +41,7 @@ final class AchievementCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(imageURL: String) {
-        if let url = URL(string: imageURL) {
-            imageView.jf.setImage(with: url)
-        }
+        imageView.image = MotiImage.sample1
     }
     
     func showSkeleton() {
@@ -55,6 +53,6 @@ final class AchievementCollectionViewCell: UICollectionViewCell {
     }
 
     func cancelDownloadImage() {
-        imageView.jf.cancelDownloadImage()
+//        imageView.jf.cancelDownloadImage()
     }
 }
