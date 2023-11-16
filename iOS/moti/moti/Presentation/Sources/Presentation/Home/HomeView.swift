@@ -11,6 +11,19 @@ import Design
 final class HomeView: UIView {
     
     // MARK: - Views
+    // 카테고리 추가 버튼
+    private let catergoryAddButton: BounceButton = {
+        let button = BounceButton()
+        button.setTitle("+", for: .normal)
+        return button
+    }()
+    
+    private let separatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .primaryDarkGray
+        return view
+    }()
+    
     // 카테고리 리스트 컬렉션 뷰
     private(set) lazy var categoryCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCategoryCollectionView())
@@ -41,16 +54,33 @@ final class HomeView: UIView {
     
     // MARK: - Setup
     private func setupUI() {
+        setupCategoryAddButton()
         setupCategoryCollectionView()
         setupAchievementCollectionView()
+    }
+    
+    private func setupCategoryAddButton() {
+        addSubview(catergoryAddButton)
+        catergoryAddButton.atl
+            .size(width: 37, height: 37)
+            .top(equalTo: self.safeAreaLayoutGuide.topAnchor)
+            .left(equalTo: self.safeAreaLayoutGuide.leftAnchor, constant: 10)
+        
+        addSubview(separatorView)
+        separatorView.atl
+            .width(constant: 1)
+            .height(equalTo: catergoryAddButton.heightAnchor)
+            .centerY(equalTo: catergoryAddButton.centerYAnchor)
+            .left(equalTo: catergoryAddButton.rightAnchor, constant: 5)
     }
     
     private func setupCategoryCollectionView() {
         addSubview(categoryCollectionView)
         categoryCollectionView.atl
-            .width(equalTo: self.widthAnchor)
             .height(constant: 37)
             .top(equalTo: self.safeAreaLayoutGuide.topAnchor)
+            .left(equalTo: separatorView.rightAnchor)
+            .right(equalTo: self.safeAreaLayoutGuide.rightAnchor)
     }
     
     private func setupAchievementCollectionView() {
