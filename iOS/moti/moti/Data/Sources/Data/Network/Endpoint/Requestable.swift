@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol Requestable {
+public protocol Requestable {
     var baseURL: String { get }
     var path: String { get }
     var method: HttpMethod { get }
@@ -24,7 +24,9 @@ extension Requestable {
         urlRequest.httpMethod = method.rawValue
         
         if let bodyParameters {
-            let encodedBodyData = try JSONEncoder().encode(bodyParameters)
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            let encodedBodyData = try encoder.encode(bodyParameters)
             urlRequest.httpBody = encodedBodyData
         }
         

@@ -8,7 +8,7 @@
 import Foundation
 import Domain
 
-struct AchievementListResponseDTO: ResponseDTO {
+struct AchievementListResponseDTO: ResponseDataDTO {
     var success: Bool?
     var message: String?
     var data: [AchievementDTO]?

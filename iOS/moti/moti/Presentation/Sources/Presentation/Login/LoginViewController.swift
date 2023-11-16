@@ -8,10 +8,16 @@
 import UIKit
 import Core
 import Combine
+import Domain
+
+protocol LoginViewControllerDelegate: AnyObject {
+    func didLogin(token: UserToken)
+}
 
 final class LoginViewController: BaseViewController<LoginView> {
 
     // MARK: - Properties
+    weak var delegate: LoginViewControllerDelegate?
     weak var coordinator: LoginCoordinator?
     private var appleLoginRequester: AppleLoginRequester?
     private let viewModel: LoginViewModel
@@ -46,12 +52,13 @@ final class LoginViewController: BaseViewController<LoginView> {
     
     private func bind() {
         viewModel.$userToken
-            .dropFirst()
+            .compactMap { $0 }
             .receive(on: RunLoop.main)
             .sink { [weak self] userToken in
                 guard let self else { return }
-                
-                Logger.debug(userToken)
+
+                delegate?.didLogin(token: userToken)
+                coordinator?.finish()
             }
             .store(in: &cancellables)
     }

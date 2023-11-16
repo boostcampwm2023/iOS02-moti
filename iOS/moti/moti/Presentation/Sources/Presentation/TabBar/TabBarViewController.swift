@@ -15,8 +15,7 @@ protocol TabBarViewControllerDelegate: AnyObject {
 final class TabBarViewController: UITabBarController {
     
     // MARK: - Views
-    private let captureButton = UIButton()
-    private let circleView = UIView()
+    private let captureButton = CaptureButton()
     
     // MARK: - Properties
     weak var tabBarDelegate: TabBarViewControllerDelegate?
@@ -34,30 +33,11 @@ final class TabBarViewController: UITabBarController {
     
     // MARK: - Actions
     private func addTarget() {
-        captureButton.addTarget(self, action: #selector(captureButtonTouchDown), for: .touchDown)
         captureButton.addTarget(self, action: #selector(captureButtonTouchUpInside), for: .touchUpInside)
-        captureButton.addTarget(self, action: #selector(captureButtonTouchUpOutside), for: .touchUpOutside)
-    }
-    
-    @objc private func captureButtonTouchDown() {
-        UIView.animate(withDuration: 0.2) {
-            let scale = CGAffineTransform(scaleX: 0.9, y: 0.9)
-            self.circleView.transform = scale
-        }
     }
     
     @objc private func captureButtonTouchUpInside() {
         tabBarDelegate?.captureButtonDidClicked()
-        
-        UIView.animate(withDuration: 0.2) {
-            self.circleView.transform = .identity
-        }
-    }
-    
-    @objc private func captureButtonTouchUpOutside() {
-        UIView.animate(withDuration: 0.2) {
-            self.circleView.transform = .identity
-        }
     }
 }
 
@@ -71,7 +51,6 @@ private extension TabBarViewController {
         
         setupBorderView()
         setupCaptureTabItem()
-        setupCircleView()
     }
     
     func setupBorderView() {
@@ -92,30 +71,10 @@ private extension TabBarViewController {
     }
     
     func setupCaptureTabItem() {
-        let buttonSize: CGFloat = 75
-
-        captureButton.backgroundColor = .motiBackground
-        captureButton.layer.borderColor = UIColor.primaryBlue.cgColor
-        captureButton.layer.borderWidth = 6
-        captureButton.layer.cornerRadius = buttonSize / 2
-        
         view.addSubview(captureButton)
         captureButton.atl
-            .size(width: buttonSize, height: buttonSize)
+            .size(width: CaptureButton.defaultSize, height: CaptureButton.defaultSize)
             .centerX(equalTo: view.centerXAnchor)
             .bottom(equalTo: view.bottomAnchor, constant: -36)
-    }
-    
-    func setupCircleView() {
-        circleView.isUserInteractionEnabled = false
-        
-        let circleSize: CGFloat = 59
-        circleView.backgroundColor = .primaryBlue
-        circleView.layer.cornerRadius = circleSize / 2
-        
-        view.addSubview(circleView)
-        circleView.atl
-            .size(width: circleSize, height: circleSize)
-            .center(of: captureButton)
     }
 }

@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { forwardRef, Global, Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { JwtModule } from '@nestjs/jwt';
 import { CustomTypeOrmModule } from '../config/typeorm/custom-typeorm.module';
@@ -10,7 +10,9 @@ import { JwtUtils } from './application/jwt-utils';
 import { UserRepository } from '../users/entities/user.repository';
 import { UserCodeGenerator } from './application/user-code-generator';
 import { UsersModule } from '../users/users.module';
+import { AccessTokenGuard } from './guard/access-token.guard';
 
+@Global()
 @Module({
   imports: [
     HttpModule,
@@ -25,7 +27,8 @@ import { UsersModule } from '../users/users.module';
     OauthRequester,
     JwtUtils,
     UserCodeGenerator,
+    AccessTokenGuard,
   ],
-  exports: [JwtUtils],
+  exports: [JwtUtils, AccessTokenGuard],
 })
 export class AuthModule {}

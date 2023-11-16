@@ -23,4 +23,9 @@ public enum Logger {
         let message = object != nil ? "\(object!)" : "nil"
         os_log(.error, "%@", message)
     }
+    
+    public static func network<T>(_ object: T?) {
+        let message = object != nil ? "\(object!)" : "nil"
+        os_log(.debug, "[Network] %@", message)
+    }
 }
