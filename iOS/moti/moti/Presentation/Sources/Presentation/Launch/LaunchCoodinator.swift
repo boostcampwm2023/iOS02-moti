@@ -29,7 +29,10 @@ public final class LaunchCoodinator: Coordinator {
     }
     
     public func start() {
-        let launchVM = LaunchViewModel(fetchVersionUseCase: .init(repository: MockVersionRepository()))
+        let launchVM = LaunchViewModel(
+            fetchVersionUseCase: .init(repository: VersionRepository()),
+            autoLoginUseCase: .init(repository: LoginRepository())
+        )
         let launchVC = LaunchViewController(viewModel: launchVM)
         launchVC.coordinator = self
         launchVC.delegate = self

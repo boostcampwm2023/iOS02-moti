@@ -7,15 +7,16 @@
 
 import Foundation
 import Domain
+import Core
 
-struct VersionRepository: VersionRepositoryProtocol {
+public struct VersionRepository: VersionRepositoryProtocol {
     private let provider: ProviderProtocol
     
-    init(provider: ProviderProtocol = Provider()) {
+    public init(provider: ProviderProtocol = Provider()) {
         self.provider = provider
     }
     
-    func fetchVersion() async throws -> Version {
+    public func fetchVersion() async throws -> Version {
         let endpoint = MotiAPI.version
         let responseDTO = try await provider.request(with: endpoint, type: VersionResponseDTO.self)
         
