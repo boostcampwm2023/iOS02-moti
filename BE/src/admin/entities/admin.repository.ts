@@ -23,7 +23,7 @@ export class AdminRepository extends TransactionalRepository<AdminEntity> {
   }
 
   async findActiveAdminByEmail(email: string): Promise<Admin> {
-    const adminEntity = await this.findOne({
+    const adminEntity = await this.repository.findOne({
       where: { email: email, status: AdminStatus.ACTIVE },
       relations: ['user'],
     });
