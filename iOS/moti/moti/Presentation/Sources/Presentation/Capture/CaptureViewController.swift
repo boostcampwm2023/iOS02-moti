@@ -16,10 +16,10 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     weak var coordinator: CaptureCoordinator?
     
     // Capture Session
-    var session: AVCaptureSession?
+    private var session: AVCaptureSession?
     
     // Photo Output
-    let output = AVCapturePhotoOutput()
+    private let output = AVCapturePhotoOutput()
     
     // MARK: - Life Cycles
     override func viewDidLoad() {
@@ -31,7 +31,7 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     
     // MARK: - Methods
     private func addTargets() {
-        layoutView.shutterButton.addTarget(self, action: #selector(didClickedShutterButton), for: .touchUpInside)
+        layoutView.captureButton.addTarget(self, action: #selector(didClickedShutterButton), for: .touchUpInside)
     }
 
     private func checkCameraPermissions() {
@@ -70,8 +70,7 @@ final class CaptureViewController: BaseViewController<CaptureView> {
                 session.addOutput(output)
             }
             
-            layoutView.previewLayer.videoGravity = .resizeAspectFill
-            layoutView.previewLayer.session = session
+            layoutView.updatePreviewLayer(session: session)
             
             DispatchQueue.global().async {
                 session.startRunning()
@@ -98,10 +97,8 @@ final class CaptureViewController: BaseViewController<CaptureView> {
 
 extension CaptureViewController: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        guard let data = photo.fileDataRepresentation() else {
-            return
-        }
-        guard let image = UIImage(data: data) else { return }
+        guard let data = photo.fileDataRepresentation(), 
+              let image = UIImage(data: data) else { return }
         Logger.debug("이미지 사이즈: \(image.size)")
         Logger.debug("이미지 용량: \(data)")
         Logger.debug("이미지 용량: \(data.count / 1000) KB\n")
@@ -109,6 +106,6 @@ extension CaptureViewController: AVCapturePhotoCaptureDelegate {
         // 카메라 세션 끊기, 끊지 않으면 여러번 사진 찍기 가능
         session?.stopRunning()
         
-        layoutView.replacePreview(with: image)
+        layoutView.updatePreview(with: image)
     }
 }

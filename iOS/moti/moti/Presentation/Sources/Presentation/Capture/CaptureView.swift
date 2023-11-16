@@ -16,11 +16,18 @@ final class CaptureView: UIView {
     private let cameraSwitchingButton = NormalButton(title: "카메라 전환", image: SymbolImage.iphone)
     
     // Video Preview
-    let previewTopPadding: CGFloat = 100
-    let previewLayer = AVCaptureVideoPreviewLayer()
-    let preview = UIView()
+    private let previewTopPadding: CGFloat = 100
+    private let previewLayer = AVCaptureVideoPreviewLayer()
+    private let preview = UIView()
     
-    let shutterButton = CaptureButton() // VC에서 액션을 달아주기 위해 private 제거
+    let captureButton = CaptureButton() // VC에서 액션을 달아주기 위해 private 제거
+    private let resultImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.isHidden = true
+        return imageView
+    }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -40,10 +47,20 @@ final class CaptureView: UIView {
     }
     
     // MARK: - Methods
+    func updatePreview(with image: UIImage) {
+        resultImageView.isHidden = false
+        resultImageView.image = image
+    }
+    
+    func updatePreviewLayer(session: AVCaptureSession) {
+        resultImageView.isHidden = true
+        previewLayer.session = session
+    }
+    
     private func setupUI() {
         setupPhotoButton()
         setupCameraSwitchingButton()
-        setupShutterButton()
+        setupCaptureButton()
         setupPreview()
     }
     
@@ -63,21 +80,17 @@ final class CaptureView: UIView {
             .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -15)
     }
     
-    private func setupShutterButton() {
-        addSubview(shutterButton)
-        shutterButton.atl
+    private func setupCaptureButton() {
+        addSubview(captureButton)
+        captureButton.atl
             .size(width: CaptureButton.defaultSize, height: CaptureButton.defaultSize)
             .centerX(equalTo: centerXAnchor)
             .bottom(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -36)
     }
     
-    func replacePreview(with image: UIImage) {
-        let imageView = UIImageView(image: image)
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        
-        addSubview(imageView)
-        imageView.atl
+    private func setupResultImageView() {
+        addSubview(resultImageView)
+        resultImageView.atl
             .all(of: preview)
     }
     
@@ -92,6 +105,7 @@ final class CaptureView: UIView {
         
         // PreviewLayer를 Preview 에 넣기
         previewLayer.backgroundColor = UIColor.lightGray.cgColor
+        previewLayer.videoGravity = .resizeAspectFill
         preview.layer.addSublayer(previewLayer)
     }
 }
