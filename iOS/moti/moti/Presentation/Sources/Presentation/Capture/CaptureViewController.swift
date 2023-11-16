@@ -43,7 +43,6 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     }
     
     // MARK: - Methods
-    
     private func setupUI() {
         setupPreview()
         setupShutterButton()
@@ -59,8 +58,7 @@ final class CaptureViewController: BaseViewController<CaptureView> {
             .right(equalTo: view.safeAreaLayoutGuide.rightAnchor)
         
         // PreviewLayer를 Preview 에 넣기
-        previewLayer.borderColor = UIColor.lightGray.cgColor
-        previewLayer.borderWidth = 1
+        previewLayer.backgroundColor = UIColor.lightGray.cgColor
         preview.layer.addSublayer(previewLayer)
     }
     
