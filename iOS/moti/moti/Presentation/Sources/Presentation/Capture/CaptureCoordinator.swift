@@ -24,10 +24,18 @@ final class CaptureCoordinator: Coordinator {
     func start() {
         let captureVC = CaptureViewController()
         captureVC.coordinator = self
+        captureVC.navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: "취소", style: .plain, target: self,
+            action: #selector(cancelButtonAction)
+        )
         
         let navVC = UINavigationController(rootViewController: captureVC)
         navVC.modalPresentationStyle = .fullScreen
         navigationController.present(navVC, animated: true)
+    }
+    
+    @objc func cancelButtonAction() {
+        finish()
     }
     
     func finish(animated: Bool = true) {

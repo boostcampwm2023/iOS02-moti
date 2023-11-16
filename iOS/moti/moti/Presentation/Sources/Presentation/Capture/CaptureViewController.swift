@@ -38,20 +38,13 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     }
     
     override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        // 기기 회전 시, 오토레이아웃으로 인해 바뀐 Preview 위치에 맞게 PreviewLayer도 조정
+        // 프리뷰 레이어 조정
         previewLayer.frame = preview.bounds
-        // 레이어가 frame 기반이라 오토레이아웃이 적용 안되기 때문
     }
     
     // MARK: - Methods
-    @objc private func leftButtonAction() {
-        coordinator?.finish()
-    }
     
     private func setupUI() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(leftButtonAction))
         setupPreview()
         setupShutterButton()
     }
