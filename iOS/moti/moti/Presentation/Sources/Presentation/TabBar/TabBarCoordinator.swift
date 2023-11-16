@@ -67,7 +67,7 @@ private extension TabBarCoordinator {
         
         homeVC.tabBarItem.image = SymbolImage.individualTabItem
         homeVC.tabBarItem.title = TabItemType.individual.title
-        setupIndividualHomeNavigationBar(vc: homeVC)
+        setupIndividualHomeNavigationBar(viewController: homeVC)
         
         return UINavigationController(rootViewController: homeVC)
     }
@@ -81,13 +81,13 @@ private extension TabBarCoordinator {
         return UINavigationController(rootViewController: groupListVC)
     }
     
-    func setupIndividualHomeNavigationBar(vc: UIViewController) {
+    func setupIndividualHomeNavigationBar(viewController: UIViewController) {
         let logoItem = UIImageView(image: MotiImage.logoBlue)
         logoItem.contentMode = .scaleAspectFit
         let leftItem = UIBarButtonItem(customView: logoItem)
         leftItem.customView?.atl
             .width(constant: 60)
-        vc.navigationItem.leftBarButtonItem = leftItem
+        viewController.navigationItem.leftBarButtonItem = leftItem
 
         // 오른쪽 프로필 버튼
         let profileImage = UIImage(
@@ -108,7 +108,7 @@ private extension TabBarCoordinator {
             action: nil
         )
 
-        vc.navigationItem.rightBarButtonItems = [profileItem, moreItem]
+        viewController.navigationItem.rightBarButtonItems = [profileItem, moreItem]
     }
 }
 

@@ -14,7 +14,4 @@ public enum MotiImage {
     
     /// 파란색 moti 로고
     public static let logoBlue = UIImage(resource: .motiLogoBlue)
-    
-    /// 기본 프로필 이미지
-    public static let defaultProfile = UIImage(resource: .defaultProfile)
 }
