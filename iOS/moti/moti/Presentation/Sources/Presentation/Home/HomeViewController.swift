@@ -29,7 +29,6 @@ final class HomeViewController: BaseViewController<HomeView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupNavigation()
         setupAchievementDataSource()
         setupCategoryDataSource()
         
@@ -44,38 +43,6 @@ final class HomeViewController: BaseViewController<HomeView> {
     }
     
     // MARK: - Setup
-    private func setupNavigation() {
-        // TODO: 코디네이터의 내비게이션을 수정하기 -> 현재는 UI 구현에 집중!
-        // 왼쪽 상단 로고
-        let logoItem = UIImageView(image: MotiImage.logoBlue)
-        logoItem.contentMode = .scaleAspectFit
-        let leftItem = UIBarButtonItem(customView: logoItem)
-        leftItem.customView?.atl
-            .width(constant: 60)
-        navigationItem.leftBarButtonItem = leftItem
-        
-        // 오른쪽 프로필 버튼
-        let profileImage = UIImage(
-            systemName: "person.crop.circle.fill",
-            withConfiguration: UIImage.SymbolConfiguration(font: .large)
-        )
-        let profileButton = UIButton(type: .system)
-        profileButton.setImage(profileImage, for: .normal)
-        profileButton.contentMode = .scaleAspectFit
-        profileButton.tintColor = .primaryDarkGray
-        let profileItem = UIBarButtonItem(customView: profileButton)
-        
-        // 오른쪽 더보기 버튼
-        let moreItem = UIBarButtonItem(
-            image: SymbolImage.ellipsisCircle,
-            style: .done,
-            target: self,
-            action: nil
-        )
-        
-        navigationItem.rightBarButtonItems = [profileItem, moreItem]
-    }
-    
     private func setupAchievementDataSource() {
         layoutView.achievementCollectionView.delegate = self
         let dataSource = HomeViewModel.AchievementDataSource.DataSource(

@@ -22,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         
         let rootVC = UINavigationController()
-//        rootVC.isNavigationBarHidden = true
+        rootVC.isNavigationBarHidden = true
         appCoordinator = AppCoordinator(rootVC, nil)
         appCoordinator?.start()
         
