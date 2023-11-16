@@ -26,10 +26,14 @@ final class LaunchViewModel {
         self.autoLoginUseCase = autoLoginUseCase
     }
     
-    func fetchVersion() throws {
+    func fetchVersion() {
         Task {
-            version = try await fetchVersionUseCase.execute()
-            Logger.debug("version: \(String(describing: version))")
+            do {
+                version = try await fetchVersionUseCase.execute()
+                Logger.debug("version: \(String(describing: version))")
+            } catch {
+                Logger.debug("version error: \(error)")
+            }
         }
     }
     
@@ -40,6 +44,7 @@ final class LaunchViewModel {
             requestAutoLogin(using: refreshToken)
         } else {
             Logger.debug("자동 로그인 실패")
+            resetToken()
             isSuccessLogin = false
         }
     }
@@ -49,7 +54,7 @@ final class LaunchViewModel {
             do {
                 let requestValue = AutoLoginRequestValue(refreshToken: refreshToken)
                 let token = try await autoLoginUseCase.excute(requestValue: requestValue)
-                saveToken(token)
+                saveAccessToken(token.accessToken)
                 isSuccessLogin = true
             } catch {
                 isSuccessLogin = false
@@ -59,9 +64,8 @@ final class LaunchViewModel {
     }
     
     // TODO: UserDefaultsStorage로 변경해서 UseCase로 사용하기
-    func saveToken(_ token: UserToken) {
-        UserDefaults.standard.setValue(token.refreshToken, forKey: "refreshToken")
-        UserDefaults.standard.setValue(token.accessToken, forKey: "accessToken")
+    func saveAccessToken(_ accessToken: String) {
+        UserDefaults.standard.setValue(accessToken, forKey: "accessToken")
     }
     
     func resetToken() {

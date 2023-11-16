@@ -36,7 +36,7 @@ final class LaunchViewController: BaseViewController<LaunchView> {
         super.viewDidLoad()
         bind()
         
-        try? viewModel.fetchVersion()
+        viewModel.fetchVersion()
     }
     
     private func bind() {
