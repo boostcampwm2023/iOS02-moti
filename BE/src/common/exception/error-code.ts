@@ -23,4 +23,12 @@ export const ERROR_INFO = {
     statusCode: 500,
     message: '이미 초기화된 모티메이트 운영정책입니다.',
   },
+  USER_ALREADY_REGISTERED_ADMIN: {
+    statusCode: 400,
+    message: '이미 등록된 관리자입니다.',
+  },
+  ADMIN_INVALID_PASSWORD: {
+    statusCode: 400,
+    message: '잘못된 비밀번호입니다.',
+  },
 } as const;
