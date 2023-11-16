@@ -8,6 +8,7 @@
 import UIKit
 import Core
 import AVFoundation
+import Design
 
 final class CaptureViewController: BaseViewController<CaptureView> {
     
@@ -26,7 +27,7 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     let preview = UIView()
     
     // Shutter Button
-    let shutterButton = UIButton()
+    let shutterButton = CaptureButton()
     
     // MARK: - Life Cycles
     override func viewDidLoad() {
@@ -72,17 +73,11 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     
     private func setupShutterButton() {
         // 카메라 셔터 버튼
-        shutterButton.backgroundColor = .blue
-        shutterButton.layer.cornerRadius = 40
-        shutterButton.layer.borderWidth = 2
-        shutterButton.layer.borderColor = UIColor.red.cgColor
-        
         view.addSubview(shutterButton)
         shutterButton.atl
-            .width(constant: 80)
-            .height(constant: 80)
+            .size(width: CaptureButton.defaultSize, height: CaptureButton.defaultSize)
             .centerX(equalTo: view.centerXAnchor)
-            .bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+            .bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -36)
         
         shutterButton.addTarget(self, action: #selector(didClickedShutterButton), for: .touchUpInside)
     }
@@ -161,7 +156,7 @@ extension CaptureViewController: AVCapturePhotoCaptureDelegate {
         Logger.debug("이미지 용량: \(data.count / 1000) KB\n")
         
         // 카메라 세션 끊기, 끊지 않으면 여러번 사진 찍기 가능
-        // session?.stopRunning()
+         session?.stopRunning()
         
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFill
