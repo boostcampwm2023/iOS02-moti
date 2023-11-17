@@ -37,8 +37,8 @@ export class AchievementEntity extends BaseTimeEntity {
 
   toModel() {
     const achievement = new Achievement(
-      this.user.toModel(),
-      this.category.toModel(),
+      this.user?.toModel(),
+      this.category?.toModel(),
       this.title,
       this.content,
       this.imageUrl,
