@@ -16,15 +16,23 @@ final class CaptureView: UIView {
     private let cameraSwitchingButton = NormalButton(title: "카메라 전환", image: SymbolImage.iphone)
     
     // Video Preview
-    private let previewTopPadding: CGFloat = 100
-    private let previewLayer = AVCaptureVideoPreviewLayer()
-    private let preview = UIView()
+    private let previewLayer = {
+        let previewLayer = AVCaptureVideoPreviewLayer()
+        previewLayer.videoGravity = .resizeAspectFill
+        // portrait 고정
+        if #available(iOS 17.0, *) {
+            previewLayer.connection?.videoRotationAngle = 90
+        } else {
+            previewLayer.connection?.videoOrientation = .portrait
+        }
+        return previewLayer
+    }()
+    let preview = UIView()
     
     let captureButton = CaptureButton() // VC에서 액션을 달아주기 위해 private 제거
     private let resultImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
         imageView.isHidden = true
         return imageView
     }()
@@ -99,7 +107,7 @@ final class CaptureView: UIView {
         // 카메라 Preview
         addSubview(preview)
         preview.atl
-            .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: previewTopPadding)
+            .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: 100)
             .left(equalTo: safeAreaLayoutGuide.leftAnchor)
             .right(equalTo: safeAreaLayoutGuide.rightAnchor)
             .height(equalTo: preview.widthAnchor)
