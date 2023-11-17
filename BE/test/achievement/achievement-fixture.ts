@@ -19,7 +19,7 @@ export class AchievementFixture {
     return new Achievement(
       user,
       category,
-      `다이어트 ${this.id}회차`,
+      `다이어트 ${++this.id}회차`,
       '오늘의 닭가슴살',
       `imageUrl${this.id}`,
       `thumbnailUrl${this.id}`,
