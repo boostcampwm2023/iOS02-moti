@@ -107,10 +107,10 @@ final class CaptureView: UIView {
         // 카메라 Preview
         addSubview(preview)
         preview.atl
-            .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: 100)
-            .left(equalTo: safeAreaLayoutGuide.leftAnchor)
-            .right(equalTo: safeAreaLayoutGuide.rightAnchor)
             .height(equalTo: preview.widthAnchor)
+            .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: 100)
+            .horizontal(equalTo: safeAreaLayoutGuide)
+            
         
         // PreviewLayer를 Preview 에 넣기
         previewLayer.backgroundColor = UIColor.primaryGray.cgColor

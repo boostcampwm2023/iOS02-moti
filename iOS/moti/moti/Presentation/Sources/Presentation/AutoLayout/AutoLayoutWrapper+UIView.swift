@@ -112,48 +112,95 @@ extension AutoLayoutWrapper {
         return self
     }
     
+    // MARK: View
     @discardableResult
     func center(
-        of parentView: UIView
+        of basedView: UIView
     ) -> Self {
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.centerXAnchor.constraint(equalTo: parentView.centerXAnchor).isActive = true
-        view.centerYAnchor.constraint(equalTo: parentView.centerYAnchor).isActive = true
+        view.centerXAnchor.constraint(equalTo: basedView.centerXAnchor).isActive = true
+        view.centerYAnchor.constraint(equalTo: basedView.centerYAnchor).isActive = true
         return self
     }
     
     @discardableResult
     func vertical(
-        equalTo anchor: NSLayoutAnchor<NSLayoutYAxisAnchor>,
+        equalTo basedView: UIView,
         constant: CGFloat = 0
     ) -> Self {
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.topAnchor.constraint(equalTo: anchor, constant: constant).isActive = true
-        view.bottomAnchor.constraint(equalTo: anchor, constant: -constant).isActive = true
+        view.topAnchor.constraint(equalTo: basedView.topAnchor, constant: constant).isActive = true
+        view.bottomAnchor.constraint(equalTo: basedView.bottomAnchor, constant: -constant).isActive = true
         return self
     }
     
     @discardableResult
     func horizontal(
-        equalTo anchor: NSLayoutAnchor<NSLayoutXAxisAnchor>,
+        equalTo basedView: UIView,
         constant: CGFloat = 0
     ) -> Self {
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.leftAnchor.constraint(equalTo: anchor, constant: constant).isActive = true
-        view.rightAnchor.constraint(equalTo: anchor, constant: -constant).isActive = true
+        view.leftAnchor.constraint(equalTo: basedView.leftAnchor, constant: constant).isActive = true
+        view.rightAnchor.constraint(equalTo: basedView.rightAnchor, constant: -constant).isActive = true
         return self
     }
     
     @discardableResult
     func all(
-        of parentView: UIView,
+        of basedView: UIView,
         constant: CGFloat = 0
     ) -> Self {
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.topAnchor.constraint(equalTo: parentView.topAnchor, constant: constant).isActive = true
-        view.bottomAnchor.constraint(equalTo: parentView.bottomAnchor, constant: -constant).isActive = true
-        view.leftAnchor.constraint(equalTo: parentView.leftAnchor, constant: constant).isActive = true
-        view.rightAnchor.constraint(equalTo: parentView.rightAnchor, constant: -constant).isActive = true
+        view.topAnchor.constraint(equalTo: basedView.topAnchor, constant: constant).isActive = true
+        view.bottomAnchor.constraint(equalTo: basedView.bottomAnchor, constant: -constant).isActive = true
+        view.leftAnchor.constraint(equalTo: basedView.leftAnchor, constant: constant).isActive = true
+        view.rightAnchor.constraint(equalTo: basedView.rightAnchor, constant: -constant).isActive = true
+        return self
+    }
+    
+    // MARK: Safe Area
+    @discardableResult
+    func center(
+        of safeAreaGuide: UILayoutGuide
+    ) -> Self {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.centerXAnchor.constraint(equalTo: safeAreaGuide.centerXAnchor).isActive = true
+        view.centerYAnchor.constraint(equalTo: safeAreaGuide.centerYAnchor).isActive = true
+        return self
+    }
+    
+    @discardableResult
+    func vertical(
+        equalTo safeAreaGuide: UILayoutGuide,
+        constant: CGFloat = 0
+    ) -> Self {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.topAnchor.constraint(equalTo: safeAreaGuide.topAnchor, constant: constant).isActive = true
+        view.bottomAnchor.constraint(equalTo: safeAreaGuide.bottomAnchor, constant: -constant).isActive = true
+        return self
+    }
+    
+    @discardableResult
+    func horizontal(
+        equalTo safeAreaGuide: UILayoutGuide,
+        constant: CGFloat = 0
+    ) -> Self {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.leftAnchor.constraint(equalTo: safeAreaGuide.leftAnchor, constant: constant).isActive = true
+        view.rightAnchor.constraint(equalTo: safeAreaGuide.rightAnchor, constant: -constant).isActive = true
+        return self
+    }
+    
+    @discardableResult
+    func all(
+        equalTo safeAreaGuide: UILayoutGuide,
+        constant: CGFloat = 0
+    ) -> Self {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.topAnchor.constraint(equalTo: safeAreaGuide.topAnchor, constant: constant).isActive = true
+        view.bottomAnchor.constraint(equalTo: safeAreaGuide.bottomAnchor, constant: -constant).isActive = true
+        view.leftAnchor.constraint(equalTo: safeAreaGuide.leftAnchor, constant: constant).isActive = true
+        view.rightAnchor.constraint(equalTo: safeAreaGuide.rightAnchor, constant: -constant).isActive = true
         return self
     }
 }
