@@ -7,6 +7,7 @@ import { typeOrmModuleOptions } from '../../config/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { configServiceModuleOptions } from '../../config/config';
 import { UsersModule } from '../users.module';
+import { UserRole } from '../domain/user-role';
 
 describe('UsersService Test', () => {
   let userService: UsersService;
@@ -41,5 +42,20 @@ describe('UsersService Test', () => {
     // then
     expect(findOne.userCode).toBe('A1B2C1D');
     expect(findOne.userIdentifier).toBe('userIdentifier');
+  });
+
+  test('getUserByUserCodeWithRoles는 권한 정보가 포함된 유저를 userCode로 조회할 수 있다.', async () => {
+    const user = User.from('userIdentifier');
+    user.assignUserCode('A1B2C1D');
+    await userRepository.saveUser(user);
+
+    // when
+    const findOne = await userService.getUserByUserCodeWithRoles('A1B2C1D');
+
+    // then
+    expect(findOne.userCode).toBe('A1B2C1D');
+    expect(findOne.userIdentifier).toBe('userIdentifier');
+    expect(findOne.roles).toHaveLength(1);
+    expect(findOne.roles).toContain(UserRole.MEMBER);
   });
 });
