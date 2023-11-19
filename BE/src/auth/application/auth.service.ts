@@ -6,7 +6,7 @@ import { AppleLoginRequest } from '../dto/apple-login-request.dto';
 import { UserCodeGenerator } from './user-code-generator';
 import { Transactional } from '../../config/transaction-manager';
 import { JwtUtils } from './jwt-utils';
-import { JwtClaim } from '../index';
+import { JwtClaim, JwtRolePayloads } from '../index';
 import { AppleLoginResponse } from '../dto/apple-login-response.dto';
 import { UserDto } from '../../users/dto/user.dto';
 import { RefreshAuthRequestDto } from '../dto/refresh-auth-request.dto';
@@ -29,11 +29,15 @@ export class AuthService {
       appleLoginRequest.identityToken,
     );
     const user =
-      (await this.usersRepository.findOneByUserIdentifier(userIdentifier)) ||
-      (await this.registerUser(userIdentifier));
+      (await this.usersRepository.findOneByUserIdentifierWithRoles(
+        userIdentifier,
+      )) || (await this.registerUser(userIdentifier));
 
     const now = new Date();
-    const claim: JwtClaim = { userCode: user.userCode };
+    const claim: JwtRolePayloads = {
+      userCode: user.userCode,
+      roles: user.roles,
+    };
     const accessToken = this.jwtUtils.createToken(claim, now);
     const refreshToken = this.jwtUtils.createRefreshToken(claim, now);
     return new AppleLoginResponse(
