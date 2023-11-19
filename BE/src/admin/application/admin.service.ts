@@ -50,4 +50,14 @@ export class AdminService {
     await registerAdmin.register(this.passwordEncoder);
     return this.adminRepository.saveAdmin(registerAdmin);
   }
+
+  @Transactional()
+  async acceptAdminRegister(accepter: User, email: string): Promise<Admin> {
+    const admin = await this.adminRepository.findPendingAdminByEmail(email);
+    if (!admin) throw new UserNotAdminPendingStatusException();
+
+    admin.accepted();
+    await this.userRoleRepository.saveUserRole(admin.user, UserRole.ADMIN);
+    return this.adminRepository.saveAdmin(admin);
+  }
 }
