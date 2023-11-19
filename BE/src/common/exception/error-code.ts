@@ -31,4 +31,8 @@ export const ERROR_INFO = {
     statusCode: 400,
     message: '잘못된 비밀번호입니다.',
   },
+  USER_NOT_ADMIN_PENDING_STATUS: {
+    statusCode: 400,
+    message: '관리자 승인 대기중인 사용자가 아닙니다.',
+  },
 } as const;
