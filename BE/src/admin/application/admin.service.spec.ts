@@ -109,7 +109,7 @@ describe('AdminService Test', () => {
     });
   });
 
-  it('loginAdmin은 존재 하지 않는 email의 Admin에 대해 UserNotAdminPendingStatusException를 발생시킨다.', async () => {
+  it('loginAdmin은 잘못된 password에 대해 AdminInvalidPasswordException를 발생시킨다.', async () => {
     await transactionTest(dataSource, async () => {
       // given
       const user = await usersFixture.getUser('ABC');
