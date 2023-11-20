@@ -3,18 +3,20 @@ import { TransactionalRepository } from '../../config/transaction-manager/transa
 import { AchievementEntity } from './achievement.entity';
 import { Achievement } from '../domain/achievement.domain';
 import { FindOptionsWhere, LessThan } from 'typeorm';
-import { Next } from '../index';
+import { PaginateAchievementRequest } from '../dto/paginate-achievement-request';
 
 @CustomRepository(AchievementEntity)
 export class AchievementRepository extends TransactionalRepository<AchievementEntity> {
   async findAll(
     userId: number,
-    achievementPaginationOption: Next,
+    achievementPaginationOption: PaginateAchievementRequest,
   ): Promise<Achievement[]> {
     const where: FindOptionsWhere<AchievementEntity> = {
       user: { id: userId },
-      category: { id: achievementPaginationOption.categoryId },
     };
+    if (achievementPaginationOption?.categoryId !== 0) {
+      where.category = { id: achievementPaginationOption.categoryId };
+    }
     if (achievementPaginationOption.whereIdLessThan) {
       where.id = LessThan(achievementPaginationOption.whereIdLessThan);
     }
