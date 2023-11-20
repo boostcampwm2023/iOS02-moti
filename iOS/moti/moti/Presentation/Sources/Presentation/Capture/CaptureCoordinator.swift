@@ -23,22 +23,32 @@ final class CaptureCoordinator: Coordinator {
     
     func start() {
         let captureVC = CaptureViewController()
+        captureVC.delegate = self
         captureVC.coordinator = self
+        
         captureVC.navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: "취소", style: .plain, target: self,
             action: #selector(cancelButtonAction)
         )
         
-        let navVC = UINavigationController(rootViewController: captureVC)
-        navVC.modalPresentationStyle = .fullScreen
-        navigationController.present(navVC, animated: true)
+        navigationController.isNavigationBarHidden = false
+        navigationController.pushViewController(captureVC, animated: true)
+    }
+    
+    private func moveCaptureResultViewController(imageData: Data) {
+        let captureResultCoordinator = CaptureResultCoordinator(navigationController, self)
+        captureResultCoordinator.start(resultImageData: imageData)
+        childCoordinators.append(captureResultCoordinator)
     }
     
     @objc func cancelButtonAction() {
+        navigationController.isNavigationBarHidden = true
         finish()
     }
-    
-    func finish(animated: Bool = true) {
-        parentCoordinator?.dismiss(child: self, animated: animated)
+}
+
+extension CaptureCoordinator: CaptureViewControllerDelegate {
+    func didCapture(imageData: Data) {
+        moveCaptureResultViewController(imageData: imageData)
     }
 }

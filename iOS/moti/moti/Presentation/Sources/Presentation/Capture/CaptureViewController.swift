@@ -10,9 +10,14 @@ import Core
 import AVFoundation
 import Design
 
+protocol CaptureViewControllerDelegate: AnyObject {
+    func didCapture(imageData: Data)
+}
+
 final class CaptureViewController: BaseViewController<CaptureView> {
     
     // MARK: - Properties
+    weak var delegate: CaptureViewControllerDelegate?
     weak var coordinator: CaptureCoordinator?
     
     // Capture Session
@@ -100,6 +105,7 @@ final class CaptureViewController: BaseViewController<CaptureView> {
         #if targetEnvironment(simulator)
             // Simulator
             Logger.debug("시뮬레이터에선 카메라를 테스트할 수 없습니다. 실기기를 연결해 주세요.")
+            delegate?.didCapture(imageData: .init())
         #else
             // TODO: PhotoQualityPrioritization 옵션별로 비교해서 최종 결정해야 함
             // - speed: 약간의 노이즈 감소만이 적용
@@ -123,24 +129,8 @@ extension CaptureViewController: AVCapturePhotoCaptureDelegate {
         // 카메라 세션 끊기, 끊지 않으면 여러번 사진 찍기 가능
         session?.stopRunning()
         
-        guard let data = photo.fileDataRepresentation(),
-              let image = UIImage(data: data) else { return }
+        guard let data = photo.fileDataRepresentation() else { return }
         
-        #if DEBUG
-            Logger.debug("이미지 사이즈: \(image.size)")
-            Logger.debug("이미지 용량: \(data) / \(data.count / 1000) KB\n")
-            Logger.debug("Crop 사이즈: \(layoutView.preview.bounds)")
-        #endif
-        
-        layoutView.updatePreview(with: cropImage(image: image, rect: layoutView.preview.bounds))
-    }
-    
-    private func cropImage(image: UIImage, rect: CGRect) -> UIImage {
-        guard let imageRef = image.cgImage?.cropping(to: rect) else {
-            return image
-        }
-        
-        let croppedImage = UIImage(cgImage: imageRef)
-        return croppedImage
+        delegate?.didCapture(imageData: data)   
     }
 }
