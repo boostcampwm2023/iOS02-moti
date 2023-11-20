@@ -24,7 +24,7 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
-        moveHomeViewController()
+        moveLaunchViewController()
     }
     
     private func moveLaunchViewController() {

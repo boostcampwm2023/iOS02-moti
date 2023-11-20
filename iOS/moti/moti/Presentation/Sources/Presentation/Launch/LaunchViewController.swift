@@ -36,31 +36,42 @@ final class LaunchViewController: BaseViewController<LaunchView> {
         super.viewDidLoad()
         bind()
         
-        viewModel.fetchVersion()
+        viewModel.action(.launch)
     }
     
     private func bind() {
-        viewModel.$version
-            .dropFirst()
+        viewModel.$versionState
             .receive(on: RunLoop.main)
-            .sink { [weak self] version in
+            .sink { [weak self] state in
                 guard let self else { return }
-                
-                sleep(1)
-                viewModel.fetchToken()
+                switch state {
+                case .none, .loading: break
+                case .finish:
+                    viewModel.action(.autoLogin)
+                case .error(let message):
+                    Logger.error("Launch Version Error: \(message)")
+                }
             }
             .store(in: &cancellables)
         
-        viewModel.$isSuccessLogin
-            .dropFirst()
+        viewModel.$autoLoginState
             .receive(on: RunLoop.main)
-            .sink { [weak self] isSuccessLogin in
+            .sink { [weak self] state in
                 guard let self else { return }
-                
-                delegate?.viewControllerDidLogin(isSuccess: isSuccessLogin)
-                coordinator?.finish(animated: false)
+                switch state {
+                case .none: break
+                case .loading:
+                    Logger.debug("자동 로그인 진행 중")
+                case .success:
+                    Logger.debug("자동 로그인 성공")
+                    delegate?.viewControllerDidLogin(isSuccess: true)
+                    coordinator?.finish(animated: false)
+                case .failed(let message):
+                    Logger.debug("자동 로그인 실패: \(message)")
+                    delegate?.viewControllerDidLogin(isSuccess: false)
+                    coordinator?.finish(animated: false)
+                }
             }
             .store(in: &cancellables)
-        
     }
 }
