@@ -6,10 +6,7 @@ import { typeOrmModuleOptions } from '../../config/typeorm';
 import { configServiceModuleOptions } from '../../config/config';
 import { DataSource } from 'typeorm';
 import { transactionTest } from '../../../test/common/transaction-test';
-import {
-  AchievementPaginationOption,
-  AchievementRepository,
-} from './achievement.repository';
+import { AchievementRepository } from './achievement.repository';
 import { UsersFixture } from '../../../test/user/users-fixture';
 import { UsersTestModule } from '../../../test/user/users-test.module';
 import { CategoryRepository } from '../../category/entities/category.repository';
@@ -18,6 +15,7 @@ import { AchievementTestModule } from '../../../test/achievement/achievement-tes
 import { AchievementFixture } from '../../../test/achievement/achievement-fixture';
 import { CategoryTestModule } from '../../../test/category/category-test.module';
 import { Achievement } from '../domain/achievement.domain';
+import { Next } from '../index';
 
 describe('AchievementRepository test', () => {
   let achievementRepository: AchievementRepository;
@@ -92,7 +90,7 @@ describe('AchievementRepository test', () => {
       }
 
       // when
-      const achievementPaginationOption: AchievementPaginationOption = {
+      const achievementPaginationOption: Next = {
         categoryId: category.id,
         take: 12,
       };
