@@ -10,8 +10,6 @@ import Domain
 
 final class HomeViewModel {
     enum HomeViewModelAction {
-        case setupCategoryDataSource(dataSource: CategoryDataSource)
-        case setupAchievementDataSource(dataSource: AchievementDataSource)
         case fetchCategories
         case fetchAchievementList
     }
@@ -56,10 +54,6 @@ final class HomeViewModel {
     
     func action(_ action: HomeViewModelAction) {
         switch action {
-        case .setupCategoryDataSource(let dataSource):
-            setupCategoryDataSource(dataSource)
-        case .setupAchievementDataSource(let dataSource):
-            setupAchievementDataSource(dataSource)
         case .fetchCategories:
             fetchCategories()
         case .fetchAchievementList:
@@ -67,11 +61,11 @@ final class HomeViewModel {
         }
     }
     
-    private func setupCategoryDataSource(_ dataSource: CategoryDataSource) {
+    func setupCategoryDataSource(_ dataSource: CategoryDataSource) {
         self.categoryDataSource = dataSource
     }
     
-    private func setupAchievementDataSource(_ dataSource: AchievementDataSource) {
+    func setupAchievementDataSource(_ dataSource: AchievementDataSource) {
         self.achievementDataSource = dataSource
     }
     

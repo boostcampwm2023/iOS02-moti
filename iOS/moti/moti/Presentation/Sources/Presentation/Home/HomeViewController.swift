@@ -91,7 +91,7 @@ final class HomeViewController: BaseViewController<HomeView> {
         }
         
         let diffableDataSource = HomeViewModel.AchievementDataSource(dataSource: dataSource)
-        viewModel.action(.setupAchievementDataSource(dataSource: diffableDataSource))
+        viewModel.setupAchievementDataSource(diffableDataSource)
     }
     
     private func setupCategoryDataSource() {
@@ -106,7 +106,7 @@ final class HomeViewController: BaseViewController<HomeView> {
         )
         
         let diffableDataSource = HomeViewModel.CategoryDataSource(dataSource: dataSource)
-        viewModel.action(.setupCategoryDataSource(dataSource: diffableDataSource))
+        viewModel.setupCategoryDataSource(diffableDataSource)
     }
 }
 
