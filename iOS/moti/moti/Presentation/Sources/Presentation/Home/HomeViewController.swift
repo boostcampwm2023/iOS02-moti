@@ -50,9 +50,9 @@ final class HomeViewController: BaseViewController<HomeView> {
     
     @objc private func showAlert() {
         let alertVC = AlertFactory.makeTextFieldAlert(
-            title: "추가할 카테고리 이름을 정해주세요.",
-            message: "ex) 다이어트",
-            placeholder: "다이어트"
+            title: "추가할 카테고리 이름을 입력하세요.",
+            okTitle: "생성",
+            placeholder: "카테고리 이름은 최대 10글자입니다."
         ) { (text) in
             Logger.debug(text)
         }
