@@ -9,7 +9,7 @@ import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PaginateAchievementResponse } from '../dto/paginate-achievement-response';
 
 @Controller('/api/v1/achievements')
-@ApiTags('achievement API')
+@ApiTags('달성기록 API')
 export class AchievementController {
   constructor(private readonly achievementService: AchievementService) {}
 
