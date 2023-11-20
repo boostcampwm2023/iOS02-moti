@@ -1,10 +1,14 @@
 import { AchievementResponse } from './achievement-response';
 import { PaginateAchievementRequest } from './paginate-achievement-request';
 import { Next } from '../index';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class PaginateAchievementResponse {
+  @ApiProperty({ type: [AchievementResponse], description: 'data' })
   data: AchievementResponse[];
+  @ApiProperty({ description: 'count' })
   count: number;
+  @ApiProperty({ description: 'next' })
   next: Next | null;
 
   constructor(

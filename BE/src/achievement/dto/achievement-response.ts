@@ -1,8 +1,12 @@
 import { Achievement } from '../domain/achievement.domain';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class AchievementResponse {
+  @ApiProperty({ description: 'id' })
   id: number;
+  @ApiProperty({ description: 'string' })
   thumbnailUrl: string;
+  @ApiProperty({ description: 'string' })
   title: string;
 
   constructor(id: number, thumbnailUrl: string, title: string) {
