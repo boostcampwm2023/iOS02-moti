@@ -9,6 +9,13 @@ import Foundation
 import Domain
 
 final class HomeViewModel {
+    enum HomeViewModelAction {
+        case setupCategoryDataSource(dataSource: CategoryDataSource)
+        case setupAchievementDataSource(dataSource: AchievementDataSource)
+        case fetchCategories
+        case fetchAchievementList
+    }
+    
     typealias AchievementDataSource = ListDiffableDataSource<Achievement>
     typealias CategoryDataSource = ListDiffableDataSource<String>
     
@@ -47,19 +54,32 @@ final class HomeViewModel {
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
     }
     
-    func setupCategoryDataSource(_ dataSource: CategoryDataSource) {
+    func action(_ action: HomeViewModelAction) {
+        switch action {
+        case .setupCategoryDataSource(let dataSource):
+            setupCategoryDataSource(dataSource)
+        case .setupAchievementDataSource(let dataSource):
+            setupAchievementDataSource(dataSource)
+        case .fetchCategories:
+            fetchCategories()
+        case .fetchAchievementList:
+            try? fetchAchievementList()
+        }
+    }
+    
+    private func setupCategoryDataSource(_ dataSource: CategoryDataSource) {
         self.categoryDataSource = dataSource
     }
     
-    func setupAchievementDataSource(_ dataSource: AchievementDataSource) {
+    private func setupAchievementDataSource(_ dataSource: AchievementDataSource) {
         self.achievementDataSource = dataSource
     }
     
-    func fetchCategories() {
+    private func fetchCategories() {
         categoryDataSource?.update(data: categories)
     }
     
-    func fetchAchievementList() throws {
+    private func fetchAchievementList() throws {
         Task {
             achievements = try await fetchAchievementListUseCase.execute()
             achievementDataSource?.update(data: achievements)

@@ -8,7 +8,6 @@
 import UIKit
 import Combine
 import Core
-import Design
 
 final class HomeViewController: BaseViewController<HomeView> {
 
@@ -33,8 +32,8 @@ final class HomeViewController: BaseViewController<HomeView> {
         setupAchievementDataSource()
         setupCategoryDataSource()
         
-        try? viewModel.fetchAchievementList()
-        viewModel.fetchCategories()
+        viewModel.action(.fetchAchievementList)
+        viewModel.action(.fetchCategories)
         
         // TODO: 카테고리 리스트 API를 받았을 때 실행시켜야 함. 지금은 임시로 0.1초 후에 실행
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
@@ -92,7 +91,7 @@ final class HomeViewController: BaseViewController<HomeView> {
         }
         
         let diffableDataSource = HomeViewModel.AchievementDataSource(dataSource: dataSource)
-        viewModel.setupAchievementDataSource(diffableDataSource)
+        viewModel.action(.setupAchievementDataSource(dataSource: diffableDataSource))
     }
     
     private func setupCategoryDataSource() {
@@ -107,7 +106,7 @@ final class HomeViewController: BaseViewController<HomeView> {
         )
         
         let diffableDataSource = HomeViewModel.CategoryDataSource(dataSource: dataSource)
-        viewModel.setupCategoryDataSource(diffableDataSource)
+        viewModel.action(.setupCategoryDataSource(dataSource: diffableDataSource))
     }
 }
 
