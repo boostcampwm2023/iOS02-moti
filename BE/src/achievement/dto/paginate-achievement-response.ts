@@ -38,11 +38,11 @@ export class PaginateAchievementResponse {
         if (!paginateAchievementRequest[key]) {
           continue;
         }
-        if (key !== 'where__id__less_than') {
+        if (key !== 'whereIdLessThan') {
           next[key] = paginateAchievementRequest[key];
         }
       }
-      next.where__id__less_than = parseInt(last.id.toString());
+      next.whereIdLessThan = parseInt(last.id.toString());
     }
 
     return next ?? null;

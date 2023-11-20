@@ -59,7 +59,7 @@ describe('AchievementService Test', () => {
     const nextRequest = new PaginateAchievementRequest(
       category.id,
       4,
-      firstResponse.next.where__id__less_than,
+      firstResponse.next.whereIdLessThan,
     );
     const nextResponse = await achievementService.getAchievements(
       user.id,
@@ -69,7 +69,7 @@ describe('AchievementService Test', () => {
     const lastRequest = new PaginateAchievementRequest(
       category.id,
       4,
-      nextResponse.next.where__id__less_than,
+      nextResponse.next.whereIdLessThan,
     );
     const lastResponse = await achievementService.getAchievements(
       user.id,
@@ -78,15 +78,14 @@ describe('AchievementService Test', () => {
 
     expect(firstResponse.count).toEqual(4);
     expect(firstResponse.data.length).toEqual(4);
-    expect(firstResponse.next.where__id__less_than).toEqual(7);
+    expect(firstResponse.next.whereIdLessThan).toEqual(7);
 
     expect(nextResponse.count).toEqual(4);
     expect(nextResponse.data.length).toEqual(4);
-    expect(nextResponse.next.where__id__less_than).toEqual(3);
+    expect(nextResponse.next.whereIdLessThan).toEqual(3);
 
     expect(lastResponse.count).toEqual(2);
     expect(lastResponse.data.length).toEqual(2);
     expect(lastResponse.next).toEqual(null);
-    console.log(lastResponse);
   });
 });

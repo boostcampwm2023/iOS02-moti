@@ -5,7 +5,7 @@ export class PaginateAchievementRequest {
   @IsNumber()
   @IsOptional()
   @ApiProperty({ description: 'next cursor id' })
-  where__id__less_than?: number;
+  whereIdLessThan?: number;
 
   @IsNumber()
   @IsOptional()
@@ -17,13 +17,9 @@ export class PaginateAchievementRequest {
   @ApiProperty({ description: 'categoryId' })
   categoryId: number;
 
-  constructor(
-    categoryId?: number,
-    take?: number,
-    where__id__less_than?: number,
-  ) {
+  constructor(categoryId?: number, take?: number, whereIdLessThan?: number) {
     this.categoryId = categoryId;
     this.take = take;
-    this.where__id__less_than = where__id__less_than;
+    this.whereIdLessThan = whereIdLessThan;
   }
 }

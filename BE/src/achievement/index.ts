@@ -1,5 +1,5 @@
 export interface Next {
-  where__id__less_than?: number;
+  whereIdLessThan?: number;
   take?: number;
   categoryId?: number;
 }
