@@ -11,7 +11,7 @@ describe('PaginateAchievementResponse test', () => {
     );
   }
 
-  test('next url을 생성한다.', () => {
+  test('다음 페이지 네이션 요청을 위한 정보를 가지고 있는 next을 생성한다.', () => {
     const paginateAchievementRequest = new PaginateAchievementRequest();
     paginateAchievementRequest.take = 12;
     const response = new PaginateAchievementResponse(
@@ -20,7 +20,7 @@ describe('PaginateAchievementResponse test', () => {
     );
     expect(response.next).toEqual({ take: 12, where__id__less_than: 88 });
   });
-  test('next url을 생성한다. - categoryId 필터링 추가', () => {
+  test('다음 페이지 네이션 요청을 위한 정보를 가지고 있는 next을 생성한다. - categoryId 필터링 추가', () => {
     const paginateAchievementRequest = new PaginateAchievementRequest();
     paginateAchievementRequest.take = 12;
     paginateAchievementRequest.categoryId = 1;
