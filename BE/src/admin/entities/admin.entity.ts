@@ -12,13 +12,13 @@ export class AdminEntity {
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: UserEntity;
 
-  @Column({ type: 'varchar', length: 100, nullable: false })
+  @Column({ type: 'varchar', length: 100, nullable: false, unique: true })
   email: string;
 
   @Column({ type: 'varchar', length: 100 })
   password: string;
 
-  @PrimaryColumn({
+  @Column({
     type: 'simple-enum',
     enum: AdminStatus,
     default: AdminStatus.PENDING,

@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AdminService } from '../application/admin.service';
 import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
 import { AdminRegister } from '../dto/admin-register';
@@ -8,6 +15,7 @@ import { AdminLogin } from '../dto/admin-login';
 import { ApiData } from '../../common/api/api-data';
 import { AdminToken } from '../dto/admin-token';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { AdminTokenGuard } from '../../auth/guard/admin-token.guard';
 
 @Controller('/api/v1/admin')
 @ApiTags('어드민 API')
@@ -41,5 +49,19 @@ export class AdminRestController {
   ): Promise<ApiData<AdminToken>> {
     const adminToken = await this.adminService.loginAdmin(loginRequest);
     return ApiData.success(AdminToken.from(adminToken));
+  }
+
+  @UseGuards(AdminTokenGuard)
+  @Post('/register/accept')
+  @ApiOperation({
+    summary: '어드민 요청 수락 API',
+    description: '어드민 계정만 요청을 수락 가능',
+  })
+  async acceptAdminRegister(
+    @AuthenticatedUser() accepter: User,
+    @Query() email: string,
+  ) {
+    await this.adminService.acceptAdminRegister(accepter, email);
+    return ApiData.success('어드민 등록 완료');
   }
 }

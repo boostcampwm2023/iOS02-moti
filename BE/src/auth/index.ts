@@ -13,4 +13,8 @@ export interface PublicKeysResponse {
 export interface JwtClaim {
   userCode: string;
 }
+export interface JwtRolePayloads extends JwtClaim {
+  roles: string[];
+}
+
 export type Payload = { iat: number; exp: number } & JwtClaim;

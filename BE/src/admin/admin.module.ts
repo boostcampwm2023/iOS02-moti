@@ -6,10 +6,16 @@ import { CustomTypeOrmModule } from '../config/typeorm/custom-typeorm.module';
 import { AdminRepository } from './entities/admin.repository';
 import { passwordEncoderProviderOptions } from './application/password-encoder';
 import { UsersModule } from '../users/users.module';
+import { UserRepository } from '../users/entities/user.repository';
+import { UsersRoleRepository } from '../users/entities/users-role.repository';
 
 @Module({
   imports: [
-    CustomTypeOrmModule.forCustomRepository([AdminRepository]),
+    CustomTypeOrmModule.forCustomRepository([
+      AdminRepository,
+      UserRepository,
+      UsersRoleRepository,
+    ]),
     AuthModule,
     UsersModule,
   ],

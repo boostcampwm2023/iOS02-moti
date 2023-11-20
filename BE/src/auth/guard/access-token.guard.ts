@@ -1,8 +1,6 @@
 import {
   CanActivate,
   ExecutionContext,
-  forwardRef,
-  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -29,7 +27,7 @@ export class AccessTokenGuard implements CanActivate {
     const payloads = this.jwtUtils.parsePayloads(splitToken[1]);
     const userCode = payloads.userCode;
 
-    req.user = await this.usersService.findOneByUserCode(userCode);
+    req.user = await this.usersService.getUserByUserCodeWithRoles(userCode);
 
     return true;
   }

@@ -8,6 +8,7 @@ import { User } from '../domain/user.domain';
 import { configServiceModuleOptions } from '../../config/config';
 import { DataSource } from 'typeorm';
 import { transactionTest } from '../../../test/common/transaction-test';
+import { UserRole } from '../domain/user-role';
 
 describe('UserRepository test', () => {
   let usersRepository: UserRepository;
@@ -76,6 +77,55 @@ describe('UserRepository test', () => {
       // then
       expect(findOne.userCode).toBe('A1B2C1D');
       expect(findOne.userIdentifier).toBe('userIdentifier');
+    });
+  });
+
+  test('findOneByUserIdentifierWithRoles는 권한정보를 포함하여 user를 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = User.from('userIdentifier');
+      user.assignUserCode('A1B2C1D');
+      await usersRepository.saveUser(user);
+
+      // when
+      const findOne =
+        await usersRepository.findOneByUserIdentifierWithRoles(
+          'userIdentifier',
+        );
+
+      // then
+      expect(findOne.userCode).toBe('A1B2C1D');
+      expect(findOne.roles.length).toBe(1);
+      expect(findOne.roles[0]).toBe(UserRole.MEMBER);
+    });
+  });
+
+  test('findOneByUserCodeWithRoles 빈값에 대해 빈 값을 반환한다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // when
+      const findOne =
+        await usersRepository.findOneByUserIdentifierWithRoles(undefined);
+
+      // then
+      expect(findOne).toBeUndefined();
+    });
+  });
+
+  test('findOneByUserCodeWithRoles는 권한정보를 포함하여 user를 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = User.from('userIdentifier');
+      user.assignUserCode('A1B2C1D');
+      await usersRepository.saveUser(user);
+
+      // when
+      const findOne =
+        await usersRepository.findOneByUserCodeWithRoles('A1B2C1D');
+
+      // then
+      expect(findOne.userCode).toBe('A1B2C1D');
+      expect(findOne.roles.length).toBe(1);
+      expect(findOne.roles).toContain(UserRole.MEMBER);
     });
   });
 });
