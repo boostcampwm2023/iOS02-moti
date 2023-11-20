@@ -10,8 +10,21 @@ import Domain
 
 final class HomeViewModel {
     enum HomeViewModelAction {
-        case fetchCategories
-        case fetchAchievementList
+        case fetchData
+    }
+    
+    enum CategoryState {
+        case none
+        case loading
+        case finish
+        case error(message: String)
+    }
+    
+    enum AchievementState {
+        case none
+        case loading
+        case finish
+        case error(message: String)
     }
     
     typealias AchievementDataSource = ListDiffableDataSource<Achievement>
@@ -46,6 +59,9 @@ final class HomeViewModel {
     ]
     private var achievements: [Achievement] = []
     
+    @Published private(set) var categoryState: CategoryState = .none
+    @Published private(set) var achievementState: AchievementState = .none
+    
     init(
         fetchAchievementListUseCase: FetchAchievementListUseCase
     ) {
@@ -54,10 +70,9 @@ final class HomeViewModel {
     
     func action(_ action: HomeViewModelAction) {
         switch action {
-        case .fetchCategories:
+        case .fetchData:
             fetchCategories()
-        case .fetchAchievementList:
-            try? fetchAchievementList()
+            fetchAchievementList()
         }
     }
     
@@ -73,10 +88,16 @@ final class HomeViewModel {
         categoryDataSource?.update(data: categories)
     }
     
-    private func fetchAchievementList() throws {
+    private func fetchAchievementList() {
         Task {
-            achievements = try await fetchAchievementListUseCase.execute()
-            achievementDataSource?.update(data: achievements)
+            do {
+                achievementState = .loading
+                achievements = try await fetchAchievementListUseCase.execute()
+                achievementState = .finish
+                achievementDataSource?.update(data: achievements)
+            } catch {
+                achievementState = .error(message: error.localizedDescription)
+            }
         }
     }
 }
