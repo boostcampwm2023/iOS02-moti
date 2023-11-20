@@ -110,7 +110,6 @@ final class CaptureView: UIView {
             .height(equalTo: preview.widthAnchor)
             .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: 100)
             .horizontal(equalTo: safeAreaLayoutGuide)
-            
         
         // PreviewLayer를 Preview 에 넣기
         previewLayer.backgroundColor = UIColor.primaryGray.cgColor
