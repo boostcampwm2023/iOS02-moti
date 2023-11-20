@@ -1,14 +1,11 @@
 import { AchievementResponse } from './achievement-response';
 import { PaginateAchievementRequest } from './paginate-achievement-request';
+import { Next } from '../index';
 
 export class PaginateAchievementResponse {
-  private basePath = '/api/v1/achievements?';
   data: AchievementResponse[];
-  cursor: {
-    after: number;
-  };
   count: number;
-  next: string;
+  next: Next | null;
 
   constructor(
     paginateAchievementRequest: PaginateAchievementRequest,
@@ -22,32 +19,28 @@ export class PaginateAchievementResponse {
         ? achievements[achievements.length - 1]
         : null;
 
-    this.cursor = {
-      after: last?.id ?? null,
-    };
-
     this.count = achievements.length;
-    this.next = this.makeNextUrl(paginateAchievementRequest, last);
+    this.next = this.makeNext(paginateAchievementRequest, last);
   }
 
-  private makeNextUrl(
+  private makeNext(
     paginateAchievementRequest: PaginateAchievementRequest,
     last: AchievementResponse,
   ) {
-    const nextUrl = last && [this.basePath];
+    const next: Next | null = last && {};
 
-    if (nextUrl) {
+    if (next) {
       for (const key of Object.keys(paginateAchievementRequest)) {
         if (!paginateAchievementRequest[key]) {
           continue;
         }
         if (key !== 'where__id__less_than') {
-          nextUrl.push(`${key}=${paginateAchievementRequest[key]}`);
+          next[key] = paginateAchievementRequest[key];
         }
       }
-      nextUrl.push(`where__id__less_than=${last.id.toString()}`);
+      next.where__id__less_than = parseInt(last.id.toString());
     }
 
-    return nextUrl?.join('&').toString() ?? null;
+    return next ?? null;
   }
 }
