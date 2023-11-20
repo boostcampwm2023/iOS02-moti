@@ -28,6 +28,7 @@ final class HomeViewController: BaseViewController<HomeView> {
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        addTargets()
         
         setupAchievementDataSource()
         setupCategoryDataSource()
@@ -40,6 +41,23 @@ final class HomeViewController: BaseViewController<HomeView> {
             self.layoutView.categoryCollectionView.selectItem(at: [0, 0], animated: false, scrollPosition: .init())
             self.collectionView(self.layoutView.categoryCollectionView.self, didSelectItemAt: IndexPath(item: 0, section: 0))
         })
+    }
+    
+    // MARK: - Methods
+    private func addTargets() {
+        layoutView.catergoryAddButton.addTarget(self, action: #selector(showAlert), for: .touchUpInside)
+    }
+    
+    @objc private func showAlert() {
+        let alertVC = AlertFactory.makeTextFieldAlert(
+            title: "추가할 카테고리 이름을 입력하세요.",
+            okTitle: "생성",
+            placeholder: "카테고리 이름은 최대 10글자입니다."
+        ) { (text) in
+            Logger.debug(text)
+        }
+        
+        present(alertVC, animated: true)
     }
     
     // MARK: - Setup

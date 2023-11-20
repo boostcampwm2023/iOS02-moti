@@ -12,7 +12,7 @@ final class HomeView: UIView {
     
     // MARK: - Views
     // 카테고리 추가 버튼
-    private let catergoryAddButton: BounceButton = {
+    let catergoryAddButton: BounceButton = {
         let button = BounceButton()
         button.setTitle("+", for: .normal)
         return button
