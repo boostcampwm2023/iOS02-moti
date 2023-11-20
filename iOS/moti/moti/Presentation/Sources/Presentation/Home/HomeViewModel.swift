@@ -10,19 +10,17 @@ import Domain
 
 final class HomeViewModel {
     enum HomeViewModelAction {
-        case fetchData
+        case launch
     }
     
     enum CategoryState {
-        case none
-        case loading
+        case initial
         case finish
         case error(message: String)
     }
     
     enum AchievementState {
-        case none
-        case loading
+        case initial
         case finish
         case error(message: String)
     }
@@ -59,8 +57,8 @@ final class HomeViewModel {
     ]
     private var achievements: [Achievement] = []
     
-    @Published private(set) var categoryState: CategoryState = .none
-    @Published private(set) var achievementState: AchievementState = .none
+    @Published private(set) var categoryState: CategoryState = .initial
+    @Published private(set) var achievementState: AchievementState = .initial
     
     init(
         fetchAchievementListUseCase: FetchAchievementListUseCase
@@ -70,7 +68,7 @@ final class HomeViewModel {
     
     func action(_ action: HomeViewModelAction) {
         switch action {
-        case .fetchData:
+        case .launch:
             fetchCategories()
             fetchAchievementList()
         }
@@ -91,7 +89,6 @@ final class HomeViewModel {
     private func fetchAchievementList() {
         Task {
             do {
-                achievementState = .loading
                 achievements = try await fetchAchievementListUseCase.execute()
                 achievementState = .finish
                 achievementDataSource?.update(data: achievements)

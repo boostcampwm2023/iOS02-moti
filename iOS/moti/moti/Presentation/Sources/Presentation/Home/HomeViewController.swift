@@ -34,7 +34,7 @@ final class HomeViewController: BaseViewController<HomeView> {
         setupAchievementDataSource()
         setupCategoryDataSource()
         
-        viewModel.action(.fetchData)
+        viewModel.action(.launch)
         
         // TODO: 카테고리 리스트 API를 받았을 때 실행시켜야 함. 지금은 임시로 0.1초 후에 실행
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
