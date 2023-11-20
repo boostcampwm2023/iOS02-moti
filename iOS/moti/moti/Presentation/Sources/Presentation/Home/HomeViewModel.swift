@@ -9,6 +9,22 @@ import Foundation
 import Domain
 
 final class HomeViewModel {
+    enum HomeViewModelAction {
+        case launch
+    }
+    
+    enum CategoryState {
+        case initial
+        case finish
+        case error(message: String)
+    }
+    
+    enum AchievementState {
+        case initial
+        case finish
+        case error(message: String)
+    }
+    
     typealias AchievementDataSource = ListDiffableDataSource<Achievement>
     typealias CategoryDataSource = ListDiffableDataSource<String>
     
@@ -41,10 +57,21 @@ final class HomeViewModel {
     ]
     private var achievements: [Achievement] = []
     
+    @Published private(set) var categoryState: CategoryState = .initial
+    @Published private(set) var achievementState: AchievementState = .initial
+    
     init(
         fetchAchievementListUseCase: FetchAchievementListUseCase
     ) {
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
+    }
+    
+    func action(_ action: HomeViewModelAction) {
+        switch action {
+        case .launch:
+            fetchCategories()
+            fetchAchievementList()
+        }
     }
     
     func setupCategoryDataSource(_ dataSource: CategoryDataSource) {
@@ -55,14 +82,19 @@ final class HomeViewModel {
         self.achievementDataSource = dataSource
     }
     
-    func fetchCategories() {
+    private func fetchCategories() {
         categoryDataSource?.update(data: categories)
     }
     
-    func fetchAchievementList() throws {
+    private func fetchAchievementList() {
         Task {
-            achievements = try await fetchAchievementListUseCase.execute()
-            achievementDataSource?.update(data: achievements)
+            do {
+                achievements = try await fetchAchievementListUseCase.execute()
+                achievementState = .finish
+                achievementDataSource?.update(data: achievements)
+            } catch {
+                achievementState = .error(message: error.localizedDescription)
+            }
         }
     }
 }

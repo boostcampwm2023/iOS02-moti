@@ -8,13 +8,13 @@
 import UIKit
 import Combine
 import Core
-import Design
 
 final class HomeViewController: BaseViewController<HomeView> {
 
     // MARK: - Properties
     weak var coordinator: HomeCoordinator?
     private let viewModel: HomeViewModel
+    private var cancellables: Set<AnyCancellable> = []
     
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
@@ -29,12 +29,12 @@ final class HomeViewController: BaseViewController<HomeView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         addTargets()
+        bind()
         
         setupAchievementDataSource()
         setupCategoryDataSource()
         
-        try? viewModel.fetchAchievementList()
-        viewModel.fetchCategories()
+        viewModel.action(.launch)
         
         // TODO: 카테고리 리스트 API를 받았을 때 실행시켜야 함. 지금은 임시로 0.1초 후에 실행
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
@@ -44,6 +44,15 @@ final class HomeViewController: BaseViewController<HomeView> {
     }
     
     // MARK: - Methods
+    private func bind() {
+        viewModel.$achievementState
+            .sink { state in
+                // state 에 따른 뷰 처리 - 스켈레톤 뷰, fetch 에러 뷰 등
+                Logger.debug(state)
+            }
+            .store(in: &cancellables)
+    }
+    
     private func addTargets() {
         layoutView.catergoryAddButton.addTarget(self, action: #selector(showAlert), for: .touchUpInside)
     }
