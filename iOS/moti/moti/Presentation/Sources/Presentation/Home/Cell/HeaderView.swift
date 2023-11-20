@@ -24,7 +24,7 @@ final class HeaderView: UICollectionViewCell {
     
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "달성"
+        label.text = "성공"
         label.font = .xlarge
         return label
     }()

@@ -65,7 +65,7 @@ final class HomeView: UIView {
         addSubview(catergoryAddButton)
         catergoryAddButton.atl
             .size(width: 37, height: 37)
-            .top(equalTo: self.safeAreaLayoutGuide.topAnchor)
+            .top(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 10)
             .left(equalTo: self.safeAreaLayoutGuide.leftAnchor, constant: 10)
         
         addSubview(separatorView)
@@ -80,7 +80,7 @@ final class HomeView: UIView {
         addSubview(categoryCollectionView)
         categoryCollectionView.atl
             .height(constant: 37)
-            .top(equalTo: self.safeAreaLayoutGuide.topAnchor)
+            .top(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 10)
             .left(equalTo: separatorView.rightAnchor)
             .right(equalTo: self.safeAreaLayoutGuide.rightAnchor)
     }
@@ -89,7 +89,7 @@ final class HomeView: UIView {
         addSubview(achievementCollectionView)
         achievementCollectionView.atl
             .width(equalTo: self.widthAnchor)
-            .top(equalTo: categoryCollectionView.bottomAnchor)
+            .top(equalTo: categoryCollectionView.bottomAnchor, constant: 10)
             .bottom(equalTo: self.bottomAnchor)
     }
 }
