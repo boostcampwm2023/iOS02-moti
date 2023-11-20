@@ -14,7 +14,10 @@ export class AchievementRepository extends TransactionalRepository<AchievementEn
     const where: FindOptionsWhere<AchievementEntity> = {
       user: { id: userId },
     };
-    if (achievementPaginationOption.categoryId !== 0) {
+    if (
+      achievementPaginationOption.categoryId &&
+      achievementPaginationOption.categoryId !== 0
+    ) {
       where.category = { id: achievementPaginationOption.categoryId };
     }
     if (achievementPaginationOption.whereIdLessThan) {
