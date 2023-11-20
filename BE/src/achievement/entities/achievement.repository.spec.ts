@@ -15,7 +15,7 @@ import { AchievementTestModule } from '../../../test/achievement/achievement-tes
 import { AchievementFixture } from '../../../test/achievement/achievement-fixture';
 import { CategoryTestModule } from '../../../test/category/category-test.module';
 import { Achievement } from '../domain/achievement.domain';
-import { Next } from '../index';
+import { PaginateAchievementRequest } from '../dto/paginate-achievement-request';
 
 describe('AchievementRepository test', () => {
   let achievementRepository: AchievementRepository;
@@ -90,7 +90,7 @@ describe('AchievementRepository test', () => {
       }
 
       // when
-      const achievementPaginationOption: Next = {
+      const achievementPaginationOption: PaginateAchievementRequest = {
         categoryId: category.id,
         take: 12,
       };
@@ -101,6 +101,40 @@ describe('AchievementRepository test', () => {
 
       // then
       expect(findAll.length).toEqual(10);
+    });
+  });
+
+  test('카테고리 ID가 0인 경우에는 모든 달성 기록을 조회한다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const category_1 = await categoryFixture.getCategory(user, 'ABC');
+      const category_2 = await categoryFixture.getCategory(user, 'DEF');
+
+      const achievements = [];
+      for (let i = 0; i < 10; i++) {
+        achievements.push(
+          await achievementFixture.getAchievement(user, category_1),
+        );
+      }
+      for (let i = 0; i < 10; i++) {
+        achievements.push(
+          await achievementFixture.getAchievement(user, category_2),
+        );
+      }
+
+      // when
+      const achievementPaginationOption: PaginateAchievementRequest = {
+        categoryId: 0,
+        take: 12,
+      };
+      const findAll = await achievementRepository.findAll(
+        user.id,
+        achievementPaginationOption,
+      );
+
+      // then
+      expect(findAll.length).toEqual(12);
     });
   });
 });
