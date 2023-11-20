@@ -24,12 +24,27 @@ final class CaptureResultView: UIView {
         textField.font = .largeBold
         return textField
     }()
-    private let categoryButton = {
+    
+    let categoryButton = {
         let button = UIButton(type: .system)
         
         button.setTitle("카테고리", for: .normal)
         button.setTitleColor(.primaryDarkGray, for: .normal)
         
+        return button
+    }()
+    
+    let categoryPickerView = {
+        let pickerView = UIPickerView()
+        pickerView.backgroundColor = .primaryGray
+        pickerView.isHidden = true
+        return pickerView
+    }()
+    
+    let selectDoneButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("완료", for: .normal)
+        button.isHidden = true
         return button
     }()
     
@@ -44,12 +59,6 @@ final class CaptureResultView: UIView {
         setupUI()
     }
     
-    private func setupUI() {
-        setupResultImageView()
-        setupTitleTextField()
-        setupCategoryButton()
-    }
-    
     func configure(image: UIImage, category: String? = nil, count: Int) {
         resultImageView.image = image
         
@@ -60,10 +69,31 @@ final class CaptureResultView: UIView {
             titleTextField.placeholder = "\(count)회 성공"
         }
     }
+    
+    func update(category: String) {
+        categoryButton.setTitle(category, for: .normal)
+    }
+    
+    func showCategoryPicker() {
+        categoryPickerView.isHidden = false
+        selectDoneButton.isHidden = false
+    }
+    
+    func hideCategoryPicker() {
+        categoryPickerView.isHidden = true
+        selectDoneButton.isHidden = true
+    }
 }
 
 // MARK: - Setup
 extension CaptureResultView {
+    private func setupUI() {
+        setupResultImageView()
+        setupTitleTextField()
+        setupCategoryButton()
+        setupCategoryPickerView()
+    }
+    
     private func setupResultImageView() {
         addSubview(resultImageView)
         resultImageView.atl
@@ -75,7 +105,7 @@ extension CaptureResultView {
     private func setupTitleTextField() {
         addSubview(titleTextField)
         titleTextField.atl
-            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
+            .horizontal(equalTo: safeAreaLayoutGuide, constant: 20)
             .bottom(equalTo: resultImageView.topAnchor, constant: -20)
     }
     
@@ -84,5 +114,18 @@ extension CaptureResultView {
         categoryButton.atl
             .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
             .bottom(equalTo: titleTextField.topAnchor, constant: -5)
+    }
+    
+    private func setupCategoryPickerView() {
+        addSubview(categoryPickerView)
+        addSubview(selectDoneButton)
+        categoryPickerView.atl
+            .height(constant: 150)
+            .horizontal(equalTo: safeAreaLayoutGuide)
+            .bottom(equalTo: safeAreaLayoutGuide.bottomAnchor)
+        
+        selectDoneButton.atl
+            .right(equalTo: categoryPickerView.rightAnchor, constant: -10)
+            .top(equalTo: categoryPickerView.topAnchor, constant: 10)
     }
 }
