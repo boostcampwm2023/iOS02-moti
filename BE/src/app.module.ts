@@ -10,6 +10,7 @@ import { TransactionModule } from './config/transaction-manager/transaction.modu
 import { OperateModule } from './operate/operate.module';
 import { UsersModule } from './users/users.module';
 import { CategoryModule } from './category/category.module';
+import { AchievementModule } from './achievement/achievement.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CategoryModule } from './category/category.module';
     TransactionModule,
     OperateModule,
     CategoryModule,
+    AchievementModule,
   ],
   controllers: [AppController],
   providers: [AppService],
