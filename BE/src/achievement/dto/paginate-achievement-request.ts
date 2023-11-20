@@ -10,14 +10,18 @@ export class PaginateAchievementRequest {
   @IsNumber()
   @IsOptional()
   @ApiProperty({ description: 'take' })
-  take: number = 12;
+  take: number;
 
   @IsNumber()
   @IsOptional()
   @ApiProperty({ description: 'categoryId' })
   categoryId: number;
 
-  constructor(categoryId?: number, take?: number, whereIdLessThan?: number) {
+  constructor(
+    categoryId?: number,
+    take: number = 12,
+    whereIdLessThan?: number,
+  ) {
     this.categoryId = categoryId;
     this.take = take;
     this.whereIdLessThan = whereIdLessThan;
