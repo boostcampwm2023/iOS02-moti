@@ -31,8 +31,11 @@ final class CaptureCoordinator: Coordinator {
             action: #selector(cancelButtonAction)
         )
         
-        navigationController.isNavigationBarHidden = false
         navigationController.pushViewController(captureVC, animated: true)
+        
+        // 화면 이동한 뒤 네비게이션바 보이기
+        // 화면 이동하기 전에 네비게이션바를 보여주면 잔상이 남음
+        navigationController.isNavigationBarHidden = false
     }
     
     private func moveCaptureResultViewController(imageData: Data) {
