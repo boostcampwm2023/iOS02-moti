@@ -11,6 +11,7 @@ import { OperateModule } from './operate/operate.module';
 import { UsersModule } from './users/users.module';
 import { AdminModule } from './admin/admin.module';
 import { CategoryModule } from './category/category.module';
+import { AchievementModule } from './achievement/achievement.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CategoryModule } from './category/category.module';
     OperateModule,
     AdminModule,
     CategoryModule,
+    AchievementModule,
   ],
   controllers: [AppController],
   providers: [AppService],
