@@ -16,7 +16,8 @@ let package = Package(
         .package(path: "../Design"),
         .package(path: "../Core"),
         .package(path: "../Domain"),
-        .package(path: "../Data")
+        .package(path: "../Data"),
+        .package(url: "https://github.com/jeongju9216/Jeongfisher.git", from: "2.5.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -27,7 +28,8 @@ let package = Package(
                 .product(name: "Design", package: "Design"),
                 .product(name: "Core", package: "Core"),
                 .product(name: "Domain", package: "Domain"),
-                .product(name: "Data", package: "Data")
+                .product(name: "Data", package: "Data"),
+                "Jeongfisher"
             ],
             path: "Sources"),
         .testTarget(

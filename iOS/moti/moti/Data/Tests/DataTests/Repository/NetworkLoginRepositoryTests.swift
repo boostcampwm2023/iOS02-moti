@@ -23,6 +23,7 @@ final class NetworkLoginRepositoryTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
+    // TODO: xcconfig baseURL nil error
     func test_login을_요청하면_결과값이_존재함() throws {
         let repository = LoginRepository()
         let expectation = XCTestExpectation(description: "test_login을_요청하면_결과값이_존재함")

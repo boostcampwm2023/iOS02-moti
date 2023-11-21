@@ -62,7 +62,7 @@ public final class TabBarCoordinator: Coordinator {
 // MARK: - Make Child ViewControllers
 private extension TabBarCoordinator {
     func makeIndividualTabPage() -> UINavigationController {
-        let homeVM = HomeViewModel(fetchAchievementListUseCase: .init(repository: MockAchievementListRepository()))
+        let homeVM = HomeViewModel(fetchAchievementListUseCase: .init(repository: AchievementListRepository()))
         let homeVC = HomeViewController(viewModel: homeVM)
         
         homeVC.tabBarItem.image = SymbolImage.individualTabItem
