@@ -12,11 +12,19 @@ public struct Achievement: Hashable {
     public let category: String
     public let title: String
     public let imageURL: URL?
-    public let body: String
+    public let body: String?
     public let achieveCount: Int
     public let date: Date?
     
-    public init(id: Int, category: String = "", title: String = "", imageURL: URL? = nil, body: String = "", achieveCount: Int = 0, date: Date? = nil) {
+    public init(
+        id: Int,
+        category: String,
+        title: String,
+        imageURL: URL?,
+        body: String?,
+        achieveCount: Int,
+        date: Date?
+    ) {
         self.id = id
         self.category = category
         self.title = title
@@ -24,5 +32,15 @@ public struct Achievement: Hashable {
         self.body = body
         self.achieveCount = achieveCount
         self.date = date
+    }
+    
+    public init(id: Int, title: String, imageURL: URL?) {
+        self.id = id
+        self.category = ""
+        self.title = title
+        self.imageURL = imageURL
+        self.body = ""
+        self.achieveCount = 0
+        self.date = nil
     }
 }
