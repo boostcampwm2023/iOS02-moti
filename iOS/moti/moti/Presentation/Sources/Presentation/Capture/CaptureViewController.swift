@@ -47,10 +47,12 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if let session = session, 
-            session.isRunning {
-            Logger.debug("Session Stop Running")
-            session.stopRunning()
+        DispatchQueue.global().async {
+            guard let session = self.session else { return }
+            if session.isRunning {
+                Logger.debug("Session Stop Running")
+                session.stopRunning()
+            }
         }
     }
     
