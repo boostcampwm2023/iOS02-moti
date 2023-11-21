@@ -10,20 +10,29 @@ import Core
 import AVFoundation
 import Design
 
+protocol CaptureViewControllerDelegate: AnyObject {
+    func didCapture()
+}
+
 final class CaptureViewController: BaseViewController<CaptureView> {
     
     // MARK: - Properties
+    weak var delegate: CaptureViewControllerDelegate?
     weak var coordinator: CaptureCoordinator?
     
+    private let categories: [String] = ["카테고리1", "카테고리2", "카테고리3", "카테고리4", "카테고리5"]
+    private var bottomSheet = TextViewBottomSheet()
+
     // Capture Session
     private var session: AVCaptureSession?
     
     // Photo Output
-    private let output = AVCapturePhotoOutput()
+    private var output: AVCapturePhotoOutput?
     
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupCategoryPickerView()
         addTargets()
     }
     
@@ -34,15 +43,39 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        Logger.debug("Session Stop Running")
-        session?.stopRunning()
+        if let session = session, 
+            session.isRunning {
+            Logger.debug("Session Stop Running")
+            session.stopRunning()
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
     }
     
     // MARK: - Methods
     private func addTargets() {
         layoutView.captureButton.addTarget(self, action: #selector(didClickedShutterButton), for: .touchUpInside)
+        layoutView.achievementView.categoryButton.addTarget(self, action: #selector(showPicker), for: .touchUpInside)
+        layoutView.achievementView.selectDoneButton.addTarget(self, action: #selector(donePicker), for: .touchUpInside)
     }
+        
+    func startCapture() {
+        layoutView.achievementView.hideCategoryPicker()
+        hideBottomSheet()
+        setupCamera()
+        layoutView.changeToCaptureMode()
+    }
+    
+    func startEdit(image: UIImage) {
+        showBottomSheet()
+        layoutView.changeToEditMode(image: MotiImage.sample1)
+    }
+}
 
+// MARK: - Camera
+extension CaptureViewController {
     private func checkCameraPermissions() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined: // 첫 권한 요청
@@ -75,45 +108,55 @@ final class CaptureViewController: BaseViewController<CaptureView> {
             let input = try AVCaptureDeviceInput(device: device)
             if session.canAddInput(input) {
                 session.addInput(input)
+                Logger.debug("Add AVCaptureDeviceInput")
             }
-            
-            if session.canAddOutput(output) {
-                session.addOutput(output)
-            }
-
-            layoutView.updatePreviewLayer(session: session)
-            
-            DispatchQueue.global().async {
-                Logger.debug("Session Start Running")
-                session.startRunning()
-            }
-            self.session = session
-                
         } catch {
             Logger.debug(error)
         }
+            
+        output = AVCapturePhotoOutput()
+        if let output = output,
+            session.canAddOutput(output) {
+            session.addOutput(output)
+            Logger.debug("Add AVCapturePhotoOutput")
+        }
+
+        layoutView.updatePreviewLayer(session: session)
+        layoutView.changeToCaptureMode()
+        
+        DispatchQueue.global().async {
+            if !session.isRunning {
+                Logger.debug("Session Start Running")
+                session.startRunning()
+            } else {
+                Logger.debug("Session Already Running")
+            }
+        }
+        self.session = session
     }
-    
+
     @objc private func didClickedShutterButton() {
         
         // 사진 찍기!
         #if targetEnvironment(simulator)
-            // Simulator
-            Logger.debug("시뮬레이터에선 카메라를 테스트할 수 없습니다. 실기기를 연결해 주세요.")
+        // Simulator
+        Logger.debug("시뮬레이터에선 카메라를 테스트할 수 없습니다. 실기기를 연결해 주세요.")
+        delegate?.didCapture()
+        startEdit(image: MotiImage.sample1)
         #else
-            // TODO: PhotoQualityPrioritization 옵션별로 비교해서 최종 결정해야 함
-            // - speed: 약간의 노이즈 감소만이 적용
-            // - balanced: speed보다 약간 더 느리지만 더 나은 품질을 얻음
-            // - quality: 현대 디바이스나 밝기에 따라 많은 시간을 사용하여 최상의 품질을 만듬
-            
-            // 빠른 속도를 위해 speed를 사용하려 했지만
-            // WWDC 2021 - Capture high-quality photos using video formats에서 speed보다 balanced를 추천 (기본이 balanced임)
-            // 만약 사진과 비디오가 동일하게 보여야 하면 speed를 사용
+        // TODO: PhotoQualityPrioritization 옵션별로 비교해서 최종 결정해야 함
+        // - speed: 약간의 노이즈 감소만이 적용
+        // - balanced: speed보다 약간 더 느리지만 더 나은 품질을 얻음
+        // - quality: 현대 디바이스나 밝기에 따라 많은 시간을 사용하여 최상의 품질을 만듬
         
-            // Actual Device
-            let setting = AVCapturePhotoSettings()
-            setting.photoQualityPrioritization = .balanced
-            output.capturePhoto(with: setting, delegate: self)
+        // 빠른 속도를 위해 speed를 사용하려 했지만
+        // WWDC 2021 - Capture high-quality photos using video formats에서 speed보다 balanced를 추천 (기본이 balanced임)
+        // 만약 사진과 비디오가 동일하게 보여야 하면 speed를 사용
+    
+        // Actual Device
+        let setting = AVCapturePhotoSettings()
+        setting.photoQualityPrioritization = .balanced
+        output?.capturePhoto(with: setting, delegate: self)
         #endif
     }
 }
@@ -121,18 +164,29 @@ final class CaptureViewController: BaseViewController<CaptureView> {
 extension CaptureViewController: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         // 카메라 세션 끊기, 끊지 않으면 여러번 사진 찍기 가능
-        session?.stopRunning()
+        if let session = session, 
+            session.isRunning {
+            session.stopRunning()
+        }
         
-        guard let data = photo.fileDataRepresentation(),
-              let image = UIImage(data: data) else { return }
+        guard let data = photo.fileDataRepresentation() else { return }
+        
+        if let image = convertDataToImage(data) {
+            delegate?.didCapture()
+            let rect = CGRect(origin: .zero, size: .init(width: 1000, height: 1000))
+            let croppedImage = cropImage(image: image, rect: rect)
+            layoutView.changeToEditMode(image: croppedImage)
+        }
+    }
+    
+    private func convertDataToImage(_ data: Data) -> UIImage? {
+        guard let image = UIImage(data: data) else { return nil }
         
         #if DEBUG
             Logger.debug("이미지 사이즈: \(image.size)")
             Logger.debug("이미지 용량: \(data) / \(data.count / 1000) KB\n")
-            Logger.debug("Crop 사이즈: \(layoutView.preview.bounds)")
         #endif
-        
-        layoutView.updatePreview(with: cropImage(image: image, rect: layoutView.preview.bounds))
+        return image
     }
     
     private func cropImage(image: UIImage, rect: CGRect) -> UIImage {
@@ -142,5 +196,65 @@ extension CaptureViewController: AVCapturePhotoCaptureDelegate {
         
         let croppedImage = UIImage(cgImage: imageRef)
         return croppedImage
+    }
+}
+
+// MARK: - Bottom Sheet
+private extension CaptureViewController {
+    func showBottomSheet() {
+        bottomSheet.modalPresentationStyle = .pageSheet
+
+        if let sheet = bottomSheet.sheetPresentationController {
+            sheet.detents = [.small(), .large()]
+            sheet.prefersGrabberVisible = true
+            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+            sheet.selectedDetentIdentifier = .small
+            sheet.largestUndimmedDetentIdentifier = .large
+        }
+
+        bottomSheet.isModalInPresentation = true
+        present(bottomSheet, animated: true)
+    }
+
+    func hideBottomSheet() {
+        bottomSheet.dismiss(animated: true)
+    }
+}
+
+// MARK: - Category PickerView
+extension CaptureViewController {
+    private func setupCategoryPickerView() {
+        layoutView.achievementView.categoryPickerView.delegate = self
+        layoutView.achievementView.categoryPickerView.dataSource = self
+    }
+    
+    @objc private func showPicker() {
+        hideBottomSheet()
+        layoutView.achievementView.showCategoryPicker()
+    }
+
+    @objc private func donePicker() {
+        layoutView.achievementView.hideCategoryPicker()
+        showBottomSheet()
+    }
+}
+
+extension CaptureViewController: UIPickerViewDelegate {
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        layoutView.achievementView.update(category: categories[row])
+    }
+}
+
+extension CaptureViewController: UIPickerViewDataSource {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return categories.count
+    }
+
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return categories[row]
     }
 }

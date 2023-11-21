@@ -12,10 +12,18 @@ import AVFoundation
 final class CaptureView: UIView {
     
     // MARK: - Views
-    private let photoButton = NormalButton(title: "앨범에서 선택", image: SymbolImage.photo)
-    private let cameraSwitchingButton = NormalButton(title: "카메라 전환", image: SymbolImage.iphone)
-    
+    // VC에서 액션을 달아주기 위해 private 제거
+    let photoButton = NormalButton(title: "앨범에서 선택", image: SymbolImage.photo)
+    let cameraSwitchingButton = NormalButton(title: "카메라 전환", image: SymbolImage.iphone)
+    let captureButton = CaptureButton()
+
     // Video Preview
+    private let preview = {
+        let view = UIView()
+        view.backgroundColor = .primaryGray
+        return view
+    }()
+
     private let previewLayer = {
         let previewLayer = AVCaptureVideoPreviewLayer()
         previewLayer.videoGravity = .resizeAspectFill
@@ -27,16 +35,15 @@ final class CaptureView: UIView {
         }
         return previewLayer
     }()
-    let preview = UIView()
     
-    let captureButton = CaptureButton() // VC에서 액션을 달아주기 위해 private 제거
-    private let resultImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.isHidden = true
-        return imageView
+    // 편집 뷰
+    let achievementView = {
+        let achievementView = AchievementView()
+        achievementView.isHidden = true
+        return achievementView
     }()
     
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -55,17 +62,34 @@ final class CaptureView: UIView {
     }
     
     // MARK: - Methods
-    func updatePreview(with image: UIImage) {
-        resultImageView.isHidden = false
-        resultImageView.image = image
-    }
-    
     func updatePreviewLayer(session: AVCaptureSession) {
-        resultImageView.isHidden = true
         previewLayer.session = session
     }
     
-    private func setupUI() {
+    func changeToCaptureMode() {
+        preview.isHidden = false
+        photoButton.isHidden = false
+        cameraSwitchingButton.isHidden = false
+        captureButton.isHidden = false
+        
+        achievementView.isHidden = true
+    }
+    
+    func changeToEditMode(image: UIImage) {
+        preview.isHidden = true
+        photoButton.isHidden = true
+        cameraSwitchingButton.isHidden = true
+        captureButton.isHidden = true
+        
+        achievementView.isHidden = false
+        achievementView.configureEdit(image: image)
+    }
+}
+
+// MARK: - Setup
+private extension CaptureView {
+    func setupUI() {
+        setupAchievementView()
         setupPreview()
         
         setupCaptureButton()
@@ -73,7 +97,7 @@ final class CaptureView: UIView {
         setupCameraSwitchingButton()
     }
     
-    private func setupCaptureButton() {
+    func setupCaptureButton() {
         addSubview(captureButton)
         captureButton.atl
             .size(width: CaptureButton.defaultSize, height: CaptureButton.defaultSize)
@@ -81,7 +105,7 @@ final class CaptureView: UIView {
             .bottom(equalTo: bottomAnchor, constant: -36)
     }
 
-    private func setupPhotoButton() {
+    func setupPhotoButton() {
         photoButton.setColor(.tabBarItemGray)
         addSubview(photoButton)
         photoButton.atl
@@ -89,7 +113,7 @@ final class CaptureView: UIView {
             .right(equalTo: captureButton.leftAnchor, constant: -30)
     }
     
-    private func setupCameraSwitchingButton() {
+    func setupCameraSwitchingButton() {
         cameraSwitchingButton.setColor(.tabBarItemGray)
         addSubview(cameraSwitchingButton)
         cameraSwitchingButton.atl
@@ -97,20 +121,21 @@ final class CaptureView: UIView {
             .left(equalTo: captureButton.rightAnchor, constant: 30)
     }
     
-    private func setupResultImageView() {
-        addSubview(resultImageView)
-        resultImageView.atl
-            .all(of: preview)
+    func setupAchievementView() {
+        addSubview(achievementView)
+        achievementView.atl
+            .top(equalTo: safeAreaLayoutGuide.topAnchor)
+            .bottom(equalTo: bottomAnchor)
+            .horizontal(equalTo: safeAreaLayoutGuide)
     }
     
-    private func setupPreview() {
+    func setupPreview() {
         // 카메라 Preview
         addSubview(preview)
         preview.atl
             .height(equalTo: preview.widthAnchor)
-            .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: 100)
+            .top(equalTo: achievementView.resultImageView.topAnchor)
             .horizontal(equalTo: safeAreaLayoutGuide)
-            
         
         // PreviewLayer를 Preview 에 넣기
         previewLayer.backgroundColor = UIColor.primaryGray.cgColor
