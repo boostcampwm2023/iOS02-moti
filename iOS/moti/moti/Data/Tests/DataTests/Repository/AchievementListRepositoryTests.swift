@@ -21,7 +21,7 @@ final class AchievementListRepositoryTests: XCTestCase {
 
     // TODO: xcconfig baseURL nil error
     func test_queryParam_없이_AchievementList_요청시_nil을_return하는가() throws {
-        let repository = AchievementListRepository()
+        let repository = MockAchievementListRepository()
         let expectation = XCTestExpectation(description: "test_queryParam_없이_AchievementList_요청시_nil을_return하는가")
         
         Task {
