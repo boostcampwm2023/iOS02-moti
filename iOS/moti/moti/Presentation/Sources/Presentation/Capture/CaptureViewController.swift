@@ -220,20 +220,18 @@ extension CaptureViewController: PHPickerViewControllerDelegate {
 // MARK: - Bottom Sheet
 private extension CaptureViewController {
     func showBottomSheet() {
-        DispatchQueue.main.async {
-            self.bottomSheet.modalPresentationStyle = .pageSheet
+        bottomSheet.modalPresentationStyle = .pageSheet
 
-            if let sheet = self.bottomSheet.sheetPresentationController {
-                sheet.detents = [.small(), .large()]
-                sheet.prefersGrabberVisible = true
-                sheet.prefersScrollingExpandsWhenScrolledToEdge = false
-                sheet.selectedDetentIdentifier = .small
-                sheet.largestUndimmedDetentIdentifier = .large
-            }
-
-            self.bottomSheet.isModalInPresentation = true
-            self.present(self.bottomSheet, animated: true)
+        if let sheet = bottomSheet.sheetPresentationController {
+            sheet.detents = [.small(), .large()]
+            sheet.prefersGrabberVisible = true
+            sheet.prefersScrollingExpandsWhenScrolledToEdge = false
+            sheet.selectedDetentIdentifier = .small
+            sheet.largestUndimmedDetentIdentifier = .large
         }
+
+        bottomSheet.isModalInPresentation = true
+        present(bottomSheet, animated: true)
     }
 
     func hideBottomSheet() {
