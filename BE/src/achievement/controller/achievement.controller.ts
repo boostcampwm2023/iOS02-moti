@@ -1,4 +1,11 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AchievementService } from '../application/achievement.service';
 import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
 import { AuthenticatedUser } from '../../auth/decorator/athenticated-user.decorator';
@@ -7,6 +14,7 @@ import { ApiData } from '../../common/api/api-data';
 import { PaginateAchievementRequest } from '../dto/paginate-achievement-request';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PaginateAchievementResponse } from '../dto/paginate-achievement-response';
+import { IsNumber } from 'class-validator';
 
 @Controller('/api/v1/achievements')
 @ApiTags('달성기록 API')
@@ -30,6 +38,19 @@ export class AchievementController {
     const response = await this.achievementService.getAchievements(
       user.id,
       paginateAchievementRequest,
+    );
+    return ApiData.success(response);
+  }
+
+  @Get('/:id')
+  @UseGuards(AccessTokenGuard)
+  async getAchievement(
+    @AuthenticatedUser() user: User,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const response = await this.achievementService.getAchievementDetail(
+      user.id,
+      id,
     );
     return ApiData.success(response);
   }
