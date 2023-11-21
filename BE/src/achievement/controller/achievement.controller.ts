@@ -12,12 +12,7 @@ import { AuthenticatedUser } from '../../auth/decorator/athenticated-user.decora
 import { User } from '../../users/domain/user.domain';
 import { ApiData } from '../../common/api/api-data';
 import { PaginateAchievementRequest } from '../dto/paginate-achievement-request';
-import {
-  ApiCreatedResponse,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PaginateAchievementResponse } from '../dto/paginate-achievement-response';
 import { AchievementDetailResponse } from '../dto/achievement-detail-response';
 
@@ -32,7 +27,8 @@ export class AchievementController {
     summary: '달성기록 리스트 API',
     description: '달성기록 리스트를 커서 페이지네이션 기반으로 조회한다.',
   })
-  @ApiCreatedResponse({
+  @ApiResponse({
+    status: 200,
     description: '달성기록 리스트',
     type: PaginateAchievementResponse,
   })
