@@ -14,7 +14,11 @@ final class CaptureView: UIView {
     // MARK: - Views
     // VC에서 액션을 달아주기 위해 private 제거
     let albumButton = NormalButton(title: "앨범에서 선택", image: SymbolImage.photo)
-    let cameraSwitchingButton = NormalButton(title: "카메라 전환", image: SymbolImage.iphone)
+    let cameraSwitchingButton = {
+        let button = NormalButton()
+        button.setTitle("카메라 전환", for: .normal)
+        return button
+    }()
     let captureButton = CaptureButton()
 
     // Video Preview
@@ -84,6 +88,14 @@ final class CaptureView: UIView {
         
         achievementView.isHidden = false
         achievementView.configureEdit(image: image)
+    }
+    
+    func changeToBackCamera() {
+        cameraSwitchingButton.setImage(SymbolImage.iphone, for: .normal)
+    }
+    
+    func changeToFrontCamera() {
+        cameraSwitchingButton.setImage(SymbolImage.iphoneCamera, for: .normal)
     }
 }
 

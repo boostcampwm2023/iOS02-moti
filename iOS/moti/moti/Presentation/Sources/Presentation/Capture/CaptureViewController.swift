@@ -25,7 +25,10 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     private var bottomSheet = TextViewBottomSheet()
 
     // Capture Session
+    private var isBackCamera = true
     private var session: AVCaptureSession?
+    private var backCameraInput: AVCaptureDeviceInput?
+    private var frontCameraInput: AVCaptureDeviceInput?
     
     // Photo Output
     private var output: AVCapturePhotoOutput?
@@ -44,10 +47,12 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if let session = session, 
-            session.isRunning {
-            Logger.debug("Session Stop Running")
-            session.stopRunning()
+        DispatchQueue.global().async {
+            guard let session = self.session else { return }
+            if session.isRunning {
+                Logger.debug("Session Stop Running")
+                session.stopRunning()
+            }
         }
     }
     
@@ -61,6 +66,7 @@ final class CaptureViewController: BaseViewController<CaptureView> {
         layoutView.achievementView.categoryButton.addTarget(self, action: #selector(showPicker), for: .touchUpInside)
         layoutView.achievementView.selectDoneButton.addTarget(self, action: #selector(donePicker), for: .touchUpInside)
         layoutView.albumButton.addTarget(self, action: #selector(showPHPicker), for: .touchUpInside)
+        layoutView.cameraSwitchingButton.addTarget(self, action: #selector(switchCameraInput), for: .touchUpInside)
     }
         
     func startCapture() {
@@ -108,30 +114,41 @@ extension CaptureViewController {
     }
 
     private func setupCamera() {
-        guard let device = AVCaptureDevice.default(for: .video) else { return }
-        
         // 세션을 만들고 input, output 연결
         let session = AVCaptureSession()
-        session.sessionPreset = .photo
-        do {
-            let input = try AVCaptureDeviceInput(device: device)
-            if session.canAddInput(input) {
-                session.addInput(input)
-                Logger.debug("Add AVCaptureDeviceInput")
-            }
-        } catch {
-            Logger.debug(error)
+        session.beginConfiguration()
+        
+        if session.canSetSessionPreset(.photo) {
+            session.sessionPreset = .photo
         }
-            
+
+        setupBackCamera(session: session)
+        setupFrontCamera(session: session)
+        
+        if isBackCamera,
+           let backCameraInput = backCameraInput {
+            session.addInput(backCameraInput)
+        } else if let frontCameraInput = frontCameraInput {
+            session.addInput(frontCameraInput)
+        }
+        
         output = AVCapturePhotoOutput()
         if let output = output,
             session.canAddOutput(output) {
             session.addOutput(output)
             Logger.debug("Add AVCapturePhotoOutput")
         }
+        
+        session.commitConfiguration()
+        self.session = session
 
         layoutView.updatePreviewLayer(session: session)
         layoutView.changeToCaptureMode()
+        if isBackCamera {
+            layoutView.changeToBackCamera()
+        } else {
+            layoutView.changeToFrontCamera()
+        }
         
         DispatchQueue.global().async {
             if !session.isRunning {
@@ -141,7 +158,32 @@ extension CaptureViewController {
                 Logger.debug("Session Already Running")
             }
         }
-        self.session = session
+    }
+    
+    // 후면 카메라 설정
+    private func setupBackCamera(session: AVCaptureSession) {
+        if let backCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
+           let backCameraInput = try? AVCaptureDeviceInput(device: backCamera) {
+            if session.canAddInput(backCameraInput) {
+                Logger.debug("Add Back Camera Input")
+                self.backCameraInput = backCameraInput
+            }
+        } else {
+            Logger.error("후면 카메라를 추가할 수 없음")
+        }
+    }
+    
+    // 전면 카메라 설정
+    private func setupFrontCamera(session: AVCaptureSession) {
+        if let frontCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
+           let frontCameraInput = try? AVCaptureDeviceInput(device: frontCamera) {
+            if session.canAddInput(frontCameraInput) {
+                Logger.debug("Add Front Camera Input")
+                self.frontCameraInput = frontCameraInput
+            }
+        } else {
+            Logger.error("전면 카메라를 추가할 수 없음")
+        }
     }
 
     @objc private func didClickedShutterButton() {
@@ -164,8 +206,39 @@ extension CaptureViewController {
         // Actual Device
         let setting = AVCapturePhotoSettings()
         setting.photoQualityPrioritization = .balanced
+        
+        // 전면 카메라일 때 좌우반전 output 설정
+        if let connection = output?.connection(with: .video) {
+            connection.isVideoMirrored = !isBackCamera
+        }
         output?.capturePhoto(with: setting, delegate: self)
         #endif
+    }
+    
+    @objc func switchCameraInput(_ sender: NormalButton) {
+        guard let session = session else { return }
+        guard let backCameraInput = backCameraInput,
+              let frontCameraInput = frontCameraInput else { return }
+        
+        sender.isUserInteractionEnabled = false
+        session.beginConfiguration()
+        
+        if isBackCamera {
+            // 전면 카메라로 전환
+            session.removeInput(backCameraInput)
+            session.addInput(frontCameraInput)
+            isBackCamera = false
+            layoutView.changeToFrontCamera()
+        } else {
+            // 후면 카메라로 전환
+            session.removeInput(frontCameraInput)
+            session.addInput(backCameraInput)
+            isBackCamera = true
+            layoutView.changeToBackCamera()
+        }
+        
+        session.commitConfiguration()
+        sender.isUserInteractionEnabled = true
     }
 }
 
