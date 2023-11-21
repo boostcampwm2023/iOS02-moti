@@ -66,7 +66,7 @@ final class CaptureView: UIView {
         previewLayer.session = session
     }
     
-    func captureMode() {
+    func changeToCaptureMode() {
         preview.isHidden = false
         photoButton.isHidden = false
         cameraSwitchingButton.isHidden = false
@@ -75,7 +75,7 @@ final class CaptureView: UIView {
         achievementView.isHidden = true
     }
     
-    func editMode(image: UIImage) {
+    func changeToEditMode(image: UIImage) {
         preview.isHidden = true
         photoButton.isHidden = true
         cameraSwitchingButton.isHidden = true

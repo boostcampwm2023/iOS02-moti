@@ -21,7 +21,7 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     weak var coordinator: CaptureCoordinator?
     
     private let categories: [String] = ["카테고리1", "카테고리2", "카테고리3", "카테고리4", "카테고리5"]
-    private var bottomSheet = InputTextViewController()
+    private var bottomSheet = TextViewBottomSheet()
 
     // Capture Session
     private var session: AVCaptureSession?
@@ -65,12 +65,12 @@ final class CaptureViewController: BaseViewController<CaptureView> {
         layoutView.achievementView.hideCategoryPicker()
         hideBottomSheet()
         setupCamera()
-        layoutView.captureMode()
+        layoutView.changeToCaptureMode()
     }
     
     func startEdit(image: UIImage) {
         showBottomSheet()
-        layoutView.editMode(image: MotiImage.sample1)
+        layoutView.changeToEditMode(image: MotiImage.sample1)
     }
 }
 
@@ -122,7 +122,7 @@ extension CaptureViewController {
         }
 
         layoutView.updatePreviewLayer(session: session)
-        layoutView.captureMode()
+        layoutView.changeToCaptureMode()
         
         DispatchQueue.global().async {
             if !session.isRunning {
@@ -175,7 +175,7 @@ extension CaptureViewController: AVCapturePhotoCaptureDelegate {
             delegate?.didCapture()
             let rect = CGRect(origin: .zero, size: .init(width: 1000, height: 1000))
             let croppedImage = cropImage(image: image, rect: rect)
-            layoutView.editMode(image: croppedImage)
+            layoutView.changeToEditMode(image: croppedImage)
         }
     }
     

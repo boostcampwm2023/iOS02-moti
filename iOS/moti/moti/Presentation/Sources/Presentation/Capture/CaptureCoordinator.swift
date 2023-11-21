@@ -29,14 +29,14 @@ final class CaptureCoordinator: Coordinator {
         
         currentViewController = captureVC
         
-        changeCaptureMode()
+        changeToCaptureMode()
         
         let navVC = UINavigationController(rootViewController: captureVC)
         navVC.modalPresentationStyle = .fullScreen
         navigationController.present(navVC, animated: true)
     }
     
-    private func changeCaptureMode() {
+    private func changeToCaptureMode() {
         guard let currentViewController = currentViewController else { return }
         currentViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: "취소", style: .plain, target: self,
@@ -46,7 +46,7 @@ final class CaptureCoordinator: Coordinator {
         currentViewController.navigationItem.rightBarButtonItem = nil
     }
     
-    private func changeEditMode() {
+    private func changeToEditMode() {
         guard let currentViewController = currentViewController else { return }
         currentViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: "다시 촬영", style: .plain, target: self,
@@ -65,7 +65,7 @@ final class CaptureCoordinator: Coordinator {
     }
     
     @objc func recaptureButtonAction() {
-        changeCaptureMode()
+        changeToCaptureMode()
         currentViewController?.startCapture()
     }
     
@@ -80,6 +80,6 @@ final class CaptureCoordinator: Coordinator {
 
 extension CaptureCoordinator: CaptureViewControllerDelegate {
     func didCapture() {
-        changeEditMode()
+        changeToEditMode()
     }
 }

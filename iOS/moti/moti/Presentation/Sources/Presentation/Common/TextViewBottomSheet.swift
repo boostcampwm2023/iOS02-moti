@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class InputTextViewController: UIViewController {
+final class TextViewBottomSheet: UIViewController {
 
     private let textView = {
         let textView = UITextView()

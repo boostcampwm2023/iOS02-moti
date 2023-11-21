@@ -88,6 +88,7 @@ final class AchievementView: UIView {
     
     func update(category: String) {
         categoryButton.setTitle(category, for: .normal)
+        categoryButton.setTitleColor(.label, for: .normal)
     }
     
     func editMode() {
