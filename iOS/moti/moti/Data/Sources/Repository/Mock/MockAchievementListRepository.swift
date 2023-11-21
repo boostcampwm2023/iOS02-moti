@@ -10,7 +10,7 @@ import Domain
 
 public struct MockAchievementListRepository: AchievementListRepositoryProtocol {
     public init() { }
-    public func fetchAchievementList() async throws -> [Achievement] {
+    public func fetchAchievementList(requestValue: FetchAchievementListRequestValue?) async throws -> [Achievement] {
         let json = """
         {
             "success": true,
@@ -56,10 +56,11 @@ public struct MockAchievementListRepository: AchievementListRepositoryProtocol {
         }
         """
         
-        guard let testData = json.data(using: .utf8) else { throw NetworkError.decode }
-        let achievementListResponseDTO = try JSONDecoder().decode(AchievementListResponseDTO.self, from: testData)
-        
-        guard let achievementDTO = achievementListResponseDTO.data else { throw NetworkError.decode }
-        return achievementDTO.map { Achievement(dto: $0) }
+//        guard let testData = json.data(using: .utf8) else { throw NetworkError.decode }
+//        let achievementListResponseDTO = try JSONDecoder().decode(AchievementListResponseDTO.self, from: testData)
+//        
+//        guard let achievementDTO = achievementListResponseDTO.data else { throw NetworkError.decode }
+//        return achievementDTO.map { Achievement(dto: $0) }
+        return []
     }
 }
