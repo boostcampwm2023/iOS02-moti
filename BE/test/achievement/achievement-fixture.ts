@@ -15,6 +15,19 @@ export class AchievementFixture {
     return await this.achievementRepository.saveAchievement(achievement);
   }
 
+  async getAchievements(
+    count: number,
+    user: User,
+    category: Category,
+  ): Promise<Achievement[]> {
+    const achievements: Achievement[] = [];
+    for (let i = 0; i < count; i++) {
+      const achievement = await this.getAchievement(user, category);
+      achievements.push(achievement);
+    }
+    return achievements;
+  }
+
   static achievement(user: User, category: Category) {
     return new Achievement(
       user,
