@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -14,6 +15,7 @@ import { AuthenticatedUser } from '../../auth/decorator/athenticated-user.decora
 import { User } from '../../users/domain/user.domain';
 import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
 import { CategoryResponse } from '../dto/category.response';
+import { CategoryListResponse } from '../dto/category-list.response';
 
 @Controller('/api/v1/category')
 @ApiTags('카테고리 API')
@@ -36,5 +38,19 @@ export class CategoryController {
       user,
     );
     return ApiData.success(CategoryResponse.from(category));
+  }
+
+  @Get()
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: '카테고리 조회 API',
+    description: '사용자 본인에 대한 카테고리를 조회합니다.',
+  })
+  async getCategories(
+    @AuthenticatedUser() user: User,
+  ): Promise<ApiData<CategoryListResponse>> {
+    const categories = await this.categoryService.getCategoriesByUsers(user);
+    return ApiData.success(new CategoryListResponse(categories));
   }
 }
