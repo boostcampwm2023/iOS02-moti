@@ -51,8 +51,8 @@ export class AchievementEntity extends BaseTimeEntity {
   static from(achievement: Achievement) {
     const achievementEntity = new AchievementEntity();
     achievementEntity.id = achievement.id;
-    achievementEntity.user = UserEntity.from(achievement.user);
-    achievementEntity.category = CategoryEntity.from(achievement.category);
+    achievementEntity.user = UserEntity.from(achievement?.user);
+    achievementEntity.category = CategoryEntity.from(achievement?.category);
     achievementEntity.title = achievement.title;
     achievementEntity.content = achievement.content;
     achievementEntity.imageUrl = achievement.imageUrl;
