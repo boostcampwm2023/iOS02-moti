@@ -17,7 +17,7 @@ import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
 import { CategoryResponse } from '../dto/category.response';
 import { CategoryListResponse } from '../dto/category-list.response';
 
-@Controller('/api/v1/category')
+@Controller('/api/v1/categories')
 @ApiTags('카테고리 API')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
@@ -50,7 +50,7 @@ export class CategoryController {
   async getCategories(
     @AuthenticatedUser() user: User,
   ): Promise<ApiData<CategoryListResponse>> {
-    const categories = await this.categoryService.getCategoriesByUsers(user);
+    const categories = await this.categoryService.getCategoriesByUser(user);
     return ApiData.success(new CategoryListResponse(categories));
   }
 }
