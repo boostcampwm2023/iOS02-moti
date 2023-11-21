@@ -43,7 +43,16 @@ extension MotiAPI {
     }
     
     var queryParameters: Encodable? {
-        return nil
+        switch self {
+        case .version:
+            return nil
+        case .login:
+            return nil
+        case .autoLogin:
+            return nil
+        case .fetchAchievementList(let requestValue):
+            return requestValue
+        }
     }
     
     var bodyParameters: Encodable? {
@@ -54,8 +63,8 @@ extension MotiAPI {
             return requestValue
         case .autoLogin(let requestValue):
             return requestValue
-        case .fetchAchievementList(let requestValue):
-            return requestValue
+        case .fetchAchievementList:
+            return nil
         }
     }
     
