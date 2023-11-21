@@ -8,15 +8,15 @@
 import Foundation
 
 public struct Achievement: Hashable {
-    public let id: String
+    public let id: Int
     public let category: String
     public let title: String
-    public let imageURL: String
+    public let imageURL: URL?
     public let body: String
-    public let achieveCount: String
-    public let date: String
+    public let achieveCount: Int
+    public let date: Date?
     
-    public init(id: String, category: String, title: String, imageURL: String, body: String, achieveCount: String, date: String) {
+    public init(id: Int, category: String = "", title: String = "", imageURL: URL? = nil, body: String = "", achieveCount: Int = 0, date: Date? = nil) {
         self.id = id
         self.category = category
         self.title = title
