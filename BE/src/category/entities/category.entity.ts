@@ -1,15 +1,19 @@
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { BaseTimeEntity } from '../../common/entities/base.entity';
 import { UserEntity } from '../../users/entities/user.entity';
 import { Category } from '../domain/category.domain';
+import { AchievementEntity } from '../../achievement/entities/achievement.entity';
 
 @Entity({ name: 'category' })
+@Index(['user'])
 export class CategoryEntity extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -20,6 +24,9 @@ export class CategoryEntity extends BaseTimeEntity {
 
   @Column({ name: 'name' })
   name: string;
+
+  @OneToMany(() => AchievementEntity, (achievement) => achievement.category)
+  achievements: AchievementEntity[];
 
   toModel(): Category {
     const category = new Category(this.user?.toModel(), this.name);
