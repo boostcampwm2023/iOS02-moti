@@ -1,27 +1,26 @@
 //
-//  CaptureResultView.swift
+//  AchievementView.swift
 //  
 //
-//  Created by 유정주 on 11/20/23.
+//  Created by 유정주 on 11/21/23.
 //
 
 import UIKit
-import Design
-import Domain
 
-final class CaptureResultView: UIView {
-
+final class AchievementView: UIView {
     // MARK: - Views
-    private let resultImageView: UIImageView = {
+    let resultImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .gray
+        imageView.clipsToBounds = true
         return imageView
     }()
     
     private let titleTextField = {
         let textField = UITextField()
         textField.font = .largeBold
+        textField.placeholder = "도전 성공"
         return textField
     }()
     
@@ -30,6 +29,7 @@ final class CaptureResultView: UIView {
         
         button.setTitle("카테고리", for: .normal)
         button.setTitleColor(.primaryDarkGray, for: .normal)
+        button.setTitleColor(.label, for: .disabled)
         
         return button
     }()
@@ -59,19 +59,45 @@ final class CaptureResultView: UIView {
         setupUI()
     }
     
-    func configure(image: UIImage, category: String? = nil, count: Int) {
+    func configureEdit(image: UIImage, category: String? = nil) {
         resultImageView.image = image
         
         if let category {
-            titleTextField.placeholder = "\(category) \(count)회 성공"
+            titleTextField.placeholder = "\(category) 도전 성공"
             categoryButton.setTitle(category, for: .normal)
-        } else {
-            titleTextField.placeholder = "\(count)회 성공"
         }
+    }
+    
+    func configureReadOnly(image: UIImage, title: String, category: String) {
+        resultImageView.image = image
+        
+        titleTextField.text = title
+        titleTextField.isEnabled = false
+        
+        categoryButton.setTitle(category, for: .normal)
+        categoryButton.isEnabled = false
+    }
+    
+    func update(image: UIImage) {
+        resultImageView.image = image
+    }
+    
+    func update(title: String) {
+        titleTextField.text = title
     }
     
     func update(category: String) {
         categoryButton.setTitle(category, for: .normal)
+    }
+    
+    func editMode() {
+        titleTextField.isEnabled = true
+        categoryButton.isEnabled = true
+    }
+    
+    func readOnlyMode() {
+        titleTextField.isEnabled = false
+        categoryButton.isEnabled = false
     }
     
     func showCategoryPicker() {
@@ -86,36 +112,36 @@ final class CaptureResultView: UIView {
 }
 
 // MARK: - Setup
-extension CaptureResultView {
+extension AchievementView {
     private func setupUI() {
-        setupResultImageView()
-        setupTitleTextField()
         setupCategoryButton()
+        setupTitleTextField()
+        setupResultImageView()
         setupCategoryPickerView()
-    }
-    
-    private func setupResultImageView() {
-        addSubview(resultImageView)
-        resultImageView.atl
-            .height(equalTo: resultImageView.widthAnchor)
-            .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: 100)
-            .horizontal(equalTo: safeAreaLayoutGuide)
-    }
-    
-    private func setupTitleTextField() {
-        addSubview(titleTextField)
-        titleTextField.atl
-            .horizontal(equalTo: safeAreaLayoutGuide, constant: 20)
-            .bottom(equalTo: resultImageView.topAnchor, constant: -20)
     }
     
     private func setupCategoryButton() {
         addSubview(categoryButton)
         categoryButton.atl
             .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
-            .bottom(equalTo: titleTextField.topAnchor, constant: -5)
+            .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20)
+    }
+
+    private func setupTitleTextField() {
+        addSubview(titleTextField)
+        titleTextField.atl
+            .horizontal(equalTo: safeAreaLayoutGuide, constant: 20)
+            .top(equalTo: categoryButton.bottomAnchor)
     }
     
+    private func setupResultImageView() {
+        addSubview(resultImageView)
+        resultImageView.atl
+            .horizontal(equalTo: safeAreaLayoutGuide)
+            .height(equalTo: resultImageView.widthAnchor)
+            .top(equalTo: titleTextField.bottomAnchor, constant: 10)
+    }
+        
     private func setupCategoryPickerView() {
         addSubview(categoryPickerView)
         addSubview(selectDoneButton)

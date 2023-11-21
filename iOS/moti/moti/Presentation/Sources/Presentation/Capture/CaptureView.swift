@@ -27,14 +27,18 @@ final class CaptureView: UIView {
         }
         return previewLayer
     }()
-    let preview = UIView()
+    private let preview = {
+        let view = UIView()
+        view.backgroundColor = .primaryGray
+        return view
+    }()
     
     let captureButton = CaptureButton() // VC에서 액션을 달아주기 위해 private 제거
-    private let resultImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.isHidden = true
-        return imageView
+    
+    let achievementView = {
+        let achievementView = AchievementView()
+        achievementView.isHidden = true
+        return achievementView
     }()
     
     override init(frame: CGRect) {
@@ -55,17 +59,32 @@ final class CaptureView: UIView {
     }
     
     // MARK: - Methods
-    func updatePreview(with image: UIImage) {
-        resultImageView.isHidden = false
-        resultImageView.image = image
+    func updatePreviewLayer(session: AVCaptureSession) {
+        previewLayer.session = session
+        captureMode()
     }
     
-    func updatePreviewLayer(session: AVCaptureSession) {
-        resultImageView.isHidden = true
-        previewLayer.session = session
+    func captureMode() {
+        preview.isHidden = false
+        achievementView.isHidden = true
+        
+        photoButton.isHidden = false
+        cameraSwitchingButton.isHidden = false
+        captureButton.isHidden = false
+    }
+    
+    func editMode(image: UIImage) {
+        preview.isHidden = true
+        achievementView.update(image: image)
+        achievementView.isHidden = false
+        
+        photoButton.isHidden = true
+        cameraSwitchingButton.isHidden = true
+        captureButton.isHidden = true
     }
     
     private func setupUI() {
+        setupAchievementView()
         setupPreview()
         
         setupCaptureButton()
@@ -97,10 +116,11 @@ final class CaptureView: UIView {
             .left(equalTo: captureButton.rightAnchor, constant: 30)
     }
     
-    private func setupResultImageView() {
-        addSubview(resultImageView)
-        resultImageView.atl
-            .all(of: preview)
+    private func setupAchievementView() {
+        addSubview(achievementView)
+        achievementView.atl
+            .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20)
+            .horizontal(equalTo: safeAreaLayoutGuide)
     }
     
     private func setupPreview() {
@@ -108,7 +128,7 @@ final class CaptureView: UIView {
         addSubview(preview)
         preview.atl
             .height(equalTo: preview.widthAnchor)
-            .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: 100)
+            .top(equalTo: achievementView.resultImageView.topAnchor)
             .horizontal(equalTo: safeAreaLayoutGuide)
         
         // PreviewLayer를 Preview 에 넣기
