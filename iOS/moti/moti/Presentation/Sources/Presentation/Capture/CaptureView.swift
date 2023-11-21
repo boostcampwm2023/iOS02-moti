@@ -13,7 +13,7 @@ final class CaptureView: UIView {
     
     // MARK: - Views
     // VC에서 액션을 달아주기 위해 private 제거
-    let photoButton = NormalButton(title: "앨범에서 선택", image: SymbolImage.photo)
+    let albumButton = NormalButton(title: "앨범에서 선택", image: SymbolImage.photo)
     let cameraSwitchingButton = NormalButton(title: "카메라 전환", image: SymbolImage.iphone)
     let captureButton = CaptureButton()
 
@@ -68,16 +68,17 @@ final class CaptureView: UIView {
     
     func changeToCaptureMode() {
         preview.isHidden = false
-        photoButton.isHidden = false
+        albumButton.isHidden = false
         cameraSwitchingButton.isHidden = false
         captureButton.isHidden = false
         
+        achievementView.resultImageView.image = nil
         achievementView.isHidden = true
     }
     
     func changeToEditMode(image: UIImage) {
         preview.isHidden = true
-        photoButton.isHidden = true
+        albumButton.isHidden = true
         cameraSwitchingButton.isHidden = true
         captureButton.isHidden = true
         
@@ -106,9 +107,9 @@ private extension CaptureView {
     }
 
     func setupPhotoButton() {
-        photoButton.setColor(.tabBarItemGray)
-        addSubview(photoButton)
-        photoButton.atl
+        albumButton.setColor(.tabBarItemGray)
+        addSubview(albumButton)
+        albumButton.atl
             .bottom(equalTo: captureButton.bottomAnchor)
             .right(equalTo: captureButton.leftAnchor, constant: -30)
     }

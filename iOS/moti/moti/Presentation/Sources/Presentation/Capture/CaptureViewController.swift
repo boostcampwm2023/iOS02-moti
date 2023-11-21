@@ -9,6 +9,7 @@ import UIKit
 import Core
 import AVFoundation
 import Design
+import PhotosUI
 
 protocol CaptureViewControllerDelegate: AnyObject {
     func didCapture()
@@ -59,6 +60,7 @@ final class CaptureViewController: BaseViewController<CaptureView> {
         layoutView.captureButton.addTarget(self, action: #selector(didClickedShutterButton), for: .touchUpInside)
         layoutView.achievementView.categoryButton.addTarget(self, action: #selector(showPicker), for: .touchUpInside)
         layoutView.achievementView.selectDoneButton.addTarget(self, action: #selector(donePicker), for: .touchUpInside)
+        layoutView.albumButton.addTarget(self, action: #selector(showPHPicker), for: .touchUpInside)
     }
         
     func startCapture() {
@@ -70,7 +72,14 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     
     func startEdit(image: UIImage) {
         showBottomSheet()
-        layoutView.changeToEditMode(image: MotiImage.sample1)
+        layoutView.changeToEditMode(image: image)
+    }
+    
+    private func capturedPicture(image: UIImage) {
+        guard let croppedImage = image.cropToSquare() else { return }
+        startEdit(image: croppedImage)
+
+        delegate?.didCapture()
     }
 }
 
@@ -141,8 +150,7 @@ extension CaptureViewController {
         #if targetEnvironment(simulator)
         // Simulator
         Logger.debug("시뮬레이터에선 카메라를 테스트할 수 없습니다. 실기기를 연결해 주세요.")
-        delegate?.didCapture()
-        startEdit(image: MotiImage.sample1)
+        capturedPicture(image: MotiImage.sample1)
         #else
         // TODO: PhotoQualityPrioritization 옵션별로 비교해서 최종 결정해야 함
         // - speed: 약간의 노이즈 감소만이 적용
@@ -169,33 +177,43 @@ extension CaptureViewController: AVCapturePhotoCaptureDelegate {
             session.stopRunning()
         }
         
-        guard let data = photo.fileDataRepresentation() else { return }
+        guard let data = photo.fileDataRepresentation(),
+              let image = UIImage(data: data) else { return }
         
-        if let image = convertDataToImage(data) {
-            delegate?.didCapture()
-            let rect = CGRect(origin: .zero, size: .init(width: 1000, height: 1000))
-            let croppedImage = cropImage(image: image, rect: rect)
-            layoutView.changeToEditMode(image: croppedImage)
-        }
+        capturedPicture(image: image)
+    }
+}
+
+// MARK: - Album
+extension CaptureViewController: PHPickerViewControllerDelegate {
+    @objc func showPHPicker() {
+        var configuration = PHPickerConfiguration()
+        configuration.selectionLimit = 1
+        configuration.filter = .images
+        
+        let picker = PHPickerViewController(configuration: configuration)
+        picker.delegate = self
+        
+        present(picker, animated: true)
     }
     
-    private func convertDataToImage(_ data: Data) -> UIImage? {
-        guard let image = UIImage(data: data) else { return nil }
+    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
         
-        #if DEBUG
-            Logger.debug("이미지 사이즈: \(image.size)")
-            Logger.debug("이미지 용량: \(data) / \(data.count / 1000) KB\n")
-        #endif
-        return image
-    }
-    
-    private func cropImage(image: UIImage, rect: CGRect) -> UIImage {
-        guard let imageRef = image.cgImage?.cropping(to: rect) else {
-            return image
+        guard let selectItem = results.first else { return }
+        
+        let itemProvider = selectItem.itemProvider
+        
+        guard itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
+        
+        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+            guard let self else { return }
+            
+            DispatchQueue.main.async {
+                guard let image = image as? UIImage else { return }
+                self.capturedPicture(image: image)
+            }
         }
-        
-        let croppedImage = UIImage(cgImage: imageRef)
-        return croppedImage
     }
 }
 
