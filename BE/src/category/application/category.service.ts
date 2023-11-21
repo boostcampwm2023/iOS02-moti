@@ -20,7 +20,7 @@ export class CategoryService {
   }
 
   @Transactional({ readonly: true })
-  async getCategoriesByUsers(user: User): Promise<CategoryMetaData[]> {
+  async getCategoriesByUser(user: User): Promise<CategoryMetaData[]> {
     return this.categoryRepository.findByUserWithCount(user);
   }
 }

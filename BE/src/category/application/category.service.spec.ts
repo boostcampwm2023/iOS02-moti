@@ -76,7 +76,7 @@ describe('CategoryService', () => {
 
       // when
       const retrievedCategories =
-        await categoryService.getCategoriesByUsers(user);
+        await categoryService.getCategoriesByUser(user);
 
       // then
       expect(retrievedCategories).toBeDefined();
@@ -97,7 +97,7 @@ describe('CategoryService', () => {
 
       // when
       const retrievedCategories =
-        await categoryService.getCategoriesByUsers(user);
+        await categoryService.getCategoriesByUser(user);
 
       // then
       expect(retrievedCategories.length).toBe(4);
