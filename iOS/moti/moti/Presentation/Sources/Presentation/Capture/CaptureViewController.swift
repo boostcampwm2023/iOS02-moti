@@ -142,6 +142,11 @@ extension CaptureViewController {
 
         layoutView.updatePreviewLayer(session: session)
         layoutView.changeToCaptureMode()
+        if isBackCamera {
+            layoutView.changeToBackCamera()
+        } else {
+            layoutView.changeToFrontCamera()
+        }
         
         DispatchQueue.global().async {
             if !session.isRunning {
@@ -202,7 +207,6 @@ extension CaptureViewController {
         
         // 전면 카메라일 때 좌우반전 output 설정
         if let connection = output?.connection(with: .video) {
-            print("isBackCamera: \(isBackCamera)")
             connection.isVideoMirrored = !isBackCamera
         }
         output?.capturePhoto(with: setting, delegate: self)
@@ -222,11 +226,13 @@ extension CaptureViewController {
             session.removeInput(backCameraInput)
             session.addInput(frontCameraInput)
             isBackCamera = false
+            layoutView.changeToFrontCamera()
         } else {
             // 후면 카메라로 전환
             session.removeInput(frontCameraInput)
             session.addInput(backCameraInput)
             isBackCamera = true
+            layoutView.changeToBackCamera()
         }
         
         session.commitConfiguration()
