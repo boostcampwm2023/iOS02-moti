@@ -68,15 +68,15 @@ final class AchievementView: UIView {
         }
     }
     
-    func configureReadOnly(image: UIImage, title: String, category: String) {
-        resultImageView.image = image
-        
-        titleTextField.text = title
-        titleTextField.isEnabled = false
-        
-        categoryButton.setTitle(category, for: .normal)
-        categoryButton.isEnabled = false
-    }
+//    func configureReadOnly(image: UIImage, title: String, category: String) {
+//        resultImageView.image = image
+//        
+//        titleTextField.text = title
+//        titleTextField.isEnabled = false
+//        
+//        categoryButton.setTitle(category, for: .normal)
+//        categoryButton.isEnabled = false
+//    }
     
     func update(image: UIImage) {
         resultImageView.image = image
@@ -94,11 +94,11 @@ final class AchievementView: UIView {
         titleTextField.isEnabled = true
         categoryButton.isEnabled = true
     }
-    
-    func readOnlyMode() {
-        titleTextField.isEnabled = false
-        categoryButton.isEnabled = false
-    }
+//    
+//    func readOnlyMode() {
+//        titleTextField.isEnabled = false
+//        categoryButton.isEnabled = false
+//    }
     
     func showCategoryPicker() {
         categoryPickerView.isHidden = false

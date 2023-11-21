@@ -42,6 +42,8 @@ final class CaptureCoordinator: Coordinator {
             title: "취소", style: .plain, target: self,
             action: #selector(cancelButtonAction)
         )
+        
+        currentViewController.navigationItem.rightBarButtonItem = nil
     }
     
     private func changeEditMode() {
