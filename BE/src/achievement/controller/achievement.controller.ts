@@ -12,9 +12,14 @@ import { AuthenticatedUser } from '../../auth/decorator/athenticated-user.decora
 import { User } from '../../users/domain/user.domain';
 import { ApiData } from '../../common/api/api-data';
 import { PaginateAchievementRequest } from '../dto/paginate-achievement-request';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { PaginateAchievementResponse } from '../dto/paginate-achievement-response';
-import { IsNumber } from 'class-validator';
+import { AchievementDetailResponse } from '../dto/achievement-detail-response';
 
 @Controller('/api/v1/achievements')
 @ApiTags('달성기록 API')
@@ -44,6 +49,15 @@ export class AchievementController {
 
   @Get('/:id')
   @UseGuards(AccessTokenGuard)
+  @ApiOperation({
+    summary: '달성기록 상세정보 API',
+    description: '달성기록 리스트를 커서 페이지네이션 기반으로 조회한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '달성기록 상세정보',
+    type: AchievementDetailResponse,
+  })
   async getAchievement(
     @AuthenticatedUser() user: User,
     @Param('id', ParseIntPipe) id: number,
