@@ -4,6 +4,7 @@ import { CategoryCreate } from '../dto/category-create';
 import { Transactional } from '../../config/transaction-manager';
 import { Category } from '../domain/category.domain';
 import { User } from '../../users/domain/user.domain';
+import { CategoryMetaData } from '../dto/category-metadata';
 
 @Injectable()
 export class CategoryService {
@@ -16,5 +17,10 @@ export class CategoryService {
   ): Promise<Category> {
     const category = categoryCreate.toModel(user);
     return await this.categoryRepository.saveCategory(category);
+  }
+
+  @Transactional({ readonly: true })
+  async getCategoriesByUsers(user: User): Promise<CategoryMetaData[]> {
+    return this.categoryRepository.findByUserWithCount(user);
   }
 }
