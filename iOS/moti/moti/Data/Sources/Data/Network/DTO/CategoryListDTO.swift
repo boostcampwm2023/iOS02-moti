@@ -24,7 +24,7 @@ struct CategoryDTO: Codable {
     let id: Int?
     let name: String?
     let continued: Int?
-    let lastChallanged: Date?
+    let lastChallenged: Date?
 }
 
 extension CategoryItem {
@@ -32,8 +32,8 @@ extension CategoryItem {
         self.init(
             id: dto.id ?? -1,
             name: dto.name ?? "",
-            continued: dto.continued ?? -1,
-            lastChallenged: dto.lastChallanged ?? .now
+            continued: dto.continued ?? 0,
+            lastChallenged: dto.lastChallenged
         )
     }
 }

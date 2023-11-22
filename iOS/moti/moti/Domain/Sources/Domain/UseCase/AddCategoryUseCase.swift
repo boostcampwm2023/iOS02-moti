@@ -22,7 +22,7 @@ public struct AddCategoryUseCase {
         self.repository = repository
     }
     
-    public func execute(requestValue: AddCategoryRequestValue) async throws -> Bool {
+    public func execute(requestValue: AddCategoryRequestValue) async throws -> CategoryItem {
         return try await repository.addCategory(requestValue: requestValue)
     }
 }

@@ -43,8 +43,16 @@ final class HomeViewModel {
     private var achievementDataSource: AchievementDataSource?
     private let fetchAchievementListUseCase: FetchAchievementListUseCase
     
-    private var categories: [CategoryItem] = []
-    private var achievements: [Achievement] = []
+    private var categories: [CategoryItem] = [] {
+        didSet {
+            categoryDataSource?.update(data: categories)
+        }
+    }
+    private var achievements: [Achievement] = [] {
+        didSet {
+            achievementDataSource?.update(data: achievements)
+        }
+    }
     
     @Published private(set) var categoryState: CategoryState = .initial
     @Published private(set) var addCategoryState: AddCategoryState = .none
@@ -91,7 +99,6 @@ final class HomeViewModel {
         Task {
             do {
                 categories = try await fetchCategoryListUseCase.execute()
-                categoryDataSource?.update(data: categories)
                 categoryState = .finish
             } catch {
                 categoryState = .error(message: error.localizedDescription)
@@ -103,9 +110,10 @@ final class HomeViewModel {
         Task {
             addCategoryState = .loading
             let requestValue = AddCategoryRequestValue(name: name)
-            let isSuccess = try? await addCategoryUseCase.execute(requestValue: requestValue)
-            if let isSuccess {
+            let category = try? await addCategoryUseCase.execute(requestValue: requestValue)
+            if let category {
                 addCategoryState = .finish
+                categories.append(category)
             } else {
                 addCategoryState = .error(message: "카테고리 추가를 실패했습니다.")
             }
@@ -116,7 +124,6 @@ final class HomeViewModel {
         Task {
             do {
                 achievements = try await fetchAchievementListUseCase.execute()
-                achievementDataSource?.update(data: achievements)
                 achievementState = .finish
             } catch {
                 achievementState = .error(message: error.localizedDescription)

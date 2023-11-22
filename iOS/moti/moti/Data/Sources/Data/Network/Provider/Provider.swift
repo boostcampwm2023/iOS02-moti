@@ -19,7 +19,11 @@ public struct Provider: ProviderProtocol {
         encoder.outputFormatting = .prettyPrinted
         return encoder
     }()
-    private let decoder = JSONDecoder()
+    private let decoder = {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return decoder
+    }()
     
     public init(session: URLSession = URLSession.shared) {
         self.session = session

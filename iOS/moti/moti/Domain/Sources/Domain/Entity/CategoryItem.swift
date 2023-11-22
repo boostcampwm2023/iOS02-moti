@@ -13,23 +13,41 @@ public struct CategoryItem: Hashable {
     public let id: Int
     public let name: String
     public let continued: Int
-    public let lastChallenged: Date
+    public let lastChallenged: Date?
     
-    public var displayLastChallenged: String {
+    private let dateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        return dateFormatter.string(from: lastChallenged)
+        return dateFormatter
+    }()
+    
+    public var displayLastChallenged: String {
+        if let lastChallenged {
+            return dateFormatter.string(from: lastChallenged)
+        } else {
+            return "없음"
+        }
     }
     
     public init(
         id: Int,
         name: String,
         continued: Int,
-        lastChallenged: Date
+        lastChallenged: Date?
     ) {
         self.id = id
         self.name = name
         self.continued = continued
         self.lastChallenged = lastChallenged
+    }
+    
+    public init(
+        id: Int,
+        name: String
+    ) {
+        self.id = id
+        self.name = name
+        self.continued = 0
+        self.lastChallenged = nil
     }
 }

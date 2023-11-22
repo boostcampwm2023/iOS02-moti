@@ -63,6 +63,24 @@ final class HomeViewController: BaseViewController<HomeView> {
                 }
             }
             .store(in: &cancellables)
+        
+        viewModel.$addCategoryState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .none: break
+                case .loading:
+                    layoutView.catergoryAddButton.isEnabled = false
+                    break
+                case .finish:
+                    layoutView.catergoryAddButton.isEnabled = true
+                case .error(let message):
+                    layoutView.catergoryAddButton.isEnabled = true
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
     }
     
     private func addTargets() {
@@ -74,10 +92,16 @@ final class HomeViewController: BaseViewController<HomeView> {
             title: "추가할 카테고리 이름을 입력하세요.",
             okTitle: "생성",
             placeholder: "카테고리 이름은 최대 10글자입니다."
-        ) { text in
-            Logger.debug(text)
+        ) { [weak self] text in
+            guard let self, let text else { return }
+            viewModel.action(.addCategory(name: text))
         }
         
+        present(alertVC, animated: true)
+    }
+    
+    private func showErrorAlert(message: String) {
+        let alertVC = AlertFactory.makeOneButtonAlert(title: "에러", message: message)
         present(alertVC, animated: true)
     }
     
@@ -107,9 +131,6 @@ final class HomeViewController: BaseViewController<HomeView> {
                 ofKind: elementKind,
                 withReuseIdentifier: HeaderView.identifier,
                 for: indexPath) as? HeaderView
-            
-//            let category = viewModel.findCategory(at: indexPath.row)
-//            headerView?.configure(category: category)
             
             return headerView
         }
