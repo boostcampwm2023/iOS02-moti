@@ -31,4 +31,10 @@ public final class HomeCoordinator: Coordinator {
         homeVC.coordinator = self
         navigationController.viewControllers = [homeVC]
     }
+    
+    public func moveToDetailAchievementViewController() {
+        let detailAchievementCoordinator = DetailAchievementCoordinator(navigationController, self)
+        childCoordinators.append(detailAchievementCoordinator)
+        detailAchievementCoordinator.start()
+    }
 }
