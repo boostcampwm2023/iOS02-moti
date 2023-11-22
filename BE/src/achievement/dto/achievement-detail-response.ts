@@ -25,7 +25,7 @@ export class AchievementDetailResponse {
     this.category = new CategoryInfo(
       achievementDetail.categoryId,
       achievementDetail.categoryName,
-      Number(achievementDetail.round),
+      Number(achievementDetail.achieveCount),
     );
   }
 }

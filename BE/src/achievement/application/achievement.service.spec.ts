@@ -112,7 +112,7 @@ describe('AchievementService Test', () => {
     expect(detail.imageUrl).toBeDefined();
     expect(detail.category.id).toEqual(category.id);
     expect(detail.category.name).toEqual(category.name);
-    expect(detail.category.round).toEqual(8);
+    expect(detail.category.achieveCount).toEqual(8);
   });
 
   test('자신이 소유하지 않은 달성 기록 정보를 조회하면 NoSuchAchievementException을 던진다.', async () => {

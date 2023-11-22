@@ -12,5 +12,5 @@ export interface IAchievementDetail {
   createdAt: Date;
   categoryId: number;
   categoryName: string;
-  round: number;
+  achieveCount: number;
 }

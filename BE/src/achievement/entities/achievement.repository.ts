@@ -51,7 +51,7 @@ export class AchievementRepository extends TransactionalRepository<AchievementEn
         'category.id as categoryId',
         'category.name as categoryName',
       ])
-      .addSelect(['COUNT(a.id) as round'])
+      .addSelect(['COUNT(a.id) as achieveCount'])
       .leftJoin(
         'achievement',
         'a',

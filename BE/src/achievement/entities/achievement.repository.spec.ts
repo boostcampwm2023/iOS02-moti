@@ -197,7 +197,7 @@ describe('AchievementRepository test', () => {
       expect(achievementDetail.imageUrl).toBeDefined();
       expect(achievementDetail.category.id).toEqual(category.id);
       expect(achievementDetail.category.name).toEqual(category.name);
-      expect(achievementDetail.category.round).toEqual(6);
+      expect(achievementDetail.category.achieveCount).toEqual(6);
     });
   });
 
