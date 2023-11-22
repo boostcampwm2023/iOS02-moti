@@ -6,7 +6,8 @@
 //
 
 import Foundation
-import Domain
+@testable import Domain
+@testable import Data
 
 public struct MockVersionRepository: VersionRepositoryProtocol {
     
