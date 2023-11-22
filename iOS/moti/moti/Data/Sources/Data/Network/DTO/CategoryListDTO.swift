@@ -8,7 +8,7 @@
 import Foundation
 import Domain
 
-struct CategoryListDTO: ResponseDataDTO {
+struct CategoryListResponseDTO: ResponseDataDTO {
     let success: Bool?
     let message: String?
     let data: [CategoryDTO]?

@@ -31,7 +31,7 @@ extension MotiAPI {
         case .login: return "/auth/login"
         case .autoLogin: return "/auth/refresh"
         case .fetchAchievementList: return "/achievements"
-        case .fetchCategoryList: return "/categories""
+        case .fetchCategoryList: return "/categories"
         }
     }
     
