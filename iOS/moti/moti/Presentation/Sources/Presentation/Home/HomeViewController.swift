@@ -35,20 +35,32 @@ final class HomeViewController: BaseViewController<HomeView> {
         setupCategoryDataSource()
         
         viewModel.action(.launch)
-        
-        // TODO: 카테고리 리스트 API를 받았을 때 실행시켜야 함. 지금은 임시로 0.1초 후에 실행
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
-//            self.layoutView.categoryCollectionView.selectItem(at: [0, 0], animated: false, scrollPosition: .init())
-//            self.collectionView(self.layoutView.categoryCollectionView.self, didSelectItemAt: IndexPath(item: 0, section: 0))
-//        })
     }
     
     // MARK: - Methods
     private func bind() {
         viewModel.$achievementState
+            .receive(on: DispatchQueue.main)
             .sink { state in
                 // state 에 따른 뷰 처리 - 스켈레톤 뷰, fetch 에러 뷰 등
                 Logger.debug(state)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$categoryState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] categoryState in
+                guard let self else { return }
+                switch categoryState {
+                case .initial:
+                    // TODO: 스켈레톤
+                    break
+                case .finish:
+                    // 첫 번째 아이템 선택
+                    self.selectFirstCategory()
+                case .error(let message):
+                    Logger.error("Category State Error: \(message)")
+                }
             }
             .store(in: &cancellables)
     }
@@ -96,7 +108,9 @@ final class HomeViewController: BaseViewController<HomeView> {
                 withReuseIdentifier: HeaderView.identifier,
                 for: indexPath) as? HeaderView
             
-            headerView?.configure(category: "다이어트", count: "32회", date: "2023-11-03")
+//            let category = viewModel.findCategory(at: indexPath.row)
+//            headerView?.configure(category: category)
+            
             return headerView
         }
         
@@ -118,6 +132,12 @@ final class HomeViewController: BaseViewController<HomeView> {
         let diffableDataSource = HomeViewModel.CategoryDataSource(dataSource: dataSource)
         viewModel.setupCategoryDataSource(diffableDataSource)
     }
+    
+    private func selectFirstCategory() {
+        let firstIndexPath = IndexPath(item: 0, section: 0)
+        layoutView.categoryCollectionView.selectItem(at: firstIndexPath, animated: false, scrollPosition: .init())
+        collectionView(layoutView.categoryCollectionView.self, didSelectItemAt: firstIndexPath)
+    }
 }
 
 extension HomeViewController: UICollectionViewDelegate {
@@ -125,7 +145,8 @@ extension HomeViewController: UICollectionViewDelegate {
         
         // 카테고리 셀을 눌렀을 때
         if let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell {
-            categoryCellDidSelected(cell: cell)
+            Logger.debug("Selected Category: \(indexPath.row)")
+            categoryCellDidSelected(cell: cell, row: indexPath.row)
         } else if let cell = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
             // 달성 기록 리스트 셀을 눌렀을 때
             // TODO: 상세 정보 화면으로 이동
@@ -133,7 +154,7 @@ extension HomeViewController: UICollectionViewDelegate {
         }
     }
     
-    private func categoryCellDidSelected(cell: CategoryCollectionViewCell) {
+    private func categoryCellDidSelected(cell: CategoryCollectionViewCell, row: Int) {
         // 눌렸을 때 Bounce 적용
         // Highlight에만 적용하면 Select에서는 적용이 안 되서 별도로 적용함
         UIView.animate(withDuration: 0.08, animations: {
@@ -143,6 +164,9 @@ extension HomeViewController: UICollectionViewDelegate {
         }, completion: { _ in
             cell.transform = .identity
         })
+        
+        let category = viewModel.findCategory(at: row)
+        layoutView.updateAchievementHeader(with: category)
     }
     
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {

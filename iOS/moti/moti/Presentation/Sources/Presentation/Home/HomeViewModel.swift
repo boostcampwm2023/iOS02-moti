@@ -62,6 +62,7 @@ final class HomeViewModel {
     
     func setupAchievementDataSource(_ dataSource: AchievementDataSource) {
         self.achievementDataSource = dataSource
+        achievementDataSource?.update(data: [])
     }
     
     func findAchievement(at index: Int) -> Achievement {
@@ -76,8 +77,8 @@ final class HomeViewModel {
         Task {
             do {
                 categories = try await fetchCategoryListUseCase.execute()
-                categoryState = .finish
                 categoryDataSource?.update(data: categories)
+                categoryState = .finish
             } catch {
                 categoryState = .error(message: error.localizedDescription)
             }
@@ -88,8 +89,8 @@ final class HomeViewModel {
         Task {
             do {
                 achievements = try await fetchAchievementListUseCase.execute()
-                achievementState = .finish
                 achievementDataSource?.update(data: achievements)
+                achievementState = .finish
             } catch {
                 achievementState = .error(message: error.localizedDescription)
             }
