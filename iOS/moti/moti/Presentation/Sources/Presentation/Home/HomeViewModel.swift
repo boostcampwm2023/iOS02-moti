@@ -115,7 +115,7 @@ final class HomeViewModel {
                 addCategoryState = .finish
                 categories.append(category)
             } else {
-                addCategoryState = .error(message: "카테고리 추가를 실패했습니다.")
+                addCategoryState = .error(message: "카테고리 추가에 실패했습니다.")
             }
         }
     }
