@@ -1,14 +1,16 @@
 import { CategoryMetaData } from './category-metadata';
-import { CategoryListResponse } from './category-list.response';
+import { CategoryListLegacyResponse } from './category-list-legacy.response';
 
-describe('CategoryListResponse', () => {
+describe('CategoryListLegacyResponse', () => {
   describe('생성된 카테고리가 없더라도 응답이 가능하다.', () => {
     it('카테고리 메타데이터가 빈 배열일 때 응답이 가능하다.', () => {
       // given
       const categoryMetaData: CategoryMetaData[] = [];
 
       // when
-      const categoryListResponse = new CategoryListResponse(categoryMetaData);
+      const categoryListResponse = new CategoryListLegacyResponse(
+        categoryMetaData,
+      );
 
       // then
       expect(categoryListResponse).toBeDefined();
@@ -27,7 +29,9 @@ describe('CategoryListResponse', () => {
       const categoryMetaData: CategoryMetaData[] = undefined;
 
       // when
-      const categoryListResponse = new CategoryListResponse(categoryMetaData);
+      const categoryListResponse = new CategoryListLegacyResponse(
+        categoryMetaData,
+      );
 
       // then
       expect(categoryListResponse).toBeDefined();
@@ -64,7 +68,9 @@ describe('CategoryListResponse', () => {
       );
 
       // when
-      const categoryListResponse = new CategoryListResponse(categoryMetaData);
+      const categoryListResponse = new CategoryListLegacyResponse(
+        categoryMetaData,
+      );
 
       // then
       expect(categoryListResponse).toBeDefined();

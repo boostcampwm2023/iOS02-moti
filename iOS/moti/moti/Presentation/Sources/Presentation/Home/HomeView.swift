@@ -7,6 +7,7 @@
 
 import UIKit
 import Design
+import Domain
 
 final class HomeView: UIView {
     
@@ -54,7 +55,18 @@ final class HomeView: UIView {
         setupUI()
     }
     
-    // MARK: - Setup
+    // MARK: - Methods
+    func updateAchievementHeader(with category: CategoryItem) {
+        guard let header = achievementCollectionView.visibleSupplementaryViews(
+            ofKind: UICollectionView.elementKindSectionHeader
+        ).first as? HeaderView else { return }
+        
+        header.configure(category: category)
+    }
+}
+
+// MARK: - SetUp
+private extension HomeView {
     private func setupUI() {
         setupCategoryAddButton()
         setupCategoryCollectionView()

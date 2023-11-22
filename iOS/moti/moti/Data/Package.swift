@@ -28,6 +28,10 @@ let package = Package(
             path: "Sources"),
         .testTarget(
             name: "DataTests",
-            dependencies: ["Data"])
+            dependencies: [
+                "Data",
+                .product(name: "Domain", package: "Domain")
+            ]
+        )
     ]
 )

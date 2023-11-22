@@ -28,7 +28,7 @@ struct AchievementListResponseNextDTO: Codable {
 
 struct AchievementSimpleDTO: Codable {
     let id: Int?
-    let thumbnailUrl: String?
+    let thumbnailUrl: URL?
     let title: String?
 }
 
@@ -37,7 +37,7 @@ extension Achievement {
         self.init(
             id: dto.id ?? -1,
             title: dto.title ?? "",
-            imageURL: URL(string: dto.thumbnailUrl ?? "")
+            imageURL: dto.thumbnailUrl
         )
     }
 }

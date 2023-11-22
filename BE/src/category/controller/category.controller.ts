@@ -15,7 +15,7 @@ import { AuthenticatedUser } from '../../auth/decorator/athenticated-user.decora
 import { User } from '../../users/domain/user.domain';
 import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
 import { CategoryResponse } from '../dto/category.response';
-import { CategoryListResponse } from '../dto/category-list.response';
+import { CategoryListElementResponse } from '../dto/category-list-element.response';
 
 @Controller('/api/v1/categories')
 @ApiTags('카테고리 API')
@@ -49,8 +49,8 @@ export class CategoryController {
   })
   async getCategories(
     @AuthenticatedUser() user: User,
-  ): Promise<ApiData<CategoryListResponse>> {
+  ): Promise<ApiData<CategoryListElementResponse[]>> {
     const categories = await this.categoryService.getCategoriesByUser(user);
-    return ApiData.success(new CategoryListResponse(categories));
+    return ApiData.success(CategoryListElementResponse.build(categories));
   }
 }

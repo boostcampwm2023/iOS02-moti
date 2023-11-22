@@ -6,8 +6,9 @@
 //
 
 import Foundation
-import Domain
-import Core
+@testable import Domain
+@testable import Data
+@testable import Core
 
 public struct MockLoginRepository: LoginRepositoryProtocol {
     private var json = """
