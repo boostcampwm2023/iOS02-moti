@@ -1,6 +1,7 @@
 import { CategoryMetaData } from './category-metadata';
 import { ApiProperty } from '@nestjs/swagger';
 import { CategoryListElementResponse } from './category-list-element.response';
+import { dateFormat } from '../../common/utils/date-formatter';
 
 interface CategoryLegacyList {
   [key: string]: CategoryListElementResponse;
@@ -24,7 +25,7 @@ export class CategoryListLegacyResponse {
         !totalItem.lastChallenged ||
         new Date(totalItem.lastChallenged) < category.insertedAt
       )
-        totalItem.lastChallenged = category.insertedAt.toISOString();
+        totalItem.lastChallenged = dateFormat(category.insertedAt);
       totalItem.continued += category.achievementCount;
 
       this.categories[category.categoryName] = new CategoryListElementResponse(

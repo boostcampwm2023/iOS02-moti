@@ -9,7 +9,9 @@ export class CategoryMetaData {
   constructor(categoryMetaData: ICategoryMetaData) {
     this.categoryId = categoryMetaData.categoryId;
     this.categoryName = categoryMetaData.categoryName;
-    this.insertedAt = new Date(categoryMetaData.insertedAt);
+    this.insertedAt = categoryMetaData.insertedAt
+      ? new Date(categoryMetaData.insertedAt)
+      : null;
     this.achievementCount = isNaN(Number(categoryMetaData.achievementCount))
       ? 0
       : parseInt(categoryMetaData.achievementCount);

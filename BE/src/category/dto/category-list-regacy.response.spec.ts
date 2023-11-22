@@ -47,7 +47,7 @@ describe('CategoryListLegacyResponse', () => {
   });
 
   describe('생성된 카테고리가 있을 때 응답이 가능하다.', () => {
-    it('', () => {
+    it('다수의 카테고리에 대해 응답이 가능하다.', () => {
       // given
       const categoryMetaData: CategoryMetaData[] = [];
       categoryMetaData.push(
@@ -86,19 +86,19 @@ describe('CategoryListLegacyResponse', () => {
         id: 0,
         name: '전체',
         continued: 3,
-        lastChallenged: '2021-01-02T00:00:00.000Z',
+        lastChallenged: '2021-01-02T00:00:00Z',
       });
       expect(categoryListResponse.categories['카테고리1']).toEqual({
         id: 1,
         name: '카테고리1',
         continued: 1,
-        lastChallenged: '2021-01-01T00:00:00.000Z',
+        lastChallenged: '2021-01-01T00:00:00Z',
       });
       expect(categoryListResponse.categories['카테고리2']).toEqual({
         id: 2,
         name: '카테고리2',
         continued: 2,
-        lastChallenged: '2021-01-02T00:00:00.000Z',
+        lastChallenged: '2021-01-02T00:00:00Z',
       });
     });
   });
