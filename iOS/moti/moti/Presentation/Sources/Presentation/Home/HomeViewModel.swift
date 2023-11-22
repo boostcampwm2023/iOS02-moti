@@ -26,44 +26,26 @@ final class HomeViewModel {
     }
     
     typealias AchievementDataSource = ListDiffableDataSource<Achievement>
-    typealias CategoryDataSource = ListDiffableDataSource<String>
+    typealias CategoryDataSource = ListDiffableDataSource<CategoryItem>
     
     private var categoryDataSource: CategoryDataSource?
-    
+    private let fetchCategoryListUseCase: FetchCategoryListUseCase
+
     private var achievementDataSource: AchievementDataSource?
     private let fetchAchievementListUseCase: FetchAchievementListUseCase
     
-    private var categories: [String] = [
-        "글자 크기가1",
-        "다른 문자열입니다.2",
-        "글자3",
-        "크기가 다른4",
-        "문자열5",
-        "글자 크기가6",
-        "다른 문자열입니다.7",
-        "글자8",
-        "크기가 다른9",
-        "문자열10",
-        "글자 크기가11",
-        "다른 문자열입니다.12",
-        "글자13",
-        "크기가 다른14",
-        "문자열15",
-        "글자 크기가16",
-        "다른 문자열입니다.17",
-        "글자18",
-        "크기가 다른19",
-        "문자열20"
-    ]
+    private var categories: [CategoryItem] = []
     private var achievements: [Achievement] = []
     
     @Published private(set) var categoryState: CategoryState = .initial
     @Published private(set) var achievementState: AchievementState = .initial
     
     init(
-        fetchAchievementListUseCase: FetchAchievementListUseCase
+        fetchAchievementListUseCase: FetchAchievementListUseCase,
+        fetchCategoryListUseCase: FetchCategoryListUseCase
     ) {
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
+        self.fetchCategoryListUseCase = fetchCategoryListUseCase
     }
     
     func action(_ action: HomeViewModelAction) {
@@ -86,8 +68,20 @@ final class HomeViewModel {
         return achievements[index]
     }
     
+    func findCategory(at index: Int) -> CategoryItem {
+        return categories[index]
+    }
+    
     private func fetchCategories() {
-        categoryDataSource?.update(data: categories)
+        Task {
+            do {
+                categories = try await fetchCategoryListUseCase.execute()
+                categoryState = .finish
+                categoryDataSource?.update(data: categories)
+            } catch {
+                categoryState = .error(message: error.localizedDescription)
+            }
+        }
     }
     
     private func fetchAchievementList() {

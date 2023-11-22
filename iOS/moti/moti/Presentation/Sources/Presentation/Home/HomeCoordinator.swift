@@ -23,7 +23,10 @@ public final class HomeCoordinator: Coordinator {
     }
     
     public func start() {
-        let homeVM = HomeViewModel(fetchAchievementListUseCase: .init(repository: AchievementListRepository()))
+        let homeVM = HomeViewModel(
+            fetchAchievementListUseCase: .init(repository: AchievementListRepository()),
+            fetchCategoryListUseCase: .init(repository: CategoryListRepository())
+        )
         let homeVC = HomeViewController(viewModel: homeVM)
         homeVC.coordinator = self
         navigationController.viewControllers = [homeVC]

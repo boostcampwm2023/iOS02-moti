@@ -21,7 +21,7 @@ struct CategoryDTO: Codable {
     let lastChallanged: Date?
 }
 
-extension Domain.Category {
+extension Domain.CategoryItem {
     init(dto: CategoryDTO) {
         self.init(
             id: dto.id ?? -1,

@@ -30,11 +30,11 @@ struct MockCategoryListRepository: CategoryListRepositoryProtocol {
     }
     """
     
-    public func fetchCategoryList() async throws -> [Domain.Category] {
+    public func fetchCategoryList() async throws -> [CategoryItem] {
         guard let testData = json.data(using: .utf8) else { return [] }
         let responseDTO = try JSONDecoder().decode(CategoryListResponseDTO.self, from: testData)
 
         guard let categoryDTO = responseDTO.data else { return [] }
-        return categoryDTO.map { Category(dto: $0) }
+        return categoryDTO.map { CategoryItem(dto: $0) }
     }
 }

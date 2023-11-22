@@ -7,7 +7,9 @@
 
 import Foundation
 
-public struct Category: Hashable {
+// Category는 이미 있는 타입이라 ambiguous 에러 뜸. (Domain.Category로 사용할 수 있지만 번거로움)
+// 그래서 뒤에 Item 붙임
+public struct CategoryItem: Hashable {
     public let id: Int
     public let name: String
     public let continued: Int

@@ -37,10 +37,10 @@ final class HomeViewController: BaseViewController<HomeView> {
         viewModel.action(.launch)
         
         // TODO: 카테고리 리스트 API를 받았을 때 실행시켜야 함. 지금은 임시로 0.1초 후에 실행
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
-            self.layoutView.categoryCollectionView.selectItem(at: [0, 0], animated: false, scrollPosition: .init())
-            self.collectionView(self.layoutView.categoryCollectionView.self, didSelectItemAt: IndexPath(item: 0, section: 0))
-        })
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+//            self.layoutView.categoryCollectionView.selectItem(at: [0, 0], animated: false, scrollPosition: .init())
+//            self.collectionView(self.layoutView.categoryCollectionView.self, didSelectItemAt: IndexPath(item: 0, section: 0))
+//        })
     }
     
     // MARK: - Methods
