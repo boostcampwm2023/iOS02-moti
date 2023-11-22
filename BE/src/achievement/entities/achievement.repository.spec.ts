@@ -169,4 +169,82 @@ describe('AchievementRepository test', () => {
       expect(findAll.length).toEqual(12);
     });
   });
+
+  test('달성 기록 상세 정보를 조회한다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const category = await categoryFixture.getCategory(user, 'ABC');
+
+      const achievements: Achievement[] = [];
+      for (let i = 0; i < 10; i++) {
+        achievements.push(
+          await achievementFixture.getAchievement(user, category),
+        );
+      }
+
+      // when
+      const achievementDetail =
+        await achievementRepository.findAchievementDetail(
+          user.id,
+          achievements[5].id,
+        );
+
+      // then
+      expect(achievementDetail.id).toBeDefined();
+      expect(achievementDetail.title).toBeDefined();
+      expect(achievementDetail.content).toBeDefined();
+      expect(achievementDetail.imageUrl).toBeDefined();
+      expect(achievementDetail.category.id).toEqual(category.id);
+      expect(achievementDetail.category.name).toEqual(category.name);
+      expect(achievementDetail.category.achieveCount).toEqual(6);
+    });
+  });
+
+  test('자신이 소유하지 않은 달성 기록 정보를 조회하면 null을 반환한다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const category = await categoryFixture.getCategory(user, 'ABC');
+
+      const achievements: Achievement[] = [];
+      for (let i = 0; i < 10; i++) {
+        achievements.push(
+          await achievementFixture.getAchievement(user, category),
+        );
+      }
+
+      // when
+      const achievementDetail =
+        await achievementRepository.findAchievementDetail(
+          user.id + 1,
+          achievements[5].id,
+        );
+
+      // then
+      expect(achievementDetail).toBeNull();
+    });
+  });
+
+  test('유효하지 않은 달성 기록 id를 통해 조회하면 null을 반환한다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const category = await categoryFixture.getCategory(user, 'ABC');
+
+      const achievements: Achievement[] = [];
+      for (let i = 0; i < 10; i++) {
+        achievements.push(
+          await achievementFixture.getAchievement(user, category),
+        );
+      }
+
+      // when
+      const achievementDetail =
+        await achievementRepository.findAchievementDetail(user.id + 1, 100);
+
+      // then
+      expect(achievementDetail).toBeNull();
+    });
+  });
 });

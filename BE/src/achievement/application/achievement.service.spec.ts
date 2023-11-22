@@ -13,6 +13,7 @@ import { AchievementFixture } from '../../../test/achievement/achievement-fixtur
 import { CategoryTestModule } from '../../../test/category/category-test.module';
 import { AchievementTestModule } from '../../../test/achievement/achievement-test.module';
 import { PaginateAchievementRequest } from '../dto/paginate-achievement-request';
+import { NoSuchAchievementException } from '../exception/no-such-achievement.exception';
 
 describe('AchievementService Test', () => {
   let achievementService: AchievementService;
@@ -87,5 +88,64 @@ describe('AchievementService Test', () => {
     expect(lastResponse.count).toEqual(2);
     expect(lastResponse.data.length).toEqual(2);
     expect(lastResponse.next).toEqual(null);
+  });
+
+  test('달성 기록 상세정보를 조회를 할 수 있다.', async () => {
+    // given
+    const user = await usersFixture.getUser('ABC');
+    const category = await categoryFixture.getCategory(user, 'ABC');
+    const achievements = [];
+    for (let i = 0; i < 10; i++) {
+      achievements.push(
+        await achievementFixture.getAchievement(user, category),
+      );
+    }
+    // when
+    const detail = await achievementService.getAchievementDetail(
+      user.id,
+      achievements[7].id,
+    );
+
+    expect(detail.id).toBeDefined();
+    expect(detail.title).toBeDefined();
+    expect(detail.content).toBeDefined();
+    expect(detail.imageUrl).toBeDefined();
+    expect(detail.category.id).toEqual(category.id);
+    expect(detail.category.name).toEqual(category.name);
+    expect(detail.category.achieveCount).toEqual(8);
+  });
+
+  test('자신이 소유하지 않은 달성 기록 정보를 조회하면 NoSuchAchievementException을 던진다.', async () => {
+    // given
+    const user = await usersFixture.getUser('ABC');
+    const category = await categoryFixture.getCategory(user, 'ABC');
+    const achievements = [];
+    for (let i = 0; i < 10; i++) {
+      achievements.push(
+        await achievementFixture.getAchievement(user, category),
+      );
+    }
+    // when
+    // then
+    await expect(
+      achievementService.getAchievementDetail(user.id + 1, achievements[7].id),
+    ).rejects.toThrow(NoSuchAchievementException);
+  });
+
+  test('유효하지 않은 달성 기록 id를 통해 조회하면 NoSuchAchievementException를 던진다.', async () => {
+    // given
+    const user = await usersFixture.getUser('ABC');
+    const category = await categoryFixture.getCategory(user, 'ABC');
+    const achievements = [];
+    for (let i = 0; i < 10; i++) {
+      achievements.push(
+        await achievementFixture.getAchievement(user, category),
+      );
+    }
+    // when
+    // then
+    await expect(
+      achievementService.getAchievementDetail(user.id, achievements[9].id + 1),
+    ).rejects.toThrow(NoSuchAchievementException);
   });
 });
