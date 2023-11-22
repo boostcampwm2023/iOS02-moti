@@ -58,6 +58,7 @@ final class HomeViewModel {
         }
     }
     private var nextRequestValue: FetchAchievementListRequestValue?
+    private var currentCategory: CategoryItem?
     
     @Published private(set) var categoryState: CategoryState = .initial
     @Published private(set) var addCategoryState: AddCategoryState = .none
@@ -143,6 +144,11 @@ final class HomeViewModel {
     }
     
     private func fetchCategoryAchievementList(category: CategoryItem) {
+        guard currentCategory != category else {
+            Logger.debug("현재 카테고리입니다.")
+            return
+        }
+        currentCategory = category
         // 새로운 카테고리 데이터를 가져오기 때문에 빈 배열로 초기화
         achievements = []
         
