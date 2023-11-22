@@ -47,7 +47,7 @@ describe('CategoryListLegacyResponse', () => {
   });
 
   describe('생성된 카테고리가 있을 때 응답이 가능하다.', () => {
-    it('', () => {
+    it('다수의 카테고리에 대해 응답이 가능하다.', () => {
       // given
       const categoryMetaData: CategoryMetaData[] = [];
       categoryMetaData.push(
