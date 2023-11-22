@@ -11,10 +11,18 @@ import Domain
 final class HomeViewModel {
     enum HomeViewModelAction {
         case launch
+        case addCategory(name: String)
     }
     
     enum CategoryState {
         case initial
+        case finish
+        case error(message: String)
+    }
+    
+    enum AddCategoryState {
+        case none
+        case loading
         case finish
         case error(message: String)
     }
@@ -30,22 +38,34 @@ final class HomeViewModel {
     
     private var categoryDataSource: CategoryDataSource?
     private let fetchCategoryListUseCase: FetchCategoryListUseCase
+    private let addCategoryUseCase: AddCategoryUseCase
 
     private var achievementDataSource: AchievementDataSource?
     private let fetchAchievementListUseCase: FetchAchievementListUseCase
     
-    private var categories: [CategoryItem] = []
-    private var achievements: [Achievement] = []
+    private var categories: [CategoryItem] = [] {
+        didSet {
+            categoryDataSource?.update(data: categories)
+        }
+    }
+    private var achievements: [Achievement] = [] {
+        didSet {
+            achievementDataSource?.update(data: achievements)
+        }
+    }
     
     @Published private(set) var categoryState: CategoryState = .initial
+    @Published private(set) var addCategoryState: AddCategoryState = .none
     @Published private(set) var achievementState: AchievementState = .initial
     
     init(
         fetchAchievementListUseCase: FetchAchievementListUseCase,
-        fetchCategoryListUseCase: FetchCategoryListUseCase
+        fetchCategoryListUseCase: FetchCategoryListUseCase,
+        addCategoryUseCase: AddCategoryUseCase
     ) {
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
         self.fetchCategoryListUseCase = fetchCategoryListUseCase
+        self.addCategoryUseCase = addCategoryUseCase
     }
     
     func action(_ action: HomeViewModelAction) {
@@ -53,6 +73,8 @@ final class HomeViewModel {
         case .launch:
             fetchCategories()
             fetchAchievementList()
+        case .addCategory(let name):
+            addCategory(name: name)
         }
     }
     
@@ -77,10 +99,23 @@ final class HomeViewModel {
         Task {
             do {
                 categories = try await fetchCategoryListUseCase.execute()
-                categoryDataSource?.update(data: categories)
                 categoryState = .finish
             } catch {
                 categoryState = .error(message: error.localizedDescription)
+            }
+        }
+    }
+    
+    private func addCategory(name: String) {
+        Task {
+            addCategoryState = .loading
+            let requestValue = AddCategoryRequestValue(name: name)
+            let category = try? await addCategoryUseCase.execute(requestValue: requestValue)
+            if let category {
+                addCategoryState = .finish
+                categories.append(category)
+            } else {
+                addCategoryState = .error(message: "카테고리 추가에 실패했습니다.")
             }
         }
     }
@@ -89,7 +124,6 @@ final class HomeViewModel {
         Task {
             do {
                 achievements = try await fetchAchievementListUseCase.execute()
-                achievementDataSource?.update(data: achievements)
                 achievementState = .finish
             } catch {
                 achievementState = .error(message: error.localizedDescription)

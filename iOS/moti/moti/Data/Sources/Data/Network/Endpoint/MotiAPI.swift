@@ -14,6 +14,7 @@ enum MotiAPI: EndpointProtocol {
     case autoLogin(requestValue: AutoLoginRequestValue)
     case fetchAchievementList(requestValue: FetchAchievementListRequestValue?)
     case fetchCategoryList
+    case addCategory(requestValue: AddCategoryRequestValue)
 }
 
 extension MotiAPI {
@@ -32,6 +33,7 @@ extension MotiAPI {
         case .autoLogin: return "/auth/refresh"
         case .fetchAchievementList: return "/achievements"
         case .fetchCategoryList: return "/categories"
+        case .addCategory: return "/categories"
         }
     }
     
@@ -42,6 +44,7 @@ extension MotiAPI {
         case .autoLogin: return .post
         case .fetchAchievementList: return .get
         case .fetchCategoryList: return .get
+        case .addCategory: return .post
         }
     }
     
@@ -56,6 +59,8 @@ extension MotiAPI {
         case .fetchAchievementList(let requestValue):
             return requestValue
         case .fetchCategoryList:
+            return nil
+        case .addCategory:
             return nil
         }
     }
@@ -72,6 +77,8 @@ extension MotiAPI {
             return nil
         case .fetchCategoryList:
             return nil
+        case .addCategory(let requestValue):
+            return requestValue
         }
     }
     
@@ -81,7 +88,7 @@ extension MotiAPI {
         switch self {
         case .version, .login:
             break
-        case .autoLogin, .fetchAchievementList, .fetchCategoryList:
+        default:
             // TODO: Keychain Storage로 변경
             if let accessToken = UserDefaults.standard.string(forKey: "accessToken") {
                 header["Authorization"] = "Bearer \(accessToken)"
