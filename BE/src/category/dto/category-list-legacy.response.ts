@@ -1,15 +1,16 @@
 import { CategoryMetaData } from './category-metadata';
 import { ApiProperty } from '@nestjs/swagger';
+import { CategoryListElementResponse } from './category-list-element.response';
 
-interface CategoryList {
+interface CategoryLegacyList {
   [key: string]: CategoryListElementResponse;
 }
 
-export class CategoryListResponse {
+export class CategoryListLegacyResponse {
   @ApiProperty({ description: '카테고리 키 리스트' })
   categoryNames: string[] = [];
   @ApiProperty({ description: '카테고리 데이터' })
-  categories: CategoryList = {};
+  categories: CategoryLegacyList = {};
 
   constructor(categoryMetaData: CategoryMetaData[]) {
     categoryMetaData = categoryMetaData || [];
@@ -29,29 +30,6 @@ export class CategoryListResponse {
       this.categories[category.categoryName] = new CategoryListElementResponse(
         category,
       );
-    });
-  }
-}
-
-export class CategoryListElementResponse {
-  id: number;
-  name: string;
-  continued: number;
-  lastChallenged: string;
-
-  constructor(category: CategoryMetaData) {
-    this.id = category.categoryId;
-    this.name = category.categoryName;
-    this.continued = category.achievementCount;
-    this.lastChallenged = category.insertedAt?.toISOString() || null;
-  }
-
-  static totalCategoryElement() {
-    return new CategoryListElementResponse({
-      categoryId: 0,
-      categoryName: '전체',
-      insertedAt: null,
-      achievementCount: 0,
     });
   }
 }
