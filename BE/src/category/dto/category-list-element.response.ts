@@ -1,4 +1,5 @@
 import { CategoryMetaData } from './category-metadata';
+import { dateFormat } from '../../common/utils/date-formatter';
 
 export class CategoryListElementResponse {
   id: number;
@@ -10,7 +11,7 @@ export class CategoryListElementResponse {
     this.id = category.categoryId;
     this.name = category.categoryName;
     this.continued = category.achievementCount;
-    this.lastChallenged = category.insertedAt?.toISOString() || null;
+    this.lastChallenged = dateFormat(category.insertedAt);
   }
 
   static totalCategoryElement() {
@@ -34,7 +35,7 @@ export class CategoryListElementResponse {
         !totalItem.lastChallenged ||
         new Date(totalItem.lastChallenged) < category.insertedAt
       )
-        totalItem.lastChallenged = category.insertedAt.toISOString();
+        totalItem.lastChallenged = dateFormat(category.insertedAt);
       totalItem.continued += category.achievementCount;
 
       categories.push(new CategoryListElementResponse(category));
