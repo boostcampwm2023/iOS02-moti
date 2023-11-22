@@ -34,6 +34,7 @@ final class HeaderView: UICollectionViewCell {
         let label = UILabel()
         label.numberOfLines = 2
         label.font = .small
+        label.textAlignment = .right
         return label
     }()
     
@@ -88,7 +89,7 @@ final class HeaderView: UICollectionViewCell {
     func configure(category: CategoryItem) {
         categoryLabel.text = category.name
         countLabel.text = "\(category.continued)"
-        dateLabel.text = "최근 달성일\n" + "\(category.lastChallenged)"
+        dateLabel.text = "최근 달성일\n" + "\(category.displayLastChallenged)"
     }
     
     func showSkeleton() {

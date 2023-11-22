@@ -143,9 +143,8 @@ final class HomeViewController: BaseViewController<HomeView> {
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        // 카테고리 셀을 눌렀을 때
         if let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell {
-            Logger.debug("Selected Category: \(indexPath.row)")
+            // 카테고리 셀을 눌렀을 때
             categoryCellDidSelected(cell: cell, row: indexPath.row)
         } else if let cell = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
             // 달성 기록 리스트 셀을 눌렀을 때
@@ -166,6 +165,7 @@ extension HomeViewController: UICollectionViewDelegate {
         })
         
         let category = viewModel.findCategory(at: row)
+        Logger.debug("Selected Category: \(category.name)")
         layoutView.updateAchievementHeader(with: category)
     }
     
