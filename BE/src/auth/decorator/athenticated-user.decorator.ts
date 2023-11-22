@@ -1,20 +1,11 @@
-import {
-  createParamDecorator,
-  ExecutionContext,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { InvalidTokenException } from '../exception/invalid-token.exception';
 
 export const AuthenticatedUser = createParamDecorator(
   (data, context: ExecutionContext) => {
     const req = context.switchToHttp().getRequest();
-
     const user = req.user;
-
-    if (!user) {
-      throw new InternalServerErrorException(
-        'request user 프로퍼티가 없습니다.',
-      );
-    }
+    if (!user) throw new InvalidTokenException();
 
     return user;
   },
