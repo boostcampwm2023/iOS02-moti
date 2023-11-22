@@ -86,19 +86,19 @@ describe('CategoryListLegacyResponse', () => {
         id: 0,
         name: '전체',
         continued: 3,
-        lastChallenged: '2021-01-02T00:00:00.000Z',
+        lastChallenged: '2021-01-02T00:00:00Z',
       });
       expect(categoryListResponse.categories['카테고리1']).toEqual({
         id: 1,
         name: '카테고리1',
         continued: 1,
-        lastChallenged: '2021-01-01T00:00:00.000Z',
+        lastChallenged: '2021-01-01T00:00:00Z',
       });
       expect(categoryListResponse.categories['카테고리2']).toEqual({
         id: 2,
         name: '카테고리2',
         continued: 2,
-        lastChallenged: '2021-01-02T00:00:00.000Z',
+        lastChallenged: '2021-01-02T00:00:00Z',
       });
     });
   });
