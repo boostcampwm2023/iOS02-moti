@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import Domain
-import Data
+@testable import Domain
+@testable import Data
 
 public struct MockAchievementListRepository: AchievementListRepositoryProtocol {
     public init() { }
@@ -87,12 +87,11 @@ public struct MockAchievementListRepository: AchievementListRepositoryProtocol {
         }
         """
         
-//        guard let testData = json.data(using: .utf8) else { throw NetworkError.decode }
-//        let achievementListResponseDTO = try JSONDecoder().decode(AchievementListResponseDTO.self, from: testData)
-//        
-//        guard let achievementListResponseDataDTO = achievementListResponseDTO.data else { throw NetworkError.decode }
-//        guard let achievementSimpleDTOs = achievementListResponseDataDTO.data else { throw NetworkError.decode }
-//        return achievementSimpleDTOs.map { Achievement(dto: $0) }
-        return []
+        guard let testData = json.data(using: .utf8) else { throw NetworkError.decode }
+        let achievementListResponseDTO = try JSONDecoder().decode(AchievementListResponseDTO.self, from: testData)
+        
+        guard let achievementListResponseDataDTO = achievementListResponseDTO.data else { throw NetworkError.decode }
+        guard let achievementSimpleDTOs = achievementListResponseDataDTO.data else { throw NetworkError.decode }
+        return achievementSimpleDTOs.map { Achievement(dto: $0) }
     }
 }

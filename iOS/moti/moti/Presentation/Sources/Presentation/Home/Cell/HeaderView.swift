@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Domain
 
 final class HeaderView: UICollectionViewCell {
     
@@ -24,7 +25,7 @@ final class HeaderView: UICollectionViewCell {
     
     private var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "성공"
+        label.text = "회 성공"
         label.font = .xlarge
         return label
     }()
@@ -33,6 +34,7 @@ final class HeaderView: UICollectionViewCell {
         let label = UILabel()
         label.numberOfLines = 2
         label.font = .small
+        label.textAlignment = .right
         return label
     }()
     
@@ -73,7 +75,7 @@ final class HeaderView: UICollectionViewCell {
         addSubview(titleLabel)
         titleLabel.atl
             .top(equalTo: countLabel.topAnchor)
-            .left(equalTo: countLabel.rightAnchor, constant: 5)
+            .left(equalTo: countLabel.rightAnchor)
     }
     
     private func setupDateLabel() {
@@ -84,10 +86,10 @@ final class HeaderView: UICollectionViewCell {
     }
     
     // MARK: - Method
-    func configure(category: String, count: String, date: String) {
-        categoryLabel.text = category
-        countLabel.text = count
-        dateLabel.text = "최근 달성일\n" + date
+    func configure(category: CategoryItem) {
+        categoryLabel.text = category.name
+        countLabel.text = "\(category.continued)"
+        dateLabel.text = "최근 달성일\n" + "\(category.displayLastChallenged)"
     }
     
     func showSkeleton() {

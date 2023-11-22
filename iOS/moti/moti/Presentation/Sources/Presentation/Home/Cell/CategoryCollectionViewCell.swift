@@ -7,6 +7,7 @@
 
 import UIKit
 import Design
+import Domain
 
 final class CategoryCollectionViewCell: UICollectionViewCell {
 
@@ -60,8 +61,8 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Methods
-    func configure(with title: String) {
-        label.text = title
+    func configure(with category: CategoryItem) {
+        label.text = category.name
     }
     
     override func applyHighlightUI() {

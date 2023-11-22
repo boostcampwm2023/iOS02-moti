@@ -13,6 +13,7 @@ enum MotiAPI: EndpointProtocol {
     case login(requestValue: LoginRequestValue)
     case autoLogin(requestValue: AutoLoginRequestValue)
     case fetchAchievementList(requestValue: FetchAchievementListRequestValue?)
+    case fetchCategoryList
 }
 
 extension MotiAPI {
@@ -21,7 +22,7 @@ extension MotiAPI {
     }
     
     var baseURL: String {
-        return Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as! String + "/api/v1"
+        return Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as! String + "/api/\(version)"
     }
     
     var path: String {
@@ -30,6 +31,7 @@ extension MotiAPI {
         case .login: return "/auth/login"
         case .autoLogin: return "/auth/refresh"
         case .fetchAchievementList: return "/achievements"
+        case .fetchCategoryList: return "/categories"
         }
     }
     
@@ -39,6 +41,7 @@ extension MotiAPI {
         case .login: return .post
         case .autoLogin: return .post
         case .fetchAchievementList: return .get
+        case .fetchCategoryList: return .get
         }
     }
     
@@ -52,6 +55,8 @@ extension MotiAPI {
             return nil
         case .fetchAchievementList(let requestValue):
             return requestValue
+        case .fetchCategoryList:
+            return nil
         }
     }
     
@@ -65,6 +70,8 @@ extension MotiAPI {
             return requestValue
         case .fetchAchievementList:
             return nil
+        case .fetchCategoryList:
+            return nil
         }
     }
     
@@ -72,11 +79,9 @@ extension MotiAPI {
         var header = ["Content-Type": "application/json"]
         
         switch self {
-        case .version:
+        case .version, .login:
             break
-        case .login:
-            break
-        case .autoLogin, .fetchAchievementList:
+        case .autoLogin, .fetchAchievementList, .fetchCategoryList:
             // TODO: Keychain Storage로 변경
             if let accessToken = UserDefaults.standard.string(forKey: "accessToken") {
                 header["Authorization"] = "Bearer \(accessToken)"
