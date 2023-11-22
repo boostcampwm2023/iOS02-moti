@@ -7,11 +7,13 @@
 
 import Foundation
 import Domain
+import Core
 
 final class HomeViewModel {
     enum HomeViewModelAction {
         case launch
         case addCategory(name: String)
+        case fetchNextPage
     }
     
     enum CategoryState {
@@ -29,6 +31,7 @@ final class HomeViewModel {
     
     enum AchievementState {
         case initial
+        case loading
         case finish
         case error(message: String)
     }
@@ -53,6 +56,8 @@ final class HomeViewModel {
             achievementDataSource?.update(data: achievements)
         }
     }
+    private var currentCategoryId: Int = 0
+    private var nextRequestValue: FetchAchievementListRequestValue?
     
     @Published private(set) var categoryState: CategoryState = .initial
     @Published private(set) var addCategoryState: AddCategoryState = .none
@@ -75,6 +80,8 @@ final class HomeViewModel {
             fetchAchievementList()
         case .addCategory(let name):
             addCategory(name: name)
+        case .fetchNextPage:
+            fetchNextAchievementList()
         }
     }
     
@@ -91,7 +98,8 @@ final class HomeViewModel {
         return achievements[index]
     }
     
-    func findCategory(at index: Int) -> CategoryItem {
+    func selectedCategory(at index: Int) -> CategoryItem {
+        currentCategoryId = categories[index].id
         return categories[index]
     }
     
@@ -123,7 +131,32 @@ final class HomeViewModel {
     private func fetchAchievementList() {
         Task {
             do {
-                achievements = try await fetchAchievementListUseCase.execute()
+                achievementState = .loading
+                (achievements, nextRequestValue) = try await fetchAchievementListUseCase.execute()
+                achievementState = .finish
+            } catch {
+                achievementState = .error(message: error.localizedDescription)
+            }
+        }
+    }
+    
+    private func fetchNextAchievementList() {
+        guard let requestValue = nextRequestValue else {
+            Logger.debug("마지막 페이지입니다.")
+            return
+        }
+        
+        Task {
+            do {
+                achievementState = .loading
+                let requestValue = FetchAchievementListRequestValue(
+                    categoryId: currentCategoryId,
+                    take: requestValue.take,
+                    whereIdLessThan: requestValue.whereIdLessThan
+                )
+                let (newAchievements, next) = try await fetchAchievementListUseCase.execute(requestValue: requestValue)
+                achievements.append(contentsOf: newAchievements)
+                nextRequestValue = next
                 achievementState = .finish
             } catch {
                 achievementState = .error(message: error.localizedDescription)
