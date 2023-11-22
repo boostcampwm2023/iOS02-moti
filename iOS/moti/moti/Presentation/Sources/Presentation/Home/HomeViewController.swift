@@ -62,7 +62,7 @@ final class HomeViewController: BaseViewController<HomeView> {
             title: "추가할 카테고리 이름을 입력하세요.",
             okTitle: "생성",
             placeholder: "카테고리 이름은 최대 10글자입니다."
-        ) { (text) in
+        ) { text in
             Logger.debug(text)
         }
         
@@ -122,13 +122,23 @@ final class HomeViewController: BaseViewController<HomeView> {
 
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell else { return }
-
+        
+        // 카테고리 셀을 눌렀을 때
+        if let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell {
+            categoryCellDidSelected(cell: cell)
+        } else if let cell = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
+            // 달성 기록 리스트 셀을 눌렀을 때
+            // TODO: 상세 정보 화면으로 이동
+            Logger.debug("clicked: \(viewModel.findAchievement(at: indexPath.row).title)")
+        }
+    }
+    
+    private func categoryCellDidSelected(cell: CategoryCollectionViewCell) {
         // 눌렸을 때 Bounce 적용
         // Highlight에만 적용하면 Select에서는 적용이 안 되서 별도로 적용함
         UIView.animate(withDuration: 0.08, animations: {
             cell.applyHighlightUI()
-            let scale = CGAffineTransform(scaleX: 0.97, y: 0.97)
+            let scale = CGAffineTransform(scaleX: 0.95, y: 0.95)
             cell.transform = scale
         }, completion: { _ in
             cell.transform = .identity

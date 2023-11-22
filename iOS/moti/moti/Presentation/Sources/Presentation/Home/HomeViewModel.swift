@@ -82,6 +82,10 @@ final class HomeViewModel {
         self.achievementDataSource = dataSource
     }
     
+    func findAchievement(at index: Int) -> Achievement {
+        return achievements[index]
+    }
+    
     private func fetchCategories() {
         categoryDataSource?.update(data: categories)
     }
