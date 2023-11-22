@@ -69,7 +69,12 @@ private extension TabBarCoordinator {
         homeVC.tabBarItem.title = TabItemType.individual.title
         setupIndividualHomeNavigationBar(viewController: homeVC)
         
-        return UINavigationController(rootViewController: homeVC)
+        let navVC = UINavigationController(rootViewController: homeVC)
+        
+        let homeCoordinator = HomeCoordinator(navVC, self)
+        homeVC.coordinator = homeCoordinator
+        childCoordinators.append(homeCoordinator)
+        return navVC
     }
     
     func makeGroupTabPage() -> UINavigationController {
