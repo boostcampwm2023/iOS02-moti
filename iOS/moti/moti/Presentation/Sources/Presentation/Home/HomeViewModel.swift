@@ -14,6 +14,7 @@ final class HomeViewModel {
         case launch
         case addCategory(name: String)
         case fetchNextPage
+        case fetchCategoryList(category: CategoryItem)
     }
     
     enum CategoryState {
@@ -56,7 +57,6 @@ final class HomeViewModel {
             achievementDataSource?.update(data: achievements)
         }
     }
-    private var currentCategoryId: Int = 0
     private var nextRequestValue: FetchAchievementListRequestValue?
     
     @Published private(set) var categoryState: CategoryState = .initial
@@ -77,11 +77,12 @@ final class HomeViewModel {
         switch action {
         case .launch:
             fetchCategories()
-            fetchAchievementList()
         case .addCategory(let name):
             addCategory(name: name)
         case .fetchNextPage:
             fetchNextAchievementList()
+        case .fetchCategoryList(let category):
+            fetchCategoryAchievementList(category: category)
         }
     }
     
@@ -98,8 +99,7 @@ final class HomeViewModel {
         return achievements[index]
     }
     
-    func selectedCategory(at index: Int) -> CategoryItem {
-        currentCategoryId = categories[index].id
+    func findCategory(at index: Int) -> CategoryItem {
         return categories[index]
     }
     
@@ -128,16 +128,26 @@ final class HomeViewModel {
         }
     }
     
-    private func fetchAchievementList() {
+    private func fetchAchievementList(requestValue: FetchAchievementListRequestValue? = nil) {
         Task {
             do {
                 achievementState = .loading
-                (achievements, nextRequestValue) = try await fetchAchievementListUseCase.execute()
+                let (achievements, nextRequestValue) = try await fetchAchievementListUseCase.execute(requestValue: requestValue)
+                self.achievements.append(contentsOf: achievements)
+                self.nextRequestValue = nextRequestValue
                 achievementState = .finish
             } catch {
                 achievementState = .error(message: error.localizedDescription)
             }
         }
+    }
+    
+    private func fetchCategoryAchievementList(category: CategoryItem) {
+        // 새로운 카테고리 데이터를 가져오기 때문에 빈 배열로 초기화
+        achievements = []
+        
+        let requestValue = FetchAchievementListRequestValue(categoryId: category.id, take: nil, whereIdLessThan: nil)
+        fetchAchievementList(requestValue: requestValue)
     }
     
     private func fetchNextAchievementList() {
@@ -146,21 +156,6 @@ final class HomeViewModel {
             return
         }
         
-        Task {
-            do {
-                achievementState = .loading
-                let requestValue = FetchAchievementListRequestValue(
-                    categoryId: currentCategoryId,
-                    take: requestValue.take,
-                    whereIdLessThan: requestValue.whereIdLessThan
-                )
-                let (newAchievements, next) = try await fetchAchievementListUseCase.execute(requestValue: requestValue)
-                achievements.append(contentsOf: newAchievements)
-                nextRequestValue = next
-                achievementState = .finish
-            } catch {
-                achievementState = .error(message: error.localizedDescription)
-            }
-        }
+        fetchAchievementList(requestValue: requestValue)
     }
 }
