@@ -170,6 +170,7 @@ extension HomeViewController: UICollectionViewDelegate {
         } else if let cell = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
             // 달성 기록 리스트 셀을 눌렀을 때
             // TODO: 상세 정보 화면으로 이동
+            coordinator?.moveToDetailAchievementViewController()
             Logger.debug("clicked: \(viewModel.findAchievement(at: indexPath.row).title)")
         }
     }
