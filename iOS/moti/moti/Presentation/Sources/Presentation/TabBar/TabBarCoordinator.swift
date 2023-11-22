@@ -105,10 +105,22 @@ private extension TabBarCoordinator {
             image: SymbolImage.ellipsisCircle,
             style: .done,
             target: self,
-            action: nil
+            action: #selector(moveTest)
         )
 
         viewController.navigationItem.rightBarButtonItems = [profileItem, moreItem]
+    }
+    
+    @objc private func moveTest() {
+        let detailAchievementVC = DetailAchievementViewController()
+        detailAchievementVC.navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(title: "삭제", style: .plain, target: self, action: nil),
+            UIBarButtonItem(title: "편집", style: .plain, target: self, action: nil)
+        ]
+        
+        let navVC = UINavigationController(rootViewController: detailAchievementVC)
+//        navigationController.pushViewController(detailAchievementVC, animated: true)
+        navigationController.present(navVC, animated: true)
     }
 }
 
