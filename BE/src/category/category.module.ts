@@ -3,9 +3,10 @@ import { CategoryController } from './controller/category.controller';
 import { CategoryService } from './application/category.service';
 import { CustomTypeOrmModule } from '../config/typeorm/custom-typeorm.module';
 import { CategoryRepository } from './entities/category.repository';
+import { CategoryLegacyController } from './controller/category-legacy.controller';
 
 @Module({
-  controllers: [CategoryController],
+  controllers: [CategoryController, CategoryLegacyController],
   imports: [CustomTypeOrmModule.forCustomRepository([CategoryRepository])],
   providers: [CategoryService],
 })
