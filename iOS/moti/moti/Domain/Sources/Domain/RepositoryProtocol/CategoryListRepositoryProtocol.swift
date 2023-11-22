@@ -9,4 +9,5 @@ import Foundation
 
 public protocol CategoryListRepositoryProtocol {
     func fetchCategoryList() async throws -> [CategoryItem]
+    func addCategory(requestValue: AddCategoryRequestValue) async throws -> Bool
 }

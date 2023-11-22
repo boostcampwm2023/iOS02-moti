@@ -11,10 +11,18 @@ import Domain
 final class HomeViewModel {
     enum HomeViewModelAction {
         case launch
+        case addCategory(name: String)
     }
     
     enum CategoryState {
         case initial
+        case finish
+        case error(message: String)
+    }
+    
+    enum AddCategoryState {
+        case none
+        case loading
         case finish
         case error(message: String)
     }
@@ -30,6 +38,7 @@ final class HomeViewModel {
     
     private var categoryDataSource: CategoryDataSource?
     private let fetchCategoryListUseCase: FetchCategoryListUseCase
+    private let addCategoryUseCase: AddCategoryUseCase
 
     private var achievementDataSource: AchievementDataSource?
     private let fetchAchievementListUseCase: FetchAchievementListUseCase
@@ -38,14 +47,17 @@ final class HomeViewModel {
     private var achievements: [Achievement] = []
     
     @Published private(set) var categoryState: CategoryState = .initial
+    @Published private(set) var addCategoryState: AddCategoryState = .none
     @Published private(set) var achievementState: AchievementState = .initial
     
     init(
         fetchAchievementListUseCase: FetchAchievementListUseCase,
-        fetchCategoryListUseCase: FetchCategoryListUseCase
+        fetchCategoryListUseCase: FetchCategoryListUseCase,
+        addCategoryUseCase: AddCategoryUseCase
     ) {
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
         self.fetchCategoryListUseCase = fetchCategoryListUseCase
+        self.addCategoryUseCase = addCategoryUseCase
     }
     
     func action(_ action: HomeViewModelAction) {
@@ -53,6 +65,8 @@ final class HomeViewModel {
         case .launch:
             fetchCategories()
             fetchAchievementList()
+        case .addCategory(let name):
+            addCategory(name: name)
         }
     }
     
@@ -81,6 +95,19 @@ final class HomeViewModel {
                 categoryState = .finish
             } catch {
                 categoryState = .error(message: error.localizedDescription)
+            }
+        }
+    }
+    
+    private func addCategory(name: String) {
+        Task {
+            addCategoryState = .loading
+            let requestValue = AddCategoryRequestValue(name: name)
+            let isSuccess = try? await addCategoryUseCase.execute(requestValue: requestValue)
+            if let isSuccess {
+                addCategoryState = .finish
+            } else {
+                addCategoryState = .error(message: "카테고리 추가를 실패했습니다.")
             }
         }
     }

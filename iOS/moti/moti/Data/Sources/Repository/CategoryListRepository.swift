@@ -51,4 +51,11 @@ public struct CategoryListRepository: CategoryListRepositoryProtocol {
         return categoryDTO.map { CategoryItem(dto: $0) }
     }
 
+    public func addCategory(requestValue: AddCategoryRequestValue) async throws -> Bool {
+        let endpoint = MotiAPI.addCategory(requestValue: requestValue)
+        let responseDTO = try await provider.request(with: endpoint, type: CategoryResponseDataDTO.self)
+        
+        guard let isSuccess = responseDTO.success else { throw NetworkError.decode }
+        return isSuccess
+    }
 }
