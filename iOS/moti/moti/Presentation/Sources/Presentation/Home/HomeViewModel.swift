@@ -47,15 +47,25 @@ final class HomeViewModel {
     private var achievementDataSource: AchievementDataSource?
     private let fetchAchievementListUseCase: FetchAchievementListUseCase
     
-    private var categories: [CategoryItem] = []
-    private var achievements: [Achievement] = []
+    private var categories: [CategoryItem] = [] {
+        didSet {
+            categoryDataSource?.update(data: categories)
+        }
+    }
+    private var achievements: [Achievement] = [] {
+        didSet {
+            achievementDataSource?.update(data: achievements)
+        }
+    }
     private var nextRequestValue: FetchAchievementListRequestValue?
     private(set) var currentCategory: CategoryItem?
+    private var nextAchievementTask: Task<Void, Never>?
     
     @Published private(set) var categoryState: CategoryState = .initial
     @Published private(set) var addCategoryState: AddCategoryState = .none
     @Published private(set) var achievementState: AchievementState = .initial
     
+    // MARK: - Init
     init(
         fetchAchievementListUseCase: FetchAchievementListUseCase,
         fetchCategoryListUseCase: FetchCategoryListUseCase,
@@ -100,7 +110,6 @@ final class HomeViewModel {
         Task {
             do {
                 categories = try await fetchCategoryListUseCase.execute()
-                categoryDataSource?.update(data: categories)
                 categoryState = .finish
             } catch {
                 categoryState = .error(message: error.localizedDescription)
@@ -115,7 +124,6 @@ final class HomeViewModel {
             let category = try? await addCategoryUseCase.execute(requestValue: requestValue)
             if let category {
                 categories.append(category)
-                categoryDataSource?.update(data: categories)
                 addCategoryState = .finish
             } else {
                 addCategoryState = .error(message: "카테고리 추가에 실패했습니다.")
@@ -124,14 +132,12 @@ final class HomeViewModel {
     }
     
     private func fetchAchievementList(requestValue: FetchAchievementListRequestValue? = nil) {
-        Task {
+        nextAchievementTask = Task {
             do {
                 achievementState = .loading
                 let (newAchievements, next) = try await fetchAchievementListUseCase.execute(requestValue: requestValue)
                 achievements.append(contentsOf: newAchievements)
                 nextRequestValue = next
-                achievementDataSource?.update(data: achievements)
-
                 achievementState = .finish
             } catch {
                 achievementState = .error(message: error.localizedDescription)
@@ -144,11 +150,13 @@ final class HomeViewModel {
             Logger.debug("현재 카테고리입니다.")
             return
         }
+        
         currentCategory = category
         // 새로운 카테고리 데이터를 가져오기 때문에 빈 배열로 초기화
         achievements = []
-        achievementDataSource?.update(data: achievements)
+        nextRequestValue = nil
         
+        nextAchievementTask?.cancel()
         let requestValue = FetchAchievementListRequestValue(categoryId: category.id, take: nil, whereIdLessThan: nil)
         fetchAchievementList(requestValue: requestValue)
     }
