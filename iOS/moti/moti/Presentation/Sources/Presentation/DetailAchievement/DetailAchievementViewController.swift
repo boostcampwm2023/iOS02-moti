@@ -34,8 +34,8 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
         viewModel.action(.launch)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         layoutView.cancelDownloadImage()
     }
     
