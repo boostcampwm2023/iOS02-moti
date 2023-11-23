@@ -202,6 +202,15 @@ extension HomeViewController: UICollectionViewDelegate {
         layoutView.updateAchievementHeader(with: category)
     }
     
+    func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+        guard elementKind == UICollectionView.elementKindSectionHeader,
+              let headerView = view as? HeaderView else { return }
+        
+        if let currentCategory = viewModel.currentCategory {
+            headerView.configure(category: currentCategory)
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let cell = cell as? AchievementCollectionViewCell else { return }
         cell.cancelDownloadImage()
