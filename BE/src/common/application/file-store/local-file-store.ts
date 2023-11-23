@@ -12,7 +12,6 @@ export class LocalFileStore extends FileStore {
   constructor(uuidHolder: UuidHolder, configService: ConfigService) {
     super(uuidHolder);
     this.basepath = configService.get('LOCAL_BASEPATH');
-    console.log(this.basepath);
   }
 
   async delete(fileUrl: string): Promise<void> {
