@@ -2,9 +2,10 @@ import { ConfigService } from '@nestjs/config';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import { Injectable } from '@nestjs/common';
-import { File, FileStore, UploadFile } from './index';
+import { File, FileStore, StoreOptions, UploadFile } from './index';
 import { UuidHolder } from '../uuid-holder';
 import { FailFileTaskException } from './fail-file-task.exception';
+import * as process from 'process';
 
 @Injectable()
 export class LocalFileStore extends FileStore {
@@ -14,18 +15,19 @@ export class LocalFileStore extends FileStore {
     this.basepath = configService.get('LOCAL_BASEPATH');
   }
 
-  async delete(fileUrl: string): Promise<void> {
+  async delete(filename: string, storeOptions?: StoreOptions): Promise<void> {
     try {
-      await fs.unlink(fileUrl);
+      await fs.unlink(this.getFullPath(filename, storeOptions));
     } catch (e) {
       throw new FailFileTaskException();
     }
   }
 
-  async upload(file: File): Promise<UploadFile> {
+  async upload(file: File, storeOptions?: StoreOptions): Promise<UploadFile> {
     const originalFilename = file.originalname;
     const storeFileName = this.createStoreFileName(originalFilename);
-    const fullPath = this.getFullPath(storeFileName);
+    const fullPath = this.getFullPath(storeFileName, storeOptions);
+    const callableFullPath = `file://${fullPath}`;
 
     try {
       await fs.mkdir(path.dirname(fullPath), { recursive: true });
@@ -37,11 +39,17 @@ export class LocalFileStore extends FileStore {
     return {
       uploadFileName: storeFileName,
       originalFileName: originalFilename,
-      uploadFullPath: fullPath,
+      uploadFullPath: callableFullPath,
     };
   }
 
-  private getFullPath(filename: string) {
-    return path.join(this.basepath, filename);
+  private getFullPath(filename: string, storeOptions: StoreOptions) {
+    return path.join(
+      process.cwd(),
+      this.basepath,
+      storeOptions?.prefix || '',
+      storeOptions?.basePath || '',
+      filename,
+    );
   }
 }
