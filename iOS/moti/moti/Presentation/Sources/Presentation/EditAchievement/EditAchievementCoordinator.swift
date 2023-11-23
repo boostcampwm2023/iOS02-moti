@@ -7,6 +7,8 @@
 
 import UIKit
 import Core
+import Data
+import Domain
 
 final class EditAchievementCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
@@ -25,8 +27,34 @@ final class EditAchievementCoordinator: Coordinator {
         
     }
     
+    func start(achievement: Achievement) {
+        let editAchievementVM = EditAchievementViewModel(
+            fetchCategoryListUseCase: .init(repository: CategoryListRepository())
+        )
+        let editAchievementVC = EditAchievementViewController(
+            viewModel: editAchievementVM,
+            achievement: achievement
+        )
+        editAchievementVC.coordinator = self
+        
+        editAchievementVC.navigationItem.rightBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .done,
+            target: self,
+            action: #selector(doneButtonAction)
+        )
+        
+        navigationController.pushViewController(editAchievementVC, animated: true)
+        navigationController.setNavigationBarHidden(false, animated: false)
+    }
+    
     func startAfterCapture(image: UIImage) {
-        let editAchievementVC = EditAchievementViewController(image: image)
+        let editAchievementVM = EditAchievementViewModel(
+            fetchCategoryListUseCase: .init(repository: CategoryListRepository())
+        )
+        let editAchievementVC = EditAchievementViewController(
+            viewModel: editAchievementVM,
+            image: image
+        )
         editAchievementVC.coordinator = self
         
         editAchievementVC.navigationItem.leftBarButtonItem = UIBarButtonItem(
