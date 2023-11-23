@@ -54,6 +54,7 @@ final class LaunchViewModel {
             } else {
                 Logger.debug("자동 로그인 실패")
                 resetToken()
+                autoLoginState = .failed(message: "최초 로그인")
             }
         }
     }
