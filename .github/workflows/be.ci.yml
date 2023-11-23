@@ -34,7 +34,7 @@ jobs:
       REFRESH_JWT_SECRET: ${{ secrets.REFRESH_JWT_SECRET }}
       REFRESH_JWT_VALIDITY: ${{ secrets.REFRESH_JWT_VALIDITY }}
       BCRYPT_SALT: ${{ secrets.BCRYPT_SALT }}
-      LOCAL_BASEPATH: ${{ ./DO-NOT-USE-THIS-PATH }}
+      LOCAL_BASEPATH: ${{ secrets.LOCAL_BASEPATH }}
       NCP_ENDPOINT: ${{ secrets.BCRYPT_SALT }}
       NCP_REGION: ${{ secrets.NCP_REGION }}
       NCP_ACCESS_KEY_ID: ${{ secrets.NCP_ACCESS_KEY_ID }}
@@ -45,10 +45,10 @@ jobs:
       mysql:
         image: mysql:8.0.34
         env:
-          MYSQL_ROOT_PASSWORD: 1234
-          MYSQL_DATABASE: "motimate_test"
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DB_DATABASE }}
         ports:
-          - 13306:3306
+          - ${{ secrets.DB_PORT }}:3306
 
     strategy:
       matrix:
