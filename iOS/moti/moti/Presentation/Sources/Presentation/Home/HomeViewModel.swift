@@ -58,7 +58,7 @@ final class HomeViewModel {
         }
     }
     private var nextRequestValue: FetchAchievementListRequestValue?
-    private var currentCategory: CategoryItem?
+    private(set) var currentCategory: CategoryItem?
     
     @Published private(set) var categoryState: CategoryState = .initial
     @Published private(set) var addCategoryState: AddCategoryState = .none
