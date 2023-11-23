@@ -11,7 +11,7 @@ import Design
 final class DetailAchievementView: UIView {
     
     // MARK: - Views
-    let achievementView = AchievementView()
+//    let achievementView = AchievementView()
     
     // MARK: - Init
     override init(frame: CGRect) {
@@ -31,12 +31,10 @@ private extension DetailAchievementView {
     }
     
     func setupAchievementView() {
-        achievementView.readOnlyMode()
-        
-        addSubview(achievementView)
-        achievementView.atl
-            .top(equalTo: safeAreaLayoutGuide.topAnchor)
-            .bottom(equalTo: bottomAnchor)
-            .horizontal(equalTo: safeAreaLayoutGuide)
+//        addSubview(achievementView)
+//        achievementView.atl
+//            .top(equalTo: safeAreaLayoutGuide.topAnchor)
+//            .bottom(equalTo: bottomAnchor)
+//            .horizontal(equalTo: safeAreaLayoutGuide)
     }
 }

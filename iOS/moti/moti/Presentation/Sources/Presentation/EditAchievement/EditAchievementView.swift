@@ -1,13 +1,17 @@
 //
-//  AchievementView.swift
-//  
+//  EditAchievementView.swift
 //
-//  Created by 유정주 on 11/21/23.
+//
+//  Created by 유정주 on 11/23/23.
 //
 
 import UIKit
 
-final class AchievementView: UIView {
+import UIKit
+import Design
+import Domain
+
+final class EditAchievementView: UIView {
     // MARK: - Views
     let resultImageView: UIImageView = {
         let imageView = UIImageView()
@@ -59,23 +63,13 @@ final class AchievementView: UIView {
         setupUI()
     }
     
-    func configureEdit(image: UIImage, category: String? = nil) {
+    func configure(image: UIImage?, category: String? = nil) {
         resultImageView.image = image
         
         if let category {
             titleTextField.placeholder = "\(category) 도전 성공"
             categoryButton.setTitle(category, for: .normal)
         }
-    }
-    
-    func configureReadOnly(image: UIImage, title: String, category: String) {
-        resultImageView.image = image
-        
-        titleTextField.text = title
-        titleTextField.isEnabled = false
-        
-        categoryButton.setTitle(category, for: .normal)
-        categoryButton.isEnabled = false
     }
     
     func update(image: UIImage) {
@@ -91,16 +85,6 @@ final class AchievementView: UIView {
         categoryButton.setTitleColor(.label, for: .normal)
     }
     
-    func editMode() {
-        titleTextField.isEnabled = true
-        categoryButton.isEnabled = true
-    }
-    
-    func readOnlyMode() {
-        titleTextField.isEnabled = false
-        categoryButton.isEnabled = false
-    }
-    
     func showCategoryPicker() {
         categoryPickerView.isHidden = false
         selectDoneButton.isHidden = false
@@ -113,7 +97,7 @@ final class AchievementView: UIView {
 }
 
 // MARK: - Setup
-extension AchievementView {
+extension EditAchievementView {
     private func setupUI() {
         setupResultImageView()
         setupTitleTextField()
