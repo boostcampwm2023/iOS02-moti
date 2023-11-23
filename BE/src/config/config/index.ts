@@ -24,6 +24,5 @@ export const configServiceModuleOptions = {
     JWT_VALIDITY: Joi.number().required(),
     REFRESH_JWT_SECRET: Joi.string().required(),
     REFRESH_JWT_VALIDITY: Joi.number().required(),
-    BCRYPT_SALT: Joi.number().required(),
   }),
 };
