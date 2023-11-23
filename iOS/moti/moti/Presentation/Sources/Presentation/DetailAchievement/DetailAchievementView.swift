@@ -31,6 +31,8 @@ private extension DetailAchievementView {
     }
     
     func setupAchievementView() {
+        achievementView.readOnlyMode()
+        
         addSubview(achievementView)
         achievementView.atl
             .top(equalTo: safeAreaLayoutGuide.topAnchor)

@@ -115,9 +115,9 @@ final class AchievementView: UIView {
 // MARK: - Setup
 extension AchievementView {
     private func setupUI() {
-        setupCategoryButton()
-        setupTitleTextField()
         setupResultImageView()
+        setupTitleTextField()
+        setupCategoryButton()
         setupCategoryPickerView()
     }
     
@@ -125,14 +125,14 @@ extension AchievementView {
         addSubview(categoryButton)
         categoryButton.atl
             .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
-            .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20)
+            .bottom(equalTo: titleTextField.topAnchor, constant: -5)
     }
 
     private func setupTitleTextField() {
         addSubview(titleTextField)
         titleTextField.atl
             .horizontal(equalTo: safeAreaLayoutGuide, constant: 20)
-            .top(equalTo: categoryButton.bottomAnchor)
+            .bottom(equalTo: resultImageView.topAnchor, constant: -10)
     }
     
     private func setupResultImageView() {
@@ -140,7 +140,7 @@ extension AchievementView {
         resultImageView.atl
             .horizontal(equalTo: safeAreaLayoutGuide)
             .height(equalTo: resultImageView.widthAnchor)
-            .top(equalTo: titleTextField.bottomAnchor, constant: 10)
+            .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
     }
         
     private func setupCategoryPickerView() {
