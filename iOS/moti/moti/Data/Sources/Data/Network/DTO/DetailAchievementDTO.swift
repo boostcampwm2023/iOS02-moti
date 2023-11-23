@@ -33,12 +33,16 @@ extension Achievement {
     init(dto: DetailAchievementDTO) {
         self.init(
             id: dto.id ?? -1,
-            category: dto.category?.name ?? "",
+            category: CategoryItem(
+                id: dto.category?.id ?? -1,
+                name: dto.category?.name ?? "",
+                continued: dto.category?.achieveCount ?? 0,
+                lastChallenged: nil
+            ),
             title: dto.title ?? "",
             imageURL: dto.imageUrl,
             body: dto.content,
-            achieveCount: dto.category?.achieveCount ?? 0,
-            date: dto.createdAt ?? Date()
+            date: dto.createdAt
         )
     }
 }

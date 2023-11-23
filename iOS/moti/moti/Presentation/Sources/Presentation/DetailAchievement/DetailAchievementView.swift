@@ -47,7 +47,7 @@ final class DetailAchievementView: UIView {
     
     func configure(achievement: Achievement) {
         titleLabel.text = achievement.title
-        categoryLabel.text = achievement.category
+        categoryLabel.text = achievement.category?.name
         if let url = achievement.imageURL {
             imageView.jf.setImage(with: url)
         }
