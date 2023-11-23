@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { LocalFileStore } from './local-file-store';
+import { FileStore } from './file-store';
+import { fileStoreProviderOptions } from './file-store-provider-options';
 
 @Module({
-  exports: [LocalFileStore],
-  providers: [LocalFileStore],
+  providers: [fileStoreProviderOptions],
+  exports: [FileStore],
 })
 export class FileStoreModule {}
