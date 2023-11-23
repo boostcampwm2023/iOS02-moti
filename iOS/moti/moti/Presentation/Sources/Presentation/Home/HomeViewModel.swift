@@ -100,6 +100,7 @@ final class HomeViewModel {
         Task {
             do {
                 categories = try await fetchCategoryListUseCase.execute()
+                categoryDataSource?.update(data: categories)
                 categoryState = .finish
             } catch {
                 categoryState = .error(message: error.localizedDescription)
@@ -126,9 +127,9 @@ final class HomeViewModel {
         Task {
             do {
                 achievementState = .loading
-                let (achievements, nextRequestValue) = try await fetchAchievementListUseCase.execute(requestValue: requestValue)
-                self.achievements.append(contentsOf: achievements)
-                self.nextRequestValue = nextRequestValue
+                let (newAchievements, next) = try await fetchAchievementListUseCase.execute(requestValue: requestValue)
+                achievements.append(contentsOf: newAchievements)
+                nextRequestValue = next
                 achievementDataSource?.update(data: achievements)
 
                 achievementState = .finish
