@@ -22,10 +22,18 @@ export class AdminRepository extends TransactionalRepository<AdminEntity> {
     return adminEntity?.toModel();
   }
 
+  async findPendingAdminByEmail(email: string): Promise<Admin> {
+    const adminEntity = await this.repository.findOne({
+      where: { email: email, status: AdminStatus.PENDING },
+      relations: ['user', 'user.userRoles'],
+    });
+    return adminEntity?.toModel();
+  }
+
   async findActiveAdminByEmail(email: string): Promise<Admin> {
     const adminEntity = await this.repository.findOne({
       where: { email: email, status: AdminStatus.ACTIVE },
-      relations: ['user'],
+      relations: ['user', 'user.userRoles'],
     });
     return adminEntity?.toModel();
   }

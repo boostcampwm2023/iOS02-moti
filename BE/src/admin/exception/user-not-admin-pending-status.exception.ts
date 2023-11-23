@@ -1,8 +1,8 @@
 import { MotimateException } from '../../common/exception/motimate.excpetion';
 import { ERROR_INFO } from '../../common/exception/error-code';
 
-export class UserAlreadyRegisteredAdmin extends MotimateException {
+export class UserNotAdminPendingStatusException extends MotimateException {
   constructor() {
-    super(ERROR_INFO.USER_ALREADY_REGISTERED_ADMIN);
+    super(ERROR_INFO.USER_NOT_ADMIN_PENDING_STATUS);
   }
 }

@@ -8,6 +8,7 @@
 import UIKit
 import Core
 import Data
+import Domain
 
 public final class HomeCoordinator: Coordinator {
     public let parentCoordinator: Coordinator?
@@ -23,9 +24,19 @@ public final class HomeCoordinator: Coordinator {
     }
     
     public func start() {
-        let homeVM = HomeViewModel(fetchAchievementListUseCase: .init(repository: MockAchievementListRepository()))
+        let homeVM = HomeViewModel(
+            fetchAchievementListUseCase: .init(repository: AchievementListRepository()),
+            fetchCategoryListUseCase: .init(repository: CategoryListRepository()), 
+            addCategoryUseCase: .init(repository: CategoryListRepository())
+        )
         let homeVC = HomeViewController(viewModel: homeVM)
         homeVC.coordinator = self
         navigationController.viewControllers = [homeVC]
+    }
+    
+    public func moveToDetailAchievementViewController(achievement: Achievement) {
+        let detailAchievementCoordinator = DetailAchievementCoordinator(navigationController, self)
+        childCoordinators.append(detailAchievementCoordinator)
+        detailAchievementCoordinator.start(achievement: achievement)
     }
 }

@@ -6,8 +6,8 @@ import { TransactionalRepository } from '../../config/transaction-manager/transa
 @CustomRepository(UserEntity)
 export class UserRepository extends TransactionalRepository<UserEntity> {
   async findOneByUserIdentifier(userIdentifier: string): Promise<User> {
-    const userEntity = await this.repository.findOneBy({
-      userIdentifier: userIdentifier,
+    const userEntity = await this.repository.findOne({
+      where: { userIdentifier: userIdentifier },
     });
     return userEntity?.toModel();
   }
@@ -24,7 +24,26 @@ export class UserRepository extends TransactionalRepository<UserEntity> {
     const saved = await this.repository.save(userEntity);
     return saved.toModel();
   }
+
   async existByUserCode(userCode: string) {
     return await this.repository.exist({ where: { userCode: userCode } });
+  }
+
+  async findOneByUserIdentifierWithRoles(
+    userIdentifier: string,
+  ): Promise<User> {
+    const userEntity = await this.repository.findOne({
+      where: { userIdentifier: userIdentifier },
+      relations: ['userRoles'],
+    });
+    return userEntity?.toModel();
+  }
+
+  async findOneByUserCodeWithRoles(userCode: string): Promise<User> {
+    const userEntity = await this.repository.findOne({
+      where: { userCode: userCode },
+      relations: ['userRoles'],
+    });
+    return userEntity?.toModel();
   }
 }

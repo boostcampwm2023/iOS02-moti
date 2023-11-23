@@ -28,4 +28,7 @@ public extension UIColor {
     
     /// 일반 버튼이 눌렸을 때 색상
     static var normalButtonHighlightColor = UIColor(resource: .skyBlue)
+    
+    /// 탭바 아이템과 동일한 회색 색상
+    static var tabBarItemGray = UIColor(resource: .tabBarItemGray)
 }

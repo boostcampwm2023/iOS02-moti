@@ -7,12 +7,13 @@
 
 import UIKit
 import Design
+import Domain
 
 final class HomeView: UIView {
     
     // MARK: - Views
     // 카테고리 추가 버튼
-    private let catergoryAddButton: BounceButton = {
+    let catergoryAddButton: BounceButton = {
         let button = BounceButton()
         button.setTitle("+", for: .normal)
         return button
@@ -54,7 +55,18 @@ final class HomeView: UIView {
         setupUI()
     }
     
-    // MARK: - Setup
+    // MARK: - Methods
+    func updateAchievementHeader(with category: CategoryItem) {        
+        guard let header = achievementCollectionView.visibleSupplementaryViews(
+            ofKind: UICollectionView.elementKindSectionHeader
+        ).first as? HeaderView else { return }
+        
+        header.configure(category: category)
+    }
+}
+
+// MARK: - SetUp
+private extension HomeView {
     private func setupUI() {
         setupCategoryAddButton()
         setupCategoryCollectionView()
@@ -65,7 +77,7 @@ final class HomeView: UIView {
         addSubview(catergoryAddButton)
         catergoryAddButton.atl
             .size(width: 37, height: 37)
-            .top(equalTo: self.safeAreaLayoutGuide.topAnchor)
+            .top(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 10)
             .left(equalTo: self.safeAreaLayoutGuide.leftAnchor, constant: 10)
         
         addSubview(separatorView)
@@ -80,7 +92,7 @@ final class HomeView: UIView {
         addSubview(categoryCollectionView)
         categoryCollectionView.atl
             .height(constant: 37)
-            .top(equalTo: self.safeAreaLayoutGuide.topAnchor)
+            .top(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 10)
             .left(equalTo: separatorView.rightAnchor)
             .right(equalTo: self.safeAreaLayoutGuide.rightAnchor)
     }
@@ -89,7 +101,7 @@ final class HomeView: UIView {
         addSubview(achievementCollectionView)
         achievementCollectionView.atl
             .width(equalTo: self.widthAnchor)
-            .top(equalTo: categoryCollectionView.bottomAnchor)
+            .top(equalTo: categoryCollectionView.bottomAnchor, constant: 10)
             .bottom(equalTo: self.bottomAnchor)
     }
 }

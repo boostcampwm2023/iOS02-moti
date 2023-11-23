@@ -10,13 +10,30 @@ import Domain
 import Core
 
 final class LaunchViewModel {
+    enum LaunchViewModelAction {
+        case launch
+        case autoLogin
+    }
+    
+    enum AutoLoginState {
+        case none
+        case loading
+        case success
+        case failed(message: String)
+    }
+    
+    enum VersionState {
+        case none
+        case loading
+        case finish(version: Version)
+        case error(message: String)
+    }
     
     private let fetchVersionUseCase: FetchVersionUseCase
     private let autoLoginUseCase: AutoLoginUseCase
     
-    @Published private(set) var version: Version?
-    @Published private(set) var isSuccessLogin = false
-    private var token: UserToken?
+    @Published private(set) var versionState: VersionState = .none
+    @Published private(set) var autoLoginState: AutoLoginState = .none
     
     init(
         fetchVersionUseCase: FetchVersionUseCase,
@@ -26,49 +43,66 @@ final class LaunchViewModel {
         self.autoLoginUseCase = autoLoginUseCase
     }
     
-    func fetchVersion() {
-        Task {
-            do {
-                version = try await fetchVersionUseCase.execute()
-                Logger.debug("version: \(String(describing: version))")
-            } catch {
-                Logger.debug("version error: \(error)")
+    func action(_ action: LaunchViewModelAction) {
+        switch action {
+        case .launch:
+            fetchVersion()
+        case .autoLogin:
+            if let refreshToken = fetchRefreshToken() {
+                Logger.debug("refreshToken으로 자동 로그인 시도")
+                requestAutoLogin(using: refreshToken)
+            } else {
+                Logger.debug("자동 로그인 실패")
+                resetToken()
+                autoLoginState = .failed(message: "최초 로그인")
             }
         }
     }
     
-    func fetchToken() {
-        // Keychain 저장소로 변경
-        if let refreshToken = UserDefaults.standard.string(forKey: "refreshToken") {
-            Logger.debug("refreshToken으로 자동 로그인 시도")
-            requestAutoLogin(using: refreshToken)
-        } else {
-            Logger.debug("자동 로그인 실패")
-            resetToken()
-            isSuccessLogin = false
+    private func fetchVersion() {
+        Task {
+            do {
+                versionState = .loading
+                
+                let version = try await fetchVersionUseCase.execute()
+                Logger.debug("version: \(String(describing: version))")
+                
+                versionState = .finish(version: version)
+            } catch {
+                Logger.debug("version error: \(error)")
+                versionState = .error(message: error.localizedDescription)
+            }
         }
     }
     
-    func requestAutoLogin(using refreshToken: String) {
+    private func fetchRefreshToken() -> String? {
+        // Keychain 저장소로 변경
+        return UserDefaults.standard.string(forKey: "refreshToken")
+    }
+    
+    private func requestAutoLogin(using refreshToken: String) {
         Task {
             do {
+                autoLoginState = .loading
+                
                 let requestValue = AutoLoginRequestValue(refreshToken: refreshToken)
                 let token = try await autoLoginUseCase.excute(requestValue: requestValue)
                 saveAccessToken(token.accessToken)
-                isSuccessLogin = true
+                
+                autoLoginState = .success
             } catch {
-                isSuccessLogin = false
                 Logger.error(error)
+                autoLoginState = .failed(message: error.localizedDescription)
             }
         }
     }
     
     // TODO: UserDefaultsStorage로 변경해서 UseCase로 사용하기
-    func saveAccessToken(_ accessToken: String) {
+    private func saveAccessToken(_ accessToken: String) {
         UserDefaults.standard.setValue(accessToken, forKey: "accessToken")
     }
     
-    func resetToken() {
+    private func resetToken() {
         UserDefaults.standard.removeObject(forKey: "refreshToken")
         UserDefaults.standard.removeObject(forKey: "accessToken")
     }

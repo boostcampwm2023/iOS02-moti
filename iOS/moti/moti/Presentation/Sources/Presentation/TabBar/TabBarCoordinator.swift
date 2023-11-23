@@ -62,14 +62,23 @@ public final class TabBarCoordinator: Coordinator {
 // MARK: - Make Child ViewControllers
 private extension TabBarCoordinator {
     func makeIndividualTabPage() -> UINavigationController {
-        let homeVM = HomeViewModel(fetchAchievementListUseCase: .init(repository: MockAchievementListRepository()))
+        let homeVM = HomeViewModel(
+            fetchAchievementListUseCase: .init(repository: AchievementListRepository()),
+            fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
+            addCategoryUseCase: .init(repository: CategoryListRepository())
+        )
         let homeVC = HomeViewController(viewModel: homeVM)
         
         homeVC.tabBarItem.image = SymbolImage.individualTabItem
         homeVC.tabBarItem.title = TabItemType.individual.title
         setupIndividualHomeNavigationBar(viewController: homeVC)
         
-        return UINavigationController(rootViewController: homeVC)
+        let navVC = UINavigationController(rootViewController: homeVC)
+        
+        let homeCoordinator = HomeCoordinator(navVC, self)
+        homeVC.coordinator = homeCoordinator
+        childCoordinators.append(homeCoordinator)
+        return navVC
     }
     
     func makeGroupTabPage() -> UINavigationController {
@@ -110,6 +119,7 @@ private extension TabBarCoordinator {
 
         viewController.navigationItem.rightBarButtonItems = [profileItem, moreItem]
     }
+    
 }
 
 extension TabBarCoordinator: TabBarViewControllerDelegate {

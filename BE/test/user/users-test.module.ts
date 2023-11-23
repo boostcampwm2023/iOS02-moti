@@ -10,5 +10,6 @@ import { UsersModule } from '../../src/users/users.module';
     UsersModule,
   ],
   providers: [UsersFixture],
+  exports: [UsersFixture],
 })
 export class UsersTestModule {}

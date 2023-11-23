@@ -12,23 +12,35 @@ import AVFoundation
 final class CaptureView: UIView {
     
     // MARK: - Views
-    private let photoButton = NormalButton(title: "앨범에서 선택", image: SymbolImage.photo)
-    private let cameraSwitchingButton = NormalButton(title: "카메라 전환", image: SymbolImage.iphone)
-    
+    // VC에서 액션을 달아주기 위해 private 제거
+    let albumButton = NormalButton(title: "앨범에서 선택", image: SymbolImage.photo)
+    let cameraSwitchingButton = {
+        let button = NormalButton()
+        button.setTitle("카메라 전환", for: .normal)
+        return button
+    }()
+    let captureButton = CaptureButton()
+
     // Video Preview
-    private let previewTopPadding: CGFloat = 100
-    private let previewLayer = AVCaptureVideoPreviewLayer()
-    private let preview = UIView()
-    
-    let captureButton = CaptureButton() // VC에서 액션을 달아주기 위해 private 제거
-    private let resultImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.isHidden = true
-        return imageView
+    private let preview = {
+        let view = UIView()
+        view.backgroundColor = .primaryGray
+        return view
+    }()
+
+    private let previewLayer = {
+        let previewLayer = AVCaptureVideoPreviewLayer()
+        previewLayer.videoGravity = .resizeAspectFill
+        // portrait 고정
+        if #available(iOS 17.0, *) {
+            previewLayer.connection?.videoRotationAngle = 90
+        } else {
+            previewLayer.connection?.videoOrientation = .portrait
+        }
+        return previewLayer
     }()
     
+    // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -47,64 +59,63 @@ final class CaptureView: UIView {
     }
     
     // MARK: - Methods
-    func updatePreview(with image: UIImage) {
-        resultImageView.isHidden = false
-        resultImageView.image = image
-    }
-    
     func updatePreviewLayer(session: AVCaptureSession) {
-        resultImageView.isHidden = true
         previewLayer.session = session
     }
     
-    private func setupUI() {
+    func changeToBackCamera() {
+        cameraSwitchingButton.setImage(SymbolImage.iphone, for: .normal)
+    }
+    
+    func changeToFrontCamera() {
+        cameraSwitchingButton.setImage(SymbolImage.iphoneCamera, for: .normal)
+    }
+}
+
+// MARK: - Setup
+private extension CaptureView {
+    func setupUI() {
+        setupPreview()
+        
+        setupCaptureButton()
         setupPhotoButton()
         setupCameraSwitchingButton()
-        setupCaptureButton()
-        setupPreview()
     }
     
-    private func setupPhotoButton() {
-        photoButton.setColor(.lightGray)
-        addSubview(photoButton)
-        photoButton.atl
-            .bottom(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -20)
-            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15)
-    }
-    
-    private func setupCameraSwitchingButton() {
-        cameraSwitchingButton.setColor(.lightGray)
-        addSubview(cameraSwitchingButton)
-        cameraSwitchingButton.atl
-            .bottom(equalTo: photoButton.bottomAnchor)
-            .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -15)
-    }
-    
-    private func setupCaptureButton() {
+    func setupCaptureButton() {
         addSubview(captureButton)
         captureButton.atl
             .size(width: CaptureButton.defaultSize, height: CaptureButton.defaultSize)
             .centerX(equalTo: centerXAnchor)
-            .bottom(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -36)
+            .bottom(equalTo: bottomAnchor, constant: -36)
+    }
+
+    func setupPhotoButton() {
+        albumButton.setColor(.tabBarItemGray)
+        addSubview(albumButton)
+        albumButton.atl
+            .bottom(equalTo: captureButton.bottomAnchor)
+            .right(equalTo: captureButton.leftAnchor, constant: -30)
     }
     
-    private func setupResultImageView() {
-        addSubview(resultImageView)
-        resultImageView.atl
-            .all(of: preview)
+    func setupCameraSwitchingButton() {
+        cameraSwitchingButton.setColor(.tabBarItemGray)
+        addSubview(cameraSwitchingButton)
+        cameraSwitchingButton.atl
+            .bottom(equalTo: captureButton.bottomAnchor)
+            .left(equalTo: captureButton.rightAnchor, constant: 30)
     }
     
-    private func setupPreview() {
+    func setupPreview() {
         // 카메라 Preview
         addSubview(preview)
         preview.atl
-            .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: previewTopPadding)
-            .left(equalTo: safeAreaLayoutGuide.leftAnchor)
-            .right(equalTo: safeAreaLayoutGuide.rightAnchor)
             .height(equalTo: preview.widthAnchor)
+            .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
+            .horizontal(equalTo: safeAreaLayoutGuide)
         
         // PreviewLayer를 Preview 에 넣기
-        previewLayer.backgroundColor = UIColor.lightGray.cgColor
+        previewLayer.backgroundColor = UIColor.primaryGray.cgColor
         previewLayer.videoGravity = .resizeAspectFill
         preview.layer.addSublayer(previewLayer)
     }

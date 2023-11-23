@@ -11,8 +11,13 @@ export class UsersService {
     private readonly usersRepository: UserRepository,
   ) {}
 
-  @Transactional()
+  @Transactional({ readonly: true })
   async findOneByUserCode(userCode: string): Promise<User> {
     return await this.usersRepository.findOneByUserCode(userCode);
+  }
+
+  @Transactional({ readonly: true })
+  async getUserByUserCodeWithRoles(userCode: string): Promise<User> {
+    return await this.usersRepository.findOneByUserCodeWithRoles(userCode);
   }
 }

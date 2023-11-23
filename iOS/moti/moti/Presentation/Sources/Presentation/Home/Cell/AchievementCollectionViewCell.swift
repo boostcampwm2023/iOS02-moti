@@ -7,6 +7,7 @@
 
 import UIKit
 import Design
+import Jeongfisher
 
 final class AchievementCollectionViewCell: UICollectionViewCell {
     private let imageView = {
@@ -40,8 +41,11 @@ final class AchievementCollectionViewCell: UICollectionViewCell {
         imageView.image = nil
     }
     
-    func configure(imageURL: String) {
-        imageView.image = MotiImage.sample1
+    func configure(imageURL: URL?) {
+//        imageView.image = MotiImage.sample1
+        if let imageURL {
+            imageView.jf.setImage(with: imageURL)
+        }
     }
     
     func showSkeleton() {
@@ -53,6 +57,6 @@ final class AchievementCollectionViewCell: UICollectionViewCell {
     }
 
     func cancelDownloadImage() {
-//        imageView.jf.cancelDownloadImage()
+        imageView.jf.cancelDownloadImage()
     }
 }

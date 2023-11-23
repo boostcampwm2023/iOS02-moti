@@ -9,6 +9,9 @@ export const validationPipeOptions: ValidationPipeOptions = {
   whitelist: true,
   forbidNonWhitelisted: true,
   transform: true,
+  transformOptions: {
+    enableImplicitConversion: true,
+  },
   exceptionFactory: (errors: ValidationError[]) => {
     const defaultErrorMessage: ValidationErrorMessage = {
       error: '잘못된 입력입니다.',

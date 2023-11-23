@@ -1,3 +1,5 @@
+import { UserRole } from './user-role';
+
 export class User {
   id: number;
 
@@ -6,6 +8,8 @@ export class User {
   userCode: string;
 
   userIdentifier: string;
+
+  roles: UserRole[] = [UserRole.MEMBER];
 
   static from(userIdentifier: string) {
     const user = new User();
