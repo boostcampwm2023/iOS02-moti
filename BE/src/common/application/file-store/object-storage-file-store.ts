@@ -71,6 +71,10 @@ export class ObjectStorageFileStore extends FileStore {
         uploadFullPath: sendData.Location,
       };
     } catch (e) {
+      console.log(originalFilename);
+      console.log(this.resolveBucketName(storedOptions));
+      console.log(fullPath);
+      console.log(e);
       throw new FailFileTaskException();
     }
   }
