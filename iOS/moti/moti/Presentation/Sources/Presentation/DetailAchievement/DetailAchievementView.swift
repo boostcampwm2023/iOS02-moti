@@ -34,7 +34,6 @@ final class DetailAchievementView: UIView {
         return imageView
     }()
 
-    
     // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
