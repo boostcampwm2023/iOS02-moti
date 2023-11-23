@@ -14,12 +14,12 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        layoutView.achievementView.readOnlyMode()
-        layoutView.achievementView.update(image: MotiImage.sample1)
-        layoutView.achievementView.categoryButton.addTarget(self, action: #selector(showPicker), for: .touchUpInside)
+//        layoutView.achievementView.readOnlyMode()
+//        layoutView.achievementView.update(image: MotiImage.sample1)
+//        layoutView.achievementView.categoryButton.addTarget(self, action: #selector(showPicker), for: .touchUpInside)
     }
     
     @objc private func showPicker() {
-        layoutView.achievementView.showCategoryPicker()
+//        layoutView.achievementView.showCategoryPicker()
     }
 }
