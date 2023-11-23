@@ -9,6 +9,7 @@ import UIKit
 import Core
 import Design
 import Combine
+import Domain
 
 final class EditAchievementViewController: BaseViewController<EditAchievementView> {
     
@@ -17,8 +18,9 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     private let viewModel: EditAchievementViewModel
     private var cancellables: Set<AnyCancellable> = []
     
-    private let image: UIImage
-    private var bottomSheet = TextViewBottomSheet()
+    private var bottomSheet: TextViewBottomSheet
+    
+    private var achievement: Achievement?
     
     // MARK: - Init
     init(
@@ -26,8 +28,22 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
         image: UIImage
     ) {
         self.viewModel = viewModel
-        self.image = image
+        self.bottomSheet = TextViewBottomSheet()
         super.init(nibName: nil, bundle: nil)
+        
+        layoutView.configure(image: image)
+    }
+    
+    init(
+        viewModel: EditAchievementViewModel,
+        achievement: Achievement
+    ) {
+        self.viewModel = viewModel
+        self.achievement = achievement
+        self.bottomSheet = TextViewBottomSheet(text: achievement.body)
+        super.init(nibName: nil, bundle: nil)
+        
+        layoutView.configure(achievement: achievement)
     }
     
     required init?(coder: NSCoder) {
@@ -45,7 +61,6 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
         layoutView.categoryPickerView.delegate = self
         layoutView.categoryPickerView.dataSource = self
         
-        layoutView.configure(image: image)
         showBottomSheet()
     }
     
@@ -62,10 +77,19 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
         viewModel.$categoryState
             .receive(on: RunLoop.main)
             .sink { [weak self] state in
+                guard let self else { return }
                 switch state {
                 case .none, .loading: break
                 case .finish:
-                    self?.layoutView.categoryPickerView.reloadAllComponents()
+                    layoutView.categoryPickerView.reloadAllComponents()
+                    
+                    if let achievement = achievement,
+                       let category = achievement.category,
+                       let index = viewModel.findCategoryIndex(category) {
+                        layoutView.selectCategory(row: index, inComponent: 0)
+                    } else if let firstCategory = viewModel.firstCategory {
+                        layoutView.update(category: firstCategory.name)
+                    }
                 }
             }
             .store(in: &cancellables)

@@ -8,10 +8,11 @@
 import UIKit
 import Design
 import Domain
+import Jeongfisher
 
 final class EditAchievementView: UIView {
     // MARK: - Views
-    let resultImageView: UIImageView = {
+    private let resultImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .gray
@@ -23,6 +24,7 @@ final class EditAchievementView: UIView {
         let textField = UITextField()
         textField.font = .largeBold
         textField.placeholder = "도전 성공"
+        textField.returnKeyType = .done
         return textField
     }()
     
@@ -54,6 +56,7 @@ final class EditAchievementView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        titleTextField.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -66,21 +69,28 @@ final class EditAchievementView: UIView {
         
         if let category {
             titleTextField.placeholder = "\(category) 도전 성공"
-            categoryButton.setTitle(category, for: .normal)
+            update(category: category)
         }
     }
     
-    func update(image: UIImage) {
-        resultImageView.image = image
-    }
-    
-    func update(title: String) {
-        titleTextField.text = title
+    func configure(achievement: Achievement) {
+        if let url = achievement.imageURL {
+            resultImageView.jf.setImage(with: url)
+        }
+        
+        titleTextField.text = achievement.title
+        if let category = achievement.category {
+            update(category: category)
+        }
     }
     
     func update(category: String) {
         categoryButton.setTitle(category, for: .normal)
         categoryButton.setTitleColor(.label, for: .normal)
+    }
+    
+    func selectCategory(row: Int, inComponent: Int) {
+        categoryPickerView.selectRow(row, inComponent: inComponent, animated: false)
     }
     
     func showCategoryPicker() {
@@ -136,5 +146,13 @@ extension EditAchievementView {
         selectDoneButton.atl
             .right(equalTo: categoryPickerView.rightAnchor, constant: -10)
             .top(equalTo: categoryPickerView.topAnchor, constant: 10)
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension EditAchievementView: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }

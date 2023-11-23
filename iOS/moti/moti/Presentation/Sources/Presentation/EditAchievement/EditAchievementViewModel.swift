@@ -22,6 +22,9 @@ final class EditAchievementViewModel {
     
     private let fetchCategoryListUseCase: FetchCategoryListUseCase
     private(set) var categories: [CategoryItem] = []
+    var firstCategory: CategoryItem? {
+        return categories.first
+    }
     
     @Published private(set) var categoryState: CategoryState = .none
     
@@ -40,6 +43,13 @@ final class EditAchievementViewModel {
     
     func findCategory(at index: Int) -> CategoryItem {
         return categories[index]
+    }
+    
+    func findCategoryIndex(_ name: String) -> Int? {
+        for (index, category) in categories.enumerated() where name == category.name {
+            return index
+        }
+        return nil
     }
     
     private func fetchCategories() {

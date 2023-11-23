@@ -7,6 +7,7 @@
 
 import UIKit
 import Core
+import Domain
 
 final class CaptureCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
