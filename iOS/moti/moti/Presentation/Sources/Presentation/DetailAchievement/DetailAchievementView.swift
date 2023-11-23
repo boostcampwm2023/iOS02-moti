@@ -7,6 +7,7 @@
 
 import UIKit
 import Design
+import Domain
 
 final class DetailAchievementView: UIView {
     
@@ -43,6 +44,14 @@ final class DetailAchievementView: UIView {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupUI()
+    }
+    
+    func configure(achievement: Achievement) {
+        titleLabel.text = achievement.title
+        categoryLabel.text = achievement.category
+        if let url = achievement.imageURL {
+            imageView.jf.setImage(with: url)
+        }
     }
 }
 
