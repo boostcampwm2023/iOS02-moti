@@ -42,7 +42,7 @@ extension Achievement {
             title: dto.title ?? "",
             imageURL: dto.imageUrl,
             body: dto.content,
-            date: dto.createdAt
+            date: dto.createdAt ?? .now
         )
     }
 }

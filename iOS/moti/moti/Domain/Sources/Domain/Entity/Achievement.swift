@@ -15,7 +15,14 @@ public struct Achievement: Hashable {
     public let body: String?
     public let date: Date?
     
-    public init(id: Int, category: CategoryItem?, title: String, imageURL: URL?, body: String?, date: Date?) {
+    public init(
+        id: Int,
+        category: CategoryItem,
+        title: String,
+        imageURL: URL?,
+        body: String?,
+        date: Date
+    ) {
         self.id = id
         self.category = category
         self.title = title
