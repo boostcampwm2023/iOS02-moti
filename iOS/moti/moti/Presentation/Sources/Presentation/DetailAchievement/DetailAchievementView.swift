@@ -56,6 +56,10 @@ final class DetailAchievementView: UIView {
     func update(title: String) {
         titleLabel.text = title
     }
+    
+    func cancelDownloadImage() {
+        imageView.jf.cancelDownloadImage()
+    }
 }
 
 private extension DetailAchievementView {

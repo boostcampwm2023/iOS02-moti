@@ -34,6 +34,11 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
         viewModel.action(.launch)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        layoutView.cancelDownloadImage()
+    }
+    
     private func setupUI() {
         navigationItem.rightBarButtonItems = [
             UIBarButtonItem(title: "삭제", style: .plain, target: self, action: #selector(didClickedRemoveButton)),
