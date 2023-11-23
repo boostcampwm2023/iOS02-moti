@@ -7,6 +7,7 @@
 
 import UIKit
 import Design
+import Core
 
 final class DetailAchievementViewController: BaseViewController<DetailAchievementView> {
     weak var coordinator: DetailAchievementCoordinator?
@@ -14,12 +15,22 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        layoutView.achievementView.readOnlyMode()
         layoutView.achievementView.update(image: MotiImage.sample1)
-        layoutView.achievementView.categoryButton.addTarget(self, action: #selector(showPicker), for: .touchUpInside)
+        setupUI()
     }
     
-    @objc private func showPicker() {
-        layoutView.achievementView.showCategoryPicker()
+    private func setupUI() {
+        navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(title: "삭제", style: .plain, target: self, action: #selector(didClickedRemoveButton)),
+            UIBarButtonItem(title: "편집", style: .plain, target: self, action: #selector(didClickedEditButton))
+        ]
+    }
+    
+    @objc private func didClickedRemoveButton() {
+        Logger.debug("삭제 버튼!")
+    }
+    
+    @objc private func didClickedEditButton() {
+        Logger.debug("편집 버튼!")
     }
 }
