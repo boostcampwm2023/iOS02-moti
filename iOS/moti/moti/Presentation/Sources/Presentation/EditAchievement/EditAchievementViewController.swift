@@ -8,18 +8,24 @@
 import UIKit
 import Core
 import Design
+import Combine
 
 final class EditAchievementViewController: BaseViewController<EditAchievementView> {
     
     // MARK: - Properties
     weak var coordinator: EditAchievementCoordinator?
-    private let image: UIImage
+    private let viewModel: EditAchievementViewModel
+    private var cancellables: Set<AnyCancellable> = []
     
-    private let categories: [String] = ["카테고리1", "카테고리2", "카테고리3", "카테고리4", "카테고리5"]
+    private let image: UIImage
     private var bottomSheet = TextViewBottomSheet()
     
     // MARK: - Init
-    init(image: UIImage) {
+    init(
+        viewModel: EditAchievementViewModel,
+        image: UIImage
+    ) {
+        self.viewModel = viewModel
         self.image = image
         super.init(nibName: nil, bundle: nil)
     }
@@ -32,12 +38,15 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        layoutView.configure(image: image)
-        showBottomSheet()
+        viewModel.action(.fetchCategories)
         addTarget()
-
+        bind()
+        
         layoutView.categoryPickerView.delegate = self
         layoutView.categoryPickerView.dataSource = self
+        
+        layoutView.configure(image: image)
+        showBottomSheet()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -47,6 +56,19 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
+    }
+    
+    private func bind() {
+        viewModel.$categoryState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                switch state {
+                case .none, .loading: break
+                case .finish:
+                    self?.layoutView.categoryPickerView.reloadAllComponents()
+                }
+            }
+            .store(in: &cancellables)
     }
     
     private func addTarget() {
@@ -97,7 +119,7 @@ extension EditAchievementViewController {
 
 extension EditAchievementViewController: UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        layoutView.update(category: categories[row])
+        layoutView.update(category: viewModel.findCategory(at: row).name)
     }
 }
 
@@ -107,10 +129,10 @@ extension EditAchievementViewController: UIPickerViewDataSource {
     }
 
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return categories.count
+        return viewModel.categories.count
     }
 
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return categories[row]
+        return viewModel.findCategory(at: row).name
     }
 }
