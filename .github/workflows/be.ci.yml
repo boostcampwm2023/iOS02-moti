@@ -29,6 +29,7 @@ jobs:
       JWT_VALIDITY: 3600000
       REFRESH_JWT_SECRET: "!@sehyeongrefresh!@"
       REFRESH_JWT_VALIDITY: 604800000
+      LOCAL_BASEPATH: ./DO-NOT-USE-THIS-PATH
 
 
     services:
