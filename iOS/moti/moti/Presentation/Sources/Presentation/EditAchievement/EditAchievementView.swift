@@ -1,15 +1,18 @@
 //
-//  AchievementView.swift
-//  
+//  EditAchievementView.swift
 //
-//  Created by 유정주 on 11/21/23.
+//
+//  Created by 유정주 on 11/23/23.
 //
 
 import UIKit
+import Design
+import Domain
+import Jeongfisher
 
-final class AchievementView: UIView {
+final class EditAchievementView: UIView {
     // MARK: - Views
-    let resultImageView: UIImageView = {
+    private let resultImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .gray
@@ -21,6 +24,7 @@ final class AchievementView: UIView {
         let textField = UITextField()
         textField.font = .largeBold
         textField.placeholder = "도전 성공"
+        textField.returnKeyType = .done
         return textField
     }()
     
@@ -52,6 +56,7 @@ final class AchievementView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        titleTextField.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -59,31 +64,24 @@ final class AchievementView: UIView {
         setupUI()
     }
     
-    func configureEdit(image: UIImage, category: String? = nil) {
+    func configure(image: UIImage?, category: String? = nil) {
         resultImageView.image = image
         
         if let category {
             titleTextField.placeholder = "\(category) 도전 성공"
-            categoryButton.setTitle(category, for: .normal)
+            update(category: category)
         }
     }
     
-    func configureReadOnly(image: UIImage, title: String, category: String) {
-        resultImageView.image = image
+    func configure(achievement: Achievement) {
+        if let url = achievement.imageURL {
+            resultImageView.jf.setImage(with: url)
+        }
         
-        titleTextField.text = title
-        titleTextField.isEnabled = false
-        
-        categoryButton.setTitle(category, for: .normal)
-        categoryButton.isEnabled = false
-    }
-    
-    func update(image: UIImage) {
-        resultImageView.image = image
-    }
-    
-    func update(title: String) {
-        titleTextField.text = title
+        titleTextField.text = achievement.title
+        if let category = achievement.category {
+            update(category: category)
+        }
     }
     
     func update(category: String) {
@@ -91,14 +89,8 @@ final class AchievementView: UIView {
         categoryButton.setTitleColor(.label, for: .normal)
     }
     
-    func editMode() {
-        titleTextField.isEnabled = true
-        categoryButton.isEnabled = true
-    }
-    
-    func readOnlyMode() {
-        titleTextField.isEnabled = false
-        categoryButton.isEnabled = false
+    func selectCategory(row: Int, inComponent: Int) {
+        categoryPickerView.selectRow(row, inComponent: inComponent, animated: false)
     }
     
     func showCategoryPicker() {
@@ -113,11 +105,11 @@ final class AchievementView: UIView {
 }
 
 // MARK: - Setup
-extension AchievementView {
+extension EditAchievementView {
     private func setupUI() {
-        setupCategoryButton()
-        setupTitleTextField()
         setupResultImageView()
+        setupTitleTextField()
+        setupCategoryButton()
         setupCategoryPickerView()
     }
     
@@ -125,14 +117,14 @@ extension AchievementView {
         addSubview(categoryButton)
         categoryButton.atl
             .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
-            .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20)
+            .bottom(equalTo: titleTextField.topAnchor, constant: -5)
     }
 
     private func setupTitleTextField() {
         addSubview(titleTextField)
         titleTextField.atl
             .horizontal(equalTo: safeAreaLayoutGuide, constant: 20)
-            .top(equalTo: categoryButton.bottomAnchor)
+            .bottom(equalTo: resultImageView.topAnchor, constant: -10)
     }
     
     private func setupResultImageView() {
@@ -140,7 +132,7 @@ extension AchievementView {
         resultImageView.atl
             .horizontal(equalTo: safeAreaLayoutGuide)
             .height(equalTo: resultImageView.widthAnchor)
-            .top(equalTo: titleTextField.bottomAnchor, constant: 10)
+            .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
     }
         
     private func setupCategoryPickerView() {
@@ -154,5 +146,13 @@ extension AchievementView {
         selectDoneButton.atl
             .right(equalTo: categoryPickerView.rightAnchor, constant: -10)
             .top(equalTo: categoryPickerView.topAnchor, constant: 10)
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension EditAchievementView: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
     }
 }

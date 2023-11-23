@@ -40,13 +40,6 @@ final class CaptureView: UIView {
         return previewLayer
     }()
     
-    // 편집 뷰
-    let achievementView = {
-        let achievementView = AchievementView()
-        achievementView.isHidden = true
-        return achievementView
-    }()
-    
     // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -70,26 +63,6 @@ final class CaptureView: UIView {
         previewLayer.session = session
     }
     
-    func changeToCaptureMode() {
-        preview.isHidden = false
-        albumButton.isHidden = false
-        cameraSwitchingButton.isHidden = false
-        captureButton.isHidden = false
-        
-        achievementView.resultImageView.image = nil
-        achievementView.isHidden = true
-    }
-    
-    func changeToEditMode(image: UIImage) {
-        preview.isHidden = true
-        albumButton.isHidden = true
-        cameraSwitchingButton.isHidden = true
-        captureButton.isHidden = true
-        
-        achievementView.isHidden = false
-        achievementView.configureEdit(image: image)
-    }
-    
     func changeToBackCamera() {
         cameraSwitchingButton.setImage(SymbolImage.iphone, for: .normal)
     }
@@ -102,7 +75,6 @@ final class CaptureView: UIView {
 // MARK: - Setup
 private extension CaptureView {
     func setupUI() {
-        setupAchievementView()
         setupPreview()
         
         setupCaptureButton()
@@ -134,20 +106,12 @@ private extension CaptureView {
             .left(equalTo: captureButton.rightAnchor, constant: 30)
     }
     
-    func setupAchievementView() {
-        addSubview(achievementView)
-        achievementView.atl
-            .top(equalTo: safeAreaLayoutGuide.topAnchor)
-            .bottom(equalTo: bottomAnchor)
-            .horizontal(equalTo: safeAreaLayoutGuide)
-    }
-    
     func setupPreview() {
         // 카메라 Preview
         addSubview(preview)
         preview.atl
             .height(equalTo: preview.widthAnchor)
-            .top(equalTo: achievementView.resultImageView.topAnchor)
+            .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
             .horizontal(equalTo: safeAreaLayoutGuide)
         
         // PreviewLayer를 Preview 에 넣기
