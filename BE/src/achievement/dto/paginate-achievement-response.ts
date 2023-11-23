@@ -35,9 +35,6 @@ export class PaginateAchievementResponse {
 
     if (next) {
       for (const key of Object.keys(paginateAchievementRequest)) {
-        if (!paginateAchievementRequest[key]) {
-          continue;
-        }
         if (key !== 'whereIdLessThan') {
           next[key] = paginateAchievementRequest[key];
         }

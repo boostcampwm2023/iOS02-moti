@@ -15,6 +15,7 @@ enum MotiAPI: EndpointProtocol {
     case fetchAchievementList(requestValue: FetchAchievementListRequestValue?)
     case fetchCategoryList
     case addCategory(requestValue: AddCategoryRequestValue)
+    case fetchDetailAchievement(requestValue: FetchDetailAchievementRequestValue)
 }
 
 extension MotiAPI {
@@ -34,6 +35,7 @@ extension MotiAPI {
         case .fetchAchievementList: return "/achievements"
         case .fetchCategoryList: return "/categories"
         case .addCategory: return "/categories"
+        case .fetchDetailAchievement(let requestValue): return "/achievements/\(requestValue.id)"
         }
     }
     
@@ -45,6 +47,7 @@ extension MotiAPI {
         case .fetchAchievementList: return .get
         case .fetchCategoryList: return .get
         case .addCategory: return .post
+        case .fetchDetailAchievement: return .get
         }
     }
     
@@ -61,6 +64,8 @@ extension MotiAPI {
         case .fetchCategoryList:
             return nil
         case .addCategory:
+            return nil
+        case .fetchDetailAchievement:
             return nil
         }
     }
@@ -79,6 +84,8 @@ extension MotiAPI {
             return nil
         case .addCategory(let requestValue):
             return requestValue
+        case .fetchDetailAchievement:
+            return nil
         }
     }
     

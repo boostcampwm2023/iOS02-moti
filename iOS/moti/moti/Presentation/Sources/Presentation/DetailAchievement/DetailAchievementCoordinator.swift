@@ -7,6 +7,8 @@
 
 import UIKit
 import Core
+import Data
+import Domain
 
 public final class DetailAchievementCoordinator: Coordinator {
     public var parentCoordinator: Coordinator?
@@ -22,14 +24,16 @@ public final class DetailAchievementCoordinator: Coordinator {
     }
     
     public func start() {
-        let detailAchievementVC = DetailAchievementViewController()
+        
+    }
+    
+    public func start(achievement: Achievement) {
+        let detailAchievementVC = DetailAchievementViewController(
+            viewModel: DetailAchievementViewModel(
+                fetchDetailAchievementUseCase: .init(repository: DetailAchievementRepository()),
+                achievement: achievement)
+        )
         detailAchievementVC.coordinator = self
-        
-        detailAchievementVC.navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(title: "삭제", style: .plain, target: self, action: nil),
-            UIBarButtonItem(title: "편집", style: .plain, target: self, action: nil)
-        ]
-        
         navigationController.pushViewController(detailAchievementVC, animated: true)
     }
 }
