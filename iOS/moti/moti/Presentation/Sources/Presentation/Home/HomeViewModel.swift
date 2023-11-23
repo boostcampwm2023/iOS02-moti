@@ -57,6 +57,7 @@ final class HomeViewModel {
             achievementDataSource?.update(data: achievements)
         }
     }
+    private var lastRequestNextValue: FetchAchievementListRequestValue?
     private var nextRequestValue: FetchAchievementListRequestValue?
     private(set) var currentCategory: CategoryItem?
     private var nextAchievementTask: Task<Void, Never>?
@@ -132,6 +133,13 @@ final class HomeViewModel {
     }
     
     private func fetchAchievementList(requestValue: FetchAchievementListRequestValue? = nil) {
+        if requestValue?.whereIdLessThan == nil {
+            // 새로운 카테고리 데이터를 가져오기 때문에 빈 배열로 초기화
+            achievements = []
+            nextRequestValue = nil
+            lastRequestNextValue = nil
+        }
+        
         nextAchievementTask?.cancel()
         nextAchievementTask = Task {
             do {
@@ -141,6 +149,7 @@ final class HomeViewModel {
                     achievementState = .finish
                     return
                 }
+                
                 if requestValue?.whereIdLessThan == nil {
                     achievements = newAchievements
                 } else {
@@ -162,20 +171,18 @@ final class HomeViewModel {
         }
         
         currentCategory = category
-        // 새로운 카테고리 데이터를 가져오기 때문에 빈 배열로 초기화
-        achievements = []
-        nextRequestValue = nil
         
         let requestValue = FetchAchievementListRequestValue(categoryId: category.id, take: nil, whereIdLessThan: nil)
         fetchAchievementList(requestValue: requestValue)
     }
     
     private func fetchNextAchievementList() {
-        guard let requestValue = nextRequestValue else {
+        guard let requestValue = nextRequestValue,
+              lastRequestNextValue?.whereIdLessThan != nextRequestValue?.whereIdLessThan else {
             Logger.debug("마지막 페이지입니다.")
             return
         }
-        
+        lastRequestNextValue = requestValue
         fetchAchievementList(requestValue: requestValue)
     }
 }
