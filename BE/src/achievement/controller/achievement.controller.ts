@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { AchievementService } from '../application/achievement.service';
 import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
 import { AuthenticatedUser } from '../../auth/decorator/athenticated-user.decorator';
@@ -15,6 +8,7 @@ import { PaginateAchievementRequest } from '../dto/paginate-achievement-request'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PaginateAchievementResponse } from '../dto/paginate-achievement-response';
 import { AchievementDetailResponse } from '../dto/achievement-detail-response';
+import { ParseIntPipe } from '../../common/pipe/parse-int.pipe';
 
 @Controller('/api/v1/achievements')
 @ApiTags('달성기록 API')
