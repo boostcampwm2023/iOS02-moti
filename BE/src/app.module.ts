@@ -12,6 +12,7 @@ import { UsersModule } from './users/users.module';
 import { AdminModule } from './admin/admin.module';
 import { CategoryModule } from './category/category.module';
 import { AchievementModule } from './achievement/achievement.module';
+import { UuidHolderModule } from './common/application/uuid-holder/uuid.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AchievementModule } from './achievement/achievement.module';
     AdminModule,
     CategoryModule,
     AchievementModule,
+    UuidHolderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
