@@ -12,24 +12,30 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      DB: "mysql"
-      DB_HOST: "127.0.0.1"
-      DB_PORT: "13306"
-      DB_USERNAME: "root"
-      DB_PASSWORD: "1234"
-      DB_DATABASE: "motimate_test"
-      DB_ENTITIES: "src/**/*.entity{.ts,.js}"
-      DB_LOGGING: false
-      SWAGGER_TITLE: "Motimate"
-      SWAGGER_DESCRIPTION: "The Motimate API Documents"
-      SWAGGER_VERSION: "0.1.0"
-      SWAGGER_TAG: "motimate"
-      APPLE_PUBLIC_KEY_URL: "https://appleid.apple.com/auth/keys"
-      JWT_SECRET: "!@sehyeong!@"
-      JWT_VALIDITY: 3600000
-      REFRESH_JWT_SECRET: "!@sehyeongrefresh!@"
-      REFRESH_JWT_VALIDITY: 604800000
-
+      DB: ${{ secrets.DB }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_USERNAME: ${{ secrets.DB_USERNAME }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_DATABASE: ${{ secrets.DB_DATABASE }}
+      DB_ENTITIES: ${{ secrets.DB_ENTITIES }}
+      DB_LOGGING: ${{ secrets.DB_LOGGING }}
+      SWAGGER_TITLE: ${{ secrets.SWAGGER_TITLE }}
+      SWAGGER_DESCRIPTION: ${{ secrets.SWAGGER_DESCRIPTION }}
+      SWAGGER_VERSION: ${{ secrets.SWAGGER_VERSION }}
+      SWAGGER_TAG: ${{ secrets.SWAGGER_TAG }}
+      APPLE_PUBLIC_KEY_URL: ${{ secrets.APPLE_PUBLIC_KEY_URL }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      JWT_VALIDITY: ${{ secrets.JWT_VALIDITY }}
+      REFRESH_JWT_SECRET: ${{ secrets.REFRESH_JWT_SECRET }}
+      REFRESH_JWT_VALIDITY: ${{ secrets.REFRESH_JWT_VALIDITY }}
+      BCRYPT_SALT: ${{ secrets.BCRYPT_SALT }}
+      LOCAL_BASEPATH: ${{ ./DO-NOT-USE-THIS-PATH }}
+      NCP_ENDPOINT: ${{ secrets.BCRYPT_SALT }}
+      NCP_REGION: ${{ secrets.NCP_REGION }}
+      NCP_ACCESS_KEY_ID: ${{ secrets.NCP_ACCESS_KEY_ID }}
+      NCP_SECRET_ACCESS_KEY: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
+      NCP_BUCKET_NAME: ${{ secrets.NCP_BUCKET_NAME }}
 
     services:
       mysql:
