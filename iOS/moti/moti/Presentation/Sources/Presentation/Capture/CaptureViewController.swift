@@ -38,6 +38,7 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        layoutView.captureButton.isEnabled = true
         checkCameraPermissions()
     }
     
@@ -161,7 +162,7 @@ extension CaptureViewController {
     }
 
     @objc private func didClickedShutterButton() {
-        
+        layoutView.captureButton.isEnabled = false
         // 사진 찍기!
         #if targetEnvironment(simulator)
         // Simulator
