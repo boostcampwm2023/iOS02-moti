@@ -17,16 +17,17 @@ export class ObjectStorageFileStore extends FileStore {
 
   constructor(uuidHolder: UuidHolder, configService: ConfigService) {
     super(uuidHolder);
+    console.log(1);
     AWS.config.credentials = new AWS.Credentials({
       accessKeyId: configService.get('NCP_ACCESS_KEY_ID'),
       secretAccessKey: configService.get('NCP_SECRET_ACCESS_KEY'),
     });
-
+    console.log(2);
     this.objectStorageClient = new AWS.S3({
       endpoint: configService.get('NCP_ENDPOINT'),
       region: configService.get('NCP_REGION'),
     });
-
+    console.log(3);
     this.defaultBucketName = configService.get('NCP_BUCKET_NAME');
   }
 
