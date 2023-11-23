@@ -47,16 +47,8 @@ final class HomeViewModel {
     private var achievementDataSource: AchievementDataSource?
     private let fetchAchievementListUseCase: FetchAchievementListUseCase
     
-    private var categories: [CategoryItem] = [] {
-        didSet {
-            categoryDataSource?.update(data: categories)
-        }
-    }
-    private var achievements: [Achievement] = [] {
-        didSet {
-            achievementDataSource?.update(data: achievements)
-        }
-    }
+    private var categories: [CategoryItem] = []
+    private var achievements: [Achievement] = []
     private var nextRequestValue: FetchAchievementListRequestValue?
     private(set) var currentCategory: CategoryItem?
     
@@ -121,8 +113,9 @@ final class HomeViewModel {
             let requestValue = AddCategoryRequestValue(name: name)
             let category = try? await addCategoryUseCase.execute(requestValue: requestValue)
             if let category {
-                addCategoryState = .finish
                 categories.append(category)
+                categoryDataSource?.update(data: categories)
+                addCategoryState = .finish
             } else {
                 addCategoryState = .error(message: "카테고리 추가에 실패했습니다.")
             }
@@ -136,6 +129,8 @@ final class HomeViewModel {
                 let (achievements, nextRequestValue) = try await fetchAchievementListUseCase.execute(requestValue: requestValue)
                 self.achievements.append(contentsOf: achievements)
                 self.nextRequestValue = nextRequestValue
+                achievementDataSource?.update(data: achievements)
+
                 achievementState = .finish
             } catch {
                 achievementState = .error(message: error.localizedDescription)
@@ -151,6 +146,7 @@ final class HomeViewModel {
         currentCategory = category
         // 새로운 카테고리 데이터를 가져오기 때문에 빈 배열로 초기화
         achievements = []
+        achievementDataSource?.update(data: achievements)
         
         let requestValue = FetchAchievementListRequestValue(categoryId: category.id, take: nil, whereIdLessThan: nil)
         fetchAchievementList(requestValue: requestValue)
