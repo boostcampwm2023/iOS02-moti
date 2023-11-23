@@ -1,7 +1,12 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { AppleLoginRequest } from '../dto/apple-login-request.dto';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { ApiData } from '../../common/api/api-data';
 import { AppleLoginResponse } from '../dto/apple-login-response.dto';
 import { RefreshAuthRequestDto } from '../dto/refresh-auth-request.dto';
@@ -31,6 +36,7 @@ export class AuthController {
 
   @Post('refresh')
   @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('accessToken')
   async refresh(
     @AuthenticatedUser() user: User,
     @Body() refreshAuthRequestDto: RefreshAuthRequestDto,

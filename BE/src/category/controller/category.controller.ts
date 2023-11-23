@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { CategoryService } from '../application/category.service';
 import { CategoryCreate } from '../dto/category-create';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ApiData } from '../../common/api/api-data';
 import { AuthenticatedUser } from '../../auth/decorator/athenticated-user.decorator';
 import { User } from '../../users/domain/user.domain';
@@ -29,6 +29,7 @@ export class CategoryController {
     summary: '카테고리 생성 API',
     description: '카테고리를 생성합니다.',
   })
+  @ApiBearerAuth('accessToken')
   async saveCategory(
     @Body() categoryCreate: CategoryCreate,
     @AuthenticatedUser() user: User,
@@ -47,6 +48,7 @@ export class CategoryController {
     summary: '카테고리 조회 API',
     description: '사용자 본인에 대한 카테고리를 조회합니다.',
   })
+  @ApiBearerAuth('accessToken')
   async getCategories(
     @AuthenticatedUser() user: User,
   ): Promise<ApiData<CategoryListElementResponse[]>> {
