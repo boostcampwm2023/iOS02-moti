@@ -45,8 +45,8 @@ final class EditAchievementViewModel {
         return categories[index]
     }
     
-    func findCategoryIndex(_ name: String) -> Int? {
-        for (index, category) in categories.enumerated() where name == category.name {
+    func findCategoryIndex(_ item: CategoryItem) -> Int? {
+        for (index, category) in categories.enumerated() where item.id == category.id {
             return index
         }
         return nil

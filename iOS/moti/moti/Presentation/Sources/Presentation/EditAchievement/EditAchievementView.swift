@@ -79,7 +79,7 @@ final class EditAchievementView: UIView {
         }
         
         titleTextField.text = achievement.title
-        if let category = achievement.category {
+        if let category = achievement.category?.name {
             update(category: category)
         }
     }
