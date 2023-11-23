@@ -55,10 +55,10 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
             .sink { [weak self] state in
                 guard let self else { return }
                 switch state {
-                case .initial: return
+                case .initial: 
+                    layoutView.update(title: viewModel.achievement.title)
                 case .success:
-                    guard let achievement = viewModel.achievement else { return }
-                    layoutView.configure(achievement: achievement)
+                    layoutView.configure(achievement: viewModel.achievement)
                 case .failed(let message):
                     Logger.error("fetch detail rrror: \(message)")
                 }

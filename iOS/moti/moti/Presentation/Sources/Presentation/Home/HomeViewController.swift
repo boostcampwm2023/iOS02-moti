@@ -180,8 +180,8 @@ extension HomeViewController: UICollectionViewDelegate {
         } else if let cell = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
             // 달성 기록 리스트 셀을 눌렀을 때
             // 상세 정보 화면으로 이동
-            let achievementId = viewModel.findAchievement(at: indexPath.row).id
-            coordinator?.moveToDetailAchievementViewController(achievementId: achievementId)
+            let achievement = viewModel.findAchievement(at: indexPath.row)
+            coordinator?.moveToDetailAchievementViewController(achievement: achievement)
         }
     }
     

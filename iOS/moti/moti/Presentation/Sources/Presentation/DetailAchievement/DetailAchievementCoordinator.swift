@@ -8,6 +8,7 @@
 import UIKit
 import Core
 import Data
+import Domain
 
 public final class DetailAchievementCoordinator: Coordinator {
     public var parentCoordinator: Coordinator?
@@ -26,11 +27,11 @@ public final class DetailAchievementCoordinator: Coordinator {
         
     }
     
-    public func start(achievementId: Int) {
+    public func start(achievement: Achievement) {
         let detailAchievementVC = DetailAchievementViewController(
             viewModel: DetailAchievementViewModel(
                 fetchDetailAchievementUseCase: .init(repository: DetailAchievementRepository()),
-                achievementId: achievementId)
+                achievement: achievement)
         )
         detailAchievementVC.coordinator = self
         navigationController.pushViewController(detailAchievementVC, animated: true)

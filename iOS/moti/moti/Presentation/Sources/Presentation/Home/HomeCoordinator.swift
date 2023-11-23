@@ -8,6 +8,7 @@
 import UIKit
 import Core
 import Data
+import Domain
 
 public final class HomeCoordinator: Coordinator {
     public let parentCoordinator: Coordinator?
@@ -33,9 +34,9 @@ public final class HomeCoordinator: Coordinator {
         navigationController.viewControllers = [homeVC]
     }
     
-    public func moveToDetailAchievementViewController(achievementId: Int) {
+    public func moveToDetailAchievementViewController(achievement: Achievement) {
         let detailAchievementCoordinator = DetailAchievementCoordinator(navigationController, self)
         childCoordinators.append(detailAchievementCoordinator)
-        detailAchievementCoordinator.start(achievementId: achievementId)
+        detailAchievementCoordinator.start(achievement: achievement)
     }
 }

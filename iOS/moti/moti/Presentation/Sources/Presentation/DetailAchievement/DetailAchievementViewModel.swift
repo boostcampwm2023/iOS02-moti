@@ -24,15 +24,14 @@ final class DetailAchievementViewModel {
     
     @Published private(set) var launchState: LaunchState = .initial
     
-    private let achievementId: Int
-    var achievement: Achievement?
+    var achievement: Achievement
     
     init(
         fetchDetailAchievementUseCase: FetchDetailAchievementUseCase,
-        achievementId: Int
+        achievement: Achievement
     ) {
         self.fetchDetailAchievementUseCase = fetchDetailAchievementUseCase
-        self.achievementId = achievementId
+        self.achievement = achievement
     }
     
     func action(_ action: DetailAchievementViewModelAction) {
@@ -46,8 +45,7 @@ final class DetailAchievementViewModel {
         Task {
             do {
                 let achievement = try await fetchDetailAchievementUseCase.execute(
-                    requestValue: FetchDetailAchievementRequestValue(id: achievementId)
-                )
+                    requestValue: FetchDetailAchievementRequestValue(id: achievement.id))
                 self.achievement = achievement
                 launchState = .success
             } catch {

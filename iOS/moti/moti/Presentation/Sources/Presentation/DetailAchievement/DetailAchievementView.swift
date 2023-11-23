@@ -52,6 +52,10 @@ final class DetailAchievementView: UIView {
             imageView.jf.setImage(with: url)
         }
     }
+    
+    func update(title: String) {
+        titleLabel.text = title
+    }
 }
 
 private extension DetailAchievementView {
