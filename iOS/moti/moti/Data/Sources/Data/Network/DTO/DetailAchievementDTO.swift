@@ -1,0 +1,44 @@
+//
+//  DetailAchievementDTO.swift
+//
+//
+//  Created by Kihyun Lee on 11/23/23.
+//
+
+import Foundation
+import Domain
+
+struct DetailAchievementResponseDTO: ResponseDataDTO {
+    let success: Bool?
+    let message: String?
+    let data: DetailAchievementDTO?
+}
+
+struct DetailAchievementDTO: Codable {
+    let id: Int?
+    let title: String?
+    let content: String?
+    let imageUrl: URL?
+    let createdAt: Date?
+    let category: CategorySimpleDTO?
+}
+
+struct CategorySimpleDTO: Codable {
+    let id: Int?
+    let name: String?
+    let achieveCount: Int?
+}
+
+extension Achievement {
+    init(dto: DetailAchievementDTO) {
+        self.init(
+            id: dto.id ?? -1,
+            category: dto.category?.name ?? "",
+            title: dto.title ?? "",
+            imageURL: dto.imageUrl,
+            body: dto.content,
+            achieveCount: dto.category?.achieveCount ?? 0,
+            date: dto.createdAt ?? Date()
+        )
+    }
+}
