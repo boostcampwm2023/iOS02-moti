@@ -34,11 +34,13 @@ public struct Provider: ProviderProtocol {
             throw NetworkError.url
         }
 
-        Logger.network("[Request(\(endpoint.method.rawValue)) \(endpoint.path)]")
+        #if DEBUG
+        Logger.network("[Request(\(endpoint.method.rawValue)) \(urlRequest.url!.absoluteString)]")
         if let requestBody = urlRequest.httpBody,
            let jsonString = String(data: requestBody, encoding: .utf8) {
             Logger.network("[요청 데이터]\n\(jsonString)")
         }
+        #endif
         
         let (data, response) = try await session.data(for: urlRequest)
         guard let response = response as? HTTPURLResponse else { throw NetworkError.response }
@@ -46,11 +48,13 @@ public struct Provider: ProviderProtocol {
         let statusCode = response.statusCode
         let body = try decoder.decode(type, from: data)
         
+        #if DEBUG
         Logger.network("[Response(\(statusCode))]")
         if let encodingData = try? encoder.encode(body),
            let jsonString = String(data: encodingData, encoding: .utf8) {
             Logger.network("[응답 데이터]\n\(jsonString)")
         }
+        #endif
         
         switch statusCode {
         case 200..<300:

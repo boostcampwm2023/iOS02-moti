@@ -7,11 +7,14 @@
 
 import Foundation
 import Domain
+import Core
 
 final class HomeViewModel {
     enum HomeViewModelAction {
         case launch
         case addCategory(name: String)
+        case fetchNextPage
+        case fetchCategoryList(category: CategoryItem)
     }
     
     enum CategoryState {
@@ -29,6 +32,7 @@ final class HomeViewModel {
     
     enum AchievementState {
         case initial
+        case loading
         case finish
         case error(message: String)
     }
@@ -53,6 +57,8 @@ final class HomeViewModel {
             achievementDataSource?.update(data: achievements)
         }
     }
+    private var nextRequestValue: FetchAchievementListRequestValue?
+    private(set) var currentCategory: CategoryItem?
     
     @Published private(set) var categoryState: CategoryState = .initial
     @Published private(set) var addCategoryState: AddCategoryState = .none
@@ -72,9 +78,12 @@ final class HomeViewModel {
         switch action {
         case .launch:
             fetchCategories()
-            fetchAchievementList()
         case .addCategory(let name):
             addCategory(name: name)
+        case .fetchNextPage:
+            fetchNextAchievementList()
+        case .fetchCategoryList(let category):
+            fetchCategoryAchievementList(category: category)
         }
     }
     
@@ -120,14 +129,39 @@ final class HomeViewModel {
         }
     }
     
-    private func fetchAchievementList() {
+    private func fetchAchievementList(requestValue: FetchAchievementListRequestValue? = nil) {
         Task {
             do {
-                achievements = try await fetchAchievementListUseCase.execute()
+                achievementState = .loading
+                let (achievements, nextRequestValue) = try await fetchAchievementListUseCase.execute(requestValue: requestValue)
+                self.achievements.append(contentsOf: achievements)
+                self.nextRequestValue = nextRequestValue
                 achievementState = .finish
             } catch {
                 achievementState = .error(message: error.localizedDescription)
             }
         }
+    }
+    
+    private func fetchCategoryAchievementList(category: CategoryItem) {
+        guard currentCategory != category else {
+            Logger.debug("현재 카테고리입니다.")
+            return
+        }
+        currentCategory = category
+        // 새로운 카테고리 데이터를 가져오기 때문에 빈 배열로 초기화
+        achievements = []
+        
+        let requestValue = FetchAchievementListRequestValue(categoryId: category.id, take: nil, whereIdLessThan: nil)
+        fetchAchievementList(requestValue: requestValue)
+    }
+    
+    private func fetchNextAchievementList() {
+        guard let requestValue = nextRequestValue else {
+            Logger.debug("마지막 페이지입니다.")
+            return
+        }
+        
+        fetchAchievementList(requestValue: requestValue)
     }
 }

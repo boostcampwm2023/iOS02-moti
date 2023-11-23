@@ -15,6 +15,7 @@ final class HomeViewController: BaseViewController<HomeView> {
     weak var coordinator: HomeCoordinator?
     private let viewModel: HomeViewModel
     private var cancellables: Set<AnyCancellable> = []
+    private var isFetchingNextPage = false
     
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
@@ -41,9 +42,19 @@ final class HomeViewController: BaseViewController<HomeView> {
     private func bind() {
         viewModel.$achievementState
             .receive(on: DispatchQueue.main)
-            .sink { state in
+            .sink { [weak self] state in
+                guard let self else { return }
                 // state 에 따른 뷰 처리 - 스켈레톤 뷰, fetch 에러 뷰 등
                 Logger.debug(state)
+                switch state {
+                case .finish:
+                    isFetchingNextPage = false
+                case .error(let message):
+                    isFetchingNextPage = false
+                    Logger.error("Fetch Achievement Error: \(message)")
+                default: break
+                }
+                
             }
             .store(in: &cancellables)
         
@@ -72,7 +83,6 @@ final class HomeViewController: BaseViewController<HomeView> {
                 case .none: break
                 case .loading:
                     layoutView.catergoryAddButton.isEnabled = false
-                    break
                 case .finish:
                     layoutView.catergoryAddButton.isEnabled = true
                 case .error(let message):
@@ -188,11 +198,34 @@ extension HomeViewController: UICollectionViewDelegate {
         
         let category = viewModel.findCategory(at: row)
         Logger.debug("Selected Category: \(category.name)")
+        viewModel.action(.fetchCategoryList(category: category))
         layoutView.updateAchievementHeader(with: category)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+        guard elementKind == UICollectionView.elementKindSectionHeader,
+              let headerView = view as? HeaderView else { return }
+        
+        if let currentCategory = viewModel.currentCategory {
+            headerView.configure(category: currentCategory)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let cell = cell as? AchievementCollectionViewCell else { return }
         cell.cancelDownloadImage()
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let actualPos = scrollView.panGestureRecognizer.translation(in: scrollView.superview)
+        let pos = scrollView.contentOffset.y
+        let diff = layoutView.achievementCollectionView.contentSize.height - scrollView.frame.size.height
+        
+        // 아래로 드래그 && 마지막까지 스크롤
+        if actualPos.y < 0 && pos > diff && !isFetchingNextPage {
+            Logger.debug("Fetch New Data")
+            isFetchingNextPage = true
+            viewModel.action(.fetchNextPage)
+        }
     }
 }
