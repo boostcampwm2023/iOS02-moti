@@ -15,16 +15,17 @@ final class DetailAchievementViewModel {
     }
     
     enum LaunchState {
-        case initial
-        case success
+        case none
+        case initial(title: String)
+        case success(achievement: Achievement)
         case failed(message: String)
     }
     
     private let fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
     
-    @Published private(set) var launchState: LaunchState = .initial
+    @Published private(set) var launchState: LaunchState = .none
     
-    var achievement: Achievement
+    private var achievement: Achievement
     
     init(
         fetchDetailAchievementUseCase: FetchDetailAchievementUseCase,
@@ -37,8 +38,13 @@ final class DetailAchievementViewModel {
     func action(_ action: DetailAchievementViewModelAction) {
         switch action {
         case .launch:
+            initTitle()
             fetchDetailAchievement()
         }
+    }
+    
+    private func initTitle() {
+        launchState = .initial(title: achievement.title)
     }
     
     private func fetchDetailAchievement() {
@@ -47,7 +53,7 @@ final class DetailAchievementViewModel {
                 let achievement = try await fetchDetailAchievementUseCase.execute(
                     requestValue: FetchDetailAchievementRequestValue(id: achievement.id))
                 self.achievement = achievement
-                launchState = .success
+                launchState = .success(achievement: achievement)
             } catch {
                 Logger.debug("detail achievement fetch error: \(error)")
                 launchState = .failed(message: error.localizedDescription)
