@@ -132,11 +132,21 @@ final class HomeViewModel {
     }
     
     private func fetchAchievementList(requestValue: FetchAchievementListRequestValue? = nil) {
+        nextAchievementTask?.cancel()
         nextAchievementTask = Task {
             do {
                 achievementState = .loading
                 let (newAchievements, next) = try await fetchAchievementListUseCase.execute(requestValue: requestValue)
-                achievements.append(contentsOf: newAchievements)
+                if let nextAchievementTask, nextAchievementTask.isCancelled {
+                    achievementState = .finish
+                    return
+                }
+                if requestValue?.whereIdLessThan == nil {
+                    achievements = newAchievements
+                } else {
+                    achievements.append(contentsOf: newAchievements)
+                }
+                
                 nextRequestValue = next
                 achievementState = .finish
             } catch {
@@ -156,7 +166,6 @@ final class HomeViewModel {
         achievements = []
         nextRequestValue = nil
         
-        nextAchievementTask?.cancel()
         let requestValue = FetchAchievementListRequestValue(categoryId: category.id, take: nil, whereIdLessThan: nil)
         fetchAchievementList(requestValue: requestValue)
     }
