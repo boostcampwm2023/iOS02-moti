@@ -24,5 +24,10 @@ export const configServiceModuleOptions = {
     JWT_VALIDITY: Joi.number().required(),
     REFRESH_JWT_SECRET: Joi.string().required(),
     REFRESH_JWT_VALIDITY: Joi.number().required(),
+    LOCAL_BASEPATH: Joi.string().when('NODE_ENV', {
+      is: 'test',
+      then: Joi.required(),
+      otherwise: Joi.optional(),
+    }),
   }),
 };

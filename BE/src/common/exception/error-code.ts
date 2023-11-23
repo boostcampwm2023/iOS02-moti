@@ -39,4 +39,8 @@ export const ERROR_INFO = {
     statusCode: 404,
     message: '존재하지 않는 달성기록 입니다.',
   },
+  FAIL_FILE_TASK: {
+    statusCode: 500,
+    message: '파일 요청 작업에 실패했습니다.',
+  },
 } as const;
