@@ -20,11 +20,10 @@ jobs:
       mysql:
         image: mysql:8.0.34
         env:
-          MYSQL_ROOT_PASSWORD: ${{ env.DB_PASSWORD }}
-          MYSQL_DATABASE: ${{ env.DB_DATABASE }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DB_DATABASE }}
         ports:
           - 13306:3306
-
     strategy:
       matrix:
         node-version: [18.x]
