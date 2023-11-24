@@ -9,8 +9,9 @@ import { ObjectStorageFileStore } from './object-storage-file-store';
 import { FileStore } from './file-store';
 import { FileFixture } from '../../../../test/common/file-store/file-fixture';
 import { FailFileTaskException } from './fail-file-task.exception';
+import { ciSkipTest } from '../../../../test/common/ci-skip-test';
 
-describe('ObjectStoreFileStore Test', () => {
+(ciSkipTest ? describe.skip : describe)('ObjectStoreFileStore Test', () => {
   let objectStorageFileStore: ObjectStorageFileStore;
   let uuidHolder: StubUuidHolder;
 
