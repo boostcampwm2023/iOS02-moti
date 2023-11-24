@@ -1,6 +1,7 @@
 import { File, UploadFile } from './index';
 import { UuidHolder } from '../uuid-holder';
 
+
 export interface StoreOptions {
   prefix?: string;
   basePath?: string;
