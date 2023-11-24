@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { CategoryService } from '../application/category.service';
 import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthenticatedUser } from '../../auth/decorator/athenticated-user.decorator';
 import { User } from '../../users/domain/user.domain';
 import { ApiData } from '../../common/api/api-data';
@@ -26,6 +26,7 @@ export class CategoryLegacyController {
     description:
       '사용자 본인에 대한 카테고리를 조회합니다.(Legacy)\nAPI 포맷이 변경되었습니다.',
   })
+  @ApiBearerAuth('accessToken')
   async getCategoriesLegacy(
     @AuthenticatedUser() user: User,
   ): Promise<ApiData<CategoryListLegacyResponse>> {
