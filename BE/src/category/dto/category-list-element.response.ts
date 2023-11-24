@@ -1,10 +1,18 @@
 import { CategoryMetaData } from './category-metadata';
 import { dateFormat } from '../../common/utils/date-formatter';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CategoryListElementResponse {
+  @ApiProperty({ description: 'id' })
   id: number;
+  @ApiProperty({ description: 'name' })
   name: string;
+  @ApiProperty({ description: 'continued' })
   continued: number;
+  @ApiProperty({
+    description: 'lastChallenged',
+    example: '2023-11-23T15:35:26Z',
+  })
   lastChallenged: string;
 
   constructor(category: CategoryMetaData) {

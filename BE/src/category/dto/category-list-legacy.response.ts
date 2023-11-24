@@ -10,7 +10,6 @@ interface CategoryLegacyList {
 export class CategoryListLegacyResponse {
   @ApiProperty({ description: '카테고리 키 리스트' })
   categoryNames: string[] = [];
-  @ApiProperty({ description: '카테고리 데이터' })
   categories: CategoryLegacyList = {};
 
   constructor(categoryMetaData: CategoryMetaData[]) {
