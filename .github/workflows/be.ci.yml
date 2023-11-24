@@ -12,6 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      TEST_ENV: "CI"
       DB: "mysql"
       DB_HOST: "127.0.0.1"
       DB_PORT: "13306"
