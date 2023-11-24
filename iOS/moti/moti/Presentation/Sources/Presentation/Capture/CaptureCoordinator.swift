@@ -7,12 +7,13 @@
 
 import UIKit
 import Core
+import Domain
 
 final class CaptureCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
-    private var currentViewController: CaptureViewController?
+    private var currentNavigationController: UINavigationController?
     
     init(
         _ navigationController: UINavigationController,
@@ -27,59 +28,31 @@ final class CaptureCoordinator: Coordinator {
         captureVC.delegate = self
         captureVC.coordinator = self
         
-        currentViewController = captureVC
-        
-        changeToCaptureMode()
-        
-        let navVC = UINavigationController(rootViewController: captureVC)
-        navVC.modalPresentationStyle = .fullScreen
-        navigationController.present(navVC, animated: true)
-    }
-    
-    private func changeToCaptureMode() {
-        guard let currentViewController = currentViewController else { return }
-        currentViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(
+        captureVC.navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: "취소", style: .plain, target: self,
             action: #selector(cancelButtonAction)
         )
         
-        currentViewController.navigationItem.rightBarButtonItem = nil
+        captureVC.navigationItem.rightBarButtonItem = nil
+        
+        navigationController.pushViewController(captureVC, animated: true)
+        navigationController.setNavigationBarHidden(false, animated: false)
     }
     
-    private func changeToEditMode() {
-        guard let currentViewController = currentViewController else { return }
-        currentViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: "다시 촬영", style: .plain, target: self,
-            action: #selector(recaptureButtonAction)
-        )
-        
-        currentViewController.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .done,
-            target: self,
-            action: #selector(doneButtonAction)
-        )
+    private func moveEditAchievementViewConrtoller(image: UIImage) {
+        let editAchievementCoordinator = EditAchievementCoordinator(navigationController, self)
+        editAchievementCoordinator.startAfterCapture(image: image)
+        childCoordinators.append(editAchievementCoordinator)
     }
     
     @objc func cancelButtonAction() {
+        navigationController.setNavigationBarHidden(true, animated: false)
         finish()
-    }
-    
-    @objc func recaptureButtonAction() {
-        changeToCaptureMode()
-        currentViewController?.startCapture()
-    }
-    
-    @objc func doneButtonAction() {
-        finish()
-    }
-    
-    func finish(animated: Bool = true) {
-        parentCoordinator?.dismiss(child: self, animated: true)
     }
 }
 
 extension CaptureCoordinator: CaptureViewControllerDelegate {
-    func didCapture() {
-        changeToEditMode()
+    func didCapture(image: UIImage) {
+        moveEditAchievementViewConrtoller(image: image)
     }
 }

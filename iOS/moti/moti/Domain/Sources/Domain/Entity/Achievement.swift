@@ -9,20 +9,18 @@ import Foundation
 
 public struct Achievement: Hashable {
     public let id: Int
-    public let category: String?
+    public let category: CategoryItem?
     public let title: String
     public let imageURL: URL?
     public let body: String?
-    public let achieveCount: Int?
     public let date: Date?
     
     public init(
         id: Int,
-        category: String,
+        category: CategoryItem,
         title: String,
         imageURL: URL?,
-        body: String,
-        achieveCount: Int,
+        body: String?,
         date: Date
     ) {
         self.id = id
@@ -30,7 +28,6 @@ public struct Achievement: Hashable {
         self.title = title
         self.imageURL = imageURL
         self.body = body
-        self.achieveCount = achieveCount
         self.date = date
     }
     
@@ -40,7 +37,6 @@ public struct Achievement: Hashable {
         self.title = title
         self.imageURL = imageURL
         self.body = nil
-        self.achieveCount = nil
         self.date = nil
     }
 }

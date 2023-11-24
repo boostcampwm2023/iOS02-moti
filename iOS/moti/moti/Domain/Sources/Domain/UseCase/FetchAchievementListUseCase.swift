@@ -9,8 +9,14 @@ import Foundation
 
 public struct FetchAchievementListRequestValue: RequestValue {
     public let categoryId: Int
-    public let take: Int
-    public let whereIdLessThan: Int
+    public let take: Int?
+    public let whereIdLessThan: Int?
+    
+    public init(categoryId: Int, take: Int?, whereIdLessThan: Int?) {
+        self.categoryId = categoryId
+        self.take = take
+        self.whereIdLessThan = whereIdLessThan
+    }
 }
 
 public struct FetchAchievementListUseCase {
@@ -20,7 +26,9 @@ public struct FetchAchievementListUseCase {
         self.repository = repository
     }
     
-    public func execute(requestValue: FetchAchievementListRequestValue? = nil) async throws -> [Achievement] {
+    public func execute(
+        requestValue: FetchAchievementListRequestValue? = nil
+    ) async throws -> ([Achievement], FetchAchievementListRequestValue?) {
         return try await repository.fetchAchievementList(requestValue: requestValue)
     }
 }

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Patch, Post, Put } from '@nestjs/common';
 import { OperateService } from '../application/operate.service';
 import { MotiPolicyResponse } from '../dto/moti-policy-response';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MotiPolicyCreate } from '../dto/moti-policy-create';
 import { ApiData } from '../../common/api/api-data';
 import { MotiPolicyIdempotentUpdate } from '../dto/moti-policy-idempotent-update';
@@ -17,6 +17,10 @@ export class OperateController {
     summary: '모티메이트 운영정책 초기화 API',
     description: '운영 정책은 1개만 등록 가능',
   })
+  @ApiResponse({
+    description: '운영 정책',
+    type: MotiPolicyResponse,
+  })
   async initPolicy(
     @Body() initPolicy: MotiPolicyCreate,
   ): Promise<ApiData<MotiPolicyResponse>> {
@@ -29,6 +33,10 @@ export class OperateController {
     summary: '모티메이트 운영정책 조회 API',
     description: '모티메이트의 현재 버전, 최소 번전, 보안 정책을 조회',
   })
+  @ApiResponse({
+    description: '운영 정책',
+    type: MotiPolicyResponse,
+  })
   async getPolicy(): Promise<ApiData<MotiPolicyResponse>> {
     const policy = await this.operateService.retrieveMotimateOperation();
     return ApiData.success(MotiPolicyResponse.from(policy));
@@ -38,6 +46,10 @@ export class OperateController {
   @ApiOperation({
     summary: '모티메이트 운영정책 업데이트 API',
     description: '모티메이트의 현재 버전, 최소 번전, 보안 정책을 업데이트',
+  })
+  @ApiResponse({
+    description: '운영 정책',
+    type: MotiPolicyResponse,
   })
   async updateIdempotentPolicy(
     @Body() updatePolicyUpdate: MotiPolicyIdempotentUpdate,
@@ -51,6 +63,10 @@ export class OperateController {
   @ApiOperation({
     summary: '모티메이트 운영정책 업데이트 API',
     description: '모티메이트의 현재 버전, 최소 번전, 보안 정책을 업데이트',
+  })
+  @ApiResponse({
+    description: '운영 정책',
+    type: MotiPolicyResponse,
   })
   async updatePartialPolicy(
     @Body() updatePolicyUpdate: MotiPolicyPartialUpdate,

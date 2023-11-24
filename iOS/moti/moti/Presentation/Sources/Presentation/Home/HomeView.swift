@@ -56,7 +56,7 @@ final class HomeView: UIView {
     }
     
     // MARK: - Methods
-    func updateAchievementHeader(with category: CategoryItem) {
+    func updateAchievementHeader(with category: CategoryItem) {        
         guard let header = achievementCollectionView.visibleSupplementaryViews(
             ofKind: UICollectionView.elementKindSectionHeader
         ).first as? HeaderView else { return }
