@@ -34,23 +34,17 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         addTargets()
+        checkCameraPermissions()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        layoutView.captureButton.isEnabled = true
-        checkCameraPermissions()
+        startSession()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        DispatchQueue.global().async {
-            guard let session = self.session else { return }
-            if session.isRunning {
-                Logger.debug("Session Stop Running")
-                session.stopRunning()
-            }
-        }
+        stopSession()
     }
     
     // MARK: - Methods
@@ -124,21 +118,13 @@ extension CaptureViewController {
         session.commitConfiguration()
         self.session = session
         
-        layoutView.updatePreviewLayer(session: session)
         if isBackCamera {
             layoutView.changeToBackCamera()
         } else {
             layoutView.changeToFrontCamera()
         }
         
-        DispatchQueue.global(qos: .userInteractive).async {
-            if !session.isRunning {
-                Logger.debug("Session Start Running")
-                session.startRunning()
-            } else {
-                Logger.debug("Session Already Running")
-            }
-        }
+        startSession()
     }
     
     // 후면 카메라 설정
@@ -158,6 +144,31 @@ extension CaptureViewController {
             self.frontCameraInput = frontCameraInput
         } else {
             Logger.error("전면 카메라를 추가할 수 없음")
+        }
+    }
+    
+    private func startSession() {
+        guard let session = session else { return }
+        
+        layoutView.updatePreviewLayer(session: session)
+        layoutView.captureButton.isEnabled = true
+        DispatchQueue.global().async {
+            if !session.isRunning {
+                Logger.debug("Session Start Running")
+                session.startRunning()
+            }
+        }
+    }
+    
+    private func stopSession() {
+        guard let session = session else { return }
+        
+        layoutView.captureButton.isEnabled = false
+        DispatchQueue.global().async {
+            if session.isRunning {
+                Logger.debug("Session Stop Running")
+                session.stopRunning()
+            }
         }
     }
 

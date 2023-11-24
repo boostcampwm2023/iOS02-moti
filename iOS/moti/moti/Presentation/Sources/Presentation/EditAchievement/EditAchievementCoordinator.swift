@@ -68,7 +68,7 @@ final class EditAchievementCoordinator: Coordinator {
             action: #selector(doneButtonAction)
         )
         
-        navigationController.pushViewController(editAchievementVC, animated: true)
+        navigationController.pushViewController(editAchievementVC, animated: false)
         navigationController.setNavigationBarHidden(false, animated: false)
     }
     
