@@ -60,7 +60,10 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
         
         layoutView.categoryPickerView.delegate = self
         layoutView.categoryPickerView.dataSource = self
-        
+    }
+    
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
         showBottomSheet()
     }
     
