@@ -16,6 +16,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      TEST_ENV: "CI"
       DB: ${{ secrets.DB }}
       DB_HOST: ${{ secrets.DB_HOST }}
       DB_PORT: ${{ secrets.DB_PORT }}
@@ -39,6 +40,7 @@ jobs:
       NCP_ACCESS_KEY_ID: ${{ secrets.NCP_ACCESS_KEY_ID }}
       NCP_SECRET_ACCESS_KEY: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
       NCP_BUCKET_NAME: ${{ secrets.NCP_BUCKET_NAME }}
+
 
     services:
       mysql:
