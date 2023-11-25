@@ -10,6 +10,6 @@ import { ImageService } from './application/image.service';
     FileStoreModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [ImageService],
 })
 export class ImageModule {}
