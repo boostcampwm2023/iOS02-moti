@@ -12,8 +12,8 @@ import { UserEntity } from '../../users/entities/user.entity';
 
 @Entity({ name: 'image' })
 export class ImageEntity {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
@@ -40,18 +40,18 @@ export class ImageEntity {
     imageEntity.thumbnailUrl = image.thumbnailUrl;
     imageEntity.achievement = image.achievement
       ? AchievementEntity.from(image?.achievement)
-      : undefined;
+      : null;
     return imageEntity;
   }
 
   toModel(): Image {
     const image = new Image(
-      this.user?.toModel(),
+      this.user?.toModel() || null,
       this.originalName,
       this.imageUrl,
     );
     image.id = this.id;
-    image.achievement = this.achievement?.toModel();
+    image.achievement = this.achievement?.toModel() || null;
     image.thumbnailUrl = this.thumbnailUrl;
     return image;
   }

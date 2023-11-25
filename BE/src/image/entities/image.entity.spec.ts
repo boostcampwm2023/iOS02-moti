@@ -17,8 +17,8 @@ describe('ImageEntity Test', () => {
       expect(imageEntity.id).toBe(image.id);
       expect(imageEntity.originalName).toBe(image.originalName);
       expect(imageEntity.imageUrl).toBe(image.imageUrl);
-      expect(imageEntity.thumbnailUrl).toBeUndefined();
-      expect(imageEntity.achievement).toBeUndefined();
+      expect(imageEntity.thumbnailUrl).toBeNull();
+      expect(imageEntity.achievement).toBeNull();
     });
   });
 
@@ -35,10 +35,11 @@ describe('ImageEntity Test', () => {
       // then
       expect(result).toBeInstanceOf(Image);
       expect(result.id).toBe(image.id);
+      expect(result.user).toBeNull();
       expect(result.originalName).toBe(image.originalName);
       expect(result.imageUrl).toBe(image.imageUrl);
-      expect(result.thumbnailUrl).toBeUndefined();
-      expect(result.achievement).toBeUndefined();
+      expect(result.thumbnailUrl).toBeNull();
+      expect(result.achievement).toBeNull();
     });
   });
 });
