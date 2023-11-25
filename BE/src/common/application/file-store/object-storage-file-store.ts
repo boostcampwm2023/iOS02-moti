@@ -27,7 +27,7 @@ export class ObjectStorageFileStore extends FileStore {
       region: configService.get('NCP_REGION'),
     });
 
-    this.defaultBucketName = configService.get('NCP_BUCKET_NAME');
+    this.defaultBucketName = configService.get('FILESTORE_PREFIX');
   }
 
   async delete(

@@ -24,8 +24,21 @@ export const configServiceModuleOptions = {
     JWT_VALIDITY: Joi.number().required(),
     REFRESH_JWT_SECRET: Joi.string().required(),
     REFRESH_JWT_VALIDITY: Joi.number().required(),
-    LOCAL_BASEPATH: Joi.string().when('NODE_ENV', {
-      is: 'test',
+    FILESTORE_PREFIX: Joi.string().required(),
+    FILESTORE_IMAGE_PREFIX: Joi.string().required(),
+    FILESTORE_THUMBNAIL_PREFIX: Joi.string().required(),
+    NCP_REGION: Joi.string().when('NODE_ENV', {
+      is: 'production',
+      then: Joi.required(),
+      otherwise: Joi.optional(),
+    }),
+    NCP_ACCESS_KEY: Joi.string().when('NODE_ENV', {
+      is: 'production',
+      then: Joi.required(),
+      otherwise: Joi.optional(),
+    }),
+    NCP_SECRET_KEY: Joi.string().when('NODE_ENV', {
+      is: 'production',
       then: Joi.required(),
       otherwise: Joi.optional(),
     }),
