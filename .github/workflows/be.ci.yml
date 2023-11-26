@@ -15,6 +15,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      TEST_ENV: "CI"
 
     services:
       mysql:
@@ -40,7 +42,6 @@ jobs:
       - name: Generate .env file
         run: |
           cat << EOF > ./BE/.test.env
-          TEST_ENV: "CI"
           DB=${{ secrets.DB }}
           DB_HOST=${{ secrets.DB_HOST }}
           DB_PORT=${{ secrets.DB_PORT }}
