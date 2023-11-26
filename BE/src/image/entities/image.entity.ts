@@ -45,11 +45,9 @@ export class ImageEntity {
   }
 
   toModel(): Image {
-    const image = new Image(
-      this.user?.toModel() || null,
-      this.originalName,
-      this.imageUrl,
-    );
+    const image = new Image(this.user?.toModel() || null);
+    image.originalName = this.originalName;
+    image.imageUrl = this.imageUrl;
     image.id = this.id;
     image.achievement = this.achievement?.toModel() || null;
     image.thumbnailUrl = this.thumbnailUrl;

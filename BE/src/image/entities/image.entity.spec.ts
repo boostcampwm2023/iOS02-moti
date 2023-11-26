@@ -7,7 +7,9 @@ describe('ImageEntity Test', () => {
     it('achievement가 비어있는 경우에도 from을 사용할 수 있다.', () => {
       // given
       const user = new User();
-      const image = new Image(user, 'originalName', 'imageUrl');
+      const image = new Image(user);
+      image.originalName = 'originalName';
+      image.imageUrl = 'imageUrl';
 
       // when
       const imageEntity = ImageEntity.from(image);
@@ -26,7 +28,9 @@ describe('ImageEntity Test', () => {
     it('achievemnt가 비어있는 경우에도 toModel로 변환할 수 있다.', () => {
       // given
       const user = new User();
-      const image = new Image(user, 'originalName', 'imageUrl');
+      const image = new Image(user);
+      image.originalName = 'originalName';
+      image.imageUrl = 'imageUrl';
 
       // when
       const imageEntity = ImageEntity.from(image);
