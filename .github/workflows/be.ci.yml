@@ -25,6 +25,7 @@ jobs:
       DB_DATABASE: ${{ secrets.DB_DATABASE }}
       DB_ENTITIES: ${{ secrets.DB_ENTITIES }}
       DB_LOGGING: ${{ secrets.DB_LOGGING }}
+      DB_SYNC: ${{ secrets.DB_SYNC }}
       SWAGGER_TITLE: ${{ secrets.SWAGGER_TITLE }}
       SWAGGER_DESCRIPTION: ${{ secrets.SWAGGER_DESCRIPTION }}
       SWAGGER_VERSION: ${{ secrets.SWAGGER_VERSION }}
