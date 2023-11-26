@@ -73,7 +73,7 @@ describe('ImageService', () => {
 
       // then
       expect(savedImage.id).toBeDefined();
-      expect(savedImage.user).toBeNull();
+      expect(savedImage.user).toEqual(user);
       expect(savedImage.originalName).toBe('img1.jpg');
       expect(savedImage.imageUrl.startsWith('file://'));
       expect(savedImage.imageUrl.endsWith('abcd-efgh-ijkl-mnop.jpg'));

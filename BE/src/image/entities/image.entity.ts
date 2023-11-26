@@ -41,6 +41,7 @@ export class ImageEntity {
     imageEntity.achievement = image.achievement
       ? AchievementEntity.from(image?.achievement)
       : null;
+    imageEntity.user = image.user ? UserEntity.from(image.user) : null;
     return imageEntity;
   }
 
@@ -50,6 +51,7 @@ export class ImageEntity {
     image.imageUrl = this.imageUrl;
     image.id = this.id;
     image.achievement = this.achievement?.toModel() || null;
+    image.user = this.user?.toModel() || null;
     image.thumbnailUrl = this.thumbnailUrl;
     return image;
   }

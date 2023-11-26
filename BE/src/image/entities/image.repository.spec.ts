@@ -59,7 +59,7 @@ describe('ImageRepository', () => {
 
         // then
         expect(savedImage.id).toBeDefined();
-        expect(savedImage.user).toBeNull();
+        expect(savedImage.user).toEqual(user);
         expect(savedImage.originalName).toEqual('image1.jpg');
         expect(savedImage.imageUrl).toEqual('file://abcd-efgh-ijkl-mnop.jpg');
         expect(savedImage.thumbnailUrl).toBeNull();

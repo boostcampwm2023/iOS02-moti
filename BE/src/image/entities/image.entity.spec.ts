@@ -39,7 +39,7 @@ describe('ImageEntity Test', () => {
       // then
       expect(result).toBeInstanceOf(Image);
       expect(result.id).toBe(image.id);
-      expect(result.user).toBeNull();
+      expect(result.user).toEqual(user);
       expect(result.originalName).toBe(image.originalName);
       expect(result.imageUrl).toBe(image.imageUrl);
       expect(result.thumbnailUrl).toBeNull();
