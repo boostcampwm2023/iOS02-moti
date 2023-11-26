@@ -15,39 +15,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      DB: ${{ secrets.DB }}
-      DB_HOST: ${{ secrets.DB_HOST }}
-      DB_PORT: ${{ secrets.DB_PORT }}
-      DB_USERNAME: ${{ secrets.DB_USERNAME }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      DB_DATABASE: ${{ secrets.DB_DATABASE }}
-      DB_ENTITIES: ${{ secrets.DB_ENTITIES }}
-      DB_LOGGING: ${{ secrets.DB_LOGGING }}
-      SWAGGER_TITLE: ${{ secrets.SWAGGER_TITLE }}
-      SWAGGER_DESCRIPTION: ${{ secrets.SWAGGER_DESCRIPTION }}
-      SWAGGER_VERSION: ${{ secrets.SWAGGER_VERSION }}
-      SWAGGER_TAG: ${{ secrets.SWAGGER_TAG }}
-      APPLE_PUBLIC_KEY_URL: ${{ secrets.APPLE_PUBLIC_KEY_URL }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      JWT_VALIDITY: ${{ secrets.JWT_VALIDITY }}
-      REFRESH_JWT_SECRET: ${{ secrets.REFRESH_JWT_SECRET }}
-      REFRESH_JWT_VALIDITY: ${{ secrets.REFRESH_JWT_VALIDITY }}
-      LOCAL_BASEPATH: ${{ secrets.LOCAL_BASEPATH }}
-      NCP_ENDPOINT: ${{ secrets.BCRYPT_SALT }}
-      NCP_REGION: ${{ secrets.NCP_REGION }}
-      NCP_ACCESS_KEY_ID: ${{ secrets.NCP_ACCESS_KEY_ID }}
-      NCP_SECRET_ACCESS_KEY: ${{ secrets.NCP_SECRET_ACCESS_KEY }}
-      NCP_BUCKET_NAME: ${{ secrets.NCP_BUCKET_NAME }}
 
     services:
       mysql:
         image: mysql:8.0.34
         env:
-          MYSQL_ROOT_PASSWORD: ${{ env.DB_PASSWORD }}
-          MYSQL_DATABASE: ${{ env.DB_DATABASE }}
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DB_DATABASE }}
         ports:
-          - 13306:3306
+          - ${{ secrets.DB_PORT }}:3306
 
     strategy:
       matrix:
@@ -61,6 +37,33 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
           cache-dependency-path: BE/package-lock.json
+      - name: Generate .env file
+        run: |
+          cat << EOF > ./BE/.test.env
+          DB=${{ secrets.DB }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_DATABASE=${{ secrets.DB_DATABASE }}
+          DB_ENTITIES=${{ secrets.DB_ENTITIES }}
+          DB_LOGGING=${{ secrets.DB_LOGGING }}
+          SWAGGER_TITLE=${{ secrets.SWAGGER_TITLE }}
+          SWAGGER_DESCRIPTION=${{ secrets.SWAGGER_DESCRIPTION }}
+          SWAGGER_VERSION=${{ secrets.SWAGGER_VERSION }}
+          SWAGGER_TAG=${{ secrets.SWAGGER_TAG }}
+          APPLE_PUBLIC_KEY_URL=${{ secrets.APPLE_PUBLIC_KEY_URL }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          JWT_VALIDITY=${{ secrets.JWT_VALIDITY }}
+          REFRESH_JWT_SECRET=${{ secrets.REFRESH_JWT_SECRET }}
+          REFRESH_JWT_VALIDITY=${{ secrets.REFRESH_JWT_VALIDITY }}
+          LOCAL_BASEPATH=${{ secrets.LOCAL_BASEPATH }}
+          NCP_ENDPOINT=${{ secrets.BCRYPT_SALT }}
+          NCP_REGION=${{ secrets.NCP_REGION }}
+          NCP_ACCESS_KEY_ID=${{ secrets.NCP_ACCESS_KEY_ID }}
+          NCP_SECRET_ACCESS_KEY=${{ secrets.NCP_SECRET_ACCESS_KEY }}
+          NCP_BUCKET_NAME=${{ secrets.NCP_BUCKET_NAME }}
+          EOF
       - name: Install dependencies
         run: npm ci
         working-directory: ./BE
