@@ -1,10 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ImageRepository } from '../entities/image.repository';
-import {
-  File,
-  FileStore,
-  UploadFile,
-} from '../../common/application/file-store';
+import { File, FileStore } from '../../common/application/file-store';
 import { User } from '../../users/domain/user.domain';
 import { Image } from '../domain/image.domain';
 import { ConfigService } from '@nestjs/config';
@@ -21,10 +17,8 @@ export class ImageService {
   }
 
   async saveImage(file: File, user: User): Promise<Image> {
-    const savedFile: UploadFile = await this.fileStore.upload(file, {
-      prefix: this.imagePrefix,
-    });
-    const image = Image.from(savedFile, user);
+    const image = new Image(user);
+    await image.uploadOriginalImage(file, this.fileStore, this.imagePrefix);
     return await this.imageRepository.saveImage(image);
   }
 }

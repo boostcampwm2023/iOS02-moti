@@ -50,11 +50,9 @@ describe('ImageRepository', () => {
       await transactionTest(dataSource, async () => {
         // given
         const user = await userFixture.getUser('ABC');
-        const image = new Image(
-          user,
-          'image1.jpg',
-          'file://abcd-efgh-ijkl-mnop.jpg',
-        );
+        const image = new Image(user);
+        image.originalName = 'image1.jpg';
+        image.imageUrl = 'file://abcd-efgh-ijkl-mnop.jpg';
 
         // when
         const savedImage = await imageRepository.saveImage(image);

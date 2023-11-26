@@ -1,6 +1,7 @@
 import { Achievement } from '../../achievement/domain/achievement.domain';
 import { User } from '../../users/domain/user.domain';
-import { UploadFile } from '../../common/application/file-store';
+import { FileStore, UploadFile } from '../../common/application/file-store';
+import { File } from '../../common/application/file-store';
 
 export class Image {
   id: number;
@@ -10,13 +11,21 @@ export class Image {
   thumbnailUrl: string = null;
   achievement: Achievement;
 
-  constructor(user: User, originalName: string, imageUrl: string) {
-    this.user = user;
-    this.originalName = originalName;
-    this.imageUrl = imageUrl;
+  async uploadOriginalImage(
+    file: File,
+    fileStore: FileStore,
+    fileStorePrefix: string,
+  ): Promise<UploadFile> {
+    const uploadFile = await fileStore.upload(file, {
+      prefix: fileStorePrefix,
+    });
+    this.originalName = uploadFile.originalFileName;
+    this.imageUrl = uploadFile.uploadFullPath;
+
+    return uploadFile;
   }
 
-  static from(image: UploadFile, user: User): Image {
-    return new Image(user, image.originalFileName, image.uploadFullPath);
+  constructor(user: User) {
+    this.user = user;
   }
 }
