@@ -10,6 +10,7 @@ import { FileFixture } from '../../../../test/common/file-store/file-fixture';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 import { FailFileTaskException } from './fail-file-task.exception';
+import { FileStore } from './file-store';
 
 describe('LocalFileStore', () => {
   const BASE_PATH = './DO-NOT-USE-THIS-PATH';
@@ -30,7 +31,7 @@ describe('LocalFileStore', () => {
       .useClass(StubUuidHolder)
       .compile();
 
-    localFileStore = app.get<LocalFileStore>(LocalFileStore);
+    localFileStore = app.get<LocalFileStore>(FileStore);
     uuidHolder = app.get<StubUuidHolder>(UuidHolder);
   });
 
@@ -61,6 +62,10 @@ describe('LocalFileStore', () => {
     // then
     expect(result.originalFileName).toBe('test.jpg');
     expect(result.uploadFileName).toBe('aaaa-bbbb-cccc-dddd.jpg');
+    expect(result.uploadFullPath.startsWith('file://')).toBeTruthy();
+    expect(
+      result.uploadFullPath.endsWith('aaaa-bbbb-cccc-dddd.jpg'),
+    ).toBeTruthy();
 
     await expect(fs.access(filePath)).resolves.toBeUndefined();
   });
@@ -86,7 +91,7 @@ describe('LocalFileStore', () => {
     const result = await localFileStore.upload(file);
 
     // when
-    await localFileStore.delete(result.uploadFullPath);
+    await localFileStore.delete(result.uploadFileName);
 
     // then
     await expect(fs.access(result.uploadFullPath)).rejects.toThrow();

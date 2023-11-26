@@ -1,9 +1,26 @@
 import { File, UploadFile } from './index';
 import { UuidHolder } from '../uuid-holder';
 
+
+export interface StoreOptions {
+  prefix?: string;
+  basePath?: string;
+}
+
 export abstract class FileStore {
-  abstract upload(file: File): Promise<UploadFile>;
-  abstract delete(filepath: string): Promise<void>;
+  /**
+   * Upload file to file store
+   * @param file - file to upload
+   * @param storeOptions - options for file store
+   */
+  abstract upload(file: File, storeOptions?: StoreOptions): Promise<UploadFile>;
+
+  /**
+   * Delete file from file store
+   * @param filename - filename to delete, not a fileFullPath!!!!
+   * @param StoreOptions - options for file store
+   */
+  abstract delete(filename: string, StoreOptions?: StoreOptions): Promise<void>;
 
   protected constructor(private readonly uuidHolder: UuidHolder) {}
 

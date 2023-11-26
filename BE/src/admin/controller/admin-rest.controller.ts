@@ -14,7 +14,13 @@ import { User } from '../../users/domain/user.domain';
 import { AdminLogin } from '../dto/admin-login';
 import { ApiData } from '../../common/api/api-data';
 import { AdminToken } from '../dto/admin-token';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AdminTokenGuard } from '../../auth/guard/admin-token.guard';
 
 @Controller('/api/v1/admin')
@@ -29,6 +35,10 @@ export class AdminRestController {
     summary: '어드민 등록 요청 API',
     description: '어드민 등록 요청',
   })
+  @ApiResponse({
+    description: '요청 접수완료',
+  })
+  @ApiBearerAuth('accessToken')
   async registerAdmin(
     @Body() registerRequest: AdminRegister,
     @AuthenticatedUser() user: User,
@@ -44,6 +54,10 @@ export class AdminRestController {
     summary: '어드민 로그인 API',
     description: 'email, password',
   })
+  @ApiResponse({
+    description: 'AdminToken',
+    type: AdminToken,
+  })
   async loginAdmin(
     @Body() loginRequest: AdminLogin,
   ): Promise<ApiData<AdminToken>> {
@@ -57,6 +71,11 @@ export class AdminRestController {
     summary: '어드민 요청 수락 API',
     description: '어드민 계정만 요청을 수락 가능',
   })
+  @ApiResponse({
+    description: '어드민 등록 완료',
+  })
+  @ApiQuery({ name: 'email' })
+  @ApiBearerAuth('accessToken')
   async acceptAdminRegister(
     @AuthenticatedUser() accepter: User,
     @Query() email: string,

@@ -16,6 +16,13 @@ final class TextViewBottomSheet: UIViewController {
         return textView
     }()
     
+    private let doneButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("완료", for: .normal)
+        button.isHidden = true
+        return button
+    }()
+    
     private var isPlaceHolder = true
     private let placeholder = "(선택) 도전 성공한 소감이 어떠신가요?\n소감을 기록해 보세요!"
     
@@ -49,6 +56,17 @@ final class TextViewBottomSheet: UIViewController {
             .top(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40)
             .bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
             .horizontal(equalTo: view.safeAreaLayoutGuide, constant: 20)
+        
+        view.addSubview(doneButton)
+        doneButton.atl
+            .top(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10)
+            .right(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10)
+        doneButton.addTarget(self, action: #selector(doneButtonClicked), for: .touchUpInside)
+    }
+    
+    // MARK: - Actions
+    @objc private func doneButtonClicked(_ sender: UIButton) {
+        textView.resignFirstResponder()
     }
     
     // MARK: - Methods
@@ -80,12 +98,14 @@ final class TextViewBottomSheet: UIViewController {
 
 extension TextViewBottomSheet: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
+        doneButton.isHidden = false
         if isPlaceHolder {
             hidePlaceholder()
         }
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
+        doneButton.isHidden = true
         if textView.text.isEmpty {
             showPlaceholder()
         }

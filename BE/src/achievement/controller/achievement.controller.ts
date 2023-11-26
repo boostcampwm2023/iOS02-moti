@@ -5,7 +5,12 @@ import { AuthenticatedUser } from '../../auth/decorator/athenticated-user.decora
 import { User } from '../../users/domain/user.domain';
 import { ApiData } from '../../common/api/api-data';
 import { PaginateAchievementRequest } from '../dto/paginate-achievement-request';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { PaginateAchievementResponse } from '../dto/paginate-achievement-response';
 import { AchievementDetailResponse } from '../dto/achievement-detail-response';
 import { ParseIntPipe } from '../../common/pipe/parse-int.pipe';
@@ -26,6 +31,7 @@ export class AchievementController {
     description: '달성기록 리스트',
     type: PaginateAchievementResponse,
   })
+  @ApiBearerAuth('accessToken')
   async getAchievements(
     @AuthenticatedUser() user: User,
     @Query() paginateAchievementRequest: PaginateAchievementRequest,
@@ -48,6 +54,7 @@ export class AchievementController {
     description: '달성기록 상세정보',
     type: AchievementDetailResponse,
   })
+  @ApiBearerAuth('accessToken')
   async getAchievement(
     @AuthenticatedUser() user: User,
     @Param('id', ParseIntPipe) id: number,
