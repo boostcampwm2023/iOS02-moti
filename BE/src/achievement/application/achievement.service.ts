@@ -59,6 +59,7 @@ export class AchievementService {
     return AchievementDeleteResponse.from(achievement);
   }
 
+  @Transactional()
   async update(
     userId: number,
     id: number,
