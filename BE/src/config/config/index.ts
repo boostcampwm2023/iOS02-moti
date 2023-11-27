@@ -8,6 +8,7 @@ export const configServiceModuleOptions = {
     NODE_ENV: Joi.string()
       .valid('development', 'production', 'test')
       .default('development'),
+
     DB_HOST: Joi.string().required(),
     DB_PORT: Joi.number().required().default(3306),
     DB_USERNAME: Joi.string().required(),
@@ -15,17 +16,35 @@ export const configServiceModuleOptions = {
     DB_DATABASE: Joi.string().required(),
     DB_ENTITIES: Joi.string().required(),
     DB_LOGGING: Joi.boolean().required(),
+    DB_SYNC: Joi.boolean().default(false),
+
     SWAGGER_TITLE: Joi.string().required(),
     SWAGGER_DESCRIPTION: Joi.string().required(),
     SWAGGER_VERSION: Joi.string().required(),
     SWAGGER_TAG: Joi.string().required(),
+
     APPLE_PUBLIC_KEY_URL: Joi.string().required(),
     JWT_SECRET: Joi.string().required(),
     JWT_VALIDITY: Joi.number().required(),
     REFRESH_JWT_SECRET: Joi.string().required(),
     REFRESH_JWT_VALIDITY: Joi.number().required(),
-    LOCAL_BASEPATH: Joi.string().when('NODE_ENV', {
-      is: 'test',
+
+    FILESTORE_PREFIX: Joi.string().required(),
+    FILESTORE_IMAGE_PREFIX: Joi.string().required(),
+    FILESTORE_THUMBNAIL_PREFIX: Joi.string().required(),
+
+    NCP_REGION: Joi.string().when('NODE_ENV', {
+      is: 'production',
+      then: Joi.required(),
+      otherwise: Joi.optional(),
+    }),
+    NCP_ACCESS_KEY_ID: Joi.string().when('NODE_ENV', {
+      is: 'production',
+      then: Joi.required(),
+      otherwise: Joi.optional(),
+    }),
+    NCP_SECRET_ACCESS_KEY: Joi.string().when('NODE_ENV', {
+      is: 'production',
       then: Joi.required(),
       otherwise: Joi.optional(),
     }),

@@ -43,8 +43,20 @@ export const ERROR_INFO = {
     statusCode: 500,
     message: '파일 요청 작업에 실패했습니다.',
   },
+  IMAGE_ALREADY_EXISTS_THUMBNAIL: {
+    statusCode: 400,
+    message: '이미 썸네일이 생성된 이미지 입니다.',
+  },
+  RESTRICT_ACEESS_TO_ADMIN: {
+    statusCode: 403,
+    message: '제한된 요청입니다.',
+  },
   INVALID_CATEGORY: {
     statusCode: 400,
     message: '유효하지 않은 카테고리입니다.',
+  },
+  IMAGE_NOT_FOUND: {
+    statusCode: 400,
+    message: '존재하지 않는 이미지 입니다.',
   },
 } as const;

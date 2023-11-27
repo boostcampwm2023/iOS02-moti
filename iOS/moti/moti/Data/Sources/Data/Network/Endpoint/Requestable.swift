@@ -58,4 +58,28 @@ extension Requestable {
         return urlComponents.url
     }
     
+    func makeMultipartFormDataBody(
+        boundary: String,
+        name: String = "image",
+        filename: String = "moti",
+        contentType: String,
+        data: Data
+    ) -> Data {
+        let lineBreak = "\r\n"
+        let boundaryPrefix = "--\(boundary)\(lineBreak)".data(using: .utf8)!
+        let endBoundary = "--\(boundary)--\(lineBreak)".data(using: .utf8)!
+        
+        var body = Data()
+                
+        body.append(boundaryPrefix)
+        
+        body.append("Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(filename).\(contentType)\"\(lineBreak)".data(using: .utf8)!)
+        body.append("Content-Type: image/\(contentType)\(lineBreak + lineBreak)".data(using: .utf8)!)
+        body.append(data)
+        body.append(lineBreak.data(using: .utf8)!)
+        
+        body.append(endBoundary)
+        
+        return body
+    }
 }

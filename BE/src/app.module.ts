@@ -13,6 +13,7 @@ import { AdminModule } from './admin/admin.module';
 import { CategoryModule } from './category/category.module';
 import { AchievementModule } from './achievement/achievement.module';
 import { UuidHolderModule } from './common/application/uuid-holder/uuid.module';
+import { ImageModule } from './image/image.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { UuidHolderModule } from './common/application/uuid-holder/uuid.module';
     CategoryModule,
     AchievementModule,
     UuidHolderModule,
+    ImageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

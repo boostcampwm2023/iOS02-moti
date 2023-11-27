@@ -1,0 +1,108 @@
+name: Motimate BE CI & CD
+
+on:
+  pull_request:
+    paths:
+      - 'BE/**'
+    branches: [ "develop", "main" ]
+    types:
+      - closed
+
+jobs:
+  build:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    env:
+      TEST_ENV: "CI"
+    services:
+      mysql:
+        image: mysql:8.0.34
+        env:
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DB_DATABASE }}
+        ports:
+          - 13306:3306
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: BE/package-lock.json
+      - name: Generate .env file
+        run: |
+          cat << EOF > ./BE/.test.env
+          DB=${{ secrets.DB }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_USERNAME=${{ secrets.DB_USERNAME }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_DATABASE=${{ secrets.DB_DATABASE }}
+          DB_ENTITIES=${{ secrets.DB_ENTITIES }}
+          DB_LOGGING=${{ secrets.DB_LOGGING }}
+          DB_SYNC: ${{ secrets.DB_SYNC }}
+          SWAGGER_TITLE=${{ secrets.SWAGGER_TITLE }}
+          SWAGGER_DESCRIPTION=${{ secrets.SWAGGER_DESCRIPTION }}
+          SWAGGER_VERSION=${{ secrets.SWAGGER_VERSION }}
+          SWAGGER_TAG=${{ secrets.SWAGGER_TAG }}
+          APPLE_PUBLIC_KEY_URL=${{ secrets.APPLE_PUBLIC_KEY_URL }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          JWT_VALIDITY=${{ secrets.JWT_VALIDITY }}
+          REFRESH_JWT_SECRET=${{ secrets.REFRESH_JWT_SECRET }}
+          REFRESH_JWT_VALIDITY=${{ secrets.REFRESH_JWT_VALIDITY }}
+          LOCAL_BASEPATH=${{ secrets.LOCAL_BASEPATH }}
+          NCP_ENDPOINT=${{ secrets.BCRYPT_SALT }}
+          NCP_REGION=${{ secrets.NCP_REGION }}
+          NCP_ACCESS_KEY_ID=${{ secrets.NCP_ACCESS_KEY_ID }}
+          NCP_SECRET_ACCESS_KEY=${{ secrets.NCP_SECRET_ACCESS_KEY }}
+          NCP_BUCKET_NAME=${{ secrets.NCP_BUCKET_NAME }}
+          FILESTORE_PREFIX: ${{ secrets.FILESTORE_PREFIX }}
+          FILESTORE_IMAGE_PREFIX: ${{ secrets.FILESTORE_IMAGE_PREFIX }}
+          FILESTORE_THUMBNAIL_PREFIX: ${{ secrets.FILESTORE_THUMBNAIL_PREFIX }}
+          EOF
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: BE
+
+      - name: Build
+        run: npm run build --if-present
+        working-directory: BE
+
+      - name: Run tests
+        run: npm test
+        working-directory: BE
+
+      - name: Build image
+        run: docker build --platform linux/amd64 -t ${{ secrets.NCP_REGISTRY }}/motimate:latest .
+        working-directory: BE
+
+      - name: Login registry
+        run: docker login ${{ secrets.NCP_REGISTRY }} -u ${{ secrets.NCP_ACCESS_KEY }} -p ${{ secrets.NCP_SECRET_KET }}
+
+      - name: Push Docker image to registry
+        run: docker push ${{ secrets.NCP_REGISTRY }}/motimate:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: connect ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USERNAME }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          port: ${{ secrets.DEPLOY_SSH_PORT }}
+          script: |
+            docker login ${{ secrets.NCP_REGISTRY }} -u ${{ secrets.NCP_ACCESS_KEY }} -p ${{ secrets.NCP_SECRET_KET }}
+            docker pull ${{ secrets.NCP_REGISTRY }}/motimate:latest
+            docker stop motimate
+            docker rm motimate
+            docker run -v /home/iOS02-moti/BE/.production.env:/usr/src/app/.production.env -d -p 3000:3000 --name motimate ${{ secrets.NCP_REGISTRY }}/motimate:latest

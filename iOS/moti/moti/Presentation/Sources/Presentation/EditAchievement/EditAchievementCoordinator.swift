@@ -29,6 +29,7 @@ final class EditAchievementCoordinator: Coordinator {
     
     func start(achievement: Achievement) {
         let editAchievementVM = EditAchievementViewModel(
+            saveImageUseCase: .init(repository: ImageRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository())
         )
         let editAchievementVC = EditAchievementViewController(
@@ -36,36 +37,29 @@ final class EditAchievementCoordinator: Coordinator {
             achievement: achievement
         )
         editAchievementVC.coordinator = self
+        editAchievementVC.delegate = self
+        editAchievementVC.navigationItem.hidesBackButton = true
         
-        editAchievementVC.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .done,
-            target: self,
-            action: #selector(doneButtonAction)
-        )
-        
-        navigationController.pushViewController(editAchievementVC, animated: true)
+        navigationController.pushViewController(editAchievementVC, animated: false)
         navigationController.setNavigationBarHidden(false, animated: false)
     }
     
-    func startAfterCapture(image: UIImage) {
+    func startAfterCapture(image: UIImage, imageExtension: ImageExtension) {
         let editAchievementVM = EditAchievementViewModel(
+            saveImageUseCase: .init(repository: ImageRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository())
         )
         let editAchievementVC = EditAchievementViewController(
             viewModel: editAchievementVM,
-            image: image
+            image: image,
+            imageExtension: imageExtension
         )
         editAchievementVC.coordinator = self
+        editAchievementVC.delegate = self
         
         editAchievementVC.navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: "다시 촬영", style: .plain, target: self,
             action: #selector(recaptureButtonAction)
-        )
-        
-        editAchievementVC.navigationItem.rightBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .done,
-            target: self,
-            action: #selector(doneButtonAction)
         )
         
         navigationController.pushViewController(editAchievementVC, animated: false)
@@ -75,10 +69,16 @@ final class EditAchievementCoordinator: Coordinator {
     @objc func recaptureButtonAction() {
         finish(animated: false)
     }
-    
-    @objc func doneButtonAction() {
-        navigationController.setNavigationBarHidden(true, animated: false)
-        finish(animated: false)
-        parentCoordinator?.finish(animated: true)
+}
+
+extension EditAchievementCoordinator: EditAchievementViewControllerDelegate {
+    func doneButtonDidClicked(isFromCaptureMode: Bool) {
+        if isFromCaptureMode {
+            navigationController.setNavigationBarHidden(true, animated: false)
+            finish(animated: false)
+            parentCoordinator?.finish(animated: true)
+        } else {
+            finish(animated: false)
+        }
     }
 }

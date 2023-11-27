@@ -16,6 +16,7 @@ enum MotiAPI: EndpointProtocol {
     case fetchCategoryList
     case addCategory(requestValue: AddCategoryRequestValue)
     case fetchDetailAchievement(requestValue: FetchDetailAchievementRequestValue)
+    case saveImage(requestValue: SaveImageRequestValue)
 }
 
 extension MotiAPI {
@@ -36,6 +37,7 @@ extension MotiAPI {
         case .fetchCategoryList: return "/categories"
         case .addCategory: return "/categories"
         case .fetchDetailAchievement(let requestValue): return "/achievements/\(requestValue.id)"
+        case .saveImage: return "/images"
         }
     }
     
@@ -48,50 +50,44 @@ extension MotiAPI {
         case .fetchCategoryList: return .get
         case .addCategory: return .post
         case .fetchDetailAchievement: return .get
+        case .saveImage: return .post
         }
     }
     
     var queryParameters: Encodable? {
         switch self {
-        case .version:
-            return nil
-        case .login:
-            return nil
-        case .autoLogin:
-            return nil
         case .fetchAchievementList(let requestValue):
             return requestValue
-        case .fetchCategoryList:
-            return nil
-        case .addCategory:
-            return nil
-        case .fetchDetailAchievement:
+        default:
             return nil
         }
     }
     
     var bodyParameters: Encodable? {
         switch self {
-        case .version: 
-            return nil
         case .login(let requestValue):
             return requestValue
         case .autoLogin(let requestValue):
             return requestValue
-        case .fetchAchievementList:
-            return nil
-        case .fetchCategoryList:
-            return nil
         case .addCategory(let requestValue):
             return requestValue
-        case .fetchDetailAchievement:
+        default:
             return nil
         }
     }
     
     var headers: [String: String]? {
-        var header = ["Content-Type": "application/json"]
+        var header: [String: String] = [:]
         
+        // Content-Type
+        switch self {
+        case .saveImage(let requestValue):
+            header["Content-Type"] = "multipart/form-data; boundary=\(requestValue.boundary)"
+        default:
+            header["Content-Type"] = "application/json"
+        }
+        
+        // Authorization
         switch self {
         case .version, .login:
             break
