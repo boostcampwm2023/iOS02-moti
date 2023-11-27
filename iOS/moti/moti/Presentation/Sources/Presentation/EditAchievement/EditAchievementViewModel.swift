@@ -7,10 +7,12 @@
 
 import Foundation
 import Domain
+import Core
 
 final class EditAchievementViewModel {
     
     enum Action {
+        case saveImage(data: Data, imageExtension: ImageExtension)
         case fetchCategories
     }
     
@@ -20,6 +22,13 @@ final class EditAchievementViewModel {
         case finish
     }
     
+    enum SaveImageState {
+        case loading
+        case finish
+        case error
+    }
+    
+    private let saveImageUseCase: SaveImageUseCase
     private let fetchCategoryListUseCase: FetchCategoryListUseCase
     private(set) var categories: [CategoryItem] = []
     var firstCategory: CategoryItem? {
@@ -27,15 +36,20 @@ final class EditAchievementViewModel {
     }
     
     @Published private(set) var categoryState: CategoryState = .none
+    @Published private(set) var saveImageState: SaveImageState = .loading
     
     init(
+        saveImageUseCase: SaveImageUseCase,
         fetchCategoryListUseCase: FetchCategoryListUseCase
     ) {
+        self.saveImageUseCase = saveImageUseCase
         self.fetchCategoryListUseCase = fetchCategoryListUseCase
     }
 
     func action(_ action: Action) {
         switch action {
+        case .saveImage(let data, let imageExtension):
+            saveImageData(data, imageExtension)
         case .fetchCategories:
             fetchCategories()
         }
@@ -58,7 +72,7 @@ final class EditAchievementViewModel {
                 categoryState = .loading
                 categories = try await fetchCategoryListUseCase.execute()
                 if !categories.isEmpty {
-                    // 전체 카테고리 제거
+                    // "전체" 카테고리 제거
                     categories.removeFirst()
                 }
             } catch {
@@ -67,5 +81,27 @@ final class EditAchievementViewModel {
             
             categoryState = .finish
         }
+    }
+    
+    private func saveImageData(_ data: Data, _ imageExtension: ImageExtension) {
+        Logger.debug("Save Image: \(data.count / 1000)KB / imageExtension: \(imageExtension.rawValue)")
+        
+        Task {
+            do {
+                saveImageState = .loading
+                
+                let requestValue = SaveImageRequestValue(
+                    boundary: UUID().uuidString,
+                    contentType: "image/\(imageExtension.rawValue)",
+                    imageData: data
+                )
+                let (isSuccess, imageId) = try await saveImageUseCase.excute(requestValue: requestValue)
+                Logger.debug("Upload: \(isSuccess) / id: \(imageId)")
+                saveImageState = .finish
+            } catch {
+                saveImageState = .error
+            }
+        }
+        
     }
 }

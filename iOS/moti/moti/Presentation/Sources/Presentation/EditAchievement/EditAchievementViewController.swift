@@ -25,13 +25,17 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     // MARK: - Init
     init(
         viewModel: EditAchievementViewModel,
-        image: UIImage
+        image: UIImage,
+        imageExtension: ImageExtension
     ) {
         self.viewModel = viewModel
         self.bottomSheet = TextViewBottomSheet()
         super.init(nibName: nil, bundle: nil)
         
         layoutView.configure(image: image)
+        if let imageData = image.jpegData(compressionQuality: 1.0) {
+            viewModel.action(.saveImage(data: imageData, imageExtension: imageExtension))
+        }
     }
     
     init(
@@ -93,6 +97,29 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
                     } else if let firstCategory = viewModel.firstCategory {
                         layoutView.update(category: firstCategory.name)
                     }
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$saveImageState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                
+                switch state {
+                case .loading:
+                    // 완료 버튼 비활성화
+                    if let doneButton = navigationItem.rightBarButtonItem {
+                        doneButton.isEnabled = false
+                    }
+                case .finish:
+                    // 완료 버튼 활성화
+                    if let doneButton = navigationItem.rightBarButtonItem {
+                        doneButton.isEnabled = true
+                    }
+                case .error:
+                    // TODO: Alert 띄우고, 다시 업로드 진행하기
+                    Logger.error("Upload Error")
                 }
             }
             .store(in: &cancellables)

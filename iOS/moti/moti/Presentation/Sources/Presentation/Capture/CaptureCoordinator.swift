@@ -39,9 +39,9 @@ final class CaptureCoordinator: Coordinator {
         navigationController.setNavigationBarHidden(false, animated: false)
     }
     
-    private func moveEditAchievementViewConrtoller(image: UIImage) {
+    private func moveEditAchievementViewConrtoller(image: UIImage, imageExtension: ImageExtension) {
         let editAchievementCoordinator = EditAchievementCoordinator(navigationController, self)
-        editAchievementCoordinator.startAfterCapture(image: image)
+        editAchievementCoordinator.startAfterCapture(image: image, imageExtension: imageExtension)
         childCoordinators.append(editAchievementCoordinator)
     }
     
@@ -52,7 +52,7 @@ final class CaptureCoordinator: Coordinator {
 }
 
 extension CaptureCoordinator: CaptureViewControllerDelegate {
-    func didCapture(image: UIImage) {
-        moveEditAchievementViewConrtoller(image: image)
+    func didCapture(image: UIImage, imageExtension: ImageExtension) {
+        moveEditAchievementViewConrtoller(image: image, imageExtension: imageExtension)
     }
 }

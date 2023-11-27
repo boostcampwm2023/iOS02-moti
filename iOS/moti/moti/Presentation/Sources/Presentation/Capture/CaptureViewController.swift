@@ -10,9 +10,10 @@ import Core
 import AVFoundation
 import Design
 import PhotosUI
+import Domain
 
 protocol CaptureViewControllerDelegate: AnyObject {
-    func didCapture(image: UIImage)
+    func didCapture(image: UIImage, imageExtension: ImageExtension)
 }
 
 final class CaptureViewController: BaseViewController<CaptureView> {
@@ -22,7 +23,7 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     weak var coordinator: CaptureCoordinator?
 
     // Capture Session
-    private var isBackCamera = true
+    private var isBackCamera = true, isHEIC = false
     private var session: AVCaptureSession?
     private var backCameraInput: AVCaptureDeviceInput?
     private var frontCameraInput: AVCaptureDeviceInput?
@@ -54,9 +55,9 @@ final class CaptureViewController: BaseViewController<CaptureView> {
         layoutView.cameraSwitchingButton.addTarget(self, action: #selector(switchCameraInput), for: .touchUpInside)
     }
     
-    private func capturedPicture(image: UIImage) {
+    private func capturedPicture(image: UIImage, imageExtension: ImageExtension) {
         guard let croppedImage = image.cropToSquare() else { return }
-        delegate?.didCapture(image: croppedImage)
+        delegate?.didCapture(image: croppedImage, imageExtension: imageExtension)
     }
 }
 
@@ -178,7 +179,7 @@ extension CaptureViewController {
         #if targetEnvironment(simulator)
         // Simulator
         Logger.debug("시뮬레이터에선 카메라를 테스트할 수 없습니다. 실기기를 연결해 주세요.")
-        capturedPicture(image: MotiImage.sample1)
+        capturedPicture(image: MotiImage.sample1, imageExtension: .jpeg)
         #else
         // - speed: 약간의 노이즈 감소만이 적용
         // - balanced: speed보다 약간 더 느리지만 더 나은 품질을 얻음
@@ -189,7 +190,16 @@ extension CaptureViewController {
         // 만약 사진과 비디오가 동일하게 보여야 하면 speed를 사용
     
         // Actual Device
-        let setting = AVCapturePhotoSettings()
+        let setting: AVCapturePhotoSettings
+        if let output = output, output.availablePhotoCodecTypes.contains(.hevc) {
+            Logger.debug("Capture hevc")
+            isHEIC = true
+            setting = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
+        } else {
+            Logger.debug("Capture jpeg")
+            isHEIC = false
+            setting = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
+        }
         setting.photoQualityPrioritization = .balanced
         
         // 전면 카메라일 때 좌우반전 output 설정
@@ -238,7 +248,8 @@ extension CaptureViewController: AVCapturePhotoCaptureDelegate {
         guard let data = photo.fileDataRepresentation(),
               let image = UIImage(data: data) else { return }
         
-        capturedPicture(image: image)
+        let imageExtension = isHEIC ? ImageExtension.heic : ImageExtension.jpeg
+        capturedPicture(image: image, imageExtension: imageExtension)
     }
 }
 
@@ -264,12 +275,20 @@ extension CaptureViewController: PHPickerViewControllerDelegate {
         
         guard itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
         
-        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
-            guard let self else { return }
+        itemProvider.loadFileRepresentation(forTypeIdentifier: "public.image") { [weak self] url, error in
+            guard let self,
+                  let url = url else { return }
             
-            DispatchQueue.main.async {
-                guard let image = image as? UIImage else { return }
-                self.capturedPicture(image: image)
+            let imageExtensionString = url.absoluteString.components(separatedBy: ".").last ?? "jpeg"
+            itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+                guard let self,
+                      let imageExtension = ImageExtension(rawValue: imageExtensionString) else { return }
+                
+                DispatchQueue.main.async {
+                    guard let image = image as? UIImage else { return }
+                    Logger.debug("image Extension = \(imageExtensionString)")
+                    self.capturedPicture(image: image, imageExtension: imageExtension)
+                }
             }
         }
     }
