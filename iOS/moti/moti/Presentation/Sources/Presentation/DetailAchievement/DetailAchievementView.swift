@@ -17,17 +17,17 @@ final class DetailAchievementView: UIView {
       return scrollView
     }()
     
-    private let titleLabel = {
+    private let categoryLabel = {
         let label = UILabel()
-        label.text = "달성 기록 제목"
-        label.font = .largeBold
+        label.numberOfLines = 1
+        label.font = .medium
         return label
     }()
     
-    private let categoryLabel = {
+    private let titleLabel = {
         let label = UILabel()
-        label.text = "카테고리 이름"
-        label.font = .medium
+        label.numberOfLines = 1
+        label.font = .largeBold
         return label
     }()
     
@@ -42,6 +42,7 @@ final class DetailAchievementView: UIView {
     private let bodyTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "내용"
+        label.numberOfLines = 1
         label.textColor = .gray
         label.font = .medium
         return label
@@ -49,7 +50,6 @@ final class DetailAchievementView: UIView {
     
     private let bodyTextView: UITextView = {
         let textView = UITextView()
-        textView.text = "다이어트는 너무싫다.ㅁㄴ암ㄴ어ㅜ널눙허눙ㅇㅁㄴㅇㅁㄴㅇㄹ후ㅏ어루하ㅓㅇ루하다이어트는 너무싫다.ㅁㄴ암ㄴ어ㅜ널눙허눙ㅇㅁㄴㅇㅁㄴㅇㄹ후ㅏ어루하ㅓㅇ루하다이어트는 너무싫다.ㅁㄴ암ㄴ어ㅜ널눙허눙ㅇㅁㄴㅇㅁㄴㅇㄹ후ㅏ어루하ㅓㅇ루하다이어트는 너무싫다.ㅁㄴ암ㄴ어ㅜ널눙허눙ㅇㅁㄴㅇㅁㄴㅇㄹ후ㅏ어루하ㅓㅇ루하다이어트는 너무싫다.ㅁㄴ암ㄴ어ㅜ널눙허눙ㅇㅁㄴㅇㅁㄴㅇㄹ후ㅏ어루하ㅓㅇ루하"
         textView.font = .medium
         return textView
     }()
@@ -57,6 +57,7 @@ final class DetailAchievementView: UIView {
     private let infoTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "정보"
+        label.numberOfLines = 1
         label.textColor = .gray
         label.font = .medium
         return label
@@ -64,14 +65,14 @@ final class DetailAchievementView: UIView {
     
     private let categoryInfoLabel: UILabel = {
         let label = UILabel()
-        label.text = "다이어트"
+        label.numberOfLines = 1
         label.font = .medium
         return label
     }()
     
     private let continuedInfoLabel: UILabel = {
         let label = UILabel()
-        label.text = "1회차"
+        label.numberOfLines = 1
         label.textColor = .gray
         label.font = .medium
         return label
@@ -86,7 +87,7 @@ final class DetailAchievementView: UIView {
     
     private let dateInfoLabel: UILabel = {
         let label = UILabel()
-        label.text = "2023년 10월 29일"
+        label.numberOfLines = 1
         label.textColor = .gray
         label.font = .medium
         return label
@@ -147,7 +148,7 @@ private extension DetailAchievementView {
         addSubview(scrollView)
         scrollView.atl
             .top(equalTo: safeAreaLayoutGuide.topAnchor)
-            .bottom(equalTo: safeAreaLayoutGuide.bottomAnchor)
+            .bottom(equalTo: bottomAnchor)
             .left(equalTo: safeAreaLayoutGuide.leftAnchor)
             .right(equalTo: safeAreaLayoutGuide.rightAnchor)
     }
