@@ -13,7 +13,7 @@ import { FailFileTaskException } from './fail-file-task.exception';
 import { FileStore } from './file-store';
 
 describe('LocalFileStore', () => {
-  const BASE_PATH = './DO-NOT-USE-THIS-PATH';
+  const BASE_PATH = './motimate-test';
 
   let localFileStore: LocalFileStore;
   let uuidHolder: StubUuidHolder;

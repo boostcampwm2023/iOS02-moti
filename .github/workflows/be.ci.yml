@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TEST_ENV: "CI"
-
+      
     services:
       mysql:
         image: mysql:8.0.34
@@ -50,6 +50,7 @@ jobs:
           DB_DATABASE=${{ secrets.DB_DATABASE }}
           DB_ENTITIES=${{ secrets.DB_ENTITIES }}
           DB_LOGGING=${{ secrets.DB_LOGGING }}
+          DB_SYNC: ${{ secrets.DB_SYNC }}
           SWAGGER_TITLE=${{ secrets.SWAGGER_TITLE }}
           SWAGGER_DESCRIPTION=${{ secrets.SWAGGER_DESCRIPTION }}
           SWAGGER_VERSION=${{ secrets.SWAGGER_VERSION }}
@@ -65,6 +66,9 @@ jobs:
           NCP_ACCESS_KEY_ID=${{ secrets.NCP_ACCESS_KEY_ID }}
           NCP_SECRET_ACCESS_KEY=${{ secrets.NCP_SECRET_ACCESS_KEY }}
           NCP_BUCKET_NAME=${{ secrets.NCP_BUCKET_NAME }}
+          FILESTORE_PREFIX: ${{ secrets.FILESTORE_PREFIX }}
+          FILESTORE_IMAGE_PREFIX: ${{ secrets.FILESTORE_IMAGE_PREFIX }}
+          FILESTORE_THUMBNAIL_PREFIX: ${{ secrets.FILESTORE_THUMBNAIL_PREFIX }}
           EOF
       - name: Install dependencies
         run: npm ci

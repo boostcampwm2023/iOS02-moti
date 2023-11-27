@@ -15,7 +15,7 @@ export const typeOrmModuleOptions = {
       entities: [configService.get('DB_ENTITIES')],
       logging: configService.get('NODE_ENV') === 'development',
       dropSchema: configService.get('NODE_ENV') === 'test',
-      synchronize: true,
+      synchronize: configService.get('DB_SYNC'),
       namingStrategy: new CamelSnakeNameStrategy(),
     };
     return option;

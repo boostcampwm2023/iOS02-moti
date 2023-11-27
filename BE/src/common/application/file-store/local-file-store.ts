@@ -12,7 +12,7 @@ export class LocalFileStore extends FileStore {
   private readonly basepath: string;
   constructor(uuidHolder: UuidHolder, configService: ConfigService) {
     super(uuidHolder);
-    this.basepath = configService.get('LOCAL_BASEPATH');
+    this.basepath = configService.get('FILESTORE_PREFIX');
   }
 
   async delete(filename: string, storeOptions?: StoreOptions): Promise<void> {
@@ -46,8 +46,7 @@ export class LocalFileStore extends FileStore {
   private getFullPath(filename: string, storeOptions: StoreOptions) {
     return path.join(
       process.cwd(),
-      this.basepath,
-      storeOptions?.prefix || '',
+      storeOptions?.prefix || this.basepath,
       storeOptions?.basePath || '',
       filename,
     );
