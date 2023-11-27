@@ -1,6 +1,5 @@
 import { LocalFileStore } from '../../common/application/file-store/local-file-store';
 import { StubUuidHolder } from '../../../test/common/uuid-holder/stub-uuid-holder';
-import { instance, mock, when } from 'ts-mockito';
 import { ConfigService } from '@nestjs/config';
 import { FileFixture } from '../../../test/common/file-store/file-fixture';
 import { Image } from './image.domain';
@@ -16,11 +15,7 @@ describe('ImageDomain Test', () => {
 
   beforeAll(async () => {
     stubUuidHolder = new StubUuidHolder();
-
-    const mockConfigService = mock<ConfigService>(ConfigService);
-    when(mockConfigService.get('FILESTORE_PREFIX')).thenReturn('motimate-test');
-
-    fileSotre = new LocalFileStore(stubUuidHolder, instance(mockConfigService));
+    fileSotre = new LocalFileStore(stubUuidHolder, new ConfigService());
   });
 
   afterEach(async () => {
