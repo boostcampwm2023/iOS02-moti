@@ -71,12 +71,6 @@ extension MotiAPI {
             return requestValue
         case .addCategory(let requestValue):
             return requestValue
-        case .saveImage(let requestValue):
-            return makeMultipartFormDataBody(
-                boundary: requestValue.boundary,
-                contentType: requestValue.contentType,
-                data: requestValue.imageData
-            )
         default:
             return nil
         }

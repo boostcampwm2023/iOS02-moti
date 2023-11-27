@@ -16,7 +16,15 @@ public struct ImageRepository: ImageRepositoryProtocol {
     }
     
     public func saveImage(requestValue: SaveImageRequestValue) async throws -> (Bool, Int) {
-        let result: (isSuccess: Bool, id: Int) = (true, -1)
-        return result
+        let endpoint = MotiAPI.saveImage(requestValue: requestValue)
+        let bodyData = endpoint.makeMultipartFormDataBody(
+            boundary: requestValue.boundary,
+            contentType: requestValue.contentType,
+            data: requestValue.imageData
+        )
+        let responseDTO = try await provider.requestMutipartFormData(with: endpoint, type: SaveImageDTO.self, bodyData: bodyData)
+        
+        guard let imageDTO = responseDTO.data else { throw NetworkError.decode }
+        return (responseDTO.success ?? false, imageDTO.id)
     }
 }
