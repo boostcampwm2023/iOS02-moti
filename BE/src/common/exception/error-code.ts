@@ -43,4 +43,8 @@ export const ERROR_INFO = {
     statusCode: 500,
     message: '파일 요청 작업에 실패했습니다.',
   },
+  INVALID_CATEGORY: {
+    statusCode: 400,
+    message: '유효하지 않은 카테고리입니다.',
+  },
 } as const;
