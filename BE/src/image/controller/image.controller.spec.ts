@@ -1,13 +1,14 @@
 import { ImageService } from '../application/image.service';
 import {
   anyNumber,
-  anyOfClass, anyString,
+  anyOfClass,
+  anyString,
   anything,
   instance,
   mock,
   objectContaining,
-  when
-} from "ts-mockito";
+  when,
+} from 'ts-mockito';
 import { Image } from '../domain/image.domain';
 import { User } from '../../users/domain/user.domain';
 import { Test, TestingModule } from '@nestjs/testing';
