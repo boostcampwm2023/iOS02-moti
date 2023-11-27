@@ -10,4 +10,12 @@ export class ImageRepository extends TransactionalRepository<ImageEntity> {
     const savedImage = await this.repository.save(imageEntity);
     return savedImage.toModel();
   }
+
+  async findById(id: number): Promise<Image> {
+    const imageEntity = await this.repository.findOneBy({
+      id: id,
+    });
+
+    return imageEntity?.toModel();
+  }
 }
