@@ -1,12 +1,13 @@
 import { ImageService } from '../application/image.service';
 import {
-  anyOfClass,
+  anyNumber,
+  anyOfClass, anyString,
   anything,
   instance,
   mock,
   objectContaining,
-  when,
-} from 'ts-mockito';
+  when
+} from "ts-mockito";
 import { Image } from '../domain/image.domain';
 import { User } from '../../users/domain/user.domain';
 import { Test, TestingModule } from '@nestjs/testing';
@@ -21,6 +22,7 @@ import { FailFileTaskException } from '../../common/application/file-store/fail-
 import { validationPipeOptions } from '../../config/validation';
 import { UnexpectedExceptionFilter } from '../../common/filter/unexpected-exception.filter';
 import { MotimateExceptionFilter } from '../../common/filter/exception.filter';
+import { ImageFixture } from '../../../test/image/image-fixture';
 
 describe('ImageController', () => {
   let app: INestApplication;
@@ -123,6 +125,53 @@ describe('ImageController', () => {
         .expect((res: request.Response) => {
           expect(res.body.success).toBe(false);
           expect(res.body.message).toBe('파일 요청 작업에 실패했습니다.');
+        });
+    });
+  });
+
+  describe('saveThumbnail은 이미지의 썸네일을 저장할 수 있다.', () => {
+    it('MEMBER 권한 유저는 이미지의 썸네일을 저장할 수 없다.', async () => {
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      return request(app.getHttpServer())
+        .post('/api/v1/images/1/thumbnails')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(403)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('제한된 요청입니다.');
+        });
+    });
+
+    it('ADMIN 권한 유저는 이미지의 썸네일을 저장할 수 있다.', async () => {
+      const { accessToken } = await authFixture.getAuthenticatedAdmin('ADMIN');
+
+      const thumbnailImage = ImageFixture.image(null);
+      thumbnailImage.thumbnailUrl = 'file://abcd-efgh-ijkl-mnop.jpg';
+
+      when(
+        mockImageService.saveThumbnail(anyNumber(), anyString()),
+      ).thenResolve(thumbnailImage);
+
+      return request(app.getHttpServer())
+        .post('/api/v1/images/1/thumbnails')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ thumbnailUrl: 'file://abcd-efgh-ijkl-mnop.jpg' })
+        .expect(204);
+    });
+
+    it('바디에 thumbnailUrl이 없으면 400 에러를 반환한다.', async () => {
+      const { accessToken } = await authFixture.getAuthenticatedAdmin('ADMIN');
+
+      return request(app.getHttpServer())
+        .post('/api/v1/images/1/thumbnails')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.data).toEqual({
+            thumbnailUrl: '잘못된 썸네일 경로입니다.',
+          });
         });
     });
   });
