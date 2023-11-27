@@ -84,7 +84,7 @@ final class EditAchievementViewModel {
     }
     
     private func saveImageData(_ data: Data, _ imageExtension: ImageExtension) {
-        Logger.debug("Save Image: \(data.count)")
+        Logger.debug("Save Image: \(data.count / 1000)KB / imageExtension: \(imageExtension.rawValue)")
         
         Task {
             do {
@@ -96,7 +96,7 @@ final class EditAchievementViewModel {
                     imageData: data
                 )
                 let (isSuccess, imageId) = try await saveImageUseCase.excute(requestValue: requestValue)
-                
+                Logger.debug("Upload: \(isSuccess) / id: \(imageId)")
                 saveImageState = .finish
             } catch {
                 saveImageState = .error
