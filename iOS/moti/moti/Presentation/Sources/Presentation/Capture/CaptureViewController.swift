@@ -23,7 +23,7 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     weak var coordinator: CaptureCoordinator?
 
     // Capture Session
-    private var isBackCamera = true
+    private var isBackCamera = true, isHEIC = false
     private var session: AVCaptureSession?
     private var backCameraInput: AVCaptureDeviceInput?
     private var frontCameraInput: AVCaptureDeviceInput?
@@ -193,9 +193,11 @@ extension CaptureViewController {
         let setting: AVCapturePhotoSettings
         if let output = output, output.availablePhotoCodecTypes.contains(.hevc) {
             Logger.debug("Capture hevc")
+            isHEIC = true
             setting = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
         } else {
             Logger.debug("Capture jpeg")
+            isHEIC = false
             setting = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
         }
         setting.photoQualityPrioritization = .balanced
@@ -246,7 +248,8 @@ extension CaptureViewController: AVCapturePhotoCaptureDelegate {
         guard let data = photo.fileDataRepresentation(),
               let image = UIImage(data: data) else { return }
         
-        capturedPicture(image: image, imageExtension: .heic)
+        let imageExtension = isHEIC ? ImageExtension.heic : ImageExtension.jpeg
+        capturedPicture(image: image, imageExtension: imageExtension)
     }
 }
 
@@ -272,12 +275,20 @@ extension CaptureViewController: PHPickerViewControllerDelegate {
         
         guard itemProvider.canLoadObject(ofClass: UIImage.self) else { return }
         
-        itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
-            guard let self else { return }
+        itemProvider.loadFileRepresentation(forTypeIdentifier: "public.image") { [weak self] url, error in
+            guard let self,
+                  let url = url else { return }
             
-            DispatchQueue.main.async {
-                guard let image = image as? UIImage else { return }
-                self.capturedPicture(image: image, imageExtension: .jpeg)
+            let imageExtensionString = url.absoluteString.components(separatedBy: ".").last ?? "jpeg"
+            itemProvider.loadObject(ofClass: UIImage.self) { [weak self] image, error in
+                guard let self,
+                      let imageExtension = ImageExtension(rawValue: imageExtensionString) else { return }
+                
+                DispatchQueue.main.async {
+                    guard let image = image as? UIImage else { return }
+                    Logger.debug("image Extension = \(imageExtensionString)")
+                    self.capturedPicture(image: image, imageExtension: imageExtension)
+                }
             }
         }
     }
