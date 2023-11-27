@@ -119,9 +119,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
                 
                 switch state {
                 case .none:
-                    if let doneButton = navigationItem.rightBarButtonItem {
-                        doneButton.isEnabled = true
-                    }
+                    break
                 case .loading:
                     // 완료 버튼 비활성화
                     if let doneButton = navigationItem.rightBarButtonItem {
