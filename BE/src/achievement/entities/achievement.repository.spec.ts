@@ -247,4 +247,28 @@ describe('AchievementRepository test', () => {
       expect(achievementDetail).toBeNull();
     });
   });
+
+  test('userId와 id로 달성 기록을 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const category = await categoryFixture.getCategory(user, 'ABC');
+
+      const achievement = await achievementFixture.getAchievement(
+        user,
+        category,
+      );
+
+      // when
+      const findOne = await achievementRepository.findOneByUserIdAndId(
+        user.id,
+        achievement.id,
+      );
+
+      // then
+      expect(findOne.id).toEqual(achievement.id);
+      expect(findOne.title).toEqual(achievement.title);
+      expect(findOne.content).toEqual(achievement.content);
+    });
+  });
 });
