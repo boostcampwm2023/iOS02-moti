@@ -1,6 +1,8 @@
 import {
+  Body,
   Controller,
   HttpCode,
+  Param,
   Post,
   UploadedFile,
   UseGuards,
@@ -15,18 +17,22 @@ import { ApiData } from '../../common/api/api-data';
 import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
 import { ParseFilePipe } from '../../common/pipe/parse-file.pipe';
 import { ImageResponse } from '../dto/image-response';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { HttpStatusCode } from 'axios';
+import { AdminTokenGuard } from '../../auth/guard/admin-token.guard';
+import { ParseIntPipe } from '../../common/pipe/parse-int.pipe';
+import { ThumbnailRequest } from '../dto/thumbnail-request';
 
 @Controller('/api/v1/images')
 @ApiTags('이미지 API')
 export class ImageController {
   constructor(private readonly imageService: ImageService) {}
 
-  @Post()
-  @HttpCode(HttpStatusCode.Created)
-  @UseGuards(AccessTokenGuard)
-  @UseInterceptors(FileInterceptor('image'))
   @ApiOperation({
     summary: '이미지 업로드 API',
     description: '이미지 선업로드를 위한 API 입니다.',
@@ -36,11 +42,34 @@ export class ImageController {
     description: '이미지 업로드 성공',
     type: ImageResponse,
   })
+  @ApiBearerAuth('accessToken')
+  @Post()
+  @HttpCode(HttpStatusCode.Created)
+  @UseGuards(AccessTokenGuard)
+  @UseInterceptors(FileInterceptor('image'))
   async uploadImage(
     @UploadedFile(ParseFilePipe) image: File,
     @AuthenticatedUser() user: User,
   ): Promise<ApiData<ImageResponse>> {
     const savedImage = await this.imageService.saveImage(image, user);
     return ApiData.success(ImageResponse.from(savedImage));
+  }
+
+  @ApiOperation({
+    summary: '썸네일 업데이트 API',
+    description: '이미지의 썸네일 경로를 영속화하는 API 입니다.',
+  })
+  @ApiResponse({
+    status: 204,
+    description: '썸네일 업데이트 성공',
+  })
+  @Post('/:imageId/thumbnails')
+  @HttpCode(HttpStatusCode.NoContent)
+  @UseGuards(AdminTokenGuard)
+  async uploadThumbnail(
+    @Param('imageId', ParseIntPipe) imageId: number,
+    @Body() thumbnail: ThumbnailRequest,
+  ): Promise<void> {
+    await this.imageService.saveThumbnail(imageId, thumbnail.thumbnailUrl);
   }
 }
