@@ -34,6 +34,19 @@ public final class DetailAchievementCoordinator: Coordinator {
                 achievement: achievement)
         )
         detailAchievementVC.coordinator = self
+        detailAchievementVC.delegate = self
         navigationController.pushViewController(detailAchievementVC, animated: true)
+    }
+    
+    private func moveEditAchievementViewController(achievement: Achievement) {
+        let editAchievementCoordinator = EditAchievementCoordinator(navigationController, self)
+        editAchievementCoordinator.start(achievement: achievement)
+        childCoordinators.append(editAchievementCoordinator)
+    }
+}
+
+extension DetailAchievementCoordinator: DetailAchievementViewControllerDelegate {
+    func editButtonDidClicked(achievement: Achievement) {
+        moveEditAchievementViewController(achievement: achievement)
     }
 }
