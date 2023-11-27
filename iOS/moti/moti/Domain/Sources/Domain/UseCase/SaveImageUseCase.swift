@@ -8,10 +8,12 @@
 import Foundation
 
 public struct SaveImageRequestValue: RequestValue {
+    public let boundary: String
     public let contentType: String
     public let imageData: Data
     
-    public init(contentType: String, imageData: Data) {
+    public init(boundary: String, contentType: String, imageData: Data) {
+        self.boundary = boundary
         self.contentType = contentType
         self.imageData = imageData
     }
