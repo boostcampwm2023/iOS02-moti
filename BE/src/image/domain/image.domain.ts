@@ -25,6 +25,10 @@ export class Image {
     return uploadFile;
   }
 
+  updateThumbnail(thumbnailUrl: string) {
+    this.thumbnailUrl = thumbnailUrl;
+  }
+
   constructor(user: User) {
     this.user = user;
   }
