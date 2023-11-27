@@ -12,7 +12,7 @@ import Combine
 import Domain
 
 protocol EditAchievementViewControllerDelegate: AnyObject {
-    func doneButtonDidClicked(isCaptureMode: Bool)
+    func doneButtonDidClicked(isFromCaptureMode: Bool)
 }
 
 final class EditAchievementViewController: BaseViewController<EditAchievementView> {
@@ -148,11 +148,11 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     @objc func doneButtonAction() {
         if viewModel.saveImageState == .none {
             // 상세 화면에서 넘어옴
-            delegate?.doneButtonDidClicked(isCaptureMode: false)
+            delegate?.doneButtonDidClicked(isFromCaptureMode: false)
             
         } else {
             // 촬영 화면에서 넘어옴
-            delegate?.doneButtonDidClicked(isCaptureMode: true)
+            delegate?.doneButtonDidClicked(isFromCaptureMode: true)
         }
     }
 }

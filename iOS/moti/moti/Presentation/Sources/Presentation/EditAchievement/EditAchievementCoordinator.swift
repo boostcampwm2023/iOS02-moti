@@ -72,8 +72,8 @@ final class EditAchievementCoordinator: Coordinator {
 }
 
 extension EditAchievementCoordinator: EditAchievementViewControllerDelegate {
-    func doneButtonDidClicked(isCaptureMode: Bool) {
-        if isCaptureMode {
+    func doneButtonDidClicked(isFromCaptureMode: Bool) {
+        if isFromCaptureMode {
             navigationController.setNavigationBarHidden(true, animated: false)
             finish(animated: false)
             parentCoordinator?.finish(animated: true)
