@@ -100,6 +100,29 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
                 }
             }
             .store(in: &cancellables)
+        
+        viewModel.$saveImageState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                
+                switch state {
+                case .loading:
+                    // 완료 버튼 비활성화
+                    if let doneButton = navigationItem.rightBarButtonItem {
+                        doneButton.isEnabled = false
+                    }
+                case .finish:
+                    // 완료 버튼 활성화
+                    if let doneButton = navigationItem.rightBarButtonItem {
+                        doneButton.isEnabled = true
+                    }
+                case .error:
+                    // TODO: Alert 띄우고, 다시 업로드 진행하기
+                    Logger.error("Upload Error")
+                }
+            }
+            .store(in: &cancellables)
     }
     
     private func addTarget() {
