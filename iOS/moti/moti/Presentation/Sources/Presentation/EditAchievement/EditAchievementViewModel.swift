@@ -92,7 +92,7 @@ final class EditAchievementViewModel {
                 
                 let requestValue = SaveImageRequestValue(
                     boundary: UUID().uuidString,
-                    contentType: "image/\(imageExtension.rawValue)",
+                    contentType: imageExtension.rawValue,
                     imageData: data
                 )
                 let (isSuccess, imageId) = try await saveImageUseCase.excute(requestValue: requestValue)

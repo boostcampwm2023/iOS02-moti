@@ -60,7 +60,7 @@ extension Requestable {
     
     func makeMultipartFormDataBody(
         boundary: String,
-        name: String = "moti",
+        name: String = "image",
         filename: String = "moti",
         contentType: String,
         data: Data
@@ -73,8 +73,8 @@ extension Requestable {
                 
         body.append(boundaryPrefix)
         
-        body.append("Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(filename)\"\(lineBreak)".data(using: .utf8)!)
-        body.append("Content-Type: \(contentType)\(lineBreak + lineBreak)".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(filename).\(contentType)\"\(lineBreak)".data(using: .utf8)!)
+        body.append("Content-Type: image/\(contentType)\(lineBreak + lineBreak)".data(using: .utf8)!)
         body.append(data)
         body.append(lineBreak.data(using: .utf8)!)
         

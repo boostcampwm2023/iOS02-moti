@@ -7,9 +7,11 @@
 
 import Foundation
 import Core
+import Domain
 
 public protocol ProviderProtocol {
     func request<R: ResponseDTO, E: EndpointProtocol>(with endpoint: E, type: R.Type) async throws -> R
+    func requestMutipartFormData<R: ResponseDTO, E: Requestable>(with endpoint: E, type: R.Type, bodyData: Data) async throws -> R
 }
 
 public struct Provider: ProviderProtocol {
@@ -43,13 +45,32 @@ public struct Provider: ProviderProtocol {
         #endif
         
         let (data, response) = try await session.data(for: urlRequest)
+        return try parsingResponse(data: data, response: response, type: type)
+    }
+    
+    public func requestMutipartFormData<R: ResponseDTO, E: Requestable>(with endpoint: E, type: R.Type, bodyData: Data) async throws -> R {
+        guard let urlRequest = try? endpoint.makeURLRequest() else {
+            throw NetworkError.url
+        }
+
+        #if DEBUG
+        Logger.network("[Multipart Form Data Request(\(endpoint.method.rawValue)) \(urlRequest.url!.absoluteString)]")
+        #endif
+        
+        let (data, response) = try await session.upload(for: urlRequest, from: bodyData)
+        return try parsingResponse(data: data, response: response, type: type)
+    }
+    
+    private func parsingResponse<R: ResponseDTO>(data: Data, response: URLResponse, type: R.Type) throws -> R {
         guard let response = response as? HTTPURLResponse else { throw NetworkError.response }
-        
+
         let statusCode = response.statusCode
-        let body = try decoder.decode(type, from: data)
-        
         #if DEBUG
         Logger.network("[Response(\(statusCode))]")
+        #endif
+
+        let body = try decoder.decode(type, from: data)
+        #if DEBUG
         if let encodingData = try? encoder.encode(body),
            let jsonString = String(data: encodingData, encoding: .utf8) {
             Logger.network("[응답 데이터]\n\(jsonString)")
