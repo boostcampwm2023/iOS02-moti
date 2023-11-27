@@ -78,7 +78,7 @@ extension EditAchievementCoordinator: EditAchievementViewControllerDelegate {
             finish(animated: false)
             parentCoordinator?.finish(animated: true)
         } else {
-            navigationController.popViewController(animated: false)
+            finish(animated: false)
         }
     }
 }
