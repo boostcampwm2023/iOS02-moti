@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AchievementService } from '../application/achievement.service';
 import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
 import { AuthenticatedUser } from '../../auth/decorator/athenticated-user.decorator';
@@ -14,6 +21,7 @@ import {
 import { PaginateAchievementResponse } from '../dto/paginate-achievement-response';
 import { AchievementDetailResponse } from '../dto/achievement-detail-response';
 import { ParseIntPipe } from '../../common/pipe/parse-int.pipe';
+import { AchievementDeleteResponse } from '../dto/achievement-delete-response';
 
 @Controller('/api/v1/achievements')
 @ApiTags('달성기록 API')
@@ -64,5 +72,24 @@ export class AchievementController {
       id,
     );
     return ApiData.success(response);
+  }
+
+  @Delete('/:id')
+  @UseGuards(AccessTokenGuard)
+  @ApiOperation({
+    summary: '달성기록 삭제 API',
+    description: '달성기록을 삭제한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '달성기록 삭제',
+    type: AchievementDeleteResponse,
+  })
+  @ApiBearerAuth('accessToken')
+  async delete(
+    @AuthenticatedUser() user: User,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return ApiData.success(await this.achievementService.delete(user.id, id));
   }
 }
