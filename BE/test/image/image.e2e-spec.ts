@@ -10,16 +10,21 @@ import * as request from 'supertest';
 import * as path from 'path';
 import * as process from 'process';
 import * as fs from 'fs/promises';
+import { ImageTestModule } from './image-test.module';
+import { ImageFixture } from './image-fixture';
 
 describe('Image Test (e2e)', () => {
+  const IMAGE_FILESTORE_PREFIX = 'serverless';
   let app: INestApplication;
   let authFixture: AuthFixture;
+  let imageFixture: ImageFixture;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule, AuthTestModule],
+      imports: [AppModule, AuthTestModule, ImageTestModule],
     }).compile();
 
+    imageFixture = moduleFixture.get<ImageFixture>(ImageFixture);
     authFixture = moduleFixture.get<AuthFixture>(AuthFixture);
     app = moduleFixture.createNestApplication();
 
@@ -32,7 +37,7 @@ describe('Image Test (e2e)', () => {
   });
 
   afterEach(async () => {
-    await fs.rm(path.join(process.cwd(), '/serverless'), {
+    await fs.rm(path.join(process.cwd(), IMAGE_FILESTORE_PREFIX), {
       recursive: true,
       force: true,
     });
@@ -59,6 +64,24 @@ describe('Image Test (e2e)', () => {
           expect(res.body.data.id).toBeGreaterThanOrEqual(0);
           expect(res.body.data.imageUrl).toBeDefined();
         });
+    });
+  });
+
+  describe('saveThumbnail은 이미지의 썸네일을 저장할 수 있다.', () => {
+    it('이미지의 썸네일 저장에 성공하면 id와 thumbnailUrl을 포함한다.', async () => {
+      const { user } = await authFixture.getAuthenticatedUser('ABC');
+      const image = await imageFixture.getImageWithRealFile(
+        user,
+        IMAGE_FILESTORE_PREFIX,
+      );
+
+      const { accessToken } = await authFixture.getAuthenticatedAdmin('ADMIN');
+
+      return request(app.getHttpServer())
+        .post(`/api/v1/images/${image.id}/thumbnails`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ thumbnailUrl: 'https://thumbnail.com' })
+        .expect(204);
     });
   });
 });
