@@ -25,22 +25,10 @@ import { MotimateExceptionFilter } from '../../common/filter/exception.filter';
 describe('ImageController', () => {
   let app: INestApplication;
   let authFixture: AuthFixture;
+  let mockImageService: ImageService;
 
   beforeAll(async () => {
-    const mockImageService = mock<ImageService>(ImageService);
-    const defaultImage = new Image(null);
-    defaultImage.id = 1004;
-    defaultImage.originalName = 'image1.jpg';
-    defaultImage.imageUrl = 'file://abcd-efgh-ijkl-mnop.jpg';
-    when(mockImageService.saveImage(anything(), anyOfClass(User))).thenResolve(
-      defaultImage,
-    );
-    when(
-      mockImageService.saveImage(
-        objectContaining({ originalname: 'error.png' }),
-        anyOfClass(User),
-      ),
-    ).thenThrow(new FailFileTaskException());
+    mockImageService = mock<ImageService>(ImageService);
 
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule, AuthTestModule],
@@ -71,8 +59,19 @@ describe('ImageController', () => {
 
   describe('saveImage는 이미지를 저장할 수 있다.', () => {
     it('이미지 저장에 성공하면 id와 imageURL을 포함한다.', async () => {
+      // given
       const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
 
+      const defaultImage = new Image(null);
+      defaultImage.id = 1004;
+      defaultImage.originalName = 'image1.jpg';
+      defaultImage.imageUrl = 'file://abcd-efgh-ijkl-mnop.jpg';
+      when(
+        mockImageService.saveImage(anything(), anyOfClass(User)),
+      ).thenResolve(defaultImage);
+
+      // when
+      // then
       return request(app.getHttpServer())
         .post('/api/v1/images')
         .set('Authorization', `Bearer ${accessToken}`)
@@ -88,8 +87,11 @@ describe('ImageController', () => {
     });
 
     it('이미지 저장에 실패하면 success가 false이고 500 stausCode를 가진다.', async () => {
+      // given
       const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
 
+      // when
+      // then
       return request(app.getHttpServer())
         .post('/api/v1/images')
         .set('Authorization', `Bearer ${accessToken}`)
@@ -101,8 +103,18 @@ describe('ImageController', () => {
     });
 
     it('이미지 저장에 실패하면 success가 false이고 500 stausCode를 가진다.', async () => {
+      // given
       const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
 
+      when(
+        mockImageService.saveImage(
+          objectContaining({ originalname: 'error.png' }),
+          anyOfClass(User),
+        ),
+      ).thenThrow(new FailFileTaskException());
+
+      // when
+      // then
       return request(app.getHttpServer())
         .post('/api/v1/images')
         .set('Authorization', `Bearer ${accessToken}`)
