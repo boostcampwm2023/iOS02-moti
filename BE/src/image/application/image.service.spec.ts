@@ -14,12 +14,17 @@ import { UuidHolder } from '../../common/application/uuid-holder';
 import { FileFixture } from '../../../test/common/file-store/file-fixture';
 import { transactionTest } from '../../../test/common/transaction-test';
 import * as fs from 'fs/promises';
+import { ImageTestModule } from '../../../test/image/image-test.module';
+import { ImageFixture } from '../../../test/image/image-fixture';
+import { ImageAlreadyExistsThumbnailException } from '../exception/image-already-exists-thumbnail.exception';
+import { ImageNotFoundException } from '../exception/image-not-found.exception';
 
 describe('ImageService', () => {
   let imageService: ImageService;
   let dataSource: DataSource;
   let userFixture: UsersFixture;
   let uuidHolder: StubUuidHolder;
+  let imageFixture: ImageFixture;
   let imagePrefix: string;
 
   beforeAll(async () => {
@@ -30,6 +35,7 @@ describe('ImageService', () => {
         AchievementTestModule,
         UsersTestModule,
         ImageModule,
+        ImageTestModule,
       ],
       controllers: [],
       providers: [],
@@ -42,6 +48,7 @@ describe('ImageService', () => {
     imageService = app.get<ImageService>(ImageService);
     dataSource = app.get<DataSource>(DataSource);
     userFixture = app.get<UsersFixture>(UsersFixture);
+    imageFixture = app.get<ImageFixture>(ImageFixture);
     imagePrefix = app
       .get<ConfigService>(ConfigService)
       .get<string>('FILESTORE_IMAGE_PREFIX');
@@ -82,6 +89,62 @@ describe('ImageService', () => {
       await expect(
         fs.access(savedImage.imageUrl.replace('file://', '')),
       ).resolves.toBeUndefined();
+    });
+  });
+
+  describe('saveThumbnail은 이미지의 썸네일을 업데이트 할 수 있다.', () => {
+    it('기존 이미지의 썸네일을 저장할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        uuidHolder.setUuid('abcd-efgh-ijkl-mnop');
+        const user = await userFixture.getUser('ABC');
+        const image = await imageFixture.getImageWithRealFile(
+          user,
+          imagePrefix,
+        );
+        const thumbnailPath = 'file://abcd-efgh-ijkl-mnop-thumbnail.jpg';
+
+        // when
+        const updatedImage = await imageService.saveThumbnail(
+          image.id,
+          thumbnailPath,
+        );
+
+        // then
+        expect(updatedImage.id).toEqual(image.id);
+        expect(updatedImage.user).toBeNull();
+        expect(updatedImage.originalName).toBe(image.originalName);
+        expect(updatedImage.imageUrl.startsWith('file://'));
+        expect(updatedImage.imageUrl.endsWith('abcd-efgh-ijkl-mnop.jpg'));
+        expect(updatedImage.thumbnailUrl).toBe(thumbnailPath);
+        expect(updatedImage.achievement).toBeNull();
+      });
+    });
+
+    it('이미 썸네일이 있는 이미지의 썸네일을 저장할 수 없다.', async () => {
+      // given
+      uuidHolder.setUuid('abcd-efgh-ijkl-mnop');
+      const user = await userFixture.getUser('ABC');
+      const image = await imageFixture.getImageWithRealFile(user, imagePrefix);
+      const thumbnailPath = 'file://abcd-efgh-ijkl-mnop-thumbnail.jpg';
+      await imageService.saveThumbnail(image.id, thumbnailPath);
+
+      // when
+      await expect(
+        imageService.saveThumbnail(image.id, thumbnailPath),
+      ).rejects.toThrow(ImageAlreadyExistsThumbnailException);
+    });
+
+    it('존재하지 않는 이미지의 썸네일을 저장할 수 없다.', async () => {
+      // given
+      // when
+      // then
+      await expect(
+        imageService.saveThumbnail(
+          1,
+          'file://abcd-efgh-ijkl-mnop-thumbnail.jpg',
+        ),
+      ).rejects.toThrow(ImageNotFoundException);
     });
   });
 });
