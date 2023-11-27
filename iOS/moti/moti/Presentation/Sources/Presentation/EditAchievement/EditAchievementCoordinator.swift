@@ -29,6 +29,7 @@ final class EditAchievementCoordinator: Coordinator {
     
     func start(achievement: Achievement) {
         let editAchievementVM = EditAchievementViewModel(
+            saveImageUseCase: .init(repository: ImageRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository())
         )
         let editAchievementVC = EditAchievementViewController(
@@ -47,13 +48,15 @@ final class EditAchievementCoordinator: Coordinator {
         navigationController.setNavigationBarHidden(false, animated: false)
     }
     
-    func startAfterCapture(image: UIImage) {
+    func startAfterCapture(image: UIImage, imageExtension: ImageExtension) {
         let editAchievementVM = EditAchievementViewModel(
+            saveImageUseCase: .init(repository: ImageRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository())
         )
         let editAchievementVC = EditAchievementViewController(
             viewModel: editAchievementVM,
-            image: image
+            image: image,
+            imageExtension: imageExtension
         )
         editAchievementVC.coordinator = self
         
