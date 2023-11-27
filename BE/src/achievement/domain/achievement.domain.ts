@@ -1,5 +1,6 @@
 import { User } from '../../users/domain/user.domain';
 import { Category } from '../../category/domain/category.domain';
+import { AchievementUpdate } from '../dto/achievement-update-request';
 
 export class Achievement {
   id: number;
@@ -38,5 +39,11 @@ export class Achievement {
 
   assignCategory(category: Category) {
     this.category = category;
+  }
+
+  update(achievementUpdate: AchievementUpdate) {
+    this.title = achievementUpdate.title || this.title;
+    this.content = achievementUpdate.content || this.content;
+    this.category = achievementUpdate.category || this.category;
   }
 }

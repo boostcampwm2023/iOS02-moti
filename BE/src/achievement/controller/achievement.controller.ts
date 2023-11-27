@@ -1,8 +1,10 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
   Param,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -22,6 +24,8 @@ import { PaginateAchievementResponse } from '../dto/paginate-achievement-respons
 import { AchievementDetailResponse } from '../dto/achievement-detail-response';
 import { ParseIntPipe } from '../../common/pipe/parse-int.pipe';
 import { AchievementDeleteResponse } from '../dto/achievement-delete-response';
+import { AchievementUpdateRequest } from '../dto/achievement-update-request';
+import { AchievementUpdateResponse } from '../dto/achievement-update-response';
 
 @Controller('/api/v1/achievements')
 @ApiTags('달성기록 API')
@@ -91,5 +95,31 @@ export class AchievementController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return ApiData.success(await this.achievementService.delete(user.id, id));
+  }
+
+  @Put('/:id')
+  @UseGuards(AccessTokenGuard)
+  @ApiOperation({
+    summary: '달성기록 수정 API',
+    description: '달성기록을 수정한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '달성기록 수정',
+    type: AchievementUpdateResponse,
+  })
+  @ApiBearerAuth('accessToken')
+  async update(
+    @AuthenticatedUser() user: User,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() achievementUpdateRequest: AchievementUpdateRequest,
+  ) {
+    return ApiData.success(
+      await this.achievementService.update(
+        user.id,
+        id,
+        achievementUpdateRequest,
+      ),
+    );
   }
 }

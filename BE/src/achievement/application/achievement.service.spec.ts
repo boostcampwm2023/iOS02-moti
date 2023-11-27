@@ -15,6 +15,9 @@ import { AchievementTestModule } from '../../../test/achievement/achievement-tes
 import { PaginateAchievementRequest } from '../dto/paginate-achievement-request';
 import { NoSuchAchievementException } from '../exception/no-such-achievement.exception';
 import { DataSource } from 'typeorm';
+import { AchievementUpdateRequest } from '../dto/achievement-update-request';
+import { CategoryRepository } from '../../category/entities/category.repository';
+import { InvalidCategoryException } from '../exception/invalid-category.exception';
 
 describe('AchievementService Test', () => {
   let achievementService: AchievementService;
@@ -28,7 +31,10 @@ describe('AchievementService Test', () => {
       imports: [
         ConfigModule.forRoot(configServiceModuleOptions),
         TypeOrmModule.forRootAsync(typeOrmModuleOptions),
-        CustomTypeOrmModule.forCustomRepository([AchievementRepository]),
+        CustomTypeOrmModule.forCustomRepository([
+          AchievementRepository,
+          CategoryRepository,
+        ]),
         UsersTestModule,
         CategoryTestModule,
         AchievementTestModule,
@@ -199,5 +205,78 @@ describe('AchievementService Test', () => {
     await expect(achievementService.getAchievementDetail(1, 0)).rejects.toThrow(
       NoSuchAchievementException,
     );
+  });
+
+  test('달성 기록을 수정한다.', async () => {
+    // given
+    const user = await usersFixture.getUser('ABC');
+    const category_1 = await categoryFixture.getCategory(user, 'ABC');
+    const category_2 = await categoryFixture.getCategory(user, 'DEF');
+    const achievement = await achievementFixture.getAchievement(
+      user,
+      category_1,
+    );
+    const request = new AchievementUpdateRequest(
+      'update title',
+      'update content',
+      category_2.id,
+    );
+
+    // when
+    await achievementService.update(user.id, achievement.id, request);
+
+    // then
+    const updated = await achievementRepository.findAchievementDetail(
+      user.id,
+      achievement.id,
+    );
+
+    expect(updated.category.id).toEqual(category_2.id);
+    expect(updated.title).toEqual('update title');
+    expect(updated.content).toEqual('update content');
+  });
+
+  test('내 달성기록이 아닌 경우는 NoSuchAchievementException 예외를 던진다.', async () => {
+    // given
+    const user = await usersFixture.getUser('ABC');
+    const category_1 = await categoryFixture.getCategory(user, 'ABC');
+    const category_2 = await categoryFixture.getCategory(user, 'DEF');
+    const achievement = await achievementFixture.getAchievement(
+      user,
+      category_1,
+    );
+    const request = new AchievementUpdateRequest(
+      'update title',
+      'update content',
+      category_2.id,
+    );
+
+    // when
+    // then
+    await expect(
+      achievementService.update(user.id + 1, achievement.id, request),
+    ).rejects.toThrow(NoSuchAchievementException);
+  });
+
+  test('내 카테고리가 아닌 경우 InvalidCategoryException 예외를 던진다.', async () => {
+    // given
+    const user = await usersFixture.getUser('ABC');
+    const category_1 = await categoryFixture.getCategory(user, 'ABC');
+    const category_2 = await categoryFixture.getCategory(user, 'DEF');
+    const achievement = await achievementFixture.getAchievement(
+      user,
+      category_1,
+    );
+    const request = new AchievementUpdateRequest(
+      'update title',
+      'update content',
+      category_2.id + 1,
+    );
+
+    // when
+    // then
+    await expect(
+      achievementService.update(user.id, achievement.id, request),
+    ).rejects.toThrow(InvalidCategoryException);
   });
 });
