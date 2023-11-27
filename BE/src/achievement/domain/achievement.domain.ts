@@ -1,6 +1,6 @@
 import { User } from '../../users/domain/user.domain';
 import { Category } from '../../category/domain/category.domain';
-import { AchievementUpdate } from '../dto/achievement-update-request';
+import { AchievementUpdate } from '../index';
 
 export class Achievement {
   id: number;
