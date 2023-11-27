@@ -11,10 +11,15 @@ import Design
 import Combine
 import Domain
 
+protocol EditAchievementViewControllerDelegate: AnyObject {
+    func doneButtonDidClicked(isCaptureMode: Bool)
+}
+
 final class EditAchievementViewController: BaseViewController<EditAchievementView> {
     
     // MARK: - Properties
     weak var coordinator: EditAchievementCoordinator?
+    weak var delegate: EditAchievementViewControllerDelegate?
     private let viewModel: EditAchievementViewModel
     private var cancellables: Set<AnyCancellable> = []
     
@@ -57,6 +62,12 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .done,
+            target: self,
+            action: #selector(doneButtonAction)
+        )
         
         viewModel.action(.fetchCategories)
         addTarget()
@@ -107,6 +118,10 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
                 guard let self else { return }
                 
                 switch state {
+                case .none:
+                    if let doneButton = navigationItem.rightBarButtonItem {
+                        doneButton.isEnabled = true
+                    }
                 case .loading:
                     // 완료 버튼 비활성화
                     if let doneButton = navigationItem.rightBarButtonItem {
@@ -128,6 +143,17 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     private func addTarget() {
         layoutView.categoryButton.addTarget(self, action: #selector(showPicker), for: .touchUpInside)
         layoutView.selectDoneButton.addTarget(self, action: #selector(donePicker), for: .touchUpInside)
+    }
+    
+    @objc func doneButtonAction() {
+        if viewModel.saveImageState == .none {
+            // 상세 화면에서 넘어옴
+            delegate?.doneButtonDidClicked(isCaptureMode: false)
+            
+        } else {
+            // 촬영 화면에서 넘어옴
+            delegate?.doneButtonDidClicked(isCaptureMode: true)
+        }
     }
 }
 
