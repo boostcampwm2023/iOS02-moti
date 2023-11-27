@@ -9,9 +9,15 @@ import UIKit
 import Design
 import Core
 import Combine
+import Domain
+
+protocol DetailAchievementViewControllerDelegate: AnyObject {
+    func editButtonDidClicked(achievement: Achievement)
+}
 
 final class DetailAchievementViewController: BaseViewController<DetailAchievementView> {
     weak var coordinator: DetailAchievementCoordinator?
+    weak var delegate: DetailAchievementViewControllerDelegate?
     
     private let viewModel: DetailAchievementViewModel
     private var cancellables: Set<AnyCancellable> = []
@@ -51,7 +57,7 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
     }
     
     @objc private func didClickedEditButton() {
-        Logger.debug("편집 버튼!")
+        delegate?.editButtonDidClicked(achievement: viewModel.achievement)
     }
     
     private func bind() {
