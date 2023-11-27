@@ -6,6 +6,7 @@ import { PaginateAchievementResponse } from '../dto/paginate-achievement-respons
 import { AchievementDetailResponse } from '../dto/achievement-detail-response';
 import { Transactional } from '../../config/transaction-manager';
 import { NoSuchAchievementException } from '../exception/no-such-achievement.exception';
+import { AchievementDeleteResponse } from '../dto/achievement-delete-response';
 
 @Injectable()
 export class AchievementService {
@@ -35,5 +36,18 @@ export class AchievementService {
       throw new NoSuchAchievementException();
     }
     return achievement;
+  }
+
+  @Transactional()
+  async delete(userId: number, id: number) {
+    const achievement = await this.achievementRepository.findOneByUserIdAndId(
+      userId,
+      id,
+    );
+    if (!achievement) {
+      throw new NoSuchAchievementException();
+    }
+    await this.achievementRepository.softDelete(achievement.id);
+    return AchievementDeleteResponse.from(achievement);
   }
 }

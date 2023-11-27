@@ -14,12 +14,15 @@ import { CategoryTestModule } from '../../../test/category/category-test.module'
 import { AchievementTestModule } from '../../../test/achievement/achievement-test.module';
 import { PaginateAchievementRequest } from '../dto/paginate-achievement-request';
 import { NoSuchAchievementException } from '../exception/no-such-achievement.exception';
+import { DataSource } from 'typeorm';
 
 describe('AchievementService Test', () => {
   let achievementService: AchievementService;
+  let achievementRepository: AchievementRepository;
   let usersFixture: UsersFixture;
   let categoryFixture: CategoryFixture;
   let achievementFixture: AchievementFixture;
+  let dataSource: DataSource;
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
@@ -34,9 +37,17 @@ describe('AchievementService Test', () => {
     }).compile();
 
     achievementService = module.get<AchievementService>(AchievementService);
+    achievementRepository = module.get<AchievementRepository>(
+      AchievementRepository,
+    );
     usersFixture = module.get<UsersFixture>(UsersFixture);
     categoryFixture = module.get<CategoryFixture>(CategoryFixture);
     achievementFixture = module.get<AchievementFixture>(AchievementFixture);
+    dataSource = module.get<DataSource>(DataSource);
+  });
+
+  afterAll(async () => {
+    await dataSource.destroy();
   });
 
   test('개인 달성 기록 리스트에 대한 페이지네이션 조회를 할 수 있다.', async () => {
@@ -147,5 +158,46 @@ describe('AchievementService Test', () => {
     await expect(
       achievementService.getAchievementDetail(user.id, achievements[9].id + 1),
     ).rejects.toThrow(NoSuchAchievementException);
+  });
+
+  test('달성 기록을 soft delete 방식으로 삭제한다.', async () => {
+    // given
+    const user = await usersFixture.getUser('ABC');
+    const category = await categoryFixture.getCategory(user, 'ABC');
+    const achievement = await achievementFixture.getAchievement(user, category);
+    // when
+    await achievementService.delete(user.id, achievement.id);
+
+    // then
+    const deleted = await achievementRepository.findOne({
+      where: { id: achievement.id },
+      withDeleted: true,
+    });
+
+    expect(deleted.id).toEqual(achievement.id);
+    expect(deleted.deletedAt).toBeDefined();
+  });
+
+  test('soft delete 방식으로 삭제된 달성 기록을 삭제하면 NoSuchAchievementException을 던진다.', async () => {
+    // given
+    const user = await usersFixture.getUser('ABC');
+    const category = await categoryFixture.getCategory(user, 'ABC');
+    const achievement = await achievementFixture.getAchievement(user, category);
+    await achievementService.delete(user.id, achievement.id);
+
+    // when
+    // then
+    await expect(
+      achievementService.getAchievementDetail(user.id, achievement.id),
+    ).rejects.toThrow(NoSuchAchievementException);
+  });
+
+  test('존재하지 않는 달성 기록을 조회하면 NoSuchAchievementException을 던진다.', async () => {
+    // given
+    // when
+    // then
+    await expect(achievementService.getAchievementDetail(1, 0)).rejects.toThrow(
+      NoSuchAchievementException,
+    );
   });
 });
