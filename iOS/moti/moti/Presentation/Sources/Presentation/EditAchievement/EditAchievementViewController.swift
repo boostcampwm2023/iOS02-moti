@@ -146,7 +146,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     }
     
     @objc func doneButtonAction() {
-        if viewModel.saveImageState == .none {
+        if let achievement {
             // 상세 화면에서 넘어옴
             delegate?.doneButtonDidClicked(isFromCaptureMode: false)
             
