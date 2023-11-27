@@ -25,7 +25,7 @@ final class DetailAchievementViewModel {
     
     @Published private(set) var launchState: LaunchState = .none
     
-    private var achievement: Achievement
+    private(set) var achievement: Achievement
     
     init(
         fetchDetailAchievementUseCase: FetchDetailAchievementUseCase,

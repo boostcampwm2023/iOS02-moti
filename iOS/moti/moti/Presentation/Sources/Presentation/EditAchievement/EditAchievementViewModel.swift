@@ -23,6 +23,7 @@ final class EditAchievementViewModel {
     }
     
     enum SaveImageState {
+        case none
         case loading
         case finish
         case error
@@ -36,7 +37,7 @@ final class EditAchievementViewModel {
     }
     
     @Published private(set) var categoryState: CategoryState = .none
-    @Published private(set) var saveImageState: SaveImageState = .loading
+    @Published private(set) var saveImageState: SaveImageState = .none
     
     init(
         saveImageUseCase: SaveImageUseCase,
