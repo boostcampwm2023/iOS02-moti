@@ -147,11 +147,11 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     
     @objc func doneButtonAction() {
         if let achievement {
-            // 상세 화면에서 넘어옴
+            // 상세 화면에서 넘어옴 => 수정 API
             delegate?.doneButtonDidClicked(isFromCaptureMode: false)
             
         } else {
-            // 촬영 화면에서 넘어옴
+            // 촬영 화면에서 넘어옴 => 생성 API
             delegate?.doneButtonDidClicked(isFromCaptureMode: true)
         }
     }
