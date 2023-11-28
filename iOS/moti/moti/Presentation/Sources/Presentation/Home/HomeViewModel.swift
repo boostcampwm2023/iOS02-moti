@@ -15,6 +15,7 @@ final class HomeViewModel {
         case addCategory(name: String)
         case fetchNextPage
         case fetchCategoryList(category: CategoryItem)
+        case delete(achievementId: Int)
     }
     
     enum CategoryState {
@@ -87,6 +88,8 @@ final class HomeViewModel {
             fetchNextAchievementList()
         case .fetchCategoryList(let category):
             fetchCategoryAchievementList(category: category)
+        case .delete(let achievementId):
+            delete(achievementId: achievementId)
         }
     }
     
@@ -105,6 +108,15 @@ final class HomeViewModel {
     
     func findCategory(at index: Int) -> CategoryItem {
         return categories[index]
+    }
+    
+    private func findIndexOfAchievement(with achievementId: Int) -> Int? {
+        return achievements.firstIndex { $0.id == achievementId }
+    }
+    
+    private func delete(achievementId: Int) {
+        guard let foundIndex = findIndexOfAchievement(with: achievementId) else { return }
+        achievements.remove(at: foundIndex)
     }
     
     private func fetchCategories() {

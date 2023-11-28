@@ -39,6 +39,10 @@ final class HomeViewController: BaseViewController<HomeView> {
     }
     
     // MARK: - Methods
+    func delete(achievementId: Int) {
+        viewModel.action(.delete(achievementId: achievementId))
+    }
+    
     private func bind() {
         viewModel.$achievementState
             .receive(on: DispatchQueue.main)
