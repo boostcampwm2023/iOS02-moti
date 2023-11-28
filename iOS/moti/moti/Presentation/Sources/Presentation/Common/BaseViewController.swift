@@ -18,6 +18,13 @@ class BaseViewController<LayoutView: UIView>: UIViewController {
         view = layoutView
     }
     
+    func showErrorAlert(
+        message: String? = nil
+    ) {
+        let alertVC = AlertFactory.makeOneButtonAlert(title: "에러", message: message)
+        present(alertVC, animated: true)
+    }
+    
     func showOneButtonAlert(
         title: String? = nil,
         message: String? = nil,

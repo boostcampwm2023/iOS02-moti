@@ -53,7 +53,7 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
     }
     
     @objc private func didClickedRemoveButton() {
-        showDestructiveTwoButtonAlert(title: "정말로 삭제하시겠습니까?", message: "되돌릴 수 없습니다.") {
+        showDestructiveTwoButtonAlert(title: "정말로 삭제하시겠습니까?", message: "삭제된 도전 기록은 되돌릴 수 없습니다.") {
             Logger.debug("remove ..")
         }
     }

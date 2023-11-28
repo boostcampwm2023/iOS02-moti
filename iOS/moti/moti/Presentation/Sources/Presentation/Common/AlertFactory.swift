@@ -11,8 +11,8 @@ public enum AlertFactory {
     public static func makeOneButtonAlert(
         title: String?,
         message: String?,
-        okTitle: String?,
-        okAction: (() -> Void)?
+        okTitle: String? = "확인",
+        okAction: (() -> Void)? = nil
     ) -> UIAlertController {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let okAlert = UIAlertAction(title: okTitle, style: .default) { _ in
