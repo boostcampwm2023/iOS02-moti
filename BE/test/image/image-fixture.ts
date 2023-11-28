@@ -14,8 +14,12 @@ export class ImageFixture {
     private readonly fileStore: FileStore,
   ) {}
 
-  async getImage(user: User): Promise<Image> {
-    const image = ImageFixture.image(user);
+  async getImage(
+    user: User,
+    imageUrl?: string,
+    thumbnailUrl?: string,
+  ): Promise<Image> {
+    const image = ImageFixture.image(user, imageUrl, thumbnailUrl);
     return this.imageRepository.saveImage(image);
   }
 
@@ -26,11 +30,12 @@ export class ImageFixture {
     return this.imageRepository.saveImage(image);
   }
 
-  static image(user: User): Image {
+  static image(user: User, imageUrl?: string, thumbnailUrl?: string): Image {
     const image = new Image(user);
+    image.updateThumbnail(thumbnailUrl || null);
     const file = FileFixture.file(`test${++ImageFixture.id}`, 'jpg');
     image.originalName = file.originalname;
-    image.imageUrl = file.path;
+    image.imageUrl = imageUrl || file.path;
     return image;
   }
 }
