@@ -12,13 +12,20 @@ import { CategoryRepository } from '../../category/entities/category.repository'
 import { AchievementUpdateResponse } from '../dto/achievement-update-response';
 import { Achievement } from '../domain/achievement.domain';
 import { InvalidCategoryException } from '../exception/invalid-category.exception';
+import { AchievementCreateRequest } from '../dto/achievement-create-request';
+import { User } from '../../users/domain/user.domain';
+import { ImageRepository } from '../../image/entities/image.repository';
+import { NoUserImageException } from '../exception/no-user-image-exception';
 
 @Injectable()
 export class AchievementService {
   constructor(
     private readonly achievementRepository: AchievementRepository,
     private readonly categoryRepository: CategoryRepository,
+    private readonly imageRepository: ImageRepository,
   ) {}
+
+  @Transactional({ readonly: true })
   async getAchievements(
     userId: number,
     paginateAchievementRequest: PaginateAchievementRequest,
@@ -35,27 +42,14 @@ export class AchievementService {
 
   @Transactional({ readonly: true })
   async getAchievementDetail(userId: number, achievementId: number) {
-    const achievement: AchievementDetailResponse =
-      await this.achievementRepository.findAchievementDetail(
-        userId,
-        achievementId,
-      );
-    if (!achievement) {
-      throw new NoSuchAchievementException();
-    }
-    return achievement;
+    return this.getAchievementResponse(userId, achievementId);
   }
 
   @Transactional()
   async delete(userId: number, id: number) {
-    const achievement = await this.achievementRepository.findOneByUserIdAndId(
-      userId,
-      id,
-    );
-    if (!achievement) {
-      throw new NoSuchAchievementException();
-    }
+    const achievement = await this.getAchievement(userId, id);
     await this.achievementRepository.softDelete(achievement.id);
+
     return AchievementDeleteResponse.from(achievement);
   }
 
@@ -63,22 +57,49 @@ export class AchievementService {
   async update(
     userId: number,
     id: number,
-    achievementUpdateRequest: AchievementUpdateRequest,
+    achieveUpdate: AchievementUpdateRequest,
   ) {
-    const achievement: Achievement =
-      await this.achievementRepository.findOneByUserIdAndId(userId, id);
-    if (!achievement) {
-      throw new NoSuchAchievementException();
-    }
-    const category = await this.categoryRepository.findOneByUserIdAndId(
-      userId,
-      achievementUpdateRequest.categoryId,
-    );
-    if (!category) {
-      throw new InvalidCategoryException();
-    }
-    achievement.update(achievementUpdateRequest.toAchievementUpdate(category));
-    await this.achievementRepository.update(achievement.id, achievement);
+    const achievement = await this.getAchievement(userId, id);
+    const category = await this.getCategory(userId, achieveUpdate.categoryId);
+
+    achievement.update(achieveUpdate.toAchievementUpdate(category));
+    await this.achievementRepository.saveAchievement(achievement);
     return AchievementUpdateResponse.from(achievement);
+  }
+
+  @Transactional()
+  async create(user: User, achieveCreate: AchievementCreateRequest) {
+    const category = await this.getCategory(user.id, achieveCreate.categoryId);
+    const image = await this.getUserImage(achieveCreate.photoId, user);
+    const achievement = achieveCreate.toModel(user, category, image);
+    const saved = await this.achievementRepository.saveAchievement(achievement);
+    return this.getAchievementResponse(user.id, saved.id);
+  }
+
+  private async getCategory(userId: number, ctgId: number) {
+    const ctg = await this.categoryRepository.findByIdAndUser(userId, ctgId);
+    if (!ctg) throw new InvalidCategoryException();
+    return ctg;
+  }
+
+  private async getAchievement(userId: number, achieveId: number) {
+    const achievement: Achievement =
+      await this.achievementRepository.findByIdAndUser(userId, achieveId);
+    if (!achievement) throw new NoSuchAchievementException();
+    return achievement;
+  }
+
+  private async getUserImage(imgId: number, user: User) {
+    const image = await this.imageRepository.findByIdAndUser(imgId, user);
+    if (!image) throw new NoUserImageException();
+    return image;
+  }
+
+  private async getAchievementResponse(userId: number, achieveId: number) {
+    const achievement: AchievementDetailResponse =
+      await this.achievementRepository.findAchievementDetail(userId, achieveId);
+    if (!achievement) throw new NoSuchAchievementException();
+
+    return achievement;
   }
 }
