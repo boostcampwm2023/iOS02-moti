@@ -128,4 +128,22 @@ describe('CategoryRepository', () => {
       expect(retrievedCategories[3].achievementCount).toBe(10);
     });
   });
+
+  it('userId와 id로 카테고리를 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const category = await categoryFixture.getCategory(user, 'ABC');
+
+      // when
+      const findOne = await categoryRepository.findOneByUserIdAndId(
+        user.id,
+        category.id,
+      );
+
+      // then
+      expect(findOne.id).toEqual(category.id);
+      expect(findOne.name).toEqual('ABC');
+    });
+  });
 });

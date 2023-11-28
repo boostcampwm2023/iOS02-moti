@@ -1,3 +1,6 @@
+import { User } from '../users/domain/user.domain';
+import { Category } from '../category/domain/category.domain';
+
 export interface Next {
   whereIdLessThan?: number;
   take?: number;
@@ -13,4 +16,13 @@ export interface IAchievementDetail {
   categoryId: number;
   categoryName: string;
   achieveCount: number;
+}
+
+export interface AchievementUpdate {
+  user?: User;
+  category?: Category;
+  title?: string;
+  content?: string;
+  imageUrl?: string;
+  thumbnailUrl?: string;
 }

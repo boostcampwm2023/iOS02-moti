@@ -66,4 +66,12 @@ export class AchievementRepository extends TransactionalRepository<AchievementEn
     }
     return null;
   }
+
+  async findOneByUserIdAndId(userId: number, id: number): Promise<Achievement> {
+    const achievementEntity = await this.repository.findOneBy({
+      user: { id: userId },
+      id: id,
+    });
+    return achievementEntity?.toModel();
+  }
 }
