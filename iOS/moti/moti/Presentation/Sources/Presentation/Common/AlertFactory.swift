@@ -8,11 +8,26 @@
 import UIKit
 
 public enum AlertFactory {
-    public static func makeNormalAlert(
-        title: String? = nil,
-        message: String? = nil,
+    public static func makeOneButtonAlert(
+        title: String?,
+        message: String?,
         okTitle: String? = "확인",
         okAction: (() -> Void)? = nil
+    ) -> UIAlertController {
+        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAlert = UIAlertAction(title: okTitle, style: .default) { _ in
+            okAction?()
+        }
+        
+        alertVC.addAction(okAlert)
+        return alertVC
+    }
+    
+    public static func makeTwoButtonAlert(
+        title: String?,
+        message: String?,
+        okTitle: String?,
+        okAction: (() -> Void)?
     ) -> UIAlertController {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let okAlert = UIAlertAction(title: okTitle, style: .default) { _ in
@@ -25,30 +40,32 @@ public enum AlertFactory {
         return alertVC
     }
     
-    public static func makeOneButtonAlert(
-        title: String? = nil,
-        message: String? = nil,
-        okTitle: String? = "확인",
-        okAction: (() -> Void)? = nil
+    public static func makeDestructiveTwoButtonAlert(
+        title: String?,
+        message: String?,
+        okTitle: String?,
+        okAction: (() -> Void)?
     ) -> UIAlertController {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let okAlert = UIAlertAction(title: okTitle, style: .default) { _ in
+        let okAlert = UIAlertAction(title: okTitle, style: .destructive) { _ in
             okAction?()
         }
+        let cancelAlert = UIAlertAction(title: "취소", style: .cancel)
         
+        alertVC.addAction(cancelAlert)
         alertVC.addAction(okAlert)
         return alertVC
     }
     
     public static func makeTextFieldAlert(
-        title: String? = nil,
-        okTitle: String? = "OK",
-        placeholder: String? = nil,
-        okAction: @escaping (String?) -> Void
+        title: String?,
+        okTitle: String?,
+        placeholder: String?,
+        okAction: ((String?) -> Void)?
     ) -> UIAlertController {
         let alertVC = UIAlertController(title: title, message: nil, preferredStyle: .alert)
         let okAlert = UIAlertAction(title: okTitle, style: .default) { _ in
-            okAction(alertVC.textFields?[0].text)
+            okAction?(alertVC.textFields?[0].text)
         }
         let cancelAlert = UIAlertAction(title: "취소", style: .cancel)
         

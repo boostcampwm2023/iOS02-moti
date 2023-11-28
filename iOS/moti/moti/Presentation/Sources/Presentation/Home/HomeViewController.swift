@@ -98,7 +98,7 @@ final class HomeViewController: BaseViewController<HomeView> {
     }
     
     @objc private func showAlert() {
-        let alertVC = AlertFactory.makeTextFieldAlert(
+        showTextFieldAlert(
             title: "추가할 카테고리 이름을 입력하세요.",
             okTitle: "생성",
             placeholder: "카테고리 이름은 최대 10글자입니다."
@@ -106,13 +106,10 @@ final class HomeViewController: BaseViewController<HomeView> {
             guard let self, let text else { return }
             viewModel.action(.addCategory(name: text))
         }
-        
-        present(alertVC, animated: true)
     }
     
     private func showErrorAlert(message: String) {
-        let alertVC = AlertFactory.makeOneButtonAlert(title: "에러", message: message)
-        present(alertVC, animated: true)
+        showOneButtonAlert(title: "에러", message: message)
     }
     
     // MARK: - Setup
