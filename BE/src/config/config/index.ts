@@ -15,7 +15,7 @@ export const configServiceModuleOptions = {
     DB_PASSWORD: Joi.string().required(),
     DB_DATABASE: Joi.string().required(),
     DB_ENTITIES: Joi.string().required(),
-    DB_LOGGING: Joi.boolean().required(),
+    DB_LOGGING: Joi.boolean().default(false),
     DB_SYNC: Joi.boolean().default(false),
 
     SWAGGER_TITLE: Joi.string().required(),
