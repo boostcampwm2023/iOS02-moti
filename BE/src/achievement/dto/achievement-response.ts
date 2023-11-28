@@ -18,7 +18,7 @@ export class AchievementResponse {
   static from(achievement: Achievement) {
     return new AchievementResponse(
       achievement.id,
-      achievement.thumbnailUrl,
+      achievement.image?.thumbnailUrl || null,
       achievement.title,
     );
   }
