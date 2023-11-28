@@ -72,6 +72,7 @@ describe('AchievementController', () => {
       const user = UsersFixture.user('ABC');
       const category = CategoryFixture.category(user, '다이어트');
       const achievements = AchievementFixture.achievements(30, user, category);
+      achievements[29].id = 1034;
 
       const pageRequest = new PaginateAchievementRequest();
       const pagedAchievements = new PaginateAchievementResponse(
