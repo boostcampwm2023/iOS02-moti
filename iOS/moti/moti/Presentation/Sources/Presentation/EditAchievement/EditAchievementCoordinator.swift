@@ -38,7 +38,11 @@ final class EditAchievementCoordinator: Coordinator {
         )
         editAchievementVC.coordinator = self
         editAchievementVC.delegate = self
-        editAchievementVC.navigationItem.hidesBackButton = true
+        
+        editAchievementVC.navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: "취소", style: .plain, target: self,
+            action: #selector(cancelButtonAction)
+        )
         
         navigationController.pushViewController(editAchievementVC, animated: false)
         navigationController.setNavigationBarHidden(false, animated: false)
@@ -66,7 +70,11 @@ final class EditAchievementCoordinator: Coordinator {
         navigationController.setNavigationBarHidden(false, animated: false)
     }
     
-    @objc func recaptureButtonAction() {
+    @objc private func cancelButtonAction() {
+        finish(animated: false)
+    }
+    
+    @objc private func recaptureButtonAction() {
         finish(animated: false)
     }
 }
