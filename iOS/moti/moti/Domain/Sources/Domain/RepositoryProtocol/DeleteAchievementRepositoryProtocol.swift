@@ -10,6 +10,6 @@ import Foundation
 public protocol DeleteAchievementRepositoryProtocol {
     func deleteAchievement(
         requestValue: DeleteAchievementRequestValue
-    ) async throws -> Int?
+    ) async throws -> Bool
 }
 

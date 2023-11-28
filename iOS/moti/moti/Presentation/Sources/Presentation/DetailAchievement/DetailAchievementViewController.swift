@@ -89,7 +89,6 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
                 case .initial:
                     break
                 case .success(let achievementId):
-                    guard let achievementId else { return }
                     delegate?.deleteButtonDidClicked(achievementId: achievementId)
                 case .failed(let message):
                     Logger.error("delete achievement error: \(message)")

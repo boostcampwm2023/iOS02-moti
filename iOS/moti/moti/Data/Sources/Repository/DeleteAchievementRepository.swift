@@ -15,11 +15,11 @@ public struct DeleteAchievementRepository: DeleteAchievementRepositoryProtocol {
         self.provider = provider
     }
     
-    public func deleteAchievement(requestValue: DeleteAchievementRequestValue) async throws -> Int? {
+    public func deleteAchievement(requestValue: DeleteAchievementRequestValue) async throws -> Bool {
         let endpoint = MotiAPI.deleteAchievement(requestValue: requestValue)
         let responseDTO = try await provider.request(with: endpoint, type: DeleteAchievementResponseDTO.self)
         
-        guard let deleteAchievementDataDTO = responseDTO.data else { throw NetworkError.decode }
-        return deleteAchievementDataDTO.id
+        guard let isSuccess = responseDTO.success else { throw NetworkError.decode }
+        return isSuccess
     }
 }

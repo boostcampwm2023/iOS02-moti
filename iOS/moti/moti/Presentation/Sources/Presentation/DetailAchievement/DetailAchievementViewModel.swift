@@ -24,7 +24,7 @@ final class DetailAchievementViewModel {
     
     enum DeleteState {
         case initial
-        case success(achievementId: Int?)
+        case success(achievementId: Int)
         case failed(message: String)
     }
     
@@ -77,9 +77,12 @@ final class DetailAchievementViewModel {
     private func deleteAchievement() {
         Task {
             do {
-                let achievementId = try await deleteAchievementUseCase.execute(
-                    requestValue: DeleteAchievementRequestValue(id: achievement.id))
-                deleteState = .success(achievementId: achievementId)
+                let isSuccess = try await deleteAchievementUseCase.execute(
+                    requestValue: DeleteAchievementRequestValue(id: achievement.id)
+                )
+                if isSuccess {
+                    deleteState = .success(achievementId: achievement.id)
+                }
             } catch {
                 Logger.debug("delete achievement error: \(error)")
                 deleteState = .failed(message: error.localizedDescription)
