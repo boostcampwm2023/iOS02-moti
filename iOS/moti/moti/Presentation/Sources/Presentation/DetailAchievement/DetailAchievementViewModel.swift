@@ -12,6 +12,7 @@ import Core
 final class DetailAchievementViewModel {
     enum DetailAchievementViewModelAction {
         case launch
+        case delete
     }
     
     enum LaunchState {
@@ -21,17 +22,27 @@ final class DetailAchievementViewModel {
         case failed(message: String)
     }
     
+    enum DeleteState {
+        case initial
+        case success(achievementId: Int?)
+        case failed(message: String)
+    }
+    
     private let fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
+    private let deleteAchievementUseCase: DeleteAchievementUseCase
     
     @Published private(set) var launchState: LaunchState = .none
+    @Published private(set) var deleteState: DeleteState = .initial
     
     private(set) var achievement: Achievement
     
     init(
         fetchDetailAchievementUseCase: FetchDetailAchievementUseCase,
+        deleteAchievementUseCase: DeleteAchievementUseCase,
         achievement: Achievement
     ) {
         self.fetchDetailAchievementUseCase = fetchDetailAchievementUseCase
+        self.deleteAchievementUseCase = deleteAchievementUseCase
         self.achievement = achievement
     }
     
@@ -40,6 +51,8 @@ final class DetailAchievementViewModel {
         case .launch:
             initTitle()
             fetchDetailAchievement()
+        case .delete:
+            deleteAchievement()
         }
     }
     
@@ -57,6 +70,19 @@ final class DetailAchievementViewModel {
             } catch {
                 Logger.debug("detail achievement fetch error: \(error)")
                 launchState = .failed(message: error.localizedDescription)
+            }
+        }
+    }
+    
+    private func deleteAchievement() {
+        Task {
+            do {
+                let achievementId = try await deleteAchievementUseCase.execute(
+                    requestValue: DeleteAchievementRequestValue(id: achievement.id))
+                deleteState = .success(achievementId: achievementId)
+            } catch {
+                Logger.debug("delete achievement error: \(error)")
+                deleteState = .failed(message: error.localizedDescription)
             }
         }
     }
