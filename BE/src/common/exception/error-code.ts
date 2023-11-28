@@ -59,4 +59,8 @@ export const ERROR_INFO = {
     statusCode: 400,
     message: '존재하지 않는 이미지 입니다.',
   },
+  NO_USER_IMAGE: {
+    statusCode: 400,
+    message: '이미지를 찾을 수 없습니다.',
+  },
 } as const;
