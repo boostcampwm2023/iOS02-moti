@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Post,
   Put,
   Query,
   UseGuards,
@@ -26,6 +27,7 @@ import { ParseIntPipe } from '../../common/pipe/parse-int.pipe';
 import { AchievementDeleteResponse } from '../dto/achievement-delete-response';
 import { AchievementUpdateRequest } from '../dto/achievement-update-request';
 import { AchievementUpdateResponse } from '../dto/achievement-update-response';
+import { AchievementCreateRequest } from '../dto/achievement-create-request';
 
 @Controller('/api/v1/achievements')
 @ApiTags('달성기록 API')
@@ -121,5 +123,26 @@ export class AchievementController {
         achievementUpdateRequest,
       ),
     );
+  }
+
+  @ApiOperation({
+    summary: '달성기록 생성 API',
+    description: '달성기록을 생성한다.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: '달성기록 생성',
+  })
+  @Post()
+  @UseGuards(AccessTokenGuard)
+  async create(
+    @AuthenticatedUser() user: User,
+    @Body() achievementCreate: AchievementCreateRequest,
+  ) {
+    const achievement = await this.achievementService.create(
+      user,
+      achievementCreate,
+    );
+    return ApiData.success(achievement);
   }
 }
