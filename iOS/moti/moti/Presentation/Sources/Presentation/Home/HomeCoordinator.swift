@@ -36,7 +36,16 @@ public final class HomeCoordinator: Coordinator {
     
     public func moveToDetailAchievementViewController(achievement: Achievement) {
         let detailAchievementCoordinator = DetailAchievementCoordinator(navigationController, self)
+        detailAchievementCoordinator.delegate = self
         childCoordinators.append(detailAchievementCoordinator)
         detailAchievementCoordinator.start(achievement: achievement)
+    }
+}
+
+extension HomeCoordinator: DetailAchievementCoordinatorDelegate {
+    func deleteButtonAction(achievementId: Int) {
+        // homeCoordinator에서 만든 homeVC를 따로 저장하고 있지 않기 때문에, naviVC에 접근하여 찾기
+        guard let homeVC = navigationController.viewControllers.compactMap({ $0 as? HomeViewController }).first else { return }
+        homeVC.delete(achievementId: achievementId)
     }
 }
