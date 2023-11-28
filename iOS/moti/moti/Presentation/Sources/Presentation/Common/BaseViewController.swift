@@ -24,12 +24,7 @@ class BaseViewController<LayoutView: UIView>: UIViewController {
         okTitle: String? = "확인",
         okAction: (() -> Void)? = nil
     ) {
-        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let okAlert = UIAlertAction(title: okTitle, style: .default) { _ in
-            okAction?()
-        }
-        
-        alertVC.addAction(okAlert)
+        let alertVC = AlertFactory.makeOneButtonAlert(title: title, message: message, okTitle: okTitle, okAction: okAction)
         present(alertVC, animated: true)
     }
     
@@ -39,14 +34,17 @@ class BaseViewController<LayoutView: UIView>: UIViewController {
         okTitle: String? = "확인",
         okAction: (() -> Void)? = nil
     ) {
-        let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let okAlert = UIAlertAction(title: okTitle, style: .default) { _ in
-            okAction?()
-        }
-        let cancelAlert = UIAlertAction(title: "취소", style: .cancel)
-        
-        alertVC.addAction(cancelAlert)
-        alertVC.addAction(okAlert)
+        let alertVC = AlertFactory.makeTwoButtonAlert(title: title, message: message, okTitle: okTitle, okAction: okAction)
+        present(alertVC, animated: true)
+    }
+    
+    func showDestructiveTwoButtonAlert(
+        title: String? = nil,
+        message: String? = nil,
+        okTitle: String? = "삭제",
+        okAction: (() -> Void)? = nil
+    ) {
+        let alertVC = AlertFactory.makeDestructiveTwoButtonAlert(title: title, message: message, okTitle: okTitle, okAction: okAction)
         present(alertVC, animated: true)
     }
     
@@ -56,12 +54,7 @@ class BaseViewController<LayoutView: UIView>: UIViewController {
         placeholder: String? = nil,
         okAction: ((String?) -> Void)? = nil
     ) {
-        let alertVC = AlertFactory.makeTextFieldAlert(
-            title: "추가할 카테고리 이름을 입력하세요.",
-            okTitle: "생성",
-            placeholder: "카테고리 이름은 최대 10글자입니다.",
-            okAction: okAction
-        )
+        let alertVC = AlertFactory.makeTextFieldAlert(title: title, okTitle: okTitle, placeholder: placeholder, okAction: okAction)
         present(alertVC, animated: true)
     }
 }
