@@ -2,14 +2,18 @@ import { BaseTimeEntity } from '../../common/entities/base.entity';
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserEntity } from '../../users/entities/user.entity';
 import { CategoryEntity } from '../../category/entities/category.entity';
 import { Achievement } from '../domain/achievement.domain';
+import { ImageEntity } from '../../image/entities/image.entity';
 
+@Index(['deletedAt', 'id'])
 @Entity({ name: 'achievement' })
 export class AchievementEntity extends BaseTimeEntity {
   @PrimaryGeneratedColumn()
@@ -29,20 +33,19 @@ export class AchievementEntity extends BaseTimeEntity {
   @Column({ type: 'text' })
   content: string;
 
-  @Column({ type: 'varchar', length: 100 })
-  imageUrl: string;
-
-  @Column({ type: 'varchar', length: 100 })
-  thumbnailUrl: string;
+  @OneToOne(() => ImageEntity, (image) => image.achievement, {
+    cascade: true,
+    eager: true,
+  })
+  image: ImageEntity;
 
   toModel() {
     const achievement = new Achievement(
       this.user?.toModel(),
-      this.category?.toModel(),
+      this.category?.toModel() || null,
       this.title,
       this.content,
-      this.imageUrl,
-      this.thumbnailUrl,
+      this.image?.toModel() || null,
     );
     achievement.id = this.id;
     return achievement;
@@ -51,12 +54,32 @@ export class AchievementEntity extends BaseTimeEntity {
   static from(achievement: Achievement) {
     const achievementEntity = new AchievementEntity();
     achievementEntity.id = achievement.id;
-    achievementEntity.user = UserEntity.from(achievement?.user);
-    achievementEntity.category = CategoryEntity.from(achievement?.category);
+    achievementEntity.user = achievement.user
+      ? UserEntity.from(achievement.user)
+      : null;
+    achievementEntity.category = achievement.category
+      ? CategoryEntity.from(achievement.category)
+      : null;
     achievementEntity.title = achievement.title;
     achievementEntity.content = achievement.content;
-    achievementEntity.imageUrl = achievement.imageUrl;
-    achievementEntity.thumbnailUrl = achievement.thumbnailUrl;
+    achievementEntity.image = achievement.image
+      ? ImageEntity.strictFrom(achievement.image)
+      : null;
+    return achievementEntity;
+  }
+
+  static strictFrom(achievement: Achievement) {
+    const achievementEntity = new AchievementEntity();
+    achievementEntity.id = achievement.id;
+    achievementEntity.user = achievement.user
+      ? UserEntity.from(achievement.user)
+      : null;
+    achievementEntity.category = achievement.category
+      ? CategoryEntity.from(achievement.category)
+      : null;
+    achievementEntity.title = achievement.title;
+    achievementEntity.content = achievement.content;
+    achievementEntity.image = null;
     return achievementEntity;
   }
 }
