@@ -23,7 +23,7 @@ class BaseViewController<LayoutView: UIView>: UIViewController {
         message: String? = nil,
         okTitle: String? = "확인",
         okAction: (() -> Void)? = nil
-    ){
+    ) {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let okAlert = UIAlertAction(title: okTitle, style: .default) { _ in
             okAction?()
@@ -38,7 +38,7 @@ class BaseViewController<LayoutView: UIView>: UIViewController {
         message: String? = nil,
         okTitle: String? = "확인",
         okAction: (() -> Void)? = nil
-    ){
+    ) {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let okAlert = UIAlertAction(title: okTitle, style: .default) { _ in
             okAction?()
@@ -55,7 +55,7 @@ class BaseViewController<LayoutView: UIView>: UIViewController {
         okTitle: String? = "OK",
         placeholder: String? = nil,
         okAction: ((String?) -> Void)? = nil
-    ){
+    ) {
         let alertVC = AlertFactory.makeTextFieldAlert(
             title: "추가할 카테고리 이름을 입력하세요.",
             okTitle: "생성",
