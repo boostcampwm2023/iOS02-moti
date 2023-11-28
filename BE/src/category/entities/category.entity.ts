@@ -37,7 +37,7 @@ export class CategoryEntity extends BaseTimeEntity {
   static from(category: Category): CategoryEntity {
     const categoryEntity = new CategoryEntity();
     categoryEntity.id = category.id;
-    categoryEntity.user = UserEntity.from(category?.user);
+    categoryEntity.user = category.user ? UserEntity.from(category.user) : null;
     categoryEntity.name = category.name;
     return categoryEntity;
   }
