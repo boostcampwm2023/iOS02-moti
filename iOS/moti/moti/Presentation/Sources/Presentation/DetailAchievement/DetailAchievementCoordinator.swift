@@ -10,10 +10,15 @@ import Core
 import Data
 import Domain
 
+protocol DetailAchievementCoordinatorDelegate: AnyObject {
+    func deleteButtonAction(achievementId: Int)
+}
+
 public final class DetailAchievementCoordinator: Coordinator {
     public var parentCoordinator: Coordinator?
     public var childCoordinators: [Coordinator] = []
     public var navigationController: UINavigationController
+    weak var delegate: DetailAchievementCoordinatorDelegate?
     
     public init(
         _ navigationController: UINavigationController,
@@ -48,5 +53,10 @@ public final class DetailAchievementCoordinator: Coordinator {
 extension DetailAchievementCoordinator: DetailAchievementViewControllerDelegate {
     func editButtonDidClicked(achievement: Achievement) {
         moveEditAchievementViewController(achievement: achievement)
+    }
+    
+    func deleteButtonDidClicked(achievementId: Int) {
+        finish(animated: true)
+        delegate?.deleteButtonAction(achievementId: achievementId)
     }
 }

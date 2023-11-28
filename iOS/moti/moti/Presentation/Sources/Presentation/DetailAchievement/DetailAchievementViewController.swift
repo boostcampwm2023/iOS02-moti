@@ -13,6 +13,7 @@ import Domain
 
 protocol DetailAchievementViewControllerDelegate: AnyObject {
     func editButtonDidClicked(achievement: Achievement)
+    func deleteButtonDidClicked(achievementId: Int)
 }
 
 final class DetailAchievementViewController: BaseViewController<DetailAchievementView> {
@@ -53,8 +54,11 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
     }
     
     @objc private func didClickedRemoveButton() {
-        showDestructiveTwoButtonAlert(title: "정말로 삭제하시겠습니까?", message: "삭제된 도전 기록은 되돌릴 수 없습니다.") {
-            Logger.debug("remove ..")
+        showDestructiveTwoButtonAlert(title: "정말로 삭제하시겠습니까?", message: "삭제된 도전 기록은 되돌릴 수 없습니다.") { [weak self] in
+            guard let self else { return }
+            
+            // TODO: viewModel에서 delete API 호출
+            self.delegate?.deleteButtonDidClicked(achievementId: viewModel.achievement.id)
         }
     }
     
