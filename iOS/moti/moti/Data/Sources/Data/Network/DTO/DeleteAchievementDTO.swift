@@ -15,5 +15,5 @@ struct DeleteAchievementResponseDTO: ResponseDTO {
 }
 
 struct DeleteAchievementDataDTO: Codable {
-    let id: Int?
+    let id: Int
 }
