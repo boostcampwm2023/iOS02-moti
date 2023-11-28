@@ -19,7 +19,7 @@ export class PaginateAchievementRequest {
 
   constructor(
     categoryId?: number,
-    take: number = 12,
+    take: number = 30,
     whereIdLessThan?: number,
   ) {
     this.categoryId = categoryId;

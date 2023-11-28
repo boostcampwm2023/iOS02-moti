@@ -146,12 +146,12 @@ describe('AchievementRepository test', () => {
       const category_2 = await categoryFixture.getCategory(user, 'DEF');
 
       const achievements = [];
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 30; i++) {
         achievements.push(
           await achievementFixture.getAchievement(user, category_1),
         );
       }
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 30; i++) {
         achievements.push(
           await achievementFixture.getAchievement(user, category_2),
         );
@@ -166,7 +166,7 @@ describe('AchievementRepository test', () => {
       );
 
       // then
-      expect(findAll.length).toEqual(12);
+      expect(findAll.length).toEqual(30);
     });
   });
 
