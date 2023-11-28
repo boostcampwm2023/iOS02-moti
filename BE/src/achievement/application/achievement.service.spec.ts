@@ -18,6 +18,11 @@ import { DataSource } from 'typeorm';
 import { AchievementUpdateRequest } from '../dto/achievement-update-request';
 import { CategoryRepository } from '../../category/entities/category.repository';
 import { InvalidCategoryException } from '../exception/invalid-category.exception';
+import { ImageTestModule } from '../../../test/image/image-test.module';
+import { ImageRepository } from '../../image/entities/image.repository';
+import { AchievementCreateRequest } from '../dto/achievement-create-request';
+import { ImageFixture } from '../../../test/image/image-fixture';
+import { NoUserImageException } from '../exception/no-user-image-exception';
 
 describe('AchievementService Test', () => {
   let achievementService: AchievementService;
@@ -25,7 +30,9 @@ describe('AchievementService Test', () => {
   let usersFixture: UsersFixture;
   let categoryFixture: CategoryFixture;
   let achievementFixture: AchievementFixture;
+  let imageFixture: ImageFixture;
   let dataSource: DataSource;
+
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
@@ -34,10 +41,12 @@ describe('AchievementService Test', () => {
         CustomTypeOrmModule.forCustomRepository([
           AchievementRepository,
           CategoryRepository,
+          ImageRepository,
         ]),
         UsersTestModule,
         CategoryTestModule,
         AchievementTestModule,
+        ImageTestModule,
       ],
       providers: [AchievementService],
     }).compile();
@@ -46,6 +55,8 @@ describe('AchievementService Test', () => {
     achievementRepository = module.get<AchievementRepository>(
       AchievementRepository,
     );
+
+    imageFixture = module.get<ImageFixture>(ImageFixture);
     usersFixture = module.get<UsersFixture>(UsersFixture);
     categoryFixture = module.get<CategoryFixture>(CategoryFixture);
     achievementFixture = module.get<AchievementFixture>(AchievementFixture);
@@ -278,5 +289,76 @@ describe('AchievementService Test', () => {
     await expect(
       achievementService.update(user.id, achievement.id, request),
     ).rejects.toThrow(InvalidCategoryException);
+  });
+
+  describe('create는 achievement를 생성한다.', () => {
+    it('성공적으로 생성하면 생성된 achievement를 반환한다.', async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const category = await categoryFixture.getCategory(user, 'ABC');
+      const image = await imageFixture.getImage(user);
+
+      const request = new AchievementCreateRequest(
+        'create title',
+        'create content',
+        category.id,
+        image.id,
+      );
+
+      // when
+      const response = await achievementService.create(user, request);
+
+      // then
+      expect(response.id).toBeDefined();
+      expect(response.title).toEqual('create title');
+      expect(response.content).toEqual('create content');
+      expect(response.category.id).toEqual(category.id);
+      expect(response.category.name).toEqual(category.name);
+      expect(response.category.achieveCount).toEqual(1);
+    });
+
+    it('내 카테고리가 아닌 경우 InvalidCategoryException 예외를 던진다.', async () => {
+      // given
+      const otherUser = await usersFixture.getUser('DEF');
+      const otherCategory = await categoryFixture.getCategory(otherUser);
+
+      const user = await usersFixture.getUser('ABC');
+      const image = await imageFixture.getImage(user);
+
+      const request = new AchievementCreateRequest(
+        'create title',
+        'create content',
+        otherCategory.id,
+        image.id,
+      );
+
+      // when
+      // then
+      await expect(achievementService.create(user, request)).rejects.toThrow(
+        InvalidCategoryException,
+      );
+    });
+
+    it('내 이미지가 아닌 경우 NoUserImageException 예외를 던진다.', async () => {
+      // given
+      const otherUser = await usersFixture.getUser('DEF');
+      const otherImage = await imageFixture.getImage(otherUser);
+
+      const user = await usersFixture.getUser('ABC');
+      const category = await categoryFixture.getCategory(user, 'ABC');
+
+      const request = new AchievementCreateRequest(
+        'create title',
+        'create content',
+        category.id,
+        otherImage.id,
+      );
+
+      // when
+      // then
+      await expect(achievementService.create(user, request)).rejects.toThrow(
+        NoUserImageException,
+      );
+    });
   });
 });
