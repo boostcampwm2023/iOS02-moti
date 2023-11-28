@@ -56,9 +56,7 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
     @objc private func didClickedRemoveButton() {
         showDestructiveTwoButtonAlert(title: "정말로 삭제하시겠습니까?", message: "삭제된 도전 기록은 되돌릴 수 없습니다.") { [weak self] in
             guard let self else { return }
-            
-            // TODO: viewModel에서 delete API 호출
-            self.delegate?.deleteButtonDidClicked(achievementId: viewModel.achievement.id)
+            viewModel.action(.delete)
         }
     }
     
@@ -78,7 +76,22 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
                 case .success(let achievement):
                     layoutView.configure(achievement: achievement)
                 case .failed(let message):
-                    Logger.error("fetch detail rrror: \(message)")
+                    Logger.error("fetch detail error: \(message)")
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$deleteState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .initial:
+                    break
+                case .success(let achievementId):
+                    delegate?.deleteButtonDidClicked(achievementId: achievementId)
+                case .failed(let message):
+                    Logger.error("delete achievement error: \(message)")
                 }
             }
             .store(in: &cancellables)
