@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   OneToOne,
@@ -28,6 +29,7 @@ export class ImageEntity {
   @Column({ type: 'varchar', length: 200, nullable: true })
   thumbnailUrl: string;
 
+  @Index()
   @OneToOne(() => AchievementEntity, { nullable: true })
   @JoinColumn({ name: 'achievement_id', referencedColumnName: 'id' })
   achievement: AchievementEntity;
@@ -39,8 +41,19 @@ export class ImageEntity {
     imageEntity.imageUrl = image.imageUrl;
     imageEntity.thumbnailUrl = image.thumbnailUrl;
     imageEntity.achievement = image.achievement
-      ? AchievementEntity.from(image?.achievement)
+      ? AchievementEntity.strictFrom(image?.achievement)
       : null;
+    imageEntity.user = image.user ? UserEntity.from(image.user) : null;
+    return imageEntity;
+  }
+
+  static strictFrom(image: Image): ImageEntity {
+    const imageEntity = new ImageEntity();
+    imageEntity.id = image.id;
+    imageEntity.originalName = image.originalName;
+    imageEntity.imageUrl = image.imageUrl;
+    imageEntity.thumbnailUrl = image.thumbnailUrl;
+    imageEntity.achievement = null;
     imageEntity.user = image.user ? UserEntity.from(image.user) : null;
     return imageEntity;
   }
