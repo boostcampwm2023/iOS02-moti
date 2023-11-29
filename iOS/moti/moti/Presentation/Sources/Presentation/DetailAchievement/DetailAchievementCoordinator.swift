@@ -67,7 +67,7 @@ extension DetailAchievementCoordinator: DetailAchievementViewControllerDelegate 
 }
 
 extension DetailAchievementCoordinator: EditAchievementCoordinatorDelegate {
-    func doneAction(updateAchievementRequestValue: UpdateAchievementRequestValue) {
+    func doneButtonAction(updateAchievementRequestValue: UpdateAchievementRequestValue) {
         detailAchievementViewController?.update(updateAchievementRequestValue: updateAchievementRequestValue)
     }
 }

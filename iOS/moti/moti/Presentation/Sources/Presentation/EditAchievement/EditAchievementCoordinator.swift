@@ -11,7 +11,7 @@ import Data
 import Domain
 
 protocol EditAchievementCoordinatorDelegate: AnyObject {
-    func doneAction(updateAchievementRequestValue: UpdateAchievementRequestValue)
+    func doneButtonAction(updateAchievementRequestValue: UpdateAchievementRequestValue)
 }
 
 final class EditAchievementCoordinator: Coordinator {
@@ -87,7 +87,7 @@ final class EditAchievementCoordinator: Coordinator {
 extension EditAchievementCoordinator: EditAchievementViewControllerDelegate {
     func doneButtonDidClickedFromEditMode(updateAchievementRequestValue: UpdateAchievementRequestValue) {
         finish(animated: false)
-        delegate?.doneAction(updateAchievementRequestValue: updateAchievementRequestValue)
+        delegate?.doneButtonAction(updateAchievementRequestValue: updateAchievementRequestValue)
     }
     
     func doneButtonDidClickedFromCaptureMode() {
