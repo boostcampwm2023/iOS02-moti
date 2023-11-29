@@ -148,7 +148,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
         if let achievement { // 상세 화면에서 넘어옴 => 수정 API
             let updateAchievementRequestValue = UpdateAchievementRequestValue(
                 title: layoutView.titleTextField.text ?? "",
-                content: bottomSheet.textView.text ?? "",
+                content: bottomSheet.text,
                 categoryId: findSelectedCategory().id
             )
             
