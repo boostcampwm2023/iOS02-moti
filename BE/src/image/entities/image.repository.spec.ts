@@ -119,7 +119,6 @@ describe('ImageRepository', () => {
         expect(findImage.originalName).toEqual('image1.jpg');
         expect(findImage.imageKey).toEqual('abcd-efgh-ijkl-mnop-deadbeef');
         expect(findImage.thumbnailUrl).toBeNull();
-        expect(findImage.thumbnailUrl).toBeNull();
         expect(findImage.achievement).toBeNull();
       });
     });
@@ -157,7 +156,6 @@ describe('ImageRepository', () => {
         expect(findImage.user).toBeNull();
         expect(findImage.originalName).toEqual('image1.jpg');
         expect(findImage.imageKey).toEqual('abcd-efgh-ijkl-mnop-deadbeef');
-        expect(findImage.thumbnailUrl).toBeNull();
         expect(findImage.thumbnailUrl).toBeNull();
         expect(findImage.achievement).toBeNull();
       });
