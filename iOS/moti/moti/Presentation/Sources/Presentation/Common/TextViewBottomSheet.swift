@@ -10,7 +10,7 @@ import Combine
 
 final class TextViewBottomSheet: UIViewController {
 
-    private let textView = {
+    let textView = {
         let textView = UITextView()
         textView.font = .medium
         return textView

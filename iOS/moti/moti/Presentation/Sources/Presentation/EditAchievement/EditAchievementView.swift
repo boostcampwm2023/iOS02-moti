@@ -20,7 +20,7 @@ final class EditAchievementView: UIView {
         return imageView
     }()
     
-    private let titleTextField = {
+    let titleTextField = {
         let textField = UITextField()
         textField.font = .largeBold
         textField.placeholder = "도전 성공"
