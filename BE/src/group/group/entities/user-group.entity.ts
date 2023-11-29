@@ -1,4 +1,10 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { UserEntity } from '../../../users/entities/user.entity';
 import { GroupEntity } from './group.entity';
 import { BaseTimeEntity } from '../../../common/entities/base.entity';
@@ -7,18 +13,15 @@ import { UserGroup } from '../domain/user-group.doamin';
 
 @Entity({ name: 'user_group' })
 export class UserGroupEntity extends BaseTimeEntity {
-  @PrimaryColumn({ type: 'bigint', nullable: false })
-  userId: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @ManyToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: UserEntity;
 
-  @PrimaryColumn()
-  groupId: number;
-
   @ManyToOne(() => GroupEntity)
-  @JoinColumn({ name: 'groupId', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'group_id', referencedColumnName: 'id' })
   group: GroupEntity;
 
   @PrimaryColumn({
@@ -41,11 +44,18 @@ export class UserGroupEntity extends BaseTimeEntity {
     userGroupEntity.user = userGroup.user
       ? UserEntity.from(userGroup.user)
       : null;
-    userGroupEntity.userId = userGroup.user?.id || null;
     userGroupEntity.group = userGroup.group
-      ? GroupEntity.from(userGroup.group)
+      ? GroupEntity.strictFrom(userGroup.group)
       : null;
-    userGroupEntity.groupId = userGroup.group?.id || null;
+    userGroupEntity.grade = userGroup.grade;
+    return userGroupEntity;
+  }
+
+  static strictFrom(userGroup: UserGroup): UserGroupEntity {
+    const userGroupEntity = new UserGroupEntity();
+    userGroupEntity.user = userGroup.user
+      ? UserEntity.from(userGroup.user)
+      : null;
     userGroupEntity.grade = userGroup.grade;
     return userGroupEntity;
   }

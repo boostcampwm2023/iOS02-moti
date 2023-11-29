@@ -22,9 +22,7 @@ describe('UserGroupEntity Test', () => {
       // then
       expect(userGroupEntity).toBeInstanceOf(UserGroupEntity);
       expect(userGroupEntity.user).toEqual(UserEntity.from(user));
-      expect(userGroupEntity.userId).toBe(user.id);
       expect(userGroupEntity.group).toEqual(GroupEntity.from(group));
-      expect(userGroupEntity.groupId).toBe(group.id);
       expect(userGroupEntity.grade).toBe(userGroup.grade);
     });
 
@@ -38,9 +36,7 @@ describe('UserGroupEntity Test', () => {
       // then
       expect(userGroupEntity).toBeInstanceOf(UserGroupEntity);
       expect(userGroupEntity.user).toBeNull();
-      expect(userGroupEntity.userId).toBeNull();
       expect(userGroupEntity.group).toBeNull();
-      expect(userGroupEntity.groupId).toBeNull();
       expect(userGroupEntity.grade).toBe(userGroup.grade);
     });
   });
