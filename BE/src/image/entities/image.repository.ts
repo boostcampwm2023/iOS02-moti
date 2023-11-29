@@ -2,6 +2,7 @@ import { CustomRepository } from '../../config/typeorm/custom-repository.decorat
 import { ImageEntity } from './image.entity';
 import { TransactionalRepository } from '../../config/transaction-manager/transactional-repository';
 import { Image } from '../domain/image.domain';
+import { User } from '../../users/domain/user.domain';
 
 @CustomRepository(ImageEntity)
 export class ImageRepository extends TransactionalRepository<ImageEntity> {
@@ -14,6 +15,17 @@ export class ImageRepository extends TransactionalRepository<ImageEntity> {
   async findById(id: number): Promise<Image> {
     const imageEntity = await this.repository.findOneBy({
       id: id,
+    });
+
+    return imageEntity?.toModel();
+  }
+
+  async findByIdAndUser(id: number, user: User): Promise<Image> {
+    const imageEntity = await this.repository.findOneBy({
+      id: id,
+      user: {
+        id: user.id,
+      },
     });
 
     return imageEntity?.toModel();

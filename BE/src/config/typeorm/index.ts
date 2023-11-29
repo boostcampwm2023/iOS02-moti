@@ -13,7 +13,7 @@ export const typeOrmModuleOptions = {
       password: configService.get('DB_PASSWORD'),
       database: configService.get('DB_DATABASE'),
       entities: [configService.get('DB_ENTITIES')],
-      logging: configService.get('NODE_ENV') === 'development',
+      logging: configService.get('DB_LOGGING'),
       dropSchema: configService.get('NODE_ENV') === 'test',
       synchronize: configService.get('DB_SYNC'),
       namingStrategy: new CamelSnakeNameStrategy(),

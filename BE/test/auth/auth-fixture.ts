@@ -41,4 +41,23 @@ export class AuthFixture {
       accessToken,
     };
   }
+
+  async getExpiredAccessTokenUser(
+    id: number | string,
+  ): Promise<UserFixtureData> {
+    const user = await this.userFixture.getUser(id);
+    const claim: JwtRolePayloads = {
+      userCode: user.userCode,
+      roles: user.roles,
+    };
+
+    const accessToken = this.jwtUtils.createToken(
+      claim,
+      new Date('1970-01-01'),
+    );
+    return {
+      user,
+      accessToken,
+    };
+  }
 }

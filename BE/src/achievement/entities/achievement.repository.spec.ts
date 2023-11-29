@@ -16,6 +16,7 @@ import { AchievementFixture } from '../../../test/achievement/achievement-fixtur
 import { CategoryTestModule } from '../../../test/category/category-test.module';
 import { Achievement } from '../domain/achievement.domain';
 import { PaginateAchievementRequest } from '../dto/paginate-achievement-request';
+import { ImageFixture } from '../../../test/image/image-fixture';
 
 describe('AchievementRepository test', () => {
   let achievementRepository: AchievementRepository;
@@ -23,6 +24,7 @@ describe('AchievementRepository test', () => {
   let usersFixture: UsersFixture;
   let categoryFixture: CategoryFixture;
   let achievementFixture: AchievementFixture;
+  let imageFixture: ImageFixture;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -39,6 +41,7 @@ describe('AchievementRepository test', () => {
       ],
     }).compile();
 
+    imageFixture = module.get<ImageFixture>(ImageFixture);
     usersFixture = module.get<UsersFixture>(UsersFixture);
     categoryFixture = module.get<CategoryFixture>(CategoryFixture);
     achievementFixture = module.get<AchievementFixture>(AchievementFixture);
@@ -57,13 +60,17 @@ describe('AchievementRepository test', () => {
       // given
       const user = await usersFixture.getUser('ABC');
       const category = await categoryFixture.getCategory(user, '카테고리1');
+      const image = await imageFixture.getImage(
+        user,
+        'imageUrl',
+        'thumbnailUrl',
+      );
       const achievement = new Achievement(
         user,
         category,
         '다이어트 1회차',
         '오늘의 닭가슴살',
-        'imageUrl',
-        'thumbnailUrl',
+        image,
       );
 
       // when
@@ -72,8 +79,8 @@ describe('AchievementRepository test', () => {
       // then
       expect(expected.title).toEqual('다이어트 1회차');
       expect(expected.content).toEqual('오늘의 닭가슴살');
-      expect(expected.imageUrl).toEqual('imageUrl');
-      expect(expected.thumbnailUrl).toEqual('thumbnailUrl');
+      expect(expected.image.imageUrl).toEqual('imageUrl');
+      expect(expected.image.thumbnailUrl).toEqual('thumbnailUrl');
     });
   });
 
@@ -111,17 +118,11 @@ describe('AchievementRepository test', () => {
       const category_1 = await categoryFixture.getCategory(user, 'ABC');
       const category_2 = await categoryFixture.getCategory(user, 'DEF');
 
-      const achievements = [];
-      for (let i = 0; i < 10; i++) {
-        achievements.push(
-          await achievementFixture.getAchievement(user, category_1),
-        );
-      }
-      for (let i = 0; i < 10; i++) {
-        achievements.push(
-          await achievementFixture.getAchievement(user, category_2),
-        );
-      }
+      const achievements: Achievement[] =
+        await achievementFixture.getAchievements(10, user, category_1);
+      achievements.push(
+        ...(await achievementFixture.getAchievements(10, user, category_2)),
+      );
 
       // when
       const achievementPaginationOption: PaginateAchievementRequest = {
@@ -175,13 +176,8 @@ describe('AchievementRepository test', () => {
       // given
       const user = await usersFixture.getUser('ABC');
       const category = await categoryFixture.getCategory(user, 'ABC');
-
-      const achievements: Achievement[] = [];
-      for (let i = 0; i < 10; i++) {
-        achievements.push(
-          await achievementFixture.getAchievement(user, category),
-        );
-      }
+      const achievements: Achievement[] =
+        await achievementFixture.getAchievements(10, user, category);
 
       // when
       const achievementDetail =
@@ -207,12 +203,8 @@ describe('AchievementRepository test', () => {
       const user = await usersFixture.getUser('ABC');
       const category = await categoryFixture.getCategory(user, 'ABC');
 
-      const achievements: Achievement[] = [];
-      for (let i = 0; i < 10; i++) {
-        achievements.push(
-          await achievementFixture.getAchievement(user, category),
-        );
-      }
+      const achievements: Achievement[] =
+        await achievementFixture.getAchievements(10, user, category);
 
       // when
       const achievementDetail =
@@ -231,13 +223,7 @@ describe('AchievementRepository test', () => {
       // given
       const user = await usersFixture.getUser('ABC');
       const category = await categoryFixture.getCategory(user, 'ABC');
-
-      const achievements: Achievement[] = [];
-      for (let i = 0; i < 10; i++) {
-        achievements.push(
-          await achievementFixture.getAchievement(user, category),
-        );
-      }
+      await achievementFixture.getAchievements(10, user, category);
 
       // when
       const achievementDetail =
@@ -260,7 +246,7 @@ describe('AchievementRepository test', () => {
       );
 
       // when
-      const findOne = await achievementRepository.findOneByUserIdAndId(
+      const findOne = await achievementRepository.findByIdAndUser(
         user.id,
         achievement.id,
       );

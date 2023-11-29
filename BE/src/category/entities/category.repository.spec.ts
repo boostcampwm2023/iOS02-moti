@@ -136,7 +136,7 @@ describe('CategoryRepository', () => {
       const category = await categoryFixture.getCategory(user, 'ABC');
 
       // when
-      const findOne = await categoryRepository.findOneByUserIdAndId(
+      const findOne = await categoryRepository.findByIdAndUser(
         user.id,
         category.id,
       );

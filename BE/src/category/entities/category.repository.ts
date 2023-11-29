@@ -35,7 +35,7 @@ export class CategoryRepository extends TransactionalRepository<CategoryEntity> 
     return categories.map((category) => new CategoryMetaData(category));
   }
 
-  async findOneByUserIdAndId(userId: number, id: number): Promise<Category> {
+  async findByIdAndUser(userId: number, id: number): Promise<Category> {
     const categoryEntity = await this.repository.findOneBy({
       user: { id: userId },
       id: id,
