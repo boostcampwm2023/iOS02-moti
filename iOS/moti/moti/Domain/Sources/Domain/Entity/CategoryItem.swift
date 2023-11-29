@@ -12,8 +12,8 @@ import Foundation
 public struct CategoryItem: Hashable {
     public let id: Int
     public let name: String
-    public let continued: Int
-    public let lastChallenged: Date?
+    public var continued: Int
+    public var lastChallenged: Date?
     
     private let dateFormatter = {
         let dateFormatter = DateFormatter()
