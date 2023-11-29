@@ -36,6 +36,7 @@ export class ImageFixture {
     const file = FileFixture.file(`test${++ImageFixture.id}`, 'jpg');
     image.originalName = file.originalname;
     image.imageUrl = imageUrl || file.path;
+    image.imageKey = `${file.filename}${++this.id}`;
     return image;
   }
 }
