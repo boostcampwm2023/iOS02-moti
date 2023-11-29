@@ -10,10 +10,15 @@ import Core
 import Data
 import Domain
 
+protocol EditAchievementCoordinatorDelegate: AnyObject {
+    func doneAction(updateAchievementRequestValue: UpdateAchievementRequestValue)
+}
+
 final class EditAchievementCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
+    weak var delegate: EditAchievementCoordinatorDelegate?
     
     init(
         _ navigationController: UINavigationController,
@@ -82,11 +87,7 @@ final class EditAchievementCoordinator: Coordinator {
 extension EditAchievementCoordinator: EditAchievementViewControllerDelegate {
     func doneButtonDidClickedFromEditMode(updateAchievementRequestValue: UpdateAchievementRequestValue) {
         finish(animated: false)
-        
-        guard let detailAchievementVC = navigationController.viewControllers
-            .compactMap({ $0 as? DetailAchievementViewController }).first else { return }
-        
-        detailAchievementVC.update(updateAchievementRequestValue: updateAchievementRequestValue)
+        delegate?.doneAction(updateAchievementRequestValue: updateAchievementRequestValue)
     }
     
     func doneButtonDidClickedFromCaptureMode() {
