@@ -1,6 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseTimeEntity } from '../../../common/entities/base.entity';
 import { Group } from '../domain/group.domain';
+import { UserGroupEntity } from './user-group.entity';
 
 @Entity({ name: 'group' })
 export class GroupEntity extends BaseTimeEntity {
@@ -10,8 +11,13 @@ export class GroupEntity extends BaseTimeEntity {
   @Column({ type: 'varchar', length: 100, nullable: false })
   name: string;
 
-  @Column({ type: 'varchar', length: 100, nullable: false })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   avatarUrl: string;
+
+  @OneToMany(() => UserGroupEntity, (userGroup) => userGroup.group, {
+    cascade: true,
+  })
+  userGroups: UserGroupEntity[];
 
   toModel(): Group {
     const group = new Group(this.name, this.avatarUrl);
@@ -24,6 +30,18 @@ export class GroupEntity extends BaseTimeEntity {
     const groupEntity = new GroupEntity();
     groupEntity.id = group.id;
     groupEntity.name = group.name;
+    groupEntity.userGroups = group.userGroups.length
+      ? group.userGroups.map((ug) => UserGroupEntity.strictFrom(ug))
+      : null;
+    groupEntity.avatarUrl = group.avatarUrl;
+    return groupEntity;
+  }
+
+  static strictFrom(group: Group): GroupEntity {
+    const groupEntity = new GroupEntity();
+    groupEntity.id = group.id;
+    groupEntity.name = group.name;
+    groupEntity.userGroups = null;
     groupEntity.avatarUrl = group.avatarUrl;
     return groupEntity;
   }
