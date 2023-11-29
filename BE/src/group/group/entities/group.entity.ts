@@ -3,7 +3,7 @@ import { BaseTimeEntity } from '../../../common/entities/base.entity';
 import { Group } from '../domain/group.domain';
 import { UserGroupEntity } from './user-group.entity';
 import { GroupAchievementEntity } from '../../achievement/entities/group-achievement.entity';
-import { isNullOrUndefined } from '../../../common/utils/is-null-undefinded';
+import { isNullOrUndefined } from '../../../common/utils/is-null-or-undefined';
 
 @Entity({ name: 'group' })
 export class GroupEntity extends BaseTimeEntity {
@@ -20,6 +20,12 @@ export class GroupEntity extends BaseTimeEntity {
     cascade: true,
   })
   userGroups: UserGroupEntity[];
+
+  @OneToMany(
+    () => GroupAchievementEntity,
+    (groupAchievement) => groupAchievement.group,
+  )
+  achievements: GroupAchievementEntity[];
 
   toModel(): Group {
     const group = new Group(this.name, this.avatarUrl);
