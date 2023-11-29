@@ -12,6 +12,7 @@ import Domain
 
 protocol DetailAchievementCoordinatorDelegate: AnyObject {
     func deleteButtonAction(achievementId: Int)
+    func updateAchievement(id: Int, newCategoryId: Int)
 }
 
 public final class DetailAchievementCoordinator: Coordinator {
@@ -69,5 +70,6 @@ extension DetailAchievementCoordinator: DetailAchievementViewControllerDelegate 
 extension DetailAchievementCoordinator: EditAchievementCoordinatorDelegate {
     func doneButtonAction(updateAchievementRequestValue: UpdateAchievementRequestValue) {
         detailAchievementViewController?.update(updateAchievementRequestValue: updateAchievementRequestValue)
+        delegate?.updateAchievement(id: updateAchievementRequestValue.id, newCategoryId: updateAchievementRequestValue.body.categoryId)
     }
 }
