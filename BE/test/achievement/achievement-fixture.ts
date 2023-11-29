@@ -15,9 +15,14 @@ export class AchievementFixture {
     private readonly imageFixture: ImageFixture,
   ) {}
 
-  async getAchievement(user: User, category: Category): Promise<Achievement> {
-    const image = await this.imageFixture.getImage(user);
+  async getAchievement(
+    user: User,
+    category: Category,
+    image?: Image,
+  ): Promise<Achievement> {
+    image = image || (await this.imageFixture.getImage(user));
     const achievement = AchievementFixture.achievement(user, category, image);
+    console.log(achievement);
     return await this.achievementRepository.saveAchievement(achievement);
   }
 

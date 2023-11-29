@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { UserEntity } from '../../users/entities/user.entity';
 import { AdminStatus } from '../domain/admin-status';
 import { Admin } from '../domain/admin.domain';
+import { isNullOrUndefined } from '../../common/utils/is-null-or-undefined';
 
 @Entity({ name: 'admin' })
 export class AdminEntity {
@@ -26,6 +27,8 @@ export class AdminEntity {
   status: AdminStatus;
 
   static from(admin: Admin) {
+    if (isNullOrUndefined(admin)) return admin;
+
     const adminEntity = new AdminEntity();
     adminEntity.user = UserEntity.from(admin.user);
     adminEntity.userId = admin.user.id;

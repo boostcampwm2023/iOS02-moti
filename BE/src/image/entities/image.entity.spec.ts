@@ -12,6 +12,7 @@ describe('ImageEntity Test', () => {
       const image = new Image(user);
       image.originalName = 'originalName';
       image.imageUrl = 'imageUrl';
+      image.achievement = null;
 
       // when
       const imageEntity = ImageEntity.from(image);
@@ -23,6 +24,26 @@ describe('ImageEntity Test', () => {
       expect(imageEntity.imageUrl).toBe(image.imageUrl);
       expect(imageEntity.thumbnailUrl).toBeNull();
       expect(imageEntity.achievement).toBeNull();
+    });
+
+    it('achievement가 비어있는 경우에도 from을 사용할 수 있다.', () => {
+      // given
+      const user = new User();
+      const image = new Image(user);
+      image.originalName = 'originalName';
+      image.imageUrl = 'imageUrl';
+      image.achievement = undefined;
+
+      // when
+      const imageEntity = ImageEntity.from(image);
+
+      // then
+      expect(imageEntity).toBeInstanceOf(ImageEntity);
+      expect(imageEntity.id).toBe(image.id);
+      expect(imageEntity.originalName).toBe(image.originalName);
+      expect(imageEntity.imageUrl).toBe(image.imageUrl);
+      expect(imageEntity.thumbnailUrl).toBeNull();
+      expect(imageEntity.achievement).toBeUndefined();
     });
   });
 
@@ -68,7 +89,7 @@ describe('ImageEntity Test', () => {
       expect(imageEntity.originalName).toBe(image.originalName);
       expect(imageEntity.imageUrl).toBe(image.imageUrl);
       expect(imageEntity.thumbnailUrl).toBeNull();
-      expect(imageEntity.achievement).toBeNull();
+      expect(imageEntity.achievement).toBeUndefined();
     });
   });
 });

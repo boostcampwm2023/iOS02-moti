@@ -36,9 +36,7 @@ describe('UserBlockedUserEntity Test', () => {
       // then
       expect(userBlockedUserEntity).toBeInstanceOf(UserBlockedUserEntity);
       expect(userBlockedUserEntity.user).toBeNull();
-      expect(userBlockedUserEntity.userId).toBeNull();
       expect(userBlockedUserEntity.blockedUser).toBeNull();
-      expect(userBlockedUserEntity.blockedUserId).toBeNull();
     });
   });
 

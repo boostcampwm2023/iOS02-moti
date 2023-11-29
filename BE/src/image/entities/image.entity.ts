@@ -10,6 +10,7 @@ import {
 import { AchievementEntity } from '../../achievement/entities/achievement.entity';
 import { Image } from '../domain/image.domain';
 import { UserEntity } from '../../users/entities/user.entity';
+import { isNullOrUndefined } from '../../common/utils/is-null-or-undefined';
 
 @Entity({ name: 'image' })
 export class ImageEntity {
@@ -35,14 +36,14 @@ export class ImageEntity {
   achievement: AchievementEntity;
 
   static from(image: Image): ImageEntity {
+    if (isNullOrUndefined(image)) return image;
+
     const imageEntity = new ImageEntity();
     imageEntity.id = image.id;
     imageEntity.originalName = image.originalName;
     imageEntity.imageUrl = image.imageUrl;
     imageEntity.thumbnailUrl = image.thumbnailUrl;
-    imageEntity.achievement = image.achievement
-      ? AchievementEntity.strictFrom(image?.achievement)
-      : null;
+    imageEntity.achievement = AchievementEntity.strictFrom(image.achievement);
     imageEntity.user = image.user ? UserEntity.from(image.user) : null;
     return imageEntity;
   }
@@ -53,8 +54,7 @@ export class ImageEntity {
     imageEntity.originalName = image.originalName;
     imageEntity.imageUrl = image.imageUrl;
     imageEntity.thumbnailUrl = image.thumbnailUrl;
-    imageEntity.achievement = null;
-    imageEntity.user = image.user ? UserEntity.from(image.user) : null;
+    imageEntity.user = UserEntity.from(image.user);
     return imageEntity;
   }
 

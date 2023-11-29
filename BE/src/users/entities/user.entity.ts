@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { BaseTimeEntity } from '../../common/entities/base.entity';
 import { User } from '../domain/user.domain';
 import { UsersRoleEntity } from './users-role.entity';
+import { isNullOrUndefined } from '../../common/utils/is-null-or-undefined';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseTimeEntity {
@@ -22,7 +23,9 @@ export class UserEntity extends BaseTimeEntity {
   })
   userRoles: UsersRoleEntity[];
 
-  static from(user: User) {
+  static from(user: User): UserEntity {
+    if (isNullOrUndefined(user)) return user;
+
     const userEntity = new UserEntity();
     userEntity.id = user.id;
     userEntity.userIdentifier = user.userIdentifier;
