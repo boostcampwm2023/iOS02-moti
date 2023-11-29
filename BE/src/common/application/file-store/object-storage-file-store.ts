@@ -51,8 +51,8 @@ export class ObjectStorageFileStore extends FileStore {
     storedOptions: StoreOptions = {},
   ): Promise<UploadFile> {
     const originalFilename = file.originalname;
-    const storeFileName = this.createStoreFileName(originalFilename);
-    const fullPath = this.getFullPath(storeFileName, storedOptions);
+    const { filename, fileId } = this.createStoreFileName(originalFilename);
+    const fullPath = this.getFullPath(filename, storedOptions);
 
     try {
       const sendData: SendData = await this.objectStorageClient
@@ -65,9 +65,10 @@ export class ObjectStorageFileStore extends FileStore {
         .promise();
 
       return {
-        uploadFileName: storeFileName,
+        uploadFileName: filename,
         originalFileName: originalFilename,
         uploadFullPath: sendData.Location,
+        fileKey: fileId,
       };
     } catch (e) {
       throw new FailFileTaskException();
