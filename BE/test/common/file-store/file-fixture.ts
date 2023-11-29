@@ -11,7 +11,7 @@ export class FileFixture {
       size: 100,
       destination: 'test',
       filename: 'test.jpg',
-      path: 'test',
+      path: 'file://test.jpg',
       stream: null,
     };
   }

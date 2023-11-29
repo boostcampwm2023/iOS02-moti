@@ -48,7 +48,7 @@ export class AchievementService {
   @Transactional()
   async delete(userId: number, id: number) {
     const achievement = await this.getAchievement(userId, id);
-    await this.achievementRepository.softDelete(achievement.id);
+    await this.achievementRepository.repository.softDelete(achievement.id);
 
     return AchievementDeleteResponse.from(achievement);
   }
@@ -89,8 +89,12 @@ export class AchievementService {
     return achievement;
   }
 
-  private async getUserImage(imgId: number, user: User) {
-    const image = await this.imageRepository.findByIdAndUser(imgId, user);
+  private async getUserImage(imageId: number, user: User) {
+    const image = await this.imageRepository.findByIdAndUserAndNotAchievement(
+      imageId,
+      user,
+    );
+
     if (!image) throw new NoUserImageException();
     return image;
   }

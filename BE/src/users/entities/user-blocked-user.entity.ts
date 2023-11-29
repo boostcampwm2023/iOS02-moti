@@ -2,6 +2,7 @@ import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { BaseTimeEntity } from '../../common/entities/base.entity';
 import { UserBlockedUser } from '../domain/user-blocked-user.domain';
+import { isNullOrUndefined } from '../../common/utils/is-null-or-undefined';
 
 @Entity({ name: 'user_blocked_user' })
 export class UserBlockedUserEntity extends BaseTimeEntity {
@@ -26,16 +27,20 @@ export class UserBlockedUserEntity extends BaseTimeEntity {
     );
   }
 
+  setBlockedUser(userBlockedUser: UserEntity) {
+    this.blockedUser = userBlockedUser;
+    this.blockedUserId = userBlockedUser?.id;
+  }
+
   static from(userBlockedUser: UserBlockedUser): UserBlockedUserEntity {
+    if (isNullOrUndefined(userBlockedUser)) return userBlockedUser;
+
     const userBlockedUserEntity = new UserBlockedUserEntity();
-    userBlockedUserEntity.user = userBlockedUser.user
-      ? UserEntity.from(userBlockedUser.user)
-      : null;
+    userBlockedUserEntity.user = UserEntity.from(userBlockedUser.user);
     userBlockedUserEntity.userId = userBlockedUser.user?.id || null;
-    userBlockedUserEntity.blockedUser = userBlockedUser.blockedUser
-      ? UserEntity.from(userBlockedUser.blockedUser)
-      : null;
-    userBlockedUserEntity.blockedUserId = userBlockedUser.blockedUser?.id || null;
+    userBlockedUserEntity.setBlockedUser(
+      UserEntity.from(userBlockedUser.blockedUser),
+    );
     return userBlockedUserEntity;
   }
 }

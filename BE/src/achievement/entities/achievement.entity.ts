@@ -12,6 +12,7 @@ import { UserEntity } from '../../users/entities/user.entity';
 import { CategoryEntity } from '../../category/entities/category.entity';
 import { Achievement } from '../domain/achievement.domain';
 import { ImageEntity } from '../../image/entities/image.entity';
+import { isNullOrUndefined } from '../../common/utils/is-null-or-undefined';
 
 @Index(['deletedAt', 'id'])
 @Entity({ name: 'achievement' })
@@ -34,7 +35,6 @@ export class AchievementEntity extends BaseTimeEntity {
   content: string;
 
   @OneToOne(() => ImageEntity, (image) => image.achievement, {
-    cascade: true,
     eager: true,
   })
   image: ImageEntity;
@@ -52,34 +52,28 @@ export class AchievementEntity extends BaseTimeEntity {
   }
 
   static from(achievement: Achievement) {
+    if (isNullOrUndefined(achievement)) return achievement;
+
     const achievementEntity = new AchievementEntity();
     achievementEntity.id = achievement.id;
-    achievementEntity.user = achievement.user
-      ? UserEntity.from(achievement.user)
-      : null;
-    achievementEntity.category = achievement.category
-      ? CategoryEntity.from(achievement.category)
-      : null;
+    achievementEntity.user = UserEntity.from(achievement.user);
+
+    achievementEntity.category = CategoryEntity.from(achievement.category);
     achievementEntity.title = achievement.title;
     achievementEntity.content = achievement.content;
-    achievementEntity.image = achievement.image
-      ? ImageEntity.strictFrom(achievement.image)
-      : null;
+    achievementEntity.image = ImageEntity.strictFrom(achievement.image);
     return achievementEntity;
   }
 
   static strictFrom(achievement: Achievement) {
+    if (isNullOrUndefined(achievement)) return achievement;
+
     const achievementEntity = new AchievementEntity();
     achievementEntity.id = achievement.id;
-    achievementEntity.user = achievement.user
-      ? UserEntity.from(achievement.user)
-      : null;
-    achievementEntity.category = achievement.category
-      ? CategoryEntity.from(achievement.category)
-      : null;
+    achievementEntity.user = UserEntity.from(achievement.user);
+    achievementEntity.category = CategoryEntity.from(achievement.category);
     achievementEntity.title = achievement.title;
     achievementEntity.content = achievement.content;
-    achievementEntity.image = null;
     return achievementEntity;
   }
 }
