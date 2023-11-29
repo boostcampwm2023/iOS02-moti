@@ -53,7 +53,7 @@ final class AchievementCollectionViewCell: UICollectionViewCell {
     }
     
     func hideSkeleton() {
-        imageView.backgroundColor = .clear
+        imageView.backgroundColor = .primaryGray
     }
 
     func cancelDownloadImage() {
