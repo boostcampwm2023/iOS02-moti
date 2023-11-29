@@ -10,6 +10,7 @@ import { GroupEntity } from './group.entity';
 import { BaseTimeEntity } from '../../../common/entities/base.entity';
 import { UserGroupGrade } from '../domain/user-group-grade';
 import { UserGroup } from '../domain/user-group.doamin';
+import { isNullOrUndefined } from '../../../common/utils/is-null-undefinded';
 
 @Entity({ name: 'user_group' })
 export class UserGroupEntity extends BaseTimeEntity {
@@ -40,22 +41,17 @@ export class UserGroupEntity extends BaseTimeEntity {
   }
 
   static from(userGroup: UserGroup): UserGroupEntity {
+    if (isNullOrUndefined(userGroup)) return userGroup;
     const userGroupEntity = new UserGroupEntity();
-    userGroupEntity.user = userGroup.user
-      ? UserEntity.from(userGroup.user)
-      : null;
-    userGroupEntity.group = userGroup.group
-      ? GroupEntity.strictFrom(userGroup.group)
-      : null;
+    userGroupEntity.user = UserEntity.from(userGroup.user);
+    userGroupEntity.group = GroupEntity.strictFrom(userGroup.group);
     userGroupEntity.grade = userGroup.grade;
     return userGroupEntity;
   }
 
   static strictFrom(userGroup: UserGroup): UserGroupEntity {
     const userGroupEntity = new UserGroupEntity();
-    userGroupEntity.user = userGroup.user
-      ? UserEntity.from(userGroup.user)
-      : null;
+    userGroupEntity.user = UserEntity.from(userGroup.user);
     userGroupEntity.grade = userGroup.grade;
     return userGroupEntity;
   }
