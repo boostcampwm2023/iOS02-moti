@@ -32,7 +32,6 @@ describe('AchievementService Test', () => {
   let categoryFixture: CategoryFixture;
   let achievementFixture: AchievementFixture;
   let imageFixture: ImageFixture;
-  let imageRepository: ImageRepository;
   let dataSource: DataSource;
 
   beforeAll(async () => {
@@ -58,7 +57,6 @@ describe('AchievementService Test', () => {
       AchievementRepository,
     );
 
-    imageRepository = module.get<ImageRepository>(ImageRepository);
     imageFixture = module.get<ImageFixture>(ImageFixture);
     usersFixture = module.get<UsersFixture>(UsersFixture);
     categoryFixture = module.get<CategoryFixture>(CategoryFixture);
@@ -276,15 +274,7 @@ describe('AchievementService Test', () => {
         user.id,
         achievement.id,
       );
-      console.log(user.id);
-      console.log(achievement.id);
 
-      const achievementEntities = await achievementRepository.repository.find(
-        {},
-      );
-      console.log(achievementEntities);
-
-      console.log(updated);
       expect(updated.category.id).toEqual(category_2.id);
       expect(updated.title).toEqual('update title');
       expect(updated.content).toEqual('update content');
@@ -422,12 +412,6 @@ describe('AchievementService Test', () => {
         const category = await categoryFixture.getCategory(user, 'ABC');
         const image = await imageFixture.getImage(user);
         await achievementFixture.getAchievement(user, category, image);
-
-        const imageEntity = await imageRepository.repository.find({
-          where: { id: image.id },
-          relations: ['achievement'],
-        });
-        console.log(imageEntity);
 
         // when
         // then

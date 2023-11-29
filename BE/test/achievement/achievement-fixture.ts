@@ -22,7 +22,6 @@ export class AchievementFixture {
   ): Promise<Achievement> {
     image = image || (await this.imageFixture.getImage(user));
     const achievement = AchievementFixture.achievement(user, category, image);
-    console.log(achievement);
     return await this.achievementRepository.saveAchievement(achievement);
   }
 
