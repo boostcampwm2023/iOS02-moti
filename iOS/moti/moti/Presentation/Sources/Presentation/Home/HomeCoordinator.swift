@@ -10,10 +10,15 @@ import Core
 import Data
 import Domain
 
+protocol HomeCoordinatorDelegate: AnyObject {
+    func deleteAction(achievementId: Int)
+}
+
 public final class HomeCoordinator: Coordinator {
     public let parentCoordinator: Coordinator?
     public var childCoordinators: [Core.Coordinator] = []
     public let navigationController: UINavigationController
+    weak var delegate: HomeCoordinatorDelegate?
     
     public init(
         _ navigationController: UINavigationController,
@@ -44,8 +49,6 @@ public final class HomeCoordinator: Coordinator {
 
 extension HomeCoordinator: DetailAchievementCoordinatorDelegate {
     func deleteButtonAction(achievementId: Int) {
-        // homeCoordinator에서 만든 homeVC를 따로 저장하고 있지 않기 때문에, naviVC에 접근하여 찾기
-        guard let homeVC = navigationController.viewControllers.compactMap({ $0 as? HomeViewController }).first else { return }
-        homeVC.delete(achievementId: achievementId)
+        delegate?.deleteAction(achievementId: achievementId)
     }
 }
