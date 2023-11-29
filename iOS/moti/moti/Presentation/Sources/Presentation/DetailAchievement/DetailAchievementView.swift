@@ -8,6 +8,7 @@
 import UIKit
 import Design
 import Domain
+import Data
 
 final class DetailAchievementView: UIView {
     
@@ -126,8 +127,8 @@ final class DetailAchievementView: UIView {
     }
     
     func update(updateAchievementRequestValue: UpdateAchievementRequestValue) {
-        // TODO: 카테고리 이름으로 수정
-        categoryLabel.text = "id가 \(updateAchievementRequestValue.categoryId)인 카테고리 이름"
+        let category = CategoryStorage.shared.find(categoryId: updateAchievementRequestValue.categoryId)
+        categoryLabel.text = category?.name
         titleLabel.text = updateAchievementRequestValue.title
         bodyTextView.text = updateAchievementRequestValue.content
     }
