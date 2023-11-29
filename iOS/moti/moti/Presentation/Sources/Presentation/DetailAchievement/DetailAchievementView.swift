@@ -125,6 +125,13 @@ final class DetailAchievementView: UIView {
         titleLabel.text = title
     }
     
+    func update(updateAchievementRequestValue: UpdateAchievementRequestValue) {
+        // TODO: 카테고리 이름으로 수정
+        categoryLabel.text = "id가 \(updateAchievementRequestValue.categoryId)인 카테고리 이름"
+        titleLabel.text = updateAchievementRequestValue.title
+        bodyTextView.text = updateAchievementRequestValue.content
+    }
+    
     func cancelDownloadImage() {
         imageView.jf.cancelDownloadImage()
     }
