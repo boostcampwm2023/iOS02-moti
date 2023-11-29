@@ -34,8 +34,7 @@ import { AchievementCreateRequest } from '../dto/achievement-create-request';
 export class AchievementController {
   constructor(private readonly achievementService: AchievementService) {}
 
-  @Get()
-  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('accessToken')
   @ApiOperation({
     summary: '달성기록 리스트 API',
     description: '달성기록 리스트를 커서 페이지네이션 기반으로 조회한다.',
@@ -45,7 +44,8 @@ export class AchievementController {
     description: '달성기록 리스트',
     type: PaginateAchievementResponse,
   })
-  @ApiBearerAuth('accessToken')
+  @Get()
+  @UseGuards(AccessTokenGuard)
   async getAchievements(
     @AuthenticatedUser() user: User,
     @Query() paginateAchievementRequest: PaginateAchievementRequest,
@@ -57,8 +57,7 @@ export class AchievementController {
     return ApiData.success(response);
   }
 
-  @Get('/:id')
-  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('accessToken')
   @ApiOperation({
     summary: '달성기록 상세정보 API',
     description: '달성기록 리스트를 커서 페이지네이션 기반으로 조회한다.',
@@ -68,7 +67,8 @@ export class AchievementController {
     description: '달성기록 상세정보',
     type: AchievementDetailResponse,
   })
-  @ApiBearerAuth('accessToken')
+  @Get('/:id')
+  @UseGuards(AccessTokenGuard)
   async getAchievement(
     @AuthenticatedUser() user: User,
     @Param('id', ParseIntPipe) id: number,
@@ -80,8 +80,7 @@ export class AchievementController {
     return ApiData.success(response);
   }
 
-  @Delete('/:id')
-  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('accessToken')
   @ApiOperation({
     summary: '달성기록 삭제 API',
     description: '달성기록을 삭제한다.',
@@ -91,7 +90,8 @@ export class AchievementController {
     description: '달성기록 삭제',
     type: AchievementDeleteResponse,
   })
-  @ApiBearerAuth('accessToken')
+  @Delete('/:id')
+  @UseGuards(AccessTokenGuard)
   async delete(
     @AuthenticatedUser() user: User,
     @Param('id', ParseIntPipe) id: number,
@@ -99,8 +99,7 @@ export class AchievementController {
     return ApiData.success(await this.achievementService.delete(user.id, id));
   }
 
-  @Put('/:id')
-  @UseGuards(AccessTokenGuard)
+  @ApiBearerAuth('accessToken')
   @ApiOperation({
     summary: '달성기록 수정 API',
     description: '달성기록을 수정한다.',
@@ -110,7 +109,8 @@ export class AchievementController {
     description: '달성기록 수정',
     type: AchievementUpdateResponse,
   })
-  @ApiBearerAuth('accessToken')
+  @Put('/:id')
+  @UseGuards(AccessTokenGuard)
   async update(
     @AuthenticatedUser() user: User,
     @Param('id', ParseIntPipe) id: number,
@@ -125,6 +125,7 @@ export class AchievementController {
     );
   }
 
+  @ApiBearerAuth('accessToken')
   @ApiOperation({
     summary: '달성기록 생성 API',
     description: '달성기록을 생성한다.',
