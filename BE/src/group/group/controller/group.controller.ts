@@ -27,7 +27,7 @@ export class GroupController {
 
   @ApiOperation({
     summary: '그룹 생성 API',
-    description: '그룹을를 생성합니다.',
+    description: '그룹을 생성한다.',
   })
   @ApiCreatedResponse({
     description: '그룹 생성',
