@@ -127,10 +127,12 @@ final class DetailAchievementView: UIView {
     }
     
     func update(updateAchievementRequestValue: UpdateAchievementRequestValue) {
-        let category = CategoryStorage.shared.find(categoryId: updateAchievementRequestValue.categoryId)
+        let category = CategoryStorage.shared.find(
+            categoryId: updateAchievementRequestValue.body.categoryId
+        )
         categoryLabel.text = category?.name
-        titleLabel.text = updateAchievementRequestValue.title
-        bodyTextView.text = updateAchievementRequestValue.content
+        titleLabel.text = updateAchievementRequestValue.body.title
+        bodyTextView.text = updateAchievementRequestValue.body.content
     }
     
     func cancelDownloadImage() {

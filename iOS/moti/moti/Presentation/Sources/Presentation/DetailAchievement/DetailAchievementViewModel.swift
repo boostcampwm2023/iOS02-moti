@@ -95,9 +95,9 @@ final class DetailAchievementViewModel {
     }
     
     private func updateAchievement(updateAchievementRequestValue: UpdateAchievementRequestValue) {
-        let category = CategoryStorage.shared.find(categoryId: updateAchievementRequestValue.categoryId)
+        let category = CategoryStorage.shared.find(categoryId: updateAchievementRequestValue.body.categoryId)
         achievement.category = category
-        achievement.title = updateAchievementRequestValue.title
-        achievement.body = updateAchievementRequestValue.content
+        achievement.title = updateAchievementRequestValue.body.title
+        achievement.body = updateAchievementRequestValue.body.content
     }
 }
