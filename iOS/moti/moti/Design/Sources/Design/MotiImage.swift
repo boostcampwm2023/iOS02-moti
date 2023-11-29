@@ -17,4 +17,7 @@ public enum MotiImage {
     
     /// 파란색 moti 로고
     public static let logoBlue = UIImage(resource: .motiLogoBlue)
+    
+    /// Cell 스켈레톤 이미지
+    public static let skeleton = UIImage(resource: .skeleton)
 }

@@ -124,7 +124,7 @@ final class HomeViewController: BaseViewController<HomeView> {
             cellProvider: { collectionView, indexPath, item in
                 let cell: AchievementCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
                 
-                if item.id == -1 {
+                if item.id < 0 {
                     cell.showSkeleton()
                 } else {
                     cell.hideSkeleton()

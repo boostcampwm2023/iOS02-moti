@@ -34,7 +34,8 @@ final class DetailAchievementView: UIView {
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.backgroundColor = .gray
+        imageView.backgroundColor = .primaryDarkGray
+        imageView.image = MotiImage.skeleton
         imageView.clipsToBounds = true
         return imageView
     }()

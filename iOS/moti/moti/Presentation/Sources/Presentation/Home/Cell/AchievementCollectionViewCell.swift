@@ -42,18 +42,18 @@ final class AchievementCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(imageURL: URL?) {
-//        imageView.image = MotiImage.sample1
         if let imageURL {
             imageView.jf.setImage(with: imageURL)
         }
     }
     
     func showSkeleton() {
-        imageView.backgroundColor = .lightGray
+        imageView.image = MotiImage.skeleton
+        imageView.backgroundColor = .primaryDarkGray
     }
     
     func hideSkeleton() {
-        imageView.backgroundColor = .clear
+        imageView.backgroundColor = .primaryGray
     }
 
     func cancelDownloadImage() {

@@ -53,6 +53,7 @@ final class HomeViewModel {
             categoryDataSource?.update(data: categories)
         }
     }
+    private let skeletonAchievements: [Achievement] = (-20...(-1)).map { Achievement(id: $0, title: "", imageURL: nil) }
     private var achievements: [Achievement] = [] {
         didSet {
             achievementDataSource?.update(data: achievements)
@@ -147,7 +148,7 @@ final class HomeViewModel {
     private func fetchAchievementList(requestValue: FetchAchievementListRequestValue? = nil) {
         if requestValue?.whereIdLessThan == nil {
             // 새로운 카테고리 데이터를 가져오기 때문에 빈 배열로 초기화
-            achievements = []
+            achievements = skeletonAchievements
             nextRequestValue = nil
             lastRequestNextValue = nil
         }
@@ -185,7 +186,7 @@ final class HomeViewModel {
         currentCategory = category
         
         let requestValue = FetchAchievementListRequestValue(categoryId: category.id, take: nil, whereIdLessThan: nil)
-        fetchAchievementList(requestValue: requestValue)
+         fetchAchievementList(requestValue: requestValue)
     }
     
     private func fetchNextAchievementList() {
