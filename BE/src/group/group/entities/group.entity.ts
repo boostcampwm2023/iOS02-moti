@@ -24,7 +24,9 @@ export class GroupEntity extends BaseTimeEntity {
   toModel(): Group {
     const group = new Group(this.name, this.avatarUrl);
     group.id = this.id;
-
+    group.userGroups = this.userGroups
+      ? this.userGroups.map((ug) => ug.toModel())
+      : [];
     return group;
   }
 
