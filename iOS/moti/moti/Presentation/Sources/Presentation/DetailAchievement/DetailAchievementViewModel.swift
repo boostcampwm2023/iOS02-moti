@@ -13,6 +13,7 @@ final class DetailAchievementViewModel {
     enum DetailAchievementViewModelAction {
         case launch
         case delete
+        case update(updateAchievementRequestValue: UpdateAchievementRequestValue)
     }
     
     enum LaunchState {
@@ -28,11 +29,17 @@ final class DetailAchievementViewModel {
         case failed(message: String)
     }
     
+    enum UpdateState { // API연동이 아닌 achievement 수정이므로 loading, fail이 없다.
+        case initial
+        case success(updateAchievementRequestValue: UpdateAchievementRequestValue)
+    }
+    
     private let fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
     private let deleteAchievementUseCase: DeleteAchievementUseCase
     
     @Published private(set) var launchState: LaunchState = .none
     @Published private(set) var deleteState: DeleteState = .initial
+    @Published private(set) var updateState: UpdateState = .initial
     
     private(set) var achievement: Achievement
     
@@ -53,6 +60,8 @@ final class DetailAchievementViewModel {
             fetchDetailAchievement()
         case .delete:
             deleteAchievement()
+        case .update(let updateAchievementRequestValue):
+            updateAchievement(updateAchievementRequestValue: updateAchievementRequestValue)
         }
     }
     
@@ -88,5 +97,13 @@ final class DetailAchievementViewModel {
                 deleteState = .failed(message: error.localizedDescription)
             }
         }
+    }
+    
+    private func updateAchievement(updateAchievementRequestValue: UpdateAchievementRequestValue) {
+        // TODO: 카테고리 아이템 수정
+//        achievement.category = updateAchievementRequestValue.categoryId
+        achievement.title = updateAchievementRequestValue.title
+        achievement.body = updateAchievementRequestValue.content
+        updateState = .success(updateAchievementRequestValue: updateAchievementRequestValue)
     }
 }
