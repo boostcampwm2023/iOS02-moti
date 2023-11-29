@@ -10,7 +10,7 @@ import { GroupEntity } from './group.entity';
 import { BaseTimeEntity } from '../../../common/entities/base.entity';
 import { UserGroupGrade } from '../domain/user-group-grade';
 import { UserGroup } from '../domain/user-group.doamin';
-import { isNullOrUndefined } from '../../../common/utils/is-null-undefinded';
+import { isNullOrUndefined } from '../../../common/utils/is-null-or-undefined';
 
 @Entity({ name: 'user_group' })
 export class UserGroupEntity extends BaseTimeEntity {
