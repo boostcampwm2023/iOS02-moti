@@ -3,7 +3,7 @@ import { queryRunnerLocalStorage } from '../../src/config/transaction-manager';
 
 export const transactionTest = async (
   dataSource: DataSource,
-  test: () => Promise<void>,
+  test: () => Promise<any>,
 ): Promise<any> => {
   const runner: QueryRunner = dataSource.createQueryRunner();
   await runner.startTransaction();
