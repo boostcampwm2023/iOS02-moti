@@ -80,13 +80,18 @@ final class EditAchievementCoordinator: Coordinator {
 }
 
 extension EditAchievementCoordinator: EditAchievementViewControllerDelegate {
-    func doneButtonDidClicked(isFromCaptureMode: Bool) {
-        if isFromCaptureMode {
-            navigationController.setNavigationBarHidden(true, animated: false)
-            finish(animated: false)
-            parentCoordinator?.finish(animated: true)
-        } else {
-            finish(animated: false)
-        }
+    func doneButtonDidClickedFromEditMode(updateAchievementRequestValue: UpdateAchievementRequestValue) {
+        finish(animated: false)
+        
+        guard let detailAchievementVC = navigationController.viewControllers
+            .compactMap({ $0 as? DetailAchievementViewController }).first else { return }
+        
+        detailAchievementVC.update(updateAchievementRequestValue: updateAchievementRequestValue)
+    }
+    
+    func doneButtonDidClickedFromCaptureMode() {
+        navigationController.setNavigationBarHidden(true, animated: false)
+        finish(animated: false)
+        parentCoordinator?.finish(animated: true)
     }
 }
