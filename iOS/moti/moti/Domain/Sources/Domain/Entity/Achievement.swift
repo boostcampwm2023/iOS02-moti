@@ -9,10 +9,10 @@ import Foundation
 
 public struct Achievement: Hashable {
     public let id: Int
-    public let category: CategoryItem?
-    public let title: String
+    public var category: CategoryItem?
+    public var title: String
     public let imageURL: URL?
-    public let body: String?
+    public var body: String?
     public let date: Date?
     
     public init(
