@@ -10,10 +10,15 @@ import Core
 import Data
 import Domain
 
+protocol EditAchievementCoordinatorDelegate: AnyObject {
+    func doneButtonAction(updateAchievementRequestValue: UpdateAchievementRequestValue)
+}
+
 final class EditAchievementCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
+    weak var delegate: EditAchievementCoordinatorDelegate?
     
     init(
         _ navigationController: UINavigationController,
@@ -80,13 +85,14 @@ final class EditAchievementCoordinator: Coordinator {
 }
 
 extension EditAchievementCoordinator: EditAchievementViewControllerDelegate {
-    func doneButtonDidClicked(isFromCaptureMode: Bool) {
-        if isFromCaptureMode {
-            navigationController.setNavigationBarHidden(true, animated: false)
-            finish(animated: false)
-            parentCoordinator?.finish(animated: true)
-        } else {
-            finish(animated: false)
-        }
+    func doneButtonDidClickedFromEditMode(updateAchievementRequestValue: UpdateAchievementRequestValue) {
+        finish(animated: false)
+        delegate?.doneButtonAction(updateAchievementRequestValue: updateAchievementRequestValue)
+    }
+    
+    func doneButtonDidClickedFromCaptureMode() {
+        navigationController.setNavigationBarHidden(true, animated: false)
+        finish(animated: false)
+        parentCoordinator?.finish(animated: true)
     }
 }

@@ -19,6 +19,7 @@ public final class DetailAchievementCoordinator: Coordinator {
     public var childCoordinators: [Coordinator] = []
     public var navigationController: UINavigationController
     weak var delegate: DetailAchievementCoordinatorDelegate?
+    private var detailAchievementViewController: DetailAchievementViewController?
     
     public init(
         _ navigationController: UINavigationController,
@@ -42,11 +43,13 @@ public final class DetailAchievementCoordinator: Coordinator {
         )
         detailAchievementVC.coordinator = self
         detailAchievementVC.delegate = self
+        detailAchievementViewController = detailAchievementVC
         navigationController.pushViewController(detailAchievementVC, animated: true)
     }
     
     private func moveEditAchievementViewController(achievement: Achievement) {
         let editAchievementCoordinator = EditAchievementCoordinator(navigationController, self)
+        editAchievementCoordinator.delegate = self
         editAchievementCoordinator.start(achievement: achievement)
         childCoordinators.append(editAchievementCoordinator)
     }
@@ -60,5 +63,11 @@ extension DetailAchievementCoordinator: DetailAchievementViewControllerDelegate 
     func deleteButtonDidClicked(achievementId: Int) {
         finish(animated: true)
         delegate?.deleteButtonAction(achievementId: achievementId)
+    }
+}
+
+extension DetailAchievementCoordinator: EditAchievementCoordinatorDelegate {
+    func doneButtonAction(updateAchievementRequestValue: UpdateAchievementRequestValue) {
+        detailAchievementViewController?.update(updateAchievementRequestValue: updateAchievementRequestValue)
     }
 }

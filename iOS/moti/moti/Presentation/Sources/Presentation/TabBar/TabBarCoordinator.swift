@@ -27,6 +27,7 @@ public final class TabBarCoordinator: Coordinator {
     public var childCoordinators: [Coordinator] = []
     public let navigationController: UINavigationController
     private let tabBarController: TabBarViewController
+    private var homeViewController: HomeViewController?
     
     public init(
         _ navigationController: UINavigationController,
@@ -68,6 +69,7 @@ private extension TabBarCoordinator {
             addCategoryUseCase: .init(repository: CategoryListRepository())
         )
         let homeVC = HomeViewController(viewModel: homeVM)
+        homeViewController = homeVC
         
         homeVC.tabBarItem.image = SymbolImage.individualTabItem
         homeVC.tabBarItem.title = TabItemType.individual.title
@@ -76,6 +78,7 @@ private extension TabBarCoordinator {
         let navVC = UINavigationController(rootViewController: homeVC)
         
         let homeCoordinator = HomeCoordinator(navVC, self)
+        homeCoordinator.delegate = self
         homeVC.coordinator = homeCoordinator
         childCoordinators.append(homeCoordinator)
         return navVC
@@ -125,5 +128,11 @@ private extension TabBarCoordinator {
 extension TabBarCoordinator: TabBarViewControllerDelegate {
     func captureButtonDidClicked() {
         moveCaptureViewController()
+    }
+}
+
+extension TabBarCoordinator: HomeCoordinatorDelegate {
+    func deleteAction(achievementId: Int) {
+        homeViewController?.delete(achievementId: achievementId)
     }
 }

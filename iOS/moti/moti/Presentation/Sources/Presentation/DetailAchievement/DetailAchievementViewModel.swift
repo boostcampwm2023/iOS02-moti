@@ -13,6 +13,7 @@ final class DetailAchievementViewModel {
     enum DetailAchievementViewModelAction {
         case launch
         case delete
+        case update(updateAchievementRequestValue: UpdateAchievementRequestValue)
     }
     
     enum LaunchState {
@@ -53,6 +54,8 @@ final class DetailAchievementViewModel {
             fetchDetailAchievement()
         case .delete:
             deleteAchievement()
+        case .update(let updateAchievementRequestValue):
+            updateAchievement(updateAchievementRequestValue: updateAchievementRequestValue)
         }
     }
     
@@ -88,5 +91,12 @@ final class DetailAchievementViewModel {
                 deleteState = .failed(message: error.localizedDescription)
             }
         }
+    }
+    
+    private func updateAchievement(updateAchievementRequestValue: UpdateAchievementRequestValue) {
+        // TODO: 카테고리 아이템 수정
+//        achievement.category = updateAchievementRequestValue.categoryId
+        achievement.title = updateAchievementRequestValue.title
+        achievement.body = updateAchievementRequestValue.content
     }
 }

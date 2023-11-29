@@ -46,6 +46,11 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
         layoutView.cancelDownloadImage()
     }
     
+    func update(updateAchievementRequestValue: UpdateAchievementRequestValue) {
+        viewModel.action(.update(updateAchievementRequestValue: updateAchievementRequestValue))
+        layoutView.update(updateAchievementRequestValue: updateAchievementRequestValue)
+    }
+    
     private func setupUI() {
         let removeButton = UIBarButtonItem(title: "삭제", style: .plain, target: self, action: #selector(didClickedRemoveButton))
         removeButton.tintColor = .red

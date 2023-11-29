@@ -14,6 +14,7 @@ final class EditAchievementViewModel {
     enum Action {
         case saveImage(data: Data, imageExtension: ImageExtension)
         case fetchCategories
+        case updateAchievement
     }
     
     enum CategoryState {
@@ -23,6 +24,13 @@ final class EditAchievementViewModel {
     }
     
     enum SaveImageState {
+        case none
+        case loading
+        case finish
+        case error
+    }
+    
+    enum UpdateAchievementState {
         case none
         case loading
         case finish
@@ -53,6 +61,8 @@ final class EditAchievementViewModel {
             saveImageData(data, imageExtension)
         case .fetchCategories:
             fetchCategories()
+        case .updateAchievement:
+            break
         }
     }
     

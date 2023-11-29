@@ -12,7 +12,8 @@ import Combine
 import Domain
 
 protocol EditAchievementViewControllerDelegate: AnyObject {
-    func doneButtonDidClicked(isFromCaptureMode: Bool)
+    func doneButtonDidClickedFromEditMode(updateAchievementRequestValue: UpdateAchievementRequestValue)
+    func doneButtonDidClickedFromCaptureMode()
 }
 
 final class EditAchievementViewController: BaseViewController<EditAchievementView> {
@@ -144,14 +145,23 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     }
     
     @objc func doneButtonAction() {
-        if let achievement {
-            // 상세 화면에서 넘어옴 => 수정 API
-            delegate?.doneButtonDidClicked(isFromCaptureMode: false)
+        if let achievement { // 상세 화면에서 넘어옴 => 수정 API
+            let updateAchievementRequestValue = UpdateAchievementRequestValue(
+                title: layoutView.titleTextField.text ?? "",
+                content: bottomSheet.text,
+                categoryId: findSelectedCategory().id
+            )
             
-        } else {
-            // 촬영 화면에서 넘어옴 => 생성 API
-            delegate?.doneButtonDidClicked(isFromCaptureMode: true)
+            delegate?.doneButtonDidClickedFromEditMode(updateAchievementRequestValue: updateAchievementRequestValue)
+            
+        } else { // 촬영 화면에서 넘어옴 => 생성 API
+            delegate?.doneButtonDidClickedFromCaptureMode()
         }
+    }
+    
+    private func findSelectedCategory() -> CategoryItem {
+        let selectedRow = layoutView.categoryPickerView.selectedRow(inComponent: 0)
+        return viewModel.findCategory(at: selectedRow)
     }
 }
 
