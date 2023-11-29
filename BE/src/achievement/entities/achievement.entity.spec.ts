@@ -45,6 +45,22 @@ describe('AchievementEntity Test', () => {
     expect(achievementEntity.content).toBe(achievement.content);
   });
 
+  it('from으로 Achievement에 대한 AchievementEntity를 만들 수 있다. (image가 없는 경우)', () => {
+    // given
+    const achievement = AchievementFixture.achievement(undefined, undefined, undefined);
+
+    // when
+    const achievementEntity = AchievementEntity.from(achievement);
+
+    // then
+    expect(achievementEntity).toBeInstanceOf(AchievementEntity);
+    expect(achievementEntity.id).toBe(achievement.id);
+    expect(achievementEntity.user).toBeUndefined();
+    expect(achievementEntity.category).toBeUndefined();
+    expect(achievementEntity.title).toBe(achievement.title);
+    expect(achievementEntity.content).toBe(achievement.content);
+  });
+
   it('strictFrom은 image가 undefined 이어야 한다.', () => {
     // given
     const user = UsersFixture.user('ABC');
@@ -62,7 +78,7 @@ describe('AchievementEntity Test', () => {
     expect(achievementEntity.category).toEqual(CategoryEntity.from(cateogry));
     expect(achievementEntity.title).toBe(achievement.title);
     expect(achievementEntity.content).toBe(achievement.content);
-    expect(achievementEntity.image).toBeNull();
+    expect(achievementEntity.image).toBeUndefined();
   });
 
   it('toModel은 Achievement를 만들어낸다.', () => {
