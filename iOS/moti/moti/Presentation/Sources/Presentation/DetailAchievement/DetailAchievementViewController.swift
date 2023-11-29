@@ -48,6 +48,7 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
     
     func update(updateAchievementRequestValue: UpdateAchievementRequestValue) {
         viewModel.action(.update(updateAchievementRequestValue: updateAchievementRequestValue))
+        layoutView.update(updateAchievementRequestValue: updateAchievementRequestValue)
     }
     
     private func setupUI() {
@@ -96,19 +97,6 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
                     delegate?.deleteButtonDidClicked(achievementId: achievementId)
                 case .failed(let message):
                     Logger.error("delete achievement error: \(message)")
-                }
-            }
-            .store(in: &cancellables)
-        
-        viewModel.$updateState
-            .receive(on: RunLoop.main)
-            .sink { [weak self] state in
-                guard let self else { return }
-                switch state {
-                case .initial:
-                    break
-                case .success(let updateAchievementRequestValue):
-                    layoutView.update(updateAchievementRequestValue: updateAchievementRequestValue)
                 }
             }
             .store(in: &cancellables)
