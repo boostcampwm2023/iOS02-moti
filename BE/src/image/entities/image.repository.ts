@@ -3,6 +3,7 @@ import { ImageEntity } from './image.entity';
 import { TransactionalRepository } from '../../config/transaction-manager/transactional-repository';
 import { Image } from '../domain/image.domain';
 import { User } from '../../users/domain/user.domain';
+import { IsNull } from "typeorm";
 
 @CustomRepository(ImageEntity)
 export class ImageRepository extends TransactionalRepository<ImageEntity> {
@@ -20,12 +21,16 @@ export class ImageRepository extends TransactionalRepository<ImageEntity> {
     return imageEntity?.toModel();
   }
 
-  async findByIdAndUser(id: number, user: User): Promise<Image> {
+  async findByIdAndUserAndNotAchievement(
+    id: number,
+    user: User,
+  ): Promise<Image> {
     const imageEntity = await this.repository.findOneBy({
       id: id,
       user: {
         id: user.id,
       },
+      achievement: IsNull(),
     });
 
     return imageEntity?.toModel();
