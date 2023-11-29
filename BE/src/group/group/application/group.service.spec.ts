@@ -13,6 +13,7 @@ import { CreateGroupRequest } from '../dto/create-group-request.dto';
 import { GroupModule } from '../group.module';
 import { UserGroupRepository } from '../entities/user-group.repository';
 import { UserGroupGrade } from '../domain/user-group-grade';
+import { transactionTest } from '../../../../test/common/transaction-test';
 
 describe('GroupSerivce Test', () => {
   let groupService: GroupService;
@@ -47,27 +48,29 @@ describe('GroupSerivce Test', () => {
 
   test('그룹을 생성할 수 있다.', async () => {
     // given
-    const user = await usersFixture.getUser('ABC');
+    await transactionTest(dataSource, async () => {
+      const user = await usersFixture.getUser('ABC');
 
-    const createGroupRequest = new CreateGroupRequest(
-      'Group Name',
-      'avatarUrl',
-    );
-    // when
-    const groupResponse = await groupService.create(user, createGroupRequest);
-    const userGroup = await userGroupRepository.repository.findOne({
-      where: { group: { id: groupResponse.id }, user: { id: user.id } },
-      relations: {
-        group: true,
-        user: true,
-      },
+      const createGroupRequest = new CreateGroupRequest(
+        'Group Name',
+        'avatarUrl',
+      );
+      // when
+      const groupResponse = await groupService.create(user, createGroupRequest);
+      const userGroup = await userGroupRepository.repository.findOne({
+        where: { group: { id: groupResponse.id }, user: { id: user.id } },
+        relations: {
+          group: true,
+          user: true,
+        },
+      });
+
+      // then
+      expect(groupResponse.name).toEqual('Group Name');
+      expect(groupResponse.avatarUrl).toEqual('avatarUrl');
+      expect(userGroup.group.id).toEqual(groupResponse.id);
+      expect(userGroup.user.id).toEqual(user.id);
+      expect(userGroup.grade).toEqual(UserGroupGrade.LEADER);
     });
-
-    // then
-    expect(groupResponse.name).toEqual('Group Name');
-    expect(groupResponse.avatarUrl).toEqual('avatarUrl');
-    expect(userGroup.group.id).toEqual(groupResponse.id);
-    expect(userGroup.user.id).toEqual(user.id);
-    expect(userGroup.grade).toEqual(UserGroupGrade.LEADER);
   });
 });
