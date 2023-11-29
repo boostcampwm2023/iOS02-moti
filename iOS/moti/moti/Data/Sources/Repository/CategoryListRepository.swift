@@ -10,17 +10,27 @@ import Domain
 
 public struct CategoryListRepository: CategoryListRepositoryProtocol {
     private let provider: ProviderProtocol
+    // 싱글턴 객체로 관리하기 위해 외부에서 주입 받지 않음
+    private let storage: CategoryStorageProtocol = CategoryStorage.shared
     
     public init(provider: ProviderProtocol = Provider()) {
         self.provider = provider
     }
     
     public func fetchCategoryList() async throws -> [CategoryItem] {
+        guard storage.isEmpty else {
+            return storage.fetchAll()
+        }
+        
         let endpoint = MotiAPI.fetchCategoryList
         let responseDTO = try await provider.request(with: endpoint, type: CategoryListResponseDTO.self)
         
         guard let categoryDTO = responseDTO.data else { throw NetworkError.decode }
-        return categoryDTO.map { CategoryItem(dto: $0) }
+        
+        let categories = categoryDTO.map { CategoryItem(dto: $0) }
+        storage.create(categories: categories)
+        
+        return categories
     }
     
     public func addCategory(requestValue: AddCategoryRequestValue) async throws -> CategoryItem {
@@ -28,6 +38,10 @@ public struct CategoryListRepository: CategoryListRepositoryProtocol {
         let responseDTO = try await provider.request(with: endpoint, type: CategoryResponseDataDTO.self)
         
         guard let categoryDTO = responseDTO.data else { throw NetworkError.decode }
-        return CategoryItem(dto: categoryDTO)
+        
+        let category = CategoryItem(dto: categoryDTO)
+        storage.create(category: category)
+        
+        return category
     }
 }
