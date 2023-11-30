@@ -4,6 +4,7 @@ import { CustomTypeOrmModule } from '../../config/typeorm/custom-typeorm.module'
 import { GroupRepository } from './entities/group.repository';
 import { GroupService } from './application/group.service';
 import { UserGroupRepository } from './entities/user-group.repository';
+import { GroupAvatarHolder } from './application/group-avatar.holder';
 
 @Module({
   imports: [
@@ -13,6 +14,6 @@ import { UserGroupRepository } from './entities/user-group.repository';
     ]),
   ],
   controllers: [GroupController],
-  providers: [GroupService],
+  providers: [GroupService, GroupAvatarHolder],
 })
 export class GroupModule {}

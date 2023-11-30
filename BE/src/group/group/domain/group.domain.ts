@@ -17,4 +17,8 @@ export class Group {
   addMember(user: User, userGrade: UserGroupGrade) {
     this.userGroups.push(new UserGroup(user, this, userGrade));
   }
+
+  assignAvatarUrl(url: string) {
+    this.avatarUrl = url;
+  }
 }

@@ -12,7 +12,7 @@ export class CreateGroupRequest {
   @ApiProperty({ description: '그룹 로고 이미지 url', required: false })
   avatarUrl: string;
 
-  constructor(name: string, avatarUrl: string) {
+  constructor(name: string, avatarUrl?: string) {
     this.name = name;
     this.avatarUrl = avatarUrl;
   }
