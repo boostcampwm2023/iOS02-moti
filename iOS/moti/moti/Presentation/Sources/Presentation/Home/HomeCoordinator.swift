@@ -86,7 +86,6 @@ extension HomeCoordinator: DetailAchievementCoordinatorDelegate {
     }
     
     func postAchievement(newAchievement: Achievement) {
-        print("-2")
         currentViewController?.postAchievement(newAchievement: newAchievement)
     }
 }

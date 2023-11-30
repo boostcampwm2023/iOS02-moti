@@ -180,7 +180,6 @@ private extension HomeViewModel {
     
     /// 새로 생성된 도전 기록을 추가하는 액션
     func postAchievement(newAchievement: Achievement) {
-        print("최종")
         achievements.insert(newAchievement, at: 0)
     }
 }

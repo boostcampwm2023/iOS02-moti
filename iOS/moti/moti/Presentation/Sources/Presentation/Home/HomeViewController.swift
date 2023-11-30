@@ -50,7 +50,6 @@ final class HomeViewController: BaseViewController<HomeView> {
     }
     
     func postAchievement(newAchievement: Achievement) {
-        print("막전")
         viewModel.action(.postAchievement(newAchievement: newAchievement))
     }
     
