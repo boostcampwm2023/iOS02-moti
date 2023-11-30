@@ -64,7 +64,7 @@ public final class TabBarCoordinator: Coordinator {
 private extension TabBarCoordinator {
     func makeIndividualTabPage() -> UINavigationController {
         let homeVM = HomeViewModel(
-            fetchAchievementListUseCase: .init(repository: AchievementListRepository()),
+            fetchAchievementListUseCase: .init(repository: AchievementRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
             addCategoryUseCase: .init(repository: CategoryListRepository())
         )

@@ -30,9 +30,9 @@ public struct UpdateAchievementRequestBody: RequestValue {
 }
 
 public struct UpdateAchievementUseCase {
-    private let repository: UpdateAchievementRepositoryProtocol
+    private let repository: AchievementRepositoryProtocol
     
-    public init(repository: UpdateAchievementRepositoryProtocol) {
+    public init(repository: AchievementRepositoryProtocol) {
         self.repository = repository
     }
     

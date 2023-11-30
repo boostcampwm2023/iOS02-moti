@@ -16,9 +16,9 @@ public struct DeleteAchievementRequestValue: RequestValue {
 }
 
 public struct DeleteAchievementUseCase {
-    private let repository: DeleteAchievementRepositoryProtocol
+    private let repository: AchievementRepositoryProtocol
     
-    public init(repository: DeleteAchievementRepositoryProtocol) {
+    public init(repository: AchievementRepositoryProtocol) {
         self.repository = repository
     }
     

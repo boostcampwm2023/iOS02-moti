@@ -37,8 +37,8 @@ public final class DetailAchievementCoordinator: Coordinator {
     public func start(achievement: Achievement) {
         let detailAchievementVC = DetailAchievementViewController(
             viewModel: DetailAchievementViewModel(
-                fetchDetailAchievementUseCase: .init(repository: DetailAchievementRepository()),
-                deleteAchievementUseCase: .init(repository: DeleteAchievementRepository()),
+                fetchDetailAchievementUseCase: .init(repository: AchievementRepository()),
+                deleteAchievementUseCase: .init(repository: AchievementRepository()),
                 achievement: achievement
             )
         )
