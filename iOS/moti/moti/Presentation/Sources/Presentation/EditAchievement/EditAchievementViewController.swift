@@ -186,9 +186,12 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
             viewModel.action(.updateAchievement(updateAchievementRequestValue: updateAchievementRequestValue))
             
         } else { // 촬영 화면에서 넘어옴 => 생성 API
-            guard var title = layoutView.titleTextField.placeholder else { return }
+            var title = ""
             if let text = layoutView.titleTextField.text, !text.isEmpty {
                 title = text
+            } else {
+                guard let placeholder = layoutView.titleTextField.placeholder else { return }
+                title = placeholder
             }
             
             viewModel.action(.postAchievement(
