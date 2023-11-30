@@ -63,72 +63,27 @@ public final class TabBarCoordinator: Coordinator {
 // MARK: - Make Child ViewControllers
 private extension TabBarCoordinator {
     func makeIndividualTabPage() -> UINavigationController {
-        let homeVM = HomeViewModel(
-            fetchAchievementListUseCase: .init(repository: AchievementRepository()),
-            fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
-            addCategoryUseCase: .init(repository: CategoryListRepository())
-        )
-        let homeVC = HomeViewController(viewModel: homeVM)
-        homeViewController = homeVC
-        
-        homeVC.tabBarItem.image = SymbolImage.individualTabItem
-        homeVC.tabBarItem.title = TabItemType.individual.title
-        setupIndividualHomeNavigationBar(viewController: homeVC)
-        
-        let navVC = UINavigationController(rootViewController: homeVC)
+        let navVC = UINavigationController()
+        navVC.tabBarItem.image = SymbolImage.individualTabItem
+        navVC.tabBarItem.title = TabItemType.individual.title
         
         let homeCoordinator = HomeCoordinator(navVC, self)
         homeCoordinator.delegate = self
-        homeVC.coordinator = homeCoordinator
+        homeCoordinator.start()
         childCoordinators.append(homeCoordinator)
         return navVC
     }
     
     func makeGroupTabPage() -> UINavigationController {
-        let groupVM = GroupListViewModel()
-        let groupListVC = GroupListViewController(viewModel: groupVM)
-        
-        groupListVC.tabBarItem.image = SymbolImage.groupTabItem
-        groupListVC.tabBarItem.title = TabItemType.group.title
-        
-        let navVC = UINavigationController(rootViewController: groupListVC)
+        let navVC = UINavigationController()
+        navVC.tabBarItem.image = SymbolImage.groupTabItem
+        navVC.tabBarItem.title = TabItemType.group.title
         
         let groupListCoordinator = GroupListCoordinator(navVC, self)
-        groupListVC.coordinator = groupListCoordinator
+        groupListCoordinator.start()
         childCoordinators.append(groupListCoordinator)
         return navVC
     }
-    
-    func setupIndividualHomeNavigationBar(viewController: UIViewController) {
-        let logoItem = UIImageView(image: MotiImage.logoBlue)
-        logoItem.contentMode = .scaleAspectFit
-        let leftItem = UIBarButtonItem(customView: logoItem)
-        leftItem.customView?.atl
-            .width(constant: 60)
-        viewController.navigationItem.leftBarButtonItem = leftItem
-
-        // 오른쪽 프로필 버튼
-        let profileImage = UIImage(
-            systemName: "person.crop.circle.fill",
-            withConfiguration: UIImage.SymbolConfiguration(font: .large)
-        )
-        let profileButton = UIButton(type: .system)
-        profileButton.setImage(profileImage, for: .normal)
-        profileButton.contentMode = .scaleAspectFit
-        profileButton.tintColor = .primaryDarkGray
-        let profileItem = UIBarButtonItem(customView: profileButton)
-
-        // 오른쪽 더보기 버튼
-        let moreItem = UIBarButtonItem(
-            image: SymbolImage.ellipsisCircle,
-            style: .done,
-            target: self,
-            action: nil
-        )
-
-        viewController.navigationItem.rightBarButtonItems = [profileItem, moreItem]
-    }
-    
 }
 
 extension TabBarCoordinator: TabBarViewControllerDelegate {

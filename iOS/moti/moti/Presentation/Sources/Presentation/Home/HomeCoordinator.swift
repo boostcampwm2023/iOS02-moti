@@ -9,6 +9,7 @@ import UIKit
 import Core
 import Data
 import Domain
+import Design
 
 protocol HomeCoordinatorDelegate: AnyObject {
     func deleteAction(achievementId: Int)
@@ -36,6 +37,7 @@ public final class HomeCoordinator: Coordinator {
             addCategoryUseCase: .init(repository: CategoryListRepository())
         )
         let homeVC = HomeViewController(viewModel: homeVM)
+        setupNavigationBar(viewController: homeVC)
         homeVC.coordinator = self
         navigationController.viewControllers = [homeVC]
     }
@@ -45,6 +47,36 @@ public final class HomeCoordinator: Coordinator {
         detailAchievementCoordinator.delegate = self
         childCoordinators.append(detailAchievementCoordinator)
         detailAchievementCoordinator.start(achievement: achievement)
+    }
+    
+    func setupNavigationBar(viewController: UIViewController) {
+        let logoItem = UIImageView(image: MotiImage.logoBlue)
+        logoItem.contentMode = .scaleAspectFit
+        let leftItem = UIBarButtonItem(customView: logoItem)
+        leftItem.customView?.atl
+            .width(constant: 60)
+        viewController.navigationItem.leftBarButtonItem = leftItem
+
+        // 오른쪽 프로필 버튼
+        let profileImage = UIImage(
+            systemName: "person.crop.circle.fill",
+            withConfiguration: UIImage.SymbolConfiguration(font: .large)
+        )
+        let profileButton = UIButton(type: .system)
+        profileButton.setImage(profileImage, for: .normal)
+        profileButton.contentMode = .scaleAspectFit
+        profileButton.tintColor = .primaryDarkGray
+        let profileItem = UIBarButtonItem(customView: profileButton)
+
+        // 오른쪽 더보기 버튼
+        let moreItem = UIBarButtonItem(
+            image: SymbolImage.ellipsisCircle,
+            style: .done,
+            target: self,
+            action: nil
+        )
+
+        viewController.navigationItem.rightBarButtonItems = [profileItem, moreItem]
     }
 }
 
