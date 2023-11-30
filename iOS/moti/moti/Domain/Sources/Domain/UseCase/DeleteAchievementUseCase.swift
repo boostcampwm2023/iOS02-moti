@@ -17,13 +17,24 @@ public struct DeleteAchievementRequestValue: RequestValue {
 
 public struct DeleteAchievementUseCase {
     private let repository: AchievementRepositoryProtocol
+    private let storage: CategoryStorageProtocol
     
-    public init(repository: AchievementRepositoryProtocol) {
+    public init(
+        repository: AchievementRepositoryProtocol,
+        storage: CategoryStorageProtocol
+    ) {
         self.repository = repository
+        self.storage = storage
     }
     
-    public func execute(requestValue: DeleteAchievementRequestValue) async throws -> Bool {
-        return try await repository.deleteAchievement(requestValue: requestValue)
+    public func execute(
+        requestValue: DeleteAchievementRequestValue,
+        categoryId: Int
+    ) async throws -> Bool {
+        let isSuccess = try await repository.deleteAchievement(requestValue: requestValue)
+        if isSuccess {
+            storage.decrease(categoryId: categoryId)
+        }
+        return isSuccess
     }
 }
-
