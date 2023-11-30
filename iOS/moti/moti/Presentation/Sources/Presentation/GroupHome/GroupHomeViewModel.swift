@@ -51,6 +51,14 @@ final class GroupHomeViewModel {
         achievementDataSource?.update(data: [])
     }
 
+    func findAchievement(at index: Int) -> Achievement {
+        return achievements[index]
+    }
+    
+    func findCategory(at index: Int) -> CategoryItem? {
+        return categories[index]
+    }
+    
     func action(_ action: GroupHomeViewModelAction) {
         switch action {
         case .launch:
