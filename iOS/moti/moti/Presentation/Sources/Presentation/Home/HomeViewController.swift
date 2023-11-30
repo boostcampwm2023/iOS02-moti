@@ -108,6 +108,7 @@ final class HomeViewController: BaseViewController<HomeView> {
                 switch state {
                 case .initial: break
                 case .updated(let category):
+                    Logger.debug("Updated: \(category)")
                     layoutView.updateAchievementHeader(with: category)
                 }
             }

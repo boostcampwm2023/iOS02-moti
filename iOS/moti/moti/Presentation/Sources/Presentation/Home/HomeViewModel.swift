@@ -142,6 +142,8 @@ final class HomeViewModel {
     private func updateAchievement(id: Int, newCategoryId: Int) {
         guard let currentCategory, currentCategory.id != 0 else { return }
         if currentCategory.id != newCategoryId {
+            CategoryStorage.shared.decrease(categoryId: id)
+            CategoryStorage.shared.increase(categoryId: newCategoryId)
             delete(achievementId: id)
         }
     }
