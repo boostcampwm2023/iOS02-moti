@@ -49,8 +49,8 @@ final class EditAchievementCoordinator: Coordinator {
             action: #selector(cancelButtonAction)
         )
         
-        navigationController.pushViewController(editAchievementVC, animated: false)
-        navigationController.setNavigationBarHidden(false, animated: false)
+        let navVC = UINavigationController(rootViewController: editAchievementVC)
+        navigationController.present(navVC, animated: true)
     }
     
     func startAfterCapture(image: UIImage, imageExtension: ImageExtension) {
@@ -76,7 +76,7 @@ final class EditAchievementCoordinator: Coordinator {
     }
     
     @objc private func cancelButtonAction() {
-        finish(animated: false)
+        parentCoordinator?.dismiss(child: self, animated: true)
     }
     
     @objc private func recaptureButtonAction() {
@@ -86,7 +86,7 @@ final class EditAchievementCoordinator: Coordinator {
 
 extension EditAchievementCoordinator: EditAchievementViewControllerDelegate {
     func doneButtonDidClickedFromEditMode(updateAchievementRequestValue: UpdateAchievementRequestValue) {
-        finish(animated: false)
+        parentCoordinator?.dismiss(child: self, animated: true)
         delegate?.doneButtonAction(updateAchievementRequestValue: updateAchievementRequestValue)
     }
     
