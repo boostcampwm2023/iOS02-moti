@@ -12,8 +12,8 @@ import Combine
 import Domain
 
 protocol EditAchievementViewControllerDelegate: AnyObject {
-    func doneButtonDidClickedFromEditMode(updateAchievementRequestValue: UpdateAchievementRequestValue)
-    func doneButtonDidClickedFromCaptureMode()
+    func doneButtonDidClickedFromDetailView(updateAchievementRequestValue: UpdateAchievementRequestValue)
+    func doneButtonDidClickedFromCaptureView()
 }
 
 final class EditAchievementViewController: BaseViewController<EditAchievementView> {
@@ -66,7 +66,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .done,
             target: self,
-            action: #selector(doneButtonAction)
+            action: #selector(doneButtonDidClicked)
         )
         
         viewModel.action(.fetchCategories)
@@ -144,7 +144,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
                 switch state {
                 case .none, .loading: break
                 case .finish(let updateAchievementRequestValue):
-                    delegate?.doneButtonDidClickedFromEditMode(updateAchievementRequestValue: updateAchievementRequestValue)
+                    delegate?.doneButtonDidClickedFromDetailView(updateAchievementRequestValue: updateAchievementRequestValue)
                 case .error:
                     Logger.error("Achievement Update Error")
                 }
@@ -158,7 +158,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
         layoutView.selectDoneButton.addTarget(self, action: #selector(donePicker), for: .touchUpInside)
     }
     
-    @objc func doneButtonAction() {
+    @objc func doneButtonDidClicked() {
         if let achievement { // 상세 화면에서 넘어옴 => 수정 API
             let updateAchievementRequestValue = UpdateAchievementRequestValue(
                 id: achievement.id,
@@ -172,7 +172,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
             viewModel.action(.updateAchievement(updateAchievementRequestValue: updateAchievementRequestValue))
             
         } else { // 촬영 화면에서 넘어옴 => 생성 API
-            delegate?.doneButtonDidClickedFromCaptureMode()
+            delegate?.doneButtonDidClickedFromCaptureView()
         }
     }
     

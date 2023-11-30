@@ -7,6 +7,7 @@
 
 import Foundation
 import Domain
+import Core
 
 public final class CategoryStorage: CategoryStorageProtocol {
     public static let shared = CategoryStorage()
@@ -53,11 +54,13 @@ public final class CategoryStorage: CategoryStorageProtocol {
     }
     
     public func decrease(categoryId: Int) {
+        Logger.debug("Decrease Continued \(categoryId)")
         storage[categoryId]?.continued -= 1
         wholeCategory?.continued -= 1
     }
     
     public func increase(categoryId: Int) {
+        Logger.debug("Increase Continued \(categoryId)")
         storage[categoryId]?.continued += 1
         wholeCategory?.continued += 1
     }
