@@ -12,6 +12,7 @@ import Domain
 
 protocol HomeCoordinatorDelegate: AnyObject {
     func deleteAction(achievementId: Int)
+    func updateAchievement(id: Int, newCategoryId: Int)
 }
 
 public final class HomeCoordinator: Coordinator {
@@ -30,7 +31,7 @@ public final class HomeCoordinator: Coordinator {
     
     public func start() {
         let homeVM = HomeViewModel(
-            fetchAchievementListUseCase: .init(repository: AchievementListRepository()),
+            fetchAchievementListUseCase: .init(repository: AchievementRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository()), 
             addCategoryUseCase: .init(repository: CategoryListRepository())
         )
@@ -50,5 +51,9 @@ public final class HomeCoordinator: Coordinator {
 extension HomeCoordinator: DetailAchievementCoordinatorDelegate {
     func deleteButtonAction(achievementId: Int) {
         delegate?.deleteAction(achievementId: achievementId)
+    }
+    
+    func updateAchievement(id: Int, newCategoryId: Int) {
+        delegate?.updateAchievement(id: id, newCategoryId: newCategoryId)
     }
 }

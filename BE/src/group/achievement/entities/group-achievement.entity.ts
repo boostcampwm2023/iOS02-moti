@@ -10,6 +10,7 @@ import { UserEntity } from '../../../users/entities/user.entity';
 import { GroupCategoryEntity } from '../../category/entities/group-category.entity';
 import { GroupEntity } from '../../group/entities/group.entity';
 import { GroupAchievement } from '../domain/group-achievement.domain';
+import { isNullOrUndefined } from '../../../common/utils/is-null-or-undefined';
 
 @Entity({ name: 'group_achievement' })
 export class GroupAchievementEntity extends BaseTimeEntity {
@@ -37,9 +38,9 @@ export class GroupAchievementEntity extends BaseTimeEntity {
   toModel(): GroupAchievement {
     const groupAchievement = new GroupAchievement(
       this.title,
-      this.user?.toModel() || null,
-      this.group?.toModel() || null,
-      this.groupCategory?.toModel() || null,
+      this.user?.toModel(),
+      this.group?.toModel(),
+      this.groupCategory?.toModel(),
       this.content,
     );
     groupAchievement.id = this.id;
@@ -47,18 +48,16 @@ export class GroupAchievementEntity extends BaseTimeEntity {
   }
 
   static from(groupAchievement: GroupAchievement): GroupAchievementEntity {
+    if (isNullOrUndefined(groupAchievement)) return groupAchievement;
+
     const groupAchievementEntity = new GroupAchievementEntity();
     groupAchievementEntity.id = groupAchievement.id;
     groupAchievementEntity.title = groupAchievement.title;
-    groupAchievementEntity.user = groupAchievement.user
-      ? UserEntity.from(groupAchievement.user)
-      : null;
-    groupAchievementEntity.group = groupAchievement.group
-      ? GroupEntity.from(groupAchievement.group)
-      : null;
-    groupAchievementEntity.groupCategory = groupAchievement.groupCategory
-      ? GroupCategoryEntity.from(groupAchievement.groupCategory)
-      : null;
+    groupAchievementEntity.user = UserEntity.from(groupAchievement.user);
+    groupAchievementEntity.group = GroupEntity.from(groupAchievement.group);
+    groupAchievementEntity.groupCategory = GroupCategoryEntity.from(
+      groupAchievement.groupCategory,
+    );
     groupAchievementEntity.content = groupAchievement.content;
     return groupAchievementEntity;
   }

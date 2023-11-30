@@ -35,7 +35,8 @@ final class EditAchievementCoordinator: Coordinator {
     func start(achievement: Achievement) {
         let editAchievementVM = EditAchievementViewModel(
             saveImageUseCase: .init(repository: ImageRepository()),
-            fetchCategoryListUseCase: .init(repository: CategoryListRepository())
+            fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
+            updateAchievementUseCase: .init(repository: AchievementRepository())
         )
         let editAchievementVC = EditAchievementViewController(
             viewModel: editAchievementVM,
@@ -56,7 +57,8 @@ final class EditAchievementCoordinator: Coordinator {
     func startAfterCapture(image: UIImage, imageExtension: ImageExtension) {
         let editAchievementVM = EditAchievementViewModel(
             saveImageUseCase: .init(repository: ImageRepository()),
-            fetchCategoryListUseCase: .init(repository: CategoryListRepository())
+            fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
+            updateAchievementUseCase: .init(repository: AchievementRepository())
         )
         let editAchievementVC = EditAchievementViewController(
             viewModel: editAchievementVM,

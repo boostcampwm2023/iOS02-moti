@@ -25,8 +25,8 @@ export class LocalFileStore extends FileStore {
 
   async upload(file: File, storeOptions?: StoreOptions): Promise<UploadFile> {
     const originalFilename = file.originalname;
-    const storeFileName = this.createStoreFileName(originalFilename);
-    const fullPath = this.getFullPath(storeFileName, storeOptions);
+    const { filename, fileId } = this.createStoreFileName(originalFilename);
+    const fullPath = this.getFullPath(filename, storeOptions);
     const callableFullPath = `file://${fullPath}`;
 
     try {
@@ -37,9 +37,10 @@ export class LocalFileStore extends FileStore {
     }
 
     return {
-      uploadFileName: storeFileName,
+      uploadFileName: filename,
       originalFileName: originalFilename,
       uploadFullPath: callableFullPath,
+      fileKey: fileId,
     };
   }
 

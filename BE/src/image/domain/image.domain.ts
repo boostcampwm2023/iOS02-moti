@@ -10,6 +10,7 @@ export class Image {
   imageUrl: string;
   thumbnailUrl: string = null;
   achievement: Achievement;
+  imageKey: string;
 
   async uploadOriginalImage(
     file: File,
@@ -21,6 +22,7 @@ export class Image {
     });
     this.originalName = uploadFile.originalFileName;
     this.imageUrl = uploadFile.uploadFullPath;
+    this.imageKey = uploadFile.fileKey;
 
     return uploadFile;
   }

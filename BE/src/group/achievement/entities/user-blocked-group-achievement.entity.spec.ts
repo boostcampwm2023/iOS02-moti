@@ -104,8 +104,8 @@ describe('UserBlockedGroupAchievementEntity Test', () => {
       expect(userBlockedGroupAchievement).toBeInstanceOf(
         UserBlockedGroupAchievement,
       );
-      expect(userBlockedGroupAchievement.user).toBeNull();
-      expect(userBlockedGroupAchievement.groupAchievement).toBeNull();
+      expect(userBlockedGroupAchievement.user).toBeUndefined();
+      expect(userBlockedGroupAchievement.groupAchievement).toBeUndefined();
     });
   });
 });

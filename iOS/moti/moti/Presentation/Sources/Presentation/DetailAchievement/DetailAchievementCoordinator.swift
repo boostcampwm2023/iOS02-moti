@@ -12,6 +12,7 @@ import Domain
 
 protocol DetailAchievementCoordinatorDelegate: AnyObject {
     func deleteButtonAction(achievementId: Int)
+    func updateAchievement(id: Int, newCategoryId: Int)
 }
 
 public final class DetailAchievementCoordinator: Coordinator {
@@ -36,8 +37,8 @@ public final class DetailAchievementCoordinator: Coordinator {
     public func start(achievement: Achievement) {
         let detailAchievementVC = DetailAchievementViewController(
             viewModel: DetailAchievementViewModel(
-                fetchDetailAchievementUseCase: .init(repository: DetailAchievementRepository()),
-                deleteAchievementUseCase: .init(repository: DeleteAchievementRepository()),
+                fetchDetailAchievementUseCase: .init(repository: AchievementRepository()),
+                deleteAchievementUseCase: .init(repository: AchievementRepository()),
                 achievement: achievement
             )
         )
@@ -69,5 +70,6 @@ extension DetailAchievementCoordinator: DetailAchievementViewControllerDelegate 
 extension DetailAchievementCoordinator: EditAchievementCoordinatorDelegate {
     func doneButtonAction(updateAchievementRequestValue: UpdateAchievementRequestValue) {
         detailAchievementViewController?.update(updateAchievementRequestValue: updateAchievementRequestValue)
+        delegate?.updateAchievement(id: updateAchievementRequestValue.id, newCategoryId: updateAchievementRequestValue.body.categoryId)
     }
 }

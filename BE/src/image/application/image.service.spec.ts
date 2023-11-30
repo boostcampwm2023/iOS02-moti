@@ -85,7 +85,7 @@ describe('ImageService', () => {
       expect(savedImage.imageUrl.startsWith('file://'));
       expect(savedImage.imageUrl.endsWith('abcd-efgh-ijkl-mnop.jpg'));
       expect(savedImage.thumbnailUrl).toBeNull();
-      expect(savedImage.achievement).toBeNull();
+      expect(savedImage.achievement).toBeUndefined();
       await expect(
         fs.access(savedImage.imageUrl.replace('file://', '')),
       ).resolves.toBeUndefined();
@@ -106,45 +106,52 @@ describe('ImageService', () => {
 
         // when
         const updatedImage = await imageService.saveThumbnail(
-          image.id,
+          image.imageKey,
           thumbnailPath,
         );
 
         // then
         expect(updatedImage.id).toEqual(image.id);
-        expect(updatedImage.user).toBeNull();
+        expect(updatedImage.user).toBeUndefined();
         expect(updatedImage.originalName).toBe(image.originalName);
         expect(updatedImage.imageUrl.startsWith('file://'));
         expect(updatedImage.imageUrl.endsWith('abcd-efgh-ijkl-mnop.jpg'));
         expect(updatedImage.thumbnailUrl).toBe(thumbnailPath);
-        expect(updatedImage.achievement).toBeNull();
+        expect(updatedImage.achievement).toBeUndefined();
       });
     });
 
     it('이미 썸네일이 있는 이미지의 썸네일을 저장할 수 없다.', async () => {
-      // given
-      uuidHolder.setUuid('abcd-efgh-ijkl-mnop');
-      const user = await userFixture.getUser('ABC');
-      const image = await imageFixture.getImageWithRealFile(user, imagePrefix);
-      const thumbnailPath = 'file://abcd-efgh-ijkl-mnop-thumbnail.jpg';
-      await imageService.saveThumbnail(image.id, thumbnailPath);
+      await transactionTest(dataSource, async () => {
+        // given
+        uuidHolder.setUuid('abcd-efgh-ijkl-mnop');
+        const user = await userFixture.getUser('ABC');
+        const image = await imageFixture.getImageWithRealFile(
+          user,
+          imagePrefix,
+        );
+        const thumbnailPath = 'file://abcd-efgh-ijkl-mnop-thumbnail.jpg';
+        await imageService.saveThumbnail(image.imageKey, thumbnailPath);
 
-      // when
-      await expect(
-        imageService.saveThumbnail(image.id, thumbnailPath),
-      ).rejects.toThrow(ImageAlreadyExistsThumbnailException);
+        // when
+        await expect(
+          imageService.saveThumbnail(image.imageKey, thumbnailPath),
+        ).rejects.toThrow(ImageAlreadyExistsThumbnailException);
+      });
     });
 
     it('존재하지 않는 이미지의 썸네일을 저장할 수 없다.', async () => {
-      // given
-      // when
-      // then
-      await expect(
-        imageService.saveThumbnail(
-          1,
-          'file://abcd-efgh-ijkl-mnop-thumbnail.jpg',
-        ),
-      ).rejects.toThrow(ImageNotFoundException);
+      await transactionTest(dataSource, async () => {
+        // given
+        // when
+        // then
+        await expect(
+          imageService.saveThumbnail(
+            'hi',
+            'file://abcd-efgh-ijkl-mnop-thumbnail.jpg',
+          ),
+        ).rejects.toThrow(ImageNotFoundException);
+      });
     });
   });
 });

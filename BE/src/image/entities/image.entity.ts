@@ -30,6 +30,9 @@ export class ImageEntity {
   @Column({ type: 'varchar', length: 200, nullable: true })
   thumbnailUrl: string;
 
+  @Column({ type: 'varchar', length: 50, unique: true })
+  imageKey: string;
+
   @Index()
   @OneToOne(() => AchievementEntity, { nullable: true })
   @JoinColumn({ name: 'achievement_id', referencedColumnName: 'id' })
@@ -43,8 +46,9 @@ export class ImageEntity {
     imageEntity.originalName = image.originalName;
     imageEntity.imageUrl = image.imageUrl;
     imageEntity.thumbnailUrl = image.thumbnailUrl;
+    imageEntity.imageKey = image.imageKey;
     imageEntity.achievement = AchievementEntity.strictFrom(image.achievement);
-    imageEntity.user = image.user ? UserEntity.from(image.user) : null;
+    imageEntity.user = UserEntity.from(image.user);
     return imageEntity;
   }
 
@@ -54,18 +58,20 @@ export class ImageEntity {
     imageEntity.originalName = image.originalName;
     imageEntity.imageUrl = image.imageUrl;
     imageEntity.thumbnailUrl = image.thumbnailUrl;
+    imageEntity.imageKey = image.imageKey;
     imageEntity.user = UserEntity.from(image.user);
     return imageEntity;
   }
 
   toModel(): Image {
-    const image = new Image(this.user?.toModel() || null);
+    const image = new Image(this.user?.toModel());
     image.originalName = this.originalName;
     image.imageUrl = this.imageUrl;
     image.id = this.id;
-    image.achievement = this.achievement?.toModel() || null;
-    image.user = this.user?.toModel() || null;
+    image.achievement = this.achievement?.toModel();
+    image.user = this.user?.toModel();
     image.thumbnailUrl = this.thumbnailUrl;
+    image.imageKey = this.imageKey;
     return image;
   }
 }

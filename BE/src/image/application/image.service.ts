@@ -27,8 +27,8 @@ export class ImageService {
   }
 
   @Transactional()
-  async saveThumbnail(imageId: number, thumbnailPath: string): Promise<Image> {
-    const findImage = await this.imageRepository.findById(imageId);
+  async saveThumbnail(imageId: string, thumbnailPath: string): Promise<Image> {
+    const findImage = await this.imageRepository.findByImageKey(imageId);
     if (!findImage) throw new ImageNotFoundException();
     if (findImage.thumbnailUrl)
       throw new ImageAlreadyExistsThumbnailException();

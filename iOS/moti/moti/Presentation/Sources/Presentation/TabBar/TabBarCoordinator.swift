@@ -64,7 +64,7 @@ public final class TabBarCoordinator: Coordinator {
 private extension TabBarCoordinator {
     func makeIndividualTabPage() -> UINavigationController {
         let homeVM = HomeViewModel(
-            fetchAchievementListUseCase: .init(repository: AchievementListRepository()),
+            fetchAchievementListUseCase: .init(repository: AchievementRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
             addCategoryUseCase: .init(repository: CategoryListRepository())
         )
@@ -134,5 +134,9 @@ extension TabBarCoordinator: TabBarViewControllerDelegate {
 extension TabBarCoordinator: HomeCoordinatorDelegate {
     func deleteAction(achievementId: Int) {
         homeViewController?.delete(achievementId: achievementId)
+    }
+    
+    func updateAchievement(id: Int, newCategoryId: Int) {
+        homeViewController?.updateAchievement(id: id, newCategoryId: newCategoryId)
     }
 }

@@ -79,7 +79,7 @@ describe('GroupAhievementImageEntity Test', () => {
       expect(groupAchievementImageEntity.thumbnailUrl).toBe(
         groupAchievementImage.thumbnailUrl,
       );
-      expect(groupAchievementImageEntity.groupAchievement).toBeNull();
+      expect(groupAchievementImageEntity.groupAchievement).toBeUndefined();
       expect(groupAchievementImageEntity.user).toBeNull();
     });
   });
@@ -151,7 +151,7 @@ describe('GroupAhievementImageEntity Test', () => {
       expect(groupAchievementImage.thumbnailUrl).toBe(
         groupAchievementImageEntity.thumbnailUrl,
       );
-      expect(groupAchievementImage.groupAchievement).toBeNull();
+      expect(groupAchievementImage.groupAchievement).toBeUndefined();
     });
   });
 });

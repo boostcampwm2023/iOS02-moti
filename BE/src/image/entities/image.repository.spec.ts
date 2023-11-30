@@ -58,6 +58,7 @@ describe('ImageRepository', () => {
         const image = new Image(user);
         image.originalName = 'image1.jpg';
         image.imageUrl = 'file://abcd-efgh-ijkl-mnop.jpg';
+        image.imageKey = 'abcd-efgh-ijkl-mnop-deadbeef';
 
         // when
         const savedImage = await imageRepository.saveImage(image);
@@ -67,27 +68,34 @@ describe('ImageRepository', () => {
         expect(savedImage.user).toEqual(user);
         expect(savedImage.originalName).toEqual('image1.jpg');
         expect(savedImage.imageUrl).toEqual('file://abcd-efgh-ijkl-mnop.jpg');
+        expect(savedImage.imageKey).toEqual('abcd-efgh-ijkl-mnop-deadbeef');
         expect(savedImage.thumbnailUrl).toBeNull();
-        expect(savedImage.achievement).toBeNull();
+        expect(savedImage.achievement).toBeUndefined();
       });
     });
 
     it('기존 이미지의 데이터를 업데이트 할 수 있다.', async () => {
-      // given
-      const user = await userFixture.getUser('ABC');
-      const image = await imageFixture.getImage(user);
-      image.updateThumbnail('file://abcd-efgh-ijkl-mnop.jpg');
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await userFixture.getUser('ABC');
+        const image = await imageFixture.getImage(user);
+        image.updateThumbnail('file://abcd-efgh-ijkl-mnop.jpg');
+        image.imageKey = 'abcd-efgh-ijkl-mnop-deadbeef';
 
-      // when
-      const savedImage = await imageRepository.saveImage(image);
+        // when
+        const savedImage = await imageRepository.saveImage(image);
 
-      // then
-      expect(savedImage.id).toEqual(image.id);
-      expect(savedImage.user).toEqual(user);
-      expect(savedImage.originalName).toEqual(image.originalName);
-      expect(savedImage.imageUrl).toEqual(image.imageUrl);
-      expect(savedImage.thumbnailUrl).toEqual('file://abcd-efgh-ijkl-mnop.jpg');
-      expect(savedImage.achievement).toBeNull();
+        // then
+        expect(savedImage.id).toEqual(image.id);
+        expect(savedImage.user).toEqual(user);
+        expect(savedImage.originalName).toEqual(image.originalName);
+        expect(savedImage.imageUrl).toEqual(image.imageUrl);
+        expect(savedImage.thumbnailUrl).toEqual(
+          'file://abcd-efgh-ijkl-mnop.jpg',
+        );
+        expect(savedImage.imageKey).toEqual('abcd-efgh-ijkl-mnop-deadbeef');
+        expect(savedImage.achievement).toBeUndefined();
+      });
     });
   });
 
@@ -99,6 +107,7 @@ describe('ImageRepository', () => {
         const image = new Image(user);
         image.originalName = 'image1.jpg';
         image.imageUrl = 'file://abcd-efgh-ijkl-mnop.jpg';
+        image.imageKey = 'abcd-efgh-ijkl-mnop-deadbeef';
         const savedImage = await imageRepository.saveImage(image);
 
         // when
@@ -106,21 +115,61 @@ describe('ImageRepository', () => {
 
         // then
         expect(findImage.id).toEqual(savedImage.id);
-        expect(findImage.user).toBeNull();
+        expect(findImage.user).toBeUndefined();
         expect(findImage.originalName).toEqual('image1.jpg');
-        expect(findImage.imageUrl).toEqual('file://abcd-efgh-ijkl-mnop.jpg');
+        expect(findImage.imageKey).toEqual('abcd-efgh-ijkl-mnop-deadbeef');
         expect(findImage.thumbnailUrl).toBeNull();
-        expect(findImage.achievement).toBeNull();
+        expect(findImage.achievement).toBeUndefined();
       });
     });
 
     it('이미지 조회에 실패하면 null을 반환한다.', async () => {
-      // given
-      // when
-      const findImage = await imageRepository.findById(1000);
+      await transactionTest(dataSource, async () => {
+        // given
+        // when
+        const findImage = await imageRepository.findById(1000);
 
-      // then
-      expect(findImage).toBeUndefined();
+        // then
+        expect(findImage).toBeUndefined();
+      });
+    });
+  });
+
+  describe('findByImageKey는 이미지를 조회할 수 있다.', () => {
+    it('이미지 조회에 성공하면 이미지 도메인 인스턴스를 반환한다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await userFixture.getUser('ABC');
+        const image = new Image(user);
+        image.originalName = 'image1.jpg';
+        image.imageUrl = 'file://abcd-efgh-ijkl-mnop.jpg';
+        image.imageKey = 'abcd-efgh-ijkl-mnop-deadbeef';
+        const savedImage = await imageRepository.saveImage(image);
+
+        // when
+        const findImage = await imageRepository.findByImageKey(
+          savedImage.imageKey,
+        );
+
+        // then
+        expect(findImage.id).toEqual(savedImage.id);
+        expect(findImage.user).toBeUndefined();
+        expect(findImage.originalName).toEqual('image1.jpg');
+        expect(findImage.imageKey).toEqual('abcd-efgh-ijkl-mnop-deadbeef');
+        expect(findImage.thumbnailUrl).toBeNull();
+        expect(findImage.achievement).toBeUndefined();
+      });
+    });
+
+    it('이미지 조회에 실패하면 null을 반환한다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        // when
+        const findImage = await imageRepository.findByImageKey('abcd-efgh');
+
+        // then
+        expect(findImage).toBeUndefined();
+      });
     });
   });
 });
