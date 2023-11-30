@@ -7,13 +7,19 @@ import { GroupCategoryCreate } from '../dto/group-category-create';
 import { ApiData } from '../../../common/api/api-data';
 import { GroupCategoryResponse } from '../dto/group-category-response';
 import { ParseIntPipe } from '../../../common/pipe/parse-int.pipe';
-import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('그룹 카테고리 API')
 @Controller('/api/v1/groups/:groupId/categories')
 export class GroupCategoryController {
   constructor(private readonly groupCategoryService: GroupCategoryService) {}
 
+  @ApiBearerAuth('accessToken')
   @ApiOperation({
     summary: '그룹 카테고리 생성 API',
     description: '그룹 카테고리를 생성한다.',
