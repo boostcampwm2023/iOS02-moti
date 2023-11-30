@@ -55,4 +55,10 @@ public final class CategoryStorage: CategoryStorageProtocol {
     public func deleteAll() {
         storage = [:]
     }
+    
+    // Count Update
+    public func decrease(categoryId: Int) {
+        storage[categoryId]?.continued -= 1
+        storage[0]?.continued -= 1
+    }
 }
