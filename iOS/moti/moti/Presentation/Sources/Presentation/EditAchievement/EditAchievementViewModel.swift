@@ -42,7 +42,7 @@ final class EditAchievementViewModel {
         case none
         case loading
         case finish(newAchievement: Achievement)
-        case error
+        case error(message: String)
     }
     
     private let saveImageUseCase: SaveImageUseCase
@@ -155,7 +155,10 @@ final class EditAchievementViewModel {
     private func postAchievement(title: String, content: String, categoryId: Int) {
         Task {
             do {
-                guard let photoId else { return }
+                guard let photoId else {
+                    postAchievementState = .error(message: "post achievement error: not exist photoId")
+                    return
+                }
                 let requestValue = PostAchievementRequestValue(
                     title: title,
                     content: content,
@@ -167,7 +170,7 @@ final class EditAchievementViewModel {
                 let newAchievement = try await postAchievementUseCase.execute(requestValue: requestValue)
                 postAchievementState = .finish(newAchievement: newAchievement)
             } catch {
-                postAchievementState = .error
+                postAchievementState = .error(message: "post achievement error")
             }
         }
     }
