@@ -52,6 +52,16 @@ public final class CategoryStorage: CategoryStorageProtocol {
         storage[category.id] = category
     }
     
+    public func decrease(categoryId: Int) {
+        storage[categoryId]?.continued -= 1
+        wholeCategory?.continued -= 1
+    }
+    
+    public func increase(categoryId: Int) {
+        storage[categoryId]?.continued += 1
+        wholeCategory?.continued += 1
+    }
+    
     // Delete
     public func delete(categoryId: Int) {
         storage[categoryId] = nil
@@ -59,11 +69,5 @@ public final class CategoryStorage: CategoryStorageProtocol {
     
     public func deleteAll() {
         storage = [:]
-    }
-    
-    // Count Update
-    public func decrease(categoryId: Int) {
-        storage[categoryId]?.continued -= 1        
-        wholeCategory?.continued -= 1
     }
 }

@@ -20,11 +20,10 @@ public protocol CategoryStorageProtocol {
     
     // Update
     func update(category: CategoryItem)
+    func decrease(categoryId: Int)
+    func increase(categoryId: Int)
     
     // Delete
     func delete(categoryId: Int)
     func deleteAll()
-    
-    // Update Count
-    func decrease(categoryId: Int)
 }
