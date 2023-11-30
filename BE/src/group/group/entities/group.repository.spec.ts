@@ -105,7 +105,7 @@ describe('GroupRepository Test', () => {
         const participants = await usersFixture.getUsers(10);
         const managers = await usersFixture.getUsers(10);
 
-        const group = await groupFixture.getGroup(
+        const group = await groupFixture.createGroups(
           leader,
           participants,
           managers,
@@ -129,7 +129,7 @@ describe('GroupRepository Test', () => {
         const participants = await usersFixture.getUsers(10);
         const managers = await usersFixture.getUsers(10);
 
-        const group = await groupFixture.getGroup(
+        const group = await groupFixture.createGroups(
           leader,
           participants,
           managers,

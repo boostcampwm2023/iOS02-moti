@@ -23,7 +23,7 @@ export class GroupFixture {
     return await this.groupRepository.saveGroup(group);
   }
 
-  async getGroup(user: User, members?: User[], managers?: User[]) {
+  async createGroups(user: User, members?: User[], managers?: User[]) {
     const group = GroupFixture.group();
     group.addMember(user, UserGroupGrade.LEADER);
     members?.forEach((member) =>

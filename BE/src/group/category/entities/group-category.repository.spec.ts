@@ -55,7 +55,7 @@ describe('GroupCategoryRepository test', () => {
       await transactionTest(dataSource, async () => {
         // given
         const user = await userFixture.getUser('ABC');
-        const group = await groupFixture.getGroup(user);
+        const group = await groupFixture.createGroups(user);
         const groupCategory = new GroupCategory(user, group, '카테고리1');
 
         // when

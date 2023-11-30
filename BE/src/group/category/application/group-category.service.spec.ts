@@ -56,7 +56,7 @@ describe('GroupCategoryService test', () => {
       await transactionTest(dataSource, async () => {
         // given
         const leader = await usersFixture.getUser('ABC');
-        const group = await groupFixture.getGroup(leader);
+        const group = await groupFixture.createGroups(leader);
 
         const groupCategoryCreate = new GroupCategoryCreate('카테고리1');
 
@@ -80,7 +80,7 @@ describe('GroupCategoryService test', () => {
         const leader = await usersFixture.getUser('ABC');
         const participants = await usersFixture.getUsers(5);
 
-        const group = await groupFixture.getGroup(leader, participants);
+        const group = await groupFixture.createGroups(leader, participants);
 
         const groupCategoryCreate = new GroupCategoryCreate('카테고리1');
 
@@ -103,7 +103,7 @@ describe('GroupCategoryService test', () => {
         const participants = await usersFixture.getUsers(5);
         const managers = await usersFixture.getUsers(5);
 
-        const group = await groupFixture.getGroup(
+        const group = await groupFixture.createGroups(
           leader,
           participants,
           managers,
