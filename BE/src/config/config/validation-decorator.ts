@@ -16,7 +16,9 @@ export const IsNotEmptyString = (validationOptions?: ValidationOptions) => {
       options: validationOptions,
       validator: {
         validate(value: any) {
-          return value !== undefined && typeof value === 'string';
+          return (
+            value !== undefined && typeof value === 'string' && value !== ''
+          );
         },
       },
     });
