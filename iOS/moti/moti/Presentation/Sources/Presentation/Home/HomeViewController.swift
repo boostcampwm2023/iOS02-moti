@@ -10,6 +10,7 @@ import Combine
 import Core
 import Data
 import Design
+import Domain
 
 final class HomeViewController: BaseViewController<HomeView> {
 
@@ -48,6 +49,10 @@ final class HomeViewController: BaseViewController<HomeView> {
     
     func updateAchievement(achievementId: Int, newCategoryId: Int) {
         viewModel.action(.updateAchievement(id: achievementId, newCategoryId: newCategoryId))
+    }
+    
+    func achievementDidPosted(newAchievement: Achievement) {
+        viewModel.action(.postAchievement(newAchievement: newAchievement))
     }
     
     private func bind() {

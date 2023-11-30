@@ -15,6 +15,7 @@ final class EditAchievementViewModel {
         case saveImage(data: Data)
         case fetchCategories
         case updateAchievement(updateAchievementRequestValue: UpdateAchievementRequestValue)
+        case postAchievement(title: String, content: String, categoryId: Int)
     }
     
     enum CategoryState {
@@ -37,26 +38,40 @@ final class EditAchievementViewModel {
         case error
     }
     
+    enum PostAchievementState {
+        case none
+        case loading
+        case finish(newAchievement: Achievement)
+        case error(message: String)
+    }
+    
     private let saveImageUseCase: SaveImageUseCase
     private let fetchCategoryListUseCase: FetchCategoryListUseCase
     private let updateAchievementUseCase: UpdateAchievementUseCase
+    private let postAchievementUseCase: PostAchievementUseCase
     private(set) var categories: [CategoryItem] = []
     var firstCategory: CategoryItem? {
         return categories.first
     }
     
+    /// 이미지 선저장으로 받아 놓은 사진 ID: post할 때 이 ID를 포함하여 post한다.
+    private var photoId: Int?
+    
     @Published private(set) var categoryState: CategoryState = .none
     @Published private(set) var saveImageState: SaveImageState = .none
     @Published private(set) var updateAchievementState: UpdateAchievementState = .none
+    @Published private(set) var postAchievementState: PostAchievementState = .none
     
     init(
         saveImageUseCase: SaveImageUseCase,
         fetchCategoryListUseCase: FetchCategoryListUseCase,
-        updateAchievementUseCase: UpdateAchievementUseCase
+        updateAchievementUseCase: UpdateAchievementUseCase,
+        postAchievementUseCase: PostAchievementUseCase
     ) {
         self.saveImageUseCase = saveImageUseCase
         self.fetchCategoryListUseCase = fetchCategoryListUseCase
         self.updateAchievementUseCase = updateAchievementUseCase
+        self.postAchievementUseCase = postAchievementUseCase
     }
 
     func action(_ action: Action) {
@@ -67,6 +82,8 @@ final class EditAchievementViewModel {
             fetchCategories()
         case .updateAchievement(let updateAchievementRequestValue):
             updateAchievement(updateAchievementRequestValue: updateAchievementRequestValue)
+        case .postAchievement(let title, let content, let categoryId):
+            postAchievement(title: title, content: content, categoryId: categoryId)
         }
     }
     
@@ -110,8 +127,9 @@ final class EditAchievementViewModel {
                     contentType: "jpeg", // heic로 테스트 해봤지만 전송되는 파일 데이터가 jpeg라서 의미 없음을 확인함. 따라서 jpeg로 통일해서 전송
                     imageData: data
                 )
-                let (isSuccess, imageId) = try await saveImageUseCase.excute(requestValue: requestValue)
-                Logger.debug("Upload: \(isSuccess) / id: \(imageId)")
+                let (isSuccess, photoId) = try await saveImageUseCase.execute(requestValue: requestValue)
+                Logger.debug("Upload: \(isSuccess) / id: \(photoId)")
+                self.photoId = photoId
                 saveImageState = .finish
             } catch {
                 saveImageState = .error
@@ -131,9 +149,31 @@ final class EditAchievementViewModel {
                     updateAchievementState = .error
                 }
             } catch {
-                saveImageState = .error
+                updateAchievementState = .error
             }
         }
-        
+    }
+    
+    private func postAchievement(title: String, content: String, categoryId: Int) {
+        Task {
+            do {
+                guard let photoId else {
+                    postAchievementState = .error(message: "post achievement error: not exist photoId")
+                    return
+                }
+                let requestValue = PostAchievementRequestValue(
+                    title: title,
+                    content: content,
+                    categoryId: categoryId,
+                    photoId: photoId
+                )
+                
+                postAchievementState = .loading
+                let newAchievement = try await postAchievementUseCase.execute(requestValue: requestValue)
+                postAchievementState = .finish(newAchievement: newAchievement)
+            } catch {
+                postAchievementState = .error(message: "post achievement error")
+            }
+        }
     }
 }

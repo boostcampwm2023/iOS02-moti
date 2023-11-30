@@ -16,6 +16,7 @@ extension HomeViewModel {
         case fetchAchievementList(category: CategoryItem)
         case delete(achievementId: Int)
         case updateAchievement(id: Int, newCategoryId: Int)
+        case postAchievement(newAchievement: Achievement)
     }
     
     enum CategoryListState {

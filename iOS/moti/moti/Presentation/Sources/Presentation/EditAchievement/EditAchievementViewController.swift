@@ -13,7 +13,7 @@ import Domain
 
 protocol EditAchievementViewControllerDelegate: AnyObject {
     func doneButtonDidClickedFromDetailView(updateAchievementRequestValue: UpdateAchievementRequestValue)
-    func doneButtonDidClickedFromCaptureView()
+    func doneButtonDidClickedFromCaptureView(newAchievement: Achievement)
 }
 
 final class EditAchievementViewController: BaseViewController<EditAchievementView> {
@@ -150,6 +150,20 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
                 }
             }
             .store(in: &cancellables)
+        
+        viewModel.$postAchievementState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .none, .loading: break
+                case .finish(let newAchievement):
+                    delegate?.doneButtonDidClickedFromCaptureView(newAchievement: newAchievement)
+                case .error:
+                    Logger.error("Achievement Post Error")
+                }
+            }
+            .store(in: &cancellables)
 
     }
     
@@ -172,7 +186,19 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
             viewModel.action(.updateAchievement(updateAchievementRequestValue: updateAchievementRequestValue))
             
         } else { // 촬영 화면에서 넘어옴 => 생성 API
-            delegate?.doneButtonDidClickedFromCaptureView()
+            var title = ""
+            if let text = layoutView.titleTextField.text, !text.isEmpty {
+                title = text
+            } else {
+                guard let placeholder = layoutView.titleTextField.placeholder else { return }
+                title = placeholder
+            }
+            
+            viewModel.action(.postAchievement(
+                title: title,
+                content: bottomSheet.text,
+                categoryId: findSelectedCategory().id)
+            )
         }
     }
     

@@ -26,7 +26,7 @@ public struct SaveImageUseCase {
         self.repository = repository
     }
     
-    public func excute(requestValue: SaveImageRequestValue) async throws -> (Bool, Int) {
+    public func execute(requestValue: SaveImageRequestValue) async throws -> (Bool, Int) {
         return try await repository.saveImage(requestValue: requestValue)
     }
 }

@@ -9,6 +9,7 @@ import UIKit
 import Design
 import Core
 import Data
+import Domain
 
 public final class TabBarCoordinator: Coordinator {
     enum TabItemType: CaseIterable {
@@ -55,6 +56,7 @@ public final class TabBarCoordinator: Coordinator {
   
     private func moveCaptureViewController() {
         let captureCoordinator = CaptureCoordinator(navigationController, self)
+        captureCoordinator.delegate = self
         captureCoordinator.start()
         childCoordinators.append(captureCoordinator)
     }
@@ -88,5 +90,15 @@ private extension TabBarCoordinator {
 extension TabBarCoordinator: TabBarViewControllerDelegate {
     func captureButtonDidClicked() {
         moveCaptureViewController()
+    }
+}
+
+extension TabBarCoordinator: CaptureCoordinatorDelegate {
+    func achievementDidPosted(newAchievement: Achievement) {
+        guard let naviVC = tabBarController.viewControllers?.first as? UINavigationController else { return }
+        
+        guard let homeVC = naviVC.viewControllers.compactMap({ $0 as? HomeViewController}).first else { return }
+        
+        homeVC.achievementDidPosted(newAchievement: newAchievement)
     }
 }

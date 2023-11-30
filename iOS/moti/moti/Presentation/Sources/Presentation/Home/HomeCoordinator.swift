@@ -53,4 +53,8 @@ extension HomeCoordinator: DetailAchievementCoordinatorDelegate {
     func updateAchievement(achievementId: Int, newCategoryId: Int) {
         currentViewController?.updateAchievement(achievementId: achievementId, newCategoryId: newCategoryId)
     }
+    
+    func achievementDidPosted(newAchievement: Achievement) {
+        currentViewController?.achievementDidPosted(newAchievement: newAchievement)
+    }
 }

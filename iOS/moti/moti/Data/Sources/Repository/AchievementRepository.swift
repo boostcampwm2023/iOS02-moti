@@ -62,4 +62,13 @@ public struct AchievementRepository: AchievementRepositoryProtocol {
         guard let isSuccess = responseDTO.success else { throw NetworkError.decode }
         return isSuccess
     }
+    
+    public func postAchievement(requestValue: PostAchievementRequestValue) async throws -> Achievement {
+        let endpoint = MotiAPI.postAchievement(requestValue: requestValue)
+        let responseDTO = try await provider.request(with: endpoint, type: DetailAchievementResponseDTO.self)
+
+        guard let detailAchievementDataDTO = responseDTO.data else { throw NetworkError.decode }
+        let achievementSimpleDTO = AchievementSimpleDTO(dto: detailAchievementDataDTO)
+        return Achievement(dto: achievementSimpleDTO)
+    }
 }
