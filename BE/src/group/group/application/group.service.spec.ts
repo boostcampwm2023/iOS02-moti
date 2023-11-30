@@ -93,6 +93,31 @@ describe('GroupSerivce Test', () => {
     });
   });
 
+  test('avatarUrl 없이 그룹을 생성할 수 있다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      const user = await usersFixture.getUser('ABC');
+      const createGroupRequest = new CreateGroupRequest('Group Name');
+
+      // when
+      const groupResponse = await groupService.create(user, createGroupRequest);
+      const userGroup = await userGroupRepository.repository.findOne({
+        where: { group: { id: groupResponse.id }, user: { id: user.id } },
+        relations: {
+          group: true,
+          user: true,
+        },
+      });
+
+      // then
+      expect(groupResponse.name).toEqual('Group Name');
+      expect(groupResponse.avatarUrl).not.toBeNull();
+      expect(userGroup.group.id).toEqual(groupResponse.id);
+      expect(userGroup.user.id).toEqual(user.id);
+      expect(userGroup.grade).toEqual(UserGroupGrade.LEADER);
+    });
+  });
+
   test('내가 속한 그룹 리스트를 조회할 수 있다.', async () => {
     // given
     await transactionTest(dataSource, async () => {
