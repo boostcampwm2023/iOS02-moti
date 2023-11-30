@@ -12,6 +12,7 @@ import { GroupCategoryController } from './controller/group-category.controller'
       GroupRepository,
     ]),
   ],
+  controllers: [GroupCategoryController],
   providers: [GroupCategoryService],
 })
 export class GroupCategoryModule {}
