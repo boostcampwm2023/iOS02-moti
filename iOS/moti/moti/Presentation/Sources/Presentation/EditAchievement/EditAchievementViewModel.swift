@@ -53,6 +53,8 @@ final class EditAchievementViewModel {
     var firstCategory: CategoryItem? {
         return categories.first
     }
+    
+    /// 이미지 선저장으로 받아 놓은 사진 ID: post할 때 이 ID를 포함하여 post한다.
     private var photoId: Int?
     
     @Published private(set) var categoryState: CategoryState = .none
