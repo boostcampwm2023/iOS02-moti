@@ -12,12 +12,14 @@ import { GroupFixture } from '../../../../test/group/group/group-fixture';
 import { UserGroupGrade } from '../domain/user-group-grade';
 import { CustomTypeOrmModule } from '../../../config/typeorm/custom-typeorm.module';
 import { UserGroupRepository } from './user-group.repository';
+import { GroupTestModule } from '../../../../test/group/group/group-test.module';
 
 describe('GroupRepository Test', () => {
   let groupRepository: GroupRepository;
   let userGroupRepository: UserGroupRepository;
   let dataSource: DataSource;
   let usersFixture: UsersFixture;
+  let groupFixture: GroupFixture;
 
   beforeAll(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -29,6 +31,7 @@ describe('GroupRepository Test', () => {
           UserGroupRepository,
         ]),
         UsersTestModule,
+        GroupTestModule,
       ],
       controllers: [],
       providers: [],
@@ -37,6 +40,7 @@ describe('GroupRepository Test', () => {
     groupRepository = app.get<GroupRepository>(GroupRepository);
     userGroupRepository = app.get<UserGroupRepository>(UserGroupRepository);
     usersFixture = app.get<UsersFixture>(UsersFixture);
+    groupFixture = app.get<GroupFixture>(GroupFixture);
     dataSource = app.get<DataSource>(DataSource);
   });
 
@@ -71,6 +75,25 @@ describe('GroupRepository Test', () => {
       expect(userGroup.group.id).toEqual(savedGroup.id);
       expect(userGroup.user.id).toEqual(user.id);
       expect(userGroup.grade).toEqual(UserGroupGrade.LEADER);
+    });
+  });
+
+  test('그룹 리스트를 조회한다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      await groupFixture.createGroup('Test Group1', user);
+      await groupFixture.createGroup('Test Group2', user);
+      await groupFixture.createGroup('Test Group3', user);
+
+      // when
+      const groups = await groupRepository.findByUserId(user.id);
+
+      // then
+      expect(groups.length).toEqual(3);
+      expect(groups[0].name).toEqual('Test Group1');
+      expect(groups[1].name).toEqual('Test Group2');
+      expect(groups[2].name).toEqual('Test Group3');
     });
   });
 });
