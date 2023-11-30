@@ -68,7 +68,6 @@ public struct AchievementRepository: AchievementRepositoryProtocol {
         let responseDTO = try await provider.request(with: endpoint, type: DetailAchievementResponseDTO.self)
 
         guard let detailAchievementDataDTO = responseDTO.data else { throw NetworkError.decode }
-        let achievementSimpleDTO = AchievementSimpleDTO(dto: detailAchievementDataDTO)
-        return Achievement(dto: achievementSimpleDTO)
+        return Achievement(dto: detailAchievementDataDTO)
     }
 }
