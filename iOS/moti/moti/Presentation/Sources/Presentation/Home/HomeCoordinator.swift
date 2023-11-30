@@ -81,7 +81,7 @@ extension HomeCoordinator: DetailAchievementCoordinatorDelegate {
         currentViewController?.delete(achievementId: achievementId)
     }
     
-    func updateAchievement(id: Int, newCategoryId: Int) {
-        currentViewController?.updateAchievement(id: id, newCategoryId: newCategoryId)
+    func updateAchievement(achievementId: Int, newCategoryId: Int) {
+        currentViewController?.updateAchievement(achievementId: achievementId, newCategoryId: newCategoryId)
     }
 }

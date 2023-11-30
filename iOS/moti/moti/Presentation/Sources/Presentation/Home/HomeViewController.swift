@@ -44,8 +44,8 @@ final class HomeViewController: BaseViewController<HomeView> {
         viewModel.action(.delete(achievementId: achievementId))
     }
     
-    func updateAchievement(id: Int, newCategoryId: Int) {
-        viewModel.action(.updateAchievement(id: id, newCategoryId: newCategoryId))
+    func updateAchievement(achievementId: Int, newCategoryId: Int) {
+        viewModel.action(.updateAchievement(id: achievementId, newCategoryId: newCategoryId))
     }
     
     private func bind() {

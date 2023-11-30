@@ -19,13 +19,12 @@ final class HomeViewModel {
     private var categoryDataSource: CategoryDataSource?
     private let fetchCategoryListUseCase: FetchCategoryListUseCase
     private let addCategoryUseCase: AddCategoryUseCase
-
+    
     private var categories: [CategoryItem] = [] {
         didSet {
             categoryDataSource?.update(data: categories)
         }
     }
-    
     private(set) var currentCategory: CategoryItem? {
         didSet {
             guard let currentCategory else { return }
@@ -36,7 +35,7 @@ final class HomeViewModel {
     // Achievement
     private var achievementDataSource: AchievementDataSource?
     private let fetchAchievementListUseCase: FetchAchievementListUseCase
-    
+
     private let skeletonAchievements: [Achievement] = (-20...(-1)).map { Achievement(id: $0, title: "", imageURL: nil) }
     private var achievements: [Achievement] = [] {
         didSet {
@@ -96,9 +95,9 @@ final class HomeViewModel {
         case .fetchCategoryList(let category):
             fetchCategoryAchievementList(category: category)
         case .delete(let achievementId):
-            delete(achievementId: achievementId)
+            deleteOfDataSource(achievementId: achievementId)
         case .updateAchievement(let id, let newCategoryId):
-            updateAchievementCategory(oldCategoryId: id, newCategoryId: newCategoryId)
+            updateAchievementCategory(achievementId: id, newCategoryId: newCategoryId)
         }
     }
 }
@@ -157,21 +156,23 @@ private extension HomeViewModel {
     }
     
     /// 도전 기록을 삭제하는 액션
-    func delete(achievementId: Int) {
+    func deleteOfDataSource(achievementId: Int) {
         guard let foundIndex = firstIndexOf(achievementId: achievementId) else { return }
         achievements.remove(at: foundIndex)
         
-        guard let currentCategoryId = currentCategory?.id else { return }
-        currentCategory = CategoryStorage.shared.find(categoryId: currentCategoryId)
+        syncCurrentCategoryWithStorage()
     }
     
     /// 도전 기록의 카테고리를 변경하는 액션
-    func updateAchievementCategory(oldCategoryId: Int, newCategoryId: Int) {
+    func updateAchievementCategory(achievementId: Int, newCategoryId: Int) {
         guard let currentCategory, currentCategory.id != 0 else { return }
+        
+        CategoryStorage.shared.decrease(categoryId: currentCategory.id)
+        CategoryStorage.shared.increase(categoryId: newCategoryId)
+        syncCurrentCategoryWithStorage()
+        
         if currentCategory.id != newCategoryId {
-            CategoryStorage.shared.decrease(categoryId: oldCategoryId)
-            CategoryStorage.shared.increase(categoryId: newCategoryId)
-            delete(achievementId: oldCategoryId)
+            deleteOfDataSource(achievementId: achievementId)
         }
     }
 }
@@ -214,7 +215,16 @@ private extension HomeViewModel {
     }
     
     /// Achievement의 첫 번째 index를 구하는 메서드
-    private func firstIndexOf(achievementId: Int) -> Int? {
+    func firstIndexOf(achievementId: Int) -> Int? {
         return achievements.firstIndex { $0.id == achievementId }
+    }
+    
+    func syncCurrentCategoryWithStorage() {
+        guard let currentCategoryId = currentCategory?.id,
+              let storageData = CategoryStorage.shared.find(categoryId: currentCategoryId),
+              currentCategory != storageData else { return }
+        Logger.debug("Sync Current Category")
+        // didSet은 같은 데이터를 넣어도 호출되므로 데이터가 다를 때만 대입
+        currentCategory = storageData
     }
 }
