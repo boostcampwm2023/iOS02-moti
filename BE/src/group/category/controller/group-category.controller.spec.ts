@@ -15,7 +15,7 @@ import { GroupCategoryCreate } from '../dto/group-category-create';
 import { GroupCategoryFixture } from '../../../../test/group/category/group-category-fixture';
 import { UnauthorizedGroupCategoryException } from '../exception/unauthorized-group-category.exception';
 
-describe('GroupCategoryEntity Test', () => {
+describe('GroupCategoryController Test', () => {
   let app: INestApplication;
   let authFixture: AuthFixture;
   let mockGroupCategoryService: GroupCategoryService;
