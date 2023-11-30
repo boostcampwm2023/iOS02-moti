@@ -16,9 +16,9 @@ public struct FetchDetailAchievementRequestValue: RequestValue {
 }
 
 public struct FetchDetailAchievementUseCase {
-    private let repository: DetailAchievementRepositoryProtocol
+    private let repository: AchievementRepositoryProtocol
     
-    public init(repository: DetailAchievementRepositoryProtocol) {
+    public init(repository: AchievementRepositoryProtocol) {
         self.repository = repository
     }
     

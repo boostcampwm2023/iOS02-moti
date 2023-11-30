@@ -20,9 +20,9 @@ public struct FetchAchievementListRequestValue: RequestValue {
 }
 
 public struct FetchAchievementListUseCase {
-    private let repository: AchievementListRepositoryProtocol
+    private let repository: AchievementRepositoryProtocol
     
-    public init(repository: AchievementListRepositoryProtocol) {
+    public init(repository: AchievementRepositoryProtocol) {
         self.repository = repository
     }
     

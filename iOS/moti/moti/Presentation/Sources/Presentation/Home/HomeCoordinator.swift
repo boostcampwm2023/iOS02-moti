@@ -31,7 +31,7 @@ public final class HomeCoordinator: Coordinator {
     
     public func start() {
         let homeVM = HomeViewModel(
-            fetchAchievementListUseCase: .init(repository: AchievementListRepository()),
+            fetchAchievementListUseCase: .init(repository: AchievementRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository()), 
             addCategoryUseCase: .init(repository: CategoryListRepository())
         )
