@@ -9,7 +9,7 @@ import UIKit
 import Core
 import Domain
 
-public final class GroupHomeCoordinator: Coordinator {
+final class GroupHomeCoordinator: Coordinator {
     public let parentCoordinator: Coordinator?
     public var childCoordinators: [Coordinator] = []
     public let navigationController: UINavigationController
@@ -23,8 +23,10 @@ public final class GroupHomeCoordinator: Coordinator {
         self.parentCoordinator = parentCoordinator
     }
     
-    public func start() {
-        let groupHomeVM = GroupHomeViewModel()
+    func start() { }
+    
+    func start(group: Group) {
+        let groupHomeVM = GroupHomeViewModel(group: group)
         let groupHomeVC = GroupHomeViewController(viewModel: groupHomeVM)
         groupHomeVC.coordinator = self
         currentViewController = groupHomeVC

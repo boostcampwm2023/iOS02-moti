@@ -14,6 +14,9 @@ final class GroupHomeViewModel {
     typealias CategoryDataSource = ListDiffableDataSource<CategoryItem>
     
     // MARK: - Properties
+    // Group
+    private(set) var group: Group
+    
     // Category
     private var categoryDataSource: CategoryDataSource?
     private var categories: [CategoryItem] = [] {
@@ -37,8 +40,8 @@ final class GroupHomeViewModel {
     @Published private(set) var achievementState: AchievementState = .initial
 
     // MARK: - Init
-    init() {
-        
+    init(group: Group) {
+        self.group = group
     }
     
     // MARK: - Methods

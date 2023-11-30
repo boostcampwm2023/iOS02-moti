@@ -9,6 +9,7 @@ import UIKit
 import Design
 import Core
 import Combine
+import Domain
 
 final class GroupHomeViewController: BaseViewController<HomeView> {
     
@@ -16,7 +17,7 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
     weak var coordinator: GroupHomeCoordinator?
     private let viewModel: GroupHomeViewModel
     private var cancellables: Set<AnyCancellable> = []
-
+    
     // MARK: - Init
     init(viewModel: GroupHomeViewModel) {
         self.viewModel = viewModel
@@ -30,7 +31,7 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupNavigationBar()
+        setupNavigationBar(with: viewModel.group)
         addTargets()
         bind()
         
@@ -141,27 +142,24 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
         viewModel.setupCategoryDataSource(diffableDataSource)
     }
     
-    func setupNavigationBar() {
-        navigationItem.title = "그룹 홈"
+    func setupNavigationBar(with group: Group) {
+        navigationItem.title = group.name
         
-        let logoItem = UIImageView(image: MotiImage.logoBlue)
-        logoItem.contentMode = .scaleAspectFit
-        let leftItem = UIBarButtonItem(customView: logoItem)
-        leftItem.customView?.atl
-            .width(constant: 60)
-        navigationItem.leftBarButtonItem = leftItem
-
         // 오른쪽 프로필 버튼
-        let profileImage = UIImage(
-            systemName: "person.crop.circle.fill",
-            withConfiguration: UIImage.SymbolConfiguration(font: .large)
-        )
-        let profileButton = UIButton(type: .system)
-        profileButton.setImage(profileImage, for: .normal)
-        profileButton.contentMode = .scaleAspectFit
-        profileButton.tintColor = .primaryDarkGray
-        let profileItem = UIBarButtonItem(customView: profileButton)
-
+        let avatarItemSize: CGFloat = 34
+        let avatarImageView = UIImageView()
+        avatarImageView.contentMode = .scaleAspectFit
+        avatarImageView.clipsToBounds = true
+        avatarImageView.layer.cornerRadius = avatarItemSize / 2
+        if let groupProfileImageURL = group.avatarUrl {
+            avatarImageView.jf.setImage(with: groupProfileImageURL)
+        } else {
+            avatarImageView.backgroundColor = .primaryGray
+        }
+        let profileItem = UIBarButtonItem(customView: avatarImageView)
+        profileItem.customView?.atl
+            .size(width: avatarItemSize, height: avatarItemSize)
+        
         // 오른쪽 더보기 버튼
         let moreItem = UIBarButtonItem(
             image: SymbolImage.ellipsisCircle,
