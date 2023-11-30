@@ -83,18 +83,22 @@ describe('ImageRepository', () => {
         image.imageKey = 'abcd-efgh-ijkl-mnop-deadbeef';
 
         // when
-        const savedImage = await imageRepository.saveImage(image);
+        await imageRepository.saveImage(image);
+        const savedImage = await imageRepository.repository.findOne({
+          where: { id: image.id },
+          relations: ['user', 'achievement'],
+        });
 
         // then
         expect(savedImage.id).toEqual(image.id);
-        expect(savedImage.user).toEqual(user);
+        expect(savedImage.user.id).toEqual(user.id);
         expect(savedImage.originalName).toEqual(image.originalName);
         expect(savedImage.imageUrl).toEqual(image.imageUrl);
         expect(savedImage.thumbnailUrl).toEqual(
           'file://abcd-efgh-ijkl-mnop.jpg',
         );
         expect(savedImage.imageKey).toEqual('abcd-efgh-ijkl-mnop-deadbeef');
-        expect(savedImage.achievement).toBeUndefined();
+        expect(savedImage.achievement).toBeNull();
       });
     });
   });
