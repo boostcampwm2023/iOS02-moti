@@ -85,7 +85,7 @@ describe('ImageService', () => {
       expect(savedImage.imageUrl.startsWith('file://'));
       expect(savedImage.imageUrl.endsWith('abcd-efgh-ijkl-mnop.jpg'));
       expect(savedImage.thumbnailUrl).toBeNull();
-      expect(savedImage.achievement).toBeNull();
+      expect(savedImage.achievement).toBeUndefined();
       await expect(
         fs.access(savedImage.imageUrl.replace('file://', '')),
       ).resolves.toBeUndefined();
@@ -112,12 +112,12 @@ describe('ImageService', () => {
 
         // then
         expect(updatedImage.id).toEqual(image.id);
-        expect(updatedImage.user).toBeNull();
+        expect(updatedImage.user).toBeUndefined();
         expect(updatedImage.originalName).toBe(image.originalName);
         expect(updatedImage.imageUrl.startsWith('file://'));
         expect(updatedImage.imageUrl.endsWith('abcd-efgh-ijkl-mnop.jpg'));
         expect(updatedImage.thumbnailUrl).toBe(thumbnailPath);
-        expect(updatedImage.achievement).toBeNull();
+        expect(updatedImage.achievement).toBeUndefined();
       });
     });
 

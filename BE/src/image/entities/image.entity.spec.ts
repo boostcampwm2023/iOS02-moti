@@ -66,7 +66,7 @@ describe('ImageEntity Test', () => {
       expect(result.originalName).toBe(image.originalName);
       expect(result.imageUrl).toBe(image.imageUrl);
       expect(result.thumbnailUrl).toBeNull();
-      expect(result.achievement).toBeNull();
+      expect(result.achievement).toBeUndefined();
     });
   });
 

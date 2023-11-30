@@ -82,8 +82,8 @@ describe('GroupCategoryEntity Test', () => {
       // then
       expect(result).toBeInstanceOf(GroupCategory);
       expect(result.id).toBe(groupCategoryEntity.id);
-      expect(result.user).toBeNull();
-      expect(result.group).toBeNull();
+      expect(result.user).toBeUndefined();
+      expect(result.group).toBeUndefined();
       expect(result.name).toBe(groupCategoryEntity.name);
     });
   });

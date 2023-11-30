@@ -48,7 +48,7 @@ export class ImageEntity {
     imageEntity.thumbnailUrl = image.thumbnailUrl;
     imageEntity.imageKey = image.imageKey;
     imageEntity.achievement = AchievementEntity.strictFrom(image.achievement);
-    imageEntity.user = image.user ? UserEntity.from(image.user) : null;
+    imageEntity.user = UserEntity.from(image.user);
     return imageEntity;
   }
 
@@ -64,12 +64,12 @@ export class ImageEntity {
   }
 
   toModel(): Image {
-    const image = new Image(this.user?.toModel() || null);
+    const image = new Image(this.user?.toModel());
     image.originalName = this.originalName;
     image.imageUrl = this.imageUrl;
     image.id = this.id;
-    image.achievement = this.achievement?.toModel() || null;
-    image.user = this.user?.toModel() || null;
+    image.achievement = this.achievement?.toModel();
+    image.user = this.user?.toModel();
     image.thumbnailUrl = this.thumbnailUrl;
     image.imageKey = this.imageKey;
     return image;
