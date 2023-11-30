@@ -22,8 +22,8 @@ public struct DeleteAchievementUseCase {
         self.repository = repository
     }
     
-    public func execute(requestValue: DeleteAchievementRequestValue) async throws -> Bool {
-        return try await repository.deleteAchievement(requestValue: requestValue)
+    public func execute(requestValue: DeleteAchievementRequestValue, categoryId: Int) async throws -> Bool {
+        return try await repository.deleteAchievement(requestValue: requestValue, categoryId: categoryId)
     }
 }
 
