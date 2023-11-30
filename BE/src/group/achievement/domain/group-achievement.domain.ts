@@ -9,7 +9,7 @@ export class GroupAchievement {
   group: Group;
   groupCategory: GroupCategory;
   content: string;
-
+  createdAt: Date;
   constructor(
     title: string,
     user: User,

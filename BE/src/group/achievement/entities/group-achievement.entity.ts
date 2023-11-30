@@ -43,6 +43,7 @@ export class GroupAchievementEntity extends BaseTimeEntity {
       this.content,
     );
     groupAchievement.id = this.id;
+    groupAchievement.createdAt = this.createdAt;
     return groupAchievement;
   }
 
