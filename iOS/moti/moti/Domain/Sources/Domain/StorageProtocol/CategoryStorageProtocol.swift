@@ -24,4 +24,7 @@ public protocol CategoryStorageProtocol {
     // Delete
     func delete(categoryId: Int)
     func deleteAll()
+    
+    // Update Count
+    func decrease(categoryId: Int)
 }
