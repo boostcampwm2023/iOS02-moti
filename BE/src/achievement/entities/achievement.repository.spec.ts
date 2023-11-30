@@ -55,32 +55,86 @@ describe('AchievementRepository test', () => {
     await dataSource.destroy();
   });
 
-  test('달성 기록을 저장할 수 있다.', async () => {
-    await transactionTest(dataSource, async () => {
-      // given
-      const user = await usersFixture.getUser('ABC');
-      const category = await categoryFixture.getCategory(user, '카테고리1');
-      const image = await imageFixture.getImage(
-        user,
-        'imageUrl',
-        'thumbnailUrl',
-      );
-      const achievement = new Achievement(
-        user,
-        category,
-        '다이어트 1회차',
-        '오늘의 닭가슴살',
-        image,
-      );
+  describe('saveAchievement는 달성 기록을 저장할 수 있다.', () => {
+    test('달성 기록을 저장할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser('ABC');
+        const category = await categoryFixture.getCategory(user, '카테고리1');
+        const image = await imageFixture.getImage(
+          user,
+          'imageUrl',
+          'thumbnailUrl',
+        );
+        const achievement = new Achievement(
+          user,
+          category,
+          '다이어트 1회차',
+          '오늘의 닭가슴살',
+          image,
+        );
 
-      // when
-      const expected = await achievementRepository.saveAchievement(achievement);
+        // when
+        const expected =
+          await achievementRepository.saveAchievement(achievement);
 
-      // then
-      expect(expected.title).toEqual('다이어트 1회차');
-      expect(expected.content).toEqual('오늘의 닭가슴살');
-      expect(expected.image.imageUrl).toEqual('imageUrl');
-      expect(expected.image.thumbnailUrl).toEqual('thumbnailUrl');
+        const retrievedAchievement =
+          await achievementRepository.repository.findOne({
+            where: {
+              id: expected.id,
+            },
+            relations: ['image', 'category', 'user'],
+          });
+
+        // then
+        expect(retrievedAchievement.title).toEqual('다이어트 1회차');
+        expect(retrievedAchievement.content).toEqual('오늘의 닭가슴살');
+        expect(retrievedAchievement.image.imageUrl).toEqual('imageUrl');
+        expect(retrievedAchievement.image.thumbnailUrl).toEqual('thumbnailUrl');
+      });
+    });
+
+    test('달성 기록을 수정할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser('ABC');
+        const category = await categoryFixture.getCategory(user, '카테고리1');
+        const category2 = await categoryFixture.getCategory(user, '카테고리2');
+        const image = await imageFixture.getImage(
+          user,
+          'imageUrl',
+          'thumbnailUrl',
+        );
+        const achievement = await achievementFixture.getAchievement(
+          user,
+          category,
+          image,
+        );
+        const findAchievement = await achievementRepository.findByIdAndUser(
+          user.id,
+          achievement.id,
+        );
+
+        // when
+        findAchievement.category = category2;
+        findAchievement.title = '다이어트 2회차';
+        findAchievement.content = '오늘의 닭가슴살 2';
+        await achievementRepository.saveAchievement(findAchievement);
+
+        const updatedAchievement =
+          await achievementRepository.repository.findOne({
+            where: {
+              id: findAchievement.id,
+            },
+            relations: ['image', 'category', 'user'],
+          });
+
+        // then
+        expect(updatedAchievement.title).toEqual('다이어트 2회차');
+        expect(updatedAchievement.content).toEqual('오늘의 닭가슴살 2');
+        expect(updatedAchievement.category.id).toEqual(category2.id);
+        expect(updatedAchievement.category.name).toEqual(category2.name);
+      });
     });
   });
 
