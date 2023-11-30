@@ -16,6 +16,7 @@ final class TabBarViewController: UITabBarController {
     
     // MARK: - Views
     private let captureButton = CaptureButton()
+    private let borderView = UIView()
     
     // MARK: - Properties
     weak var tabBarDelegate: TabBarViewControllerDelegate?
@@ -39,6 +40,21 @@ final class TabBarViewController: UITabBarController {
     @objc private func captureButtonTouchUpInside() {
         tabBarDelegate?.captureButtonDidClicked()
     }
+
+    // MARK: - Methods
+    /// 탭바를 보일 때 호출
+    func showTabBar() {
+        tabBar.isHidden = false
+        captureButton.isHidden = false
+        borderView.isHidden = false
+    }
+    
+    /// 탭바를 숨길 때 호출
+    func hideTabBar() {
+        tabBar.isHidden = true
+        captureButton.isHidden = true
+        borderView.isHidden = true
+    }
 }
 
 // MARK: - Setup UI
@@ -55,7 +71,6 @@ private extension TabBarViewController {
     
     func setupBorderView() {
         let borderWidth: CGFloat = 1.0
-        let borderView = UIView(frame: .zero)
         
         borderView.backgroundColor = .gray
         borderView.alpha = 0.3
