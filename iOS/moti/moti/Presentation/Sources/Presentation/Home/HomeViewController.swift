@@ -214,8 +214,7 @@ extension HomeViewController: UICollectionViewDelegate {
             cell.transform = .identity
         })
         
-        let categoryId = viewModel.findCategory(at: row).id
-        guard let category = CategoryStorage.shared.find(categoryId: categoryId) else { return }
+        guard let category = viewModel.findCategory(at: row) else { return }
         Logger.debug("Selected Category: \(category.name)")
         viewModel.action(.fetchCategoryList(category: category))
         layoutView.updateAchievementHeader(with: category)

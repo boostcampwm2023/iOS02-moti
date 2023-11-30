@@ -122,8 +122,9 @@ final class HomeViewModel {
         return achievements[index]
     }
     
-    func findCategory(at index: Int) -> CategoryItem {
-        return categories[index]
+    func findCategory(at index: Int) -> CategoryItem? {
+        let categoryId = categories[index].id
+        return CategoryStorage.shared.find(categoryId: categoryId)
     }
     
     private func findIndexOfAchievement(with achievementId: Int) -> Int? {
