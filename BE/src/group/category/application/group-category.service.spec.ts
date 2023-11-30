@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmModuleOptions } from '../../../config/typeorm';
 import { UsersTestModule } from '../../../../test/user/users-test.module';
-import { OperateModule } from '../../../operate/operate.module';
 import { ConfigModule } from '@nestjs/config';
 import { configServiceModuleOptions } from '../../../config/config';
 import { UsersFixture } from '../../../../test/user/users-fixture';
@@ -26,7 +25,6 @@ describe('GroupCategoryService test', () => {
       imports: [
         TypeOrmModule.forRootAsync(typeOrmModuleOptions),
         UsersTestModule,
-        OperateModule,
         ConfigModule.forRoot(configServiceModuleOptions),
         GroupTestModule,
         GroupCategoryModule,
