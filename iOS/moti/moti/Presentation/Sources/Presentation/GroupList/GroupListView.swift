@@ -12,7 +12,7 @@ final class GroupListView: UIView {
     private(set) lazy var groupListCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout())
         collectionView.backgroundColor = .motiBackground
-        collectionView.register(with: AchievementCollectionViewCell.self)
+        collectionView.register(with: GroupListCollectionViewCell.self)
         return collectionView
     }()
     
@@ -44,16 +44,12 @@ private extension GroupListView {
         let itemPadding: CGFloat = 20
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .fractionalHeight(1))
+            heightDimension: .absolute(80))
         let itemInset = NSDirectionalEdgeInsets(top: itemPadding, leading: 0, bottom: itemPadding, trailing: 0)
-        
-        let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: itemSize.widthDimension)
         
         return CompositionalLayoutFactory.makeVerticalCompositionalLayout(
             itemSize: itemSize,
             itemInset: itemInset,
-            groupSize: groupSize)
+            groupSize: itemSize)
     }
 }
