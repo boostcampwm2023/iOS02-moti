@@ -22,6 +22,9 @@ final class GroupListCoordinator: Coordinator {
     }
     
     func start() {
-        
+        let groupVM = GroupListViewModel()
+        let groupListVC = GroupListViewController(viewModel: groupVM)
+        groupListVC.coordinator = self
+        navigationController.viewControllers = [groupListVC]
     }
 }
