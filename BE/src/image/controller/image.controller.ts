@@ -25,8 +25,8 @@ import {
 } from '@nestjs/swagger';
 import { HttpStatusCode } from 'axios';
 import { AdminTokenGuard } from '../../auth/guard/admin-token.guard';
-import { ParseIntPipe } from '../../common/pipe/parse-int.pipe';
 import { ThumbnailRequest } from '../dto/thumbnail-request';
+import { ParseNotEmptyPipe } from '../../common/pipe/parse-not-empty.pipe';
 
 @Controller('/api/v1/images')
 @ApiTags('이미지 API')
@@ -67,7 +67,7 @@ export class ImageController {
   @HttpCode(HttpStatusCode.NoContent)
   @UseGuards(AdminTokenGuard)
   async uploadThumbnail(
-    @Param('imageId', ParseIntPipe) imageId: number,
+    @Param('imageId', ParseNotEmptyPipe) imageId: string,
     @Body() thumbnail: ThumbnailRequest,
   ): Promise<void> {
     await this.imageService.saveThumbnail(imageId, thumbnail.thumbnailUrl);

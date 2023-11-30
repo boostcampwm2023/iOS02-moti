@@ -14,8 +14,14 @@ export interface File {
   buffer: Buffer;
 }
 
+export interface StoredFile {
+  filename: string;
+  fileId: string;
+}
+
 export interface UploadFile {
   uploadFileName: string;
   originalFileName: string;
   uploadFullPath: string;
+  fileKey: string;
 }

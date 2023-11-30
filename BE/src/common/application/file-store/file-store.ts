@@ -1,6 +1,5 @@
-import { File, UploadFile } from './index';
+import { File, StoredFile, UploadFile } from './index';
 import { UuidHolder } from '../uuid-holder';
-
 
 export interface StoreOptions {
   prefix?: string;
@@ -24,10 +23,13 @@ export abstract class FileStore {
 
   protected constructor(private readonly uuidHolder: UuidHolder) {}
 
-  protected createStoreFileName(originalFilename: string) {
+  protected createStoreFileName(originalFilename: string): StoredFile {
     const ext = this.extractExt(originalFilename);
     const randomName = this.uuidHolder.uuid();
-    return `${randomName}.${ext}`;
+    return {
+      filename: `${randomName}.${ext}`,
+      fileId: randomName,
+    };
   }
 
   private extractExt(originalFilename: string) {
