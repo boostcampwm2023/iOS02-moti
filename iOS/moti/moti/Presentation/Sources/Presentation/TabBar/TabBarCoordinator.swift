@@ -135,4 +135,8 @@ extension TabBarCoordinator: HomeCoordinatorDelegate {
     func deleteAction(achievementId: Int) {
         homeViewController?.delete(achievementId: achievementId)
     }
+    
+    func updateAchievement(id: Int, newCategoryId: Int) {
+        homeViewController?.updateAchievement(id: id, newCategoryId: newCategoryId)
+    }
 }

@@ -14,7 +14,7 @@ final class EditAchievementViewModel {
     enum Action {
         case saveImage(data: Data, imageExtension: ImageExtension)
         case fetchCategories
-        case updateAchievement
+        case updateAchievement(updateAchievementRequestValue: UpdateAchievementRequestValue)
     }
     
     enum CategoryState {
@@ -33,12 +33,13 @@ final class EditAchievementViewModel {
     enum UpdateAchievementState {
         case none
         case loading
-        case finish
+        case finish(updateAchievementRequestValue: UpdateAchievementRequestValue)
         case error
     }
     
     private let saveImageUseCase: SaveImageUseCase
     private let fetchCategoryListUseCase: FetchCategoryListUseCase
+    private let updateAchievementUseCase: UpdateAchievementUseCase
     private(set) var categories: [CategoryItem] = []
     var firstCategory: CategoryItem? {
         return categories.first
@@ -46,13 +47,16 @@ final class EditAchievementViewModel {
     
     @Published private(set) var categoryState: CategoryState = .none
     @Published private(set) var saveImageState: SaveImageState = .none
+    @Published private(set) var updateAchievementState: UpdateAchievementState = .none
     
     init(
         saveImageUseCase: SaveImageUseCase,
-        fetchCategoryListUseCase: FetchCategoryListUseCase
+        fetchCategoryListUseCase: FetchCategoryListUseCase,
+        updateAchievementUseCase: UpdateAchievementUseCase
     ) {
         self.saveImageUseCase = saveImageUseCase
         self.fetchCategoryListUseCase = fetchCategoryListUseCase
+        self.updateAchievementUseCase = updateAchievementUseCase
     }
 
     func action(_ action: Action) {
@@ -61,8 +65,8 @@ final class EditAchievementViewModel {
             saveImageData(data, imageExtension)
         case .fetchCategories:
             fetchCategories()
-        case .updateAchievement:
-            break
+        case .updateAchievement(let updateAchievementRequestValue):
+            updateAchievement(updateAchievementRequestValue: updateAchievementRequestValue)
         }
     }
     
@@ -109,6 +113,23 @@ final class EditAchievementViewModel {
                 let (isSuccess, imageId) = try await saveImageUseCase.excute(requestValue: requestValue)
                 Logger.debug("Upload: \(isSuccess) / id: \(imageId)")
                 saveImageState = .finish
+            } catch {
+                saveImageState = .error
+            }
+        }
+        
+    }
+    
+    private func updateAchievement(updateAchievementRequestValue: UpdateAchievementRequestValue) {
+        Task {
+            do {
+                updateAchievementState = .loading
+                let isSuccess = try await updateAchievementUseCase.execute(requestValue: updateAchievementRequestValue)
+                if isSuccess {
+                    updateAchievementState = .finish(updateAchievementRequestValue: updateAchievementRequestValue)
+                } else {
+                    updateAchievementState = .error
+                }
             } catch {
                 saveImageState = .error
             }

@@ -8,6 +8,7 @@
 import Foundation
 import Domain
 import Core
+import Data
 
 final class DetailAchievementViewModel {
     enum DetailAchievementViewModelAction {
@@ -94,9 +95,9 @@ final class DetailAchievementViewModel {
     }
     
     private func updateAchievement(updateAchievementRequestValue: UpdateAchievementRequestValue) {
-        // TODO: 카테고리 아이템 수정
-//        achievement.category = updateAchievementRequestValue.categoryId
-        achievement.title = updateAchievementRequestValue.title
-        achievement.body = updateAchievementRequestValue.content
+        let category = CategoryStorage.shared.find(categoryId: updateAchievementRequestValue.body.categoryId)
+        achievement.category = category
+        achievement.title = updateAchievementRequestValue.body.title
+        achievement.body = updateAchievementRequestValue.body.content
     }
 }

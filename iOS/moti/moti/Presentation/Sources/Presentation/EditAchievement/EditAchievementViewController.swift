@@ -137,6 +137,21 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
                 }
             }
             .store(in: &cancellables)
+        
+        viewModel.$updateAchievementState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .none, .loading: break
+                case .finish(let updateAchievementRequestValue):
+                    delegate?.doneButtonDidClickedFromEditMode(updateAchievementRequestValue: updateAchievementRequestValue)
+                case .error:
+                    Logger.error("Achievement Update Error")
+                }
+            }
+            .store(in: &cancellables)
+
     }
     
     private func addTarget() {
@@ -147,12 +162,15 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     @objc func doneButtonAction() {
         if let achievement { // 상세 화면에서 넘어옴 => 수정 API
             let updateAchievementRequestValue = UpdateAchievementRequestValue(
-                title: layoutView.titleTextField.text ?? "",
-                content: bottomSheet.text,
-                categoryId: findSelectedCategory().id
+                id: achievement.id,
+                body: UpdateAchievementRequestBody(
+                    title: layoutView.titleTextField.text ?? "",
+                    content: bottomSheet.text,
+                    categoryId: findSelectedCategory().id
+                )
             )
             
-            delegate?.doneButtonDidClickedFromEditMode(updateAchievementRequestValue: updateAchievementRequestValue)
+            viewModel.action(.updateAchievement(updateAchievementRequestValue: updateAchievementRequestValue))
             
         } else { // 촬영 화면에서 넘어옴 => 생성 API
             delegate?.doneButtonDidClickedFromCaptureMode()
