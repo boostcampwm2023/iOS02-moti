@@ -12,6 +12,7 @@ import Domain
 
 protocol EditAchievementCoordinatorDelegate: AnyObject {
     func doneButtonDidClicked(updateAchievementRequestValue: UpdateAchievementRequestValue)
+    func postAchievement(newAchievement: Achievement)
 }
 
 final class EditAchievementCoordinator: Coordinator {
@@ -36,7 +37,8 @@ final class EditAchievementCoordinator: Coordinator {
         let editAchievementVM = EditAchievementViewModel(
             saveImageUseCase: .init(repository: ImageRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
-            updateAchievementUseCase: .init(repository: AchievementRepository())
+            updateAchievementUseCase: .init(repository: AchievementRepository()), 
+            postAchievementUseCase: .init(repository: AchievementRepository())
         )
         let editAchievementVC = EditAchievementViewController(
             viewModel: editAchievementVM,
@@ -58,7 +60,8 @@ final class EditAchievementCoordinator: Coordinator {
         let editAchievementVM = EditAchievementViewModel(
             saveImageUseCase: .init(repository: ImageRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
-            updateAchievementUseCase: .init(repository: AchievementRepository())
+            updateAchievementUseCase: .init(repository: AchievementRepository()),
+            postAchievementUseCase: .init(repository: AchievementRepository())
         )
         let editAchievementVC = EditAchievementViewController(
             viewModel: editAchievementVM,
@@ -91,7 +94,9 @@ extension EditAchievementCoordinator: EditAchievementViewControllerDelegate {
         delegate?.doneButtonDidClicked(updateAchievementRequestValue: updateAchievementRequestValue)
     }
     
-    func doneButtonDidClickedFromCaptureView() {
+    func doneButtonDidClickedFromCaptureView(newAchievement: Achievement) {
+        print("여기4", delegate)
+        delegate?.postAchievement(newAchievement: newAchievement)
         navigationController.setNavigationBarHidden(true, animated: false)
         finish(animated: false)
         parentCoordinator?.finish(animated: true)

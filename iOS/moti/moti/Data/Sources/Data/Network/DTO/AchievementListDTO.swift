@@ -30,6 +30,20 @@ struct AchievementSimpleDTO: Codable {
     let id: Int?
     let thumbnailUrl: URL?
     let title: String?
+    
+    init(id: Int?, thumbnailUrl: URL?, title: String?) {
+        self.id = id
+        self.thumbnailUrl = thumbnailUrl
+        self.title = title
+    }
+    
+    init(dto: DetailAchievementDTO) {
+        self.init(
+            id: dto.id,
+            thumbnailUrl: dto.imageUrl,
+            title: dto.title
+        )
+    }
 }
 
 extension Achievement {

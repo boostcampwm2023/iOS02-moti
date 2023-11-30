@@ -23,4 +23,8 @@ public protocol AchievementRepositoryProtocol {
     func updateAchievement(
         requestValue: UpdateAchievementRequestValue
     ) async throws -> Bool
+    
+    func postAchievement(
+        requestValue: PostAchievementRequestValue
+    ) async throws -> Achievement
 }

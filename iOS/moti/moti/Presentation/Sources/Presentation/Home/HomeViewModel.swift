@@ -98,6 +98,8 @@ final class HomeViewModel {
             deleteOfDataSource(achievementId: achievementId)
         case .updateAchievement(let id, let newCategoryId):
             updateAchievementCategory(achievementId: id, newCategoryId: newCategoryId)
+        case .postAchievement(let newAchievement):
+            postAchievement(newAchievement: newAchievement)
         }
     }
 }
@@ -174,6 +176,12 @@ private extension HomeViewModel {
         if currentCategory.id != newCategoryId {
             deleteOfDataSource(achievementId: achievementId)
         }
+    }
+    
+    /// 새로 생성된 도전 기록을 추가하는 액션
+    func postAchievement(newAchievement: Achievement) {
+        print("최종")
+        achievements.insert(newAchievement, at: 0)
     }
 }
 
