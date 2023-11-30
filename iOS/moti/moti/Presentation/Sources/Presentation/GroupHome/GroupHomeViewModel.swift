@@ -66,7 +66,7 @@ final class GroupHomeViewModel {
         switch action {
         case .launch:
             fetchCategories()
-        case .fetchCategoryAchievementList(let category):
+        case .fetchAchievementList(let category):
             fetchCategoryAchievementList(category: category)
         }
     }

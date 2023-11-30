@@ -11,7 +11,7 @@ import Domain
 extension GroupHomeViewModel {
     enum GroupHomeViewModelAction {
         case launch
-        case fetchCategoryAchievementList(category: CategoryItem)
+        case fetchAchievementList(category: CategoryItem)
     }
     
     enum CategoryListState {
