@@ -13,6 +13,16 @@ export class UsersFixture {
     return this.userRepository.saveUser(user);
   }
 
+  async getUsers(count: number, id?: number | string) {
+    const users: User[] = [];
+    for (let i = 0; i < count; i++) {
+      users.push(
+        await this.getUser(`${id}${++UsersFixture.id}` || ++UsersFixture.id),
+      );
+    }
+    return users;
+  }
+
   static user(id: number | string): User {
     const user = new User();
     user.assignUserCode(`ABCD${id || ++UsersFixture.id}`);

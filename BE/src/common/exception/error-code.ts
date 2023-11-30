@@ -63,4 +63,8 @@ export const ERROR_INFO = {
     statusCode: 400,
     message: '이미지를 찾을 수 없습니다.',
   },
+  UNAUTHORIZED_GROUP_CATEGORY: {
+    statusCode: 400,
+    message: '그룹에 카테고리를 만들 수 없습니다.',
+  },
 } as const;

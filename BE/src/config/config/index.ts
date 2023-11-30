@@ -48,5 +48,7 @@ export const configServiceModuleOptions = {
       then: Joi.required(),
       otherwise: Joi.optional(),
     }),
+
+    GROUP_AVATAR_URLS: Joi.string().required(),
   }),
 };

@@ -4,6 +4,8 @@ import { CustomRepository } from '../../../config/typeorm/custom-repository.deco
 import { Group } from '../domain/group.domain';
 import { IGroupPreview } from '../index';
 import { GroupPreview } from '../dto/group-preview.dto';
+import { User } from '../../../users/domain/user.domain';
+import { UserGroupGrade } from '../domain/user-group-grade';
 
 @CustomRepository(GroupEntity)
 export class GroupRepository extends TransactionalRepository<GroupEntity> {
@@ -30,5 +32,21 @@ export class GroupRepository extends TransactionalRepository<GroupEntity> {
       .getRawMany<IGroupPreview>();
 
     return groupPreviews.map((groupPreview) => new GroupPreview(groupPreview));
+  }
+
+  async findGroupByIdAndLeaderUser(user: User, id: number): Promise<Group> {
+    const group = await this.repository.findOne({
+      where: {
+        id: id,
+        userGroups: {
+          user: {
+            id: user.id,
+          },
+          grade: UserGroupGrade.LEADER,
+        },
+      },
+      relations: ['userGroups.user'],
+    });
+    return group?.toModel();
   }
 }

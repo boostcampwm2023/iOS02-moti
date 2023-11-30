@@ -1,6 +1,6 @@
-import { User } from '../../../src/users/domain/user.domain';
 import { Group } from '../../../src/group/group/domain/group.domain';
 import { GroupRepository } from '../../../src/group/group/entities/group.repository';
+import { User } from '../../../src/users/domain/user.domain';
 import { UserGroupGrade } from '../../../src/group/group/domain/user-group-grade';
 import { Injectable } from '@nestjs/common';
 
@@ -21,6 +21,18 @@ export class GroupFixture {
   async addMember(group: Group, user: User, userGroupGrade: UserGroupGrade) {
     group.addMember(user, userGroupGrade);
     return await this.groupRepository.saveGroup(group);
+  }
+
+  async createGroups(user: User, members?: User[], managers?: User[]) {
+    const group = GroupFixture.group();
+    group.addMember(user, UserGroupGrade.LEADER);
+    members?.forEach((member) =>
+      group.addMember(member, UserGroupGrade.PARTICIPANT),
+    );
+    managers?.forEach((manager) =>
+      group.addMember(manager, UserGroupGrade.MANAGER),
+    );
+    return this.groupRepository.saveGroup(group);
   }
 
   static group(name?: string) {
