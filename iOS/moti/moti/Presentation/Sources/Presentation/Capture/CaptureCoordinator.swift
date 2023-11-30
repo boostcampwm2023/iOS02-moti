@@ -9,11 +9,16 @@ import UIKit
 import Core
 import Domain
 
+protocol CaptureCoordinatorDelegate: AnyObject {
+    func postAchievement(newAchievement: Achievement)
+}
+
 final class CaptureCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
     private var currentNavigationController: UINavigationController?
+    weak var delegate: CaptureCoordinatorDelegate?
     
     init(
         _ navigationController: UINavigationController,
@@ -41,6 +46,7 @@ final class CaptureCoordinator: Coordinator {
     
     private func moveEditAchievementViewConrtoller(image: UIImage) {
         let editAchievementCoordinator = EditAchievementCoordinator(navigationController, self)
+        editAchievementCoordinator.delegate = self
         editAchievementCoordinator.startAfterCapture(image: image)
         childCoordinators.append(editAchievementCoordinator)
     }
@@ -54,5 +60,15 @@ final class CaptureCoordinator: Coordinator {
 extension CaptureCoordinator: CaptureViewControllerDelegate {
     func didCapture(image: UIImage) {
         moveEditAchievementViewConrtoller(image: image)
+    }
+}
+
+extension CaptureCoordinator: EditAchievementCoordinatorDelegate {
+    func doneButtonDidClickedFromDetail(updateAchievementRequestValue: UpdateAchievementRequestValue) {
+        
+    }
+    
+    func doneButtonDidClickedFromCapture(newAchievement: Achievement) {
+        delegate?.postAchievement(newAchievement: newAchievement)
     }
 }
