@@ -1,5 +1,5 @@
 //
-//  AchievementListRepositoryProtocol.swift
+//  AchievementRepositoryProtocol.swift
 //
 //
 //  Created by Kihyun Lee on 11/14/23.
