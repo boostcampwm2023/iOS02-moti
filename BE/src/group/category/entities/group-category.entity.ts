@@ -9,6 +9,7 @@ import { UserEntity } from '../../../users/entities/user.entity';
 import { BaseTimeEntity } from '../../../common/entities/base.entity';
 import { GroupEntity } from '../../group/entities/group.entity';
 import { GroupCategory } from '../domain/group.category';
+import { isNullOrUndefined } from '../../../common/utils/is-null-or-undefined';
 
 @Entity('group_category')
 export class GroupCategoryEntity extends BaseTimeEntity {
@@ -28,8 +29,8 @@ export class GroupCategoryEntity extends BaseTimeEntity {
 
   toModel(): GroupCategory {
     const group = new GroupCategory(
-      this.user?.toModel() || null,
-      this.group?.toModel() || null,
+      this.user?.toModel(),
+      this.group?.toModel(),
       this.name,
     );
     group.id = this.id;
@@ -38,14 +39,12 @@ export class GroupCategoryEntity extends BaseTimeEntity {
   }
 
   static from(groupCategory: GroupCategory): GroupCategoryEntity {
+    if (isNullOrUndefined(groupCategory)) return groupCategory;
+
     const groupCategoryEntity = new GroupCategoryEntity();
     groupCategoryEntity.id = groupCategory.id;
-    groupCategoryEntity.user = groupCategory.user
-      ? UserEntity.from(groupCategory?.user)
-      : null;
-    groupCategoryEntity.group = groupCategory.group
-      ? GroupEntity.from(groupCategory?.group)
-      : null;
+    groupCategoryEntity.user = UserEntity.from(groupCategory?.user);
+    groupCategoryEntity.group = GroupEntity.from(groupCategory?.group);
     groupCategoryEntity.name = groupCategory.name;
     return groupCategoryEntity;
   }

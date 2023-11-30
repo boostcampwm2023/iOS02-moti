@@ -103,9 +103,9 @@ describe('GroupAchievementEntity Test', () => {
       // then
       expect(result).toBeInstanceOf(GroupAchievement);
       expect(result.id).toBe(groupAchievementEntity.id);
-      expect(result.user).toBeNull();
-      expect(result.group).toBeNull();
-      expect(result.groupCategory).toBeNull();
+      expect(result.user).toBeUndefined();
+      expect(result.group).toBeUndefined();
+      expect(result.groupCategory).toBeUndefined();
       expect(result.content).toBe(groupAchievementEntity.content);
     });
   });

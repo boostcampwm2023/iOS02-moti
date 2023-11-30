@@ -3,6 +3,7 @@ import { UserEntity } from '../../../users/entities/user.entity';
 import { GroupAchievementEntity } from './group-achievement.entity';
 import { BaseTimeEntity } from '../../../common/entities/base.entity';
 import { UserBlockedGroupAchievement } from '../domain/user-blocked-group-achievement.domain';
+import { isNullOrUndefined } from '../../../common/utils/is-null-or-undefined';
 
 @Entity({ name: 'user_blocked_group_achievement' })
 export class UserBlockedGroupAchievementEntity extends BaseTimeEntity {
@@ -19,25 +20,24 @@ export class UserBlockedGroupAchievementEntity extends BaseTimeEntity {
 
   toModel(): UserBlockedGroupAchievement {
     return new UserBlockedGroupAchievement(
-      this.user?.toModel() || null,
-      this.groupAchievement?.toModel() || null,
+      this.user?.toModel(),
+      this.groupAchievement?.toModel(),
     );
   }
 
   static from(
     userBlockedGroupAchievement: UserBlockedGroupAchievement,
   ): UserBlockedGroupAchievementEntity {
+    if (isNullOrUndefined(userBlockedGroupAchievement))
+      return userBlockedGroupAchievement;
+
     const userBlockedGroupAchievementEntity =
       new UserBlockedGroupAchievementEntity();
-    userBlockedGroupAchievementEntity.user = userBlockedGroupAchievement.user
-      ? UserEntity.from(userBlockedGroupAchievement.user)
-      : null;
+    userBlockedGroupAchievementEntity.user = UserEntity.from(
+      userBlockedGroupAchievement.user,
+    );
     userBlockedGroupAchievementEntity.groupAchievement =
-      userBlockedGroupAchievement.groupAchievement
-        ? GroupAchievementEntity.from(
-            userBlockedGroupAchievement.groupAchievement,
-          )
-        : null;
+      GroupAchievementEntity.from(userBlockedGroupAchievement.groupAchievement);
     return userBlockedGroupAchievementEntity;
   }
 }

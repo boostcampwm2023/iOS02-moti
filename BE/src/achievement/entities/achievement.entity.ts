@@ -42,10 +42,10 @@ export class AchievementEntity extends BaseTimeEntity {
   toModel() {
     const achievement = new Achievement(
       this.user?.toModel(),
-      this.category?.toModel() || null,
+      this.category?.toModel(),
       this.title,
       this.content,
-      this.image?.toModel() || null,
+      this.image?.toModel(),
     );
     achievement.id = this.id;
     return achievement;

@@ -70,7 +70,7 @@ describe('ImageRepository', () => {
         expect(savedImage.imageUrl).toEqual('file://abcd-efgh-ijkl-mnop.jpg');
         expect(savedImage.imageKey).toEqual('abcd-efgh-ijkl-mnop-deadbeef');
         expect(savedImage.thumbnailUrl).toBeNull();
-        expect(savedImage.achievement).toBeNull();
+        expect(savedImage.achievement).toBeUndefined();
       });
     });
 
@@ -94,7 +94,7 @@ describe('ImageRepository', () => {
           'file://abcd-efgh-ijkl-mnop.jpg',
         );
         expect(savedImage.imageKey).toEqual('abcd-efgh-ijkl-mnop-deadbeef');
-        expect(savedImage.achievement).toBeNull();
+        expect(savedImage.achievement).toBeUndefined();
       });
     });
   });
@@ -115,11 +115,11 @@ describe('ImageRepository', () => {
 
         // then
         expect(findImage.id).toEqual(savedImage.id);
-        expect(findImage.user).toBeNull();
+        expect(findImage.user).toBeUndefined();
         expect(findImage.originalName).toEqual('image1.jpg');
         expect(findImage.imageKey).toEqual('abcd-efgh-ijkl-mnop-deadbeef');
         expect(findImage.thumbnailUrl).toBeNull();
-        expect(findImage.achievement).toBeNull();
+        expect(findImage.achievement).toBeUndefined();
       });
     });
 
@@ -153,11 +153,11 @@ describe('ImageRepository', () => {
 
         // then
         expect(findImage.id).toEqual(savedImage.id);
-        expect(findImage.user).toBeNull();
+        expect(findImage.user).toBeUndefined();
         expect(findImage.originalName).toEqual('image1.jpg');
         expect(findImage.imageKey).toEqual('abcd-efgh-ijkl-mnop-deadbeef');
         expect(findImage.thumbnailUrl).toBeNull();
-        expect(findImage.achievement).toBeNull();
+        expect(findImage.achievement).toBeUndefined();
       });
     });
 
