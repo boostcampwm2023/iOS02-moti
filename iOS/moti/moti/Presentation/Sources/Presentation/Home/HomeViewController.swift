@@ -51,7 +51,7 @@ final class HomeViewController: BaseViewController<HomeView> {
         viewModel.action(.updateAchievement(id: achievementId, newCategoryId: newCategoryId))
     }
     
-    func postAchievement(newAchievement: Achievement) {
+    func achievementDidPosted(newAchievement: Achievement) {
         viewModel.action(.postAchievement(newAchievement: newAchievement))
     }
     

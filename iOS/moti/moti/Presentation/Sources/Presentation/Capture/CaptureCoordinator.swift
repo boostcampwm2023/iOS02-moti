@@ -10,7 +10,7 @@ import Core
 import Domain
 
 protocol CaptureCoordinatorDelegate: AnyObject {
-    func postAchievement(newAchievement: Achievement)
+    func achievementDidPosted(newAchievement: Achievement)
 }
 
 final class CaptureCoordinator: Coordinator {
@@ -69,6 +69,6 @@ extension CaptureCoordinator: EditAchievementCoordinatorDelegate {
     }
     
     func doneButtonDidClickedFromCapture(newAchievement: Achievement) {
-        delegate?.postAchievement(newAchievement: newAchievement)
+        delegate?.achievementDidPosted(newAchievement: newAchievement)
     }
 }

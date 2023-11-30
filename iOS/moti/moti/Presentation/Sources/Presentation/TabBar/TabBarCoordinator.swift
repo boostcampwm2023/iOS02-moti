@@ -94,11 +94,11 @@ extension TabBarCoordinator: TabBarViewControllerDelegate {
 }
 
 extension TabBarCoordinator: CaptureCoordinatorDelegate {
-    func postAchievement(newAchievement: Achievement) {
+    func achievementDidPosted(newAchievement: Achievement) {
         guard let naviVC = tabBarController.viewControllers?.first as? UINavigationController else { return }
         
         guard let homeVC = naviVC.viewControllers.compactMap({ $0 as? HomeViewController}).first else { return }
         
-        homeVC.postAchievement(newAchievement: newAchievement)
+        homeVC.achievementDidPosted(newAchievement: newAchievement)
     }
 }

@@ -13,7 +13,7 @@ import Domain
 protocol DetailAchievementCoordinatorDelegate: AnyObject {
     func deleteButtonAction(achievementId: Int)
     func updateAchievement(achievementId: Int, newCategoryId: Int)
-    func postAchievement(newAchievement: Achievement)
+    func achievementDidPosted(newAchievement: Achievement)
 }
 
 public final class DetailAchievementCoordinator: Coordinator {
@@ -75,6 +75,6 @@ extension DetailAchievementCoordinator: EditAchievementCoordinatorDelegate {
     }
     
     func doneButtonDidClickedFromCapture(newAchievement: Achievement) {
-        delegate?.postAchievement(newAchievement: newAchievement)
+        delegate?.achievementDidPosted(newAchievement: newAchievement)
     }
 }
