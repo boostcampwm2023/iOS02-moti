@@ -18,6 +18,11 @@ public final class CategoryStorage: CategoryStorageProtocol {
         return storage.isEmpty
     }
     
+    private var wholeCategory: CategoryItem? {
+        get { storage[0] }
+        set { storage[0] = newValue }
+    }
+    
     private init() { }
     
     // MARK: - Methods
@@ -58,7 +63,7 @@ public final class CategoryStorage: CategoryStorageProtocol {
     
     // Count Update
     public func decrease(categoryId: Int) {
-        storage[categoryId]?.continued -= 1
-        storage[0]?.continued -= 1
+        storage[categoryId]?.continued -= 1        
+        wholeCategory?.continued -= 1
     }
 }
