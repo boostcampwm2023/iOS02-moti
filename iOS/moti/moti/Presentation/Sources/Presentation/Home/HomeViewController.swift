@@ -9,6 +9,7 @@ import UIKit
 import Combine
 import Core
 import Data
+import Design
 
 final class HomeViewController: BaseViewController<HomeView> {
 
@@ -30,6 +31,7 @@ final class HomeViewController: BaseViewController<HomeView> {
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupNavigationBar()
         addTargets()
         bind()
         
@@ -181,6 +183,36 @@ final class HomeViewController: BaseViewController<HomeView> {
         
         let diffableDataSource = HomeViewModel.CategoryDataSource(dataSource: dataSource)
         viewModel.setupCategoryDataSource(diffableDataSource)
+    }
+    
+    func setupNavigationBar() {
+        let logoItem = UIImageView(image: MotiImage.logoBlue)
+        logoItem.contentMode = .scaleAspectFit
+        let leftItem = UIBarButtonItem(customView: logoItem)
+        leftItem.customView?.atl
+            .width(constant: 60)
+        navigationItem.leftBarButtonItem = leftItem
+
+        // 오른쪽 프로필 버튼
+        let profileImage = UIImage(
+            systemName: "person.crop.circle.fill",
+            withConfiguration: UIImage.SymbolConfiguration(font: .large)
+        )
+        let profileButton = UIButton(type: .system)
+        profileButton.setImage(profileImage, for: .normal)
+        profileButton.contentMode = .scaleAspectFit
+        profileButton.tintColor = .primaryDarkGray
+        let profileItem = UIBarButtonItem(customView: profileButton)
+
+        // 오른쪽 더보기 버튼
+        let moreItem = UIBarButtonItem(
+            image: SymbolImage.ellipsisCircle,
+            style: .done,
+            target: self,
+            action: nil
+        )
+
+        navigationItem.rightBarButtonItems = [profileItem, moreItem]
     }
     
     private func selectFirstCategory() {

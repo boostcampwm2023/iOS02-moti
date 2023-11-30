@@ -27,4 +27,10 @@ final class GroupListCoordinator: Coordinator {
         groupListVC.coordinator = self
         navigationController.viewControllers = [groupListVC]
     }
+    
+    func moveToGroupHomeViewController() {
+        let groupHomeCoordinator = GroupHomeCoordinator(navigationController, self)
+        groupHomeCoordinator.start()
+        childCoordinators.append(groupHomeCoordinator)
+    }
 }
