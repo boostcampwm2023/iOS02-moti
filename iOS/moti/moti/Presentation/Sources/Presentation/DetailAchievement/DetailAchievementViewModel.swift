@@ -81,11 +81,16 @@ final class DetailAchievementViewModel {
     private func deleteAchievement() {
         Task {
             do {
+                guard let categoryId = achievement.category?.id else { return }
                 let isSuccess = try await deleteAchievementUseCase.execute(
-                    requestValue: DeleteAchievementRequestValue(id: achievement.id)
+                    requestValue: DeleteAchievementRequestValue(id: achievement.id),
+                    categoryId: categoryId
                 )
+                
                 if isSuccess {
                     deleteState = .success(achievementId: achievement.id)
+                } else {
+                    deleteState = .failed(message: "delete achievement error")
                 }
             } catch {
                 Logger.debug("delete achievement error: \(error)")

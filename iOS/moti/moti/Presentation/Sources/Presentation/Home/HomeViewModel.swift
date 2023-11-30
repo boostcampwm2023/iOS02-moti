@@ -8,6 +8,7 @@
 import Foundation
 import Domain
 import Core
+import Data
 
 final class HomeViewModel {
     enum HomeViewModelAction {
@@ -19,10 +20,15 @@ final class HomeViewModel {
         case updateAchievement(id: Int, newCategoryId: Int)
     }
     
-    enum CategoryState {
+    enum CategoryListState {
         case initial
         case finish
         case error(message: String)
+    }
+    
+    enum CategoryState {
+        case initial
+        case updated(category: CategoryItem)
     }
     
     enum AddCategoryState {
@@ -62,12 +68,18 @@ final class HomeViewModel {
     }
     private var lastRequestNextValue: FetchAchievementListRequestValue?
     private var nextRequestValue: FetchAchievementListRequestValue?
-    private(set) var currentCategory: CategoryItem?
+    private(set) var currentCategory: CategoryItem? {
+        didSet {
+            guard let currentCategory else { return }
+            categoryState = .updated(category: currentCategory)
+        }
+    }
     private var nextAchievementTask: Task<Void, Never>?
     
-    @Published private(set) var categoryState: CategoryState = .initial
+    @Published private(set) var categoryListState: CategoryListState = .initial
     @Published private(set) var addCategoryState: AddCategoryState = .none
     @Published private(set) var achievementState: AchievementState = .initial
+    @Published private(set) var categoryState: CategoryState = .initial
     
     // MARK: - Init
     init(
@@ -121,6 +133,9 @@ final class HomeViewModel {
     private func delete(achievementId: Int) {
         guard let foundIndex = findIndexOfAchievement(with: achievementId) else { return }
         achievements.remove(at: foundIndex)
+        
+        guard let currentCategoryId = currentCategory?.id else { return }
+        currentCategory = CategoryStorage.shared.find(categoryId: currentCategoryId)
     }
     
     private func updateAchievement(id: Int, newCategoryId: Int) {
@@ -134,9 +149,9 @@ final class HomeViewModel {
         Task {
             do {
                 categories = try await fetchCategoryListUseCase.execute()
-                categoryState = .finish
+                categoryListState = .finish
             } catch {
-                categoryState = .error(message: error.localizedDescription)
+                categoryListState = .error(message: error.localizedDescription)
             }
         }
     }

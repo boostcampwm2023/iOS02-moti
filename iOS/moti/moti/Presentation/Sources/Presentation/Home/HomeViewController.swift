@@ -8,6 +8,7 @@
 import UIKit
 import Combine
 import Core
+import Data
 
 final class HomeViewController: BaseViewController<HomeView> {
 
@@ -66,7 +67,7 @@ final class HomeViewController: BaseViewController<HomeView> {
             }
             .store(in: &cancellables)
         
-        viewModel.$categoryState
+        viewModel.$categoryListState
             .receive(on: DispatchQueue.main)
             .sink { [weak self] categoryState in
                 guard let self else { return }
@@ -96,6 +97,18 @@ final class HomeViewController: BaseViewController<HomeView> {
                 case .error(let message):
                     layoutView.catergoryAddButton.isEnabled = true
                     showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$categoryState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .initial: break
+                case .updated(let category):
+                    layoutView.updateAchievementHeader(with: category)
                 }
             }
             .store(in: &cancellables)
@@ -201,7 +214,8 @@ extension HomeViewController: UICollectionViewDelegate {
             cell.transform = .identity
         })
         
-        let category = viewModel.findCategory(at: row)
+        let categoryId = viewModel.findCategory(at: row).id
+        guard let category = CategoryStorage.shared.find(categoryId: categoryId) else { return }
         Logger.debug("Selected Category: \(category.name)")
         viewModel.action(.fetchCategoryList(category: category))
         layoutView.updateAchievementHeader(with: category)
