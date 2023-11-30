@@ -92,7 +92,7 @@ final class HomeViewModel {
             addCategory(name: name)
         case .fetchNextPage:
             fetchNextAchievementList()
-        case .fetchCategoryList(let category):
+        case .fetchCategoryAchievementList(let category):
             fetchCategoryAchievementList(category: category)
         case .delete(let achievementId):
             deleteOfDataSource(achievementId: achievementId)

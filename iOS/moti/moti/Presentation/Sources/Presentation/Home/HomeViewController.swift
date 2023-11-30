@@ -249,7 +249,7 @@ extension HomeViewController: UICollectionViewDelegate {
         
         guard let category = viewModel.findCategory(at: row) else { return }
         Logger.debug("Selected Category: \(category.name)")
-        viewModel.action(.fetchCategoryList(category: category))
+        viewModel.action(.fetchCategoryAchievementList(category: category))
         layoutView.updateAchievementHeader(with: category)
     }
     

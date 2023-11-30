@@ -13,7 +13,7 @@ extension HomeViewModel {
         case launch
         case addCategory(name: String)
         case fetchNextPage
-        case fetchCategoryList(category: CategoryItem)
+        case fetchCategoryAchievementList(category: CategoryItem)
         case delete(achievementId: Int)
         case updateAchievement(id: Int, newCategoryId: Int)
     }
