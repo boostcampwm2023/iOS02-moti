@@ -11,17 +11,12 @@ import Data
 import Domain
 import Design
 
-protocol HomeCoordinatorDelegate: AnyObject {
-    func deleteAction(achievementId: Int)
-    func updateAchievement(id: Int, newCategoryId: Int)
-}
-
 public final class HomeCoordinator: Coordinator {
     public let parentCoordinator: Coordinator?
     public var childCoordinators: [Core.Coordinator] = []
     public let navigationController: UINavigationController
-    weak var delegate: HomeCoordinatorDelegate?
-    
+    private var currentViewController: HomeViewController?
+        
     public init(
         _ navigationController: UINavigationController,
         _ parentCoordinator: Coordinator?
@@ -39,6 +34,7 @@ public final class HomeCoordinator: Coordinator {
         let homeVC = HomeViewController(viewModel: homeVM)
         setupNavigationBar(viewController: homeVC)
         homeVC.coordinator = self
+        currentViewController = homeVC
         navigationController.viewControllers = [homeVC]
     }
     
@@ -82,10 +78,10 @@ public final class HomeCoordinator: Coordinator {
 
 extension HomeCoordinator: DetailAchievementCoordinatorDelegate {
     func deleteButtonAction(achievementId: Int) {
-        delegate?.deleteAction(achievementId: achievementId)
+        currentViewController?.delete(achievementId: achievementId)
     }
     
     func updateAchievement(id: Int, newCategoryId: Int) {
-        delegate?.updateAchievement(id: id, newCategoryId: newCategoryId)
+        currentViewController?.updateAchievement(id: id, newCategoryId: newCategoryId)
     }
 }

@@ -68,7 +68,6 @@ private extension TabBarCoordinator {
         navVC.tabBarItem.title = TabItemType.individual.title
         
         let homeCoordinator = HomeCoordinator(navVC, self)
-        homeCoordinator.delegate = self
         homeCoordinator.start()
         childCoordinators.append(homeCoordinator)
         return navVC
@@ -89,15 +88,5 @@ private extension TabBarCoordinator {
 extension TabBarCoordinator: TabBarViewControllerDelegate {
     func captureButtonDidClicked() {
         moveCaptureViewController()
-    }
-}
-
-extension TabBarCoordinator: HomeCoordinatorDelegate {
-    func deleteAction(achievementId: Int) {
-        homeViewController?.delete(achievementId: achievementId)
-    }
-    
-    func updateAchievement(id: Int, newCategoryId: Int) {
-        homeViewController?.updateAchievement(id: id, newCategoryId: newCategoryId)
     }
 }
