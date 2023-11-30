@@ -167,13 +167,13 @@ private extension HomeViewModel {
     
     /// 도전 기록의 카테고리를 변경하는 액션
     func updateAchievementCategory(achievementId: Int, newCategoryId: Int) {
-        guard let currentCategory, currentCategory.id != 0 else { return }
+        guard let currentCategory else { return }
         
         CategoryStorage.shared.decrease(categoryId: currentCategory.id)
         CategoryStorage.shared.increase(categoryId: newCategoryId)
         syncCurrentCategoryWithStorage()
         
-        if currentCategory.id != newCategoryId {
+        if currentCategory.id != 0 && currentCategory.id != newCategoryId {
             deleteOfDataSource(achievementId: achievementId)
         }
     }
