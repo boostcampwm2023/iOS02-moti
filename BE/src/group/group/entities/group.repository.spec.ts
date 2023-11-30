@@ -17,9 +17,9 @@ import { GroupTestModule } from '../../../../test/group/group/group-test.module'
 describe('GroupRepository Test', () => {
   let groupRepository: GroupRepository;
   let userGroupRepository: UserGroupRepository;
+  let groupFixture: GroupFixture;
   let dataSource: DataSource;
   let usersFixture: UsersFixture;
-  let groupFixture: GroupFixture;
 
   beforeAll(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -94,6 +94,56 @@ describe('GroupRepository Test', () => {
       expect(groups[0].name).toEqual('Test Group1');
       expect(groups[1].name).toEqual('Test Group2');
       expect(groups[2].name).toEqual('Test Group3');
+    });
+  });
+
+  describe('findGroupByIdAndLeaderUser는 그룹을 찾을 수 있다.', () => {
+    it('LEADER는 해당하는 그룹을 반환받는다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+        const participants = await usersFixture.getUsers(10);
+        const managers = await usersFixture.getUsers(10);
+
+        const group = await groupFixture.createGroups(
+          leader,
+          participants,
+          managers,
+        );
+        // when
+
+        const savedGroup = await groupRepository.findGroupByIdAndLeaderUser(
+          leader,
+          group.id,
+        );
+
+        // then
+        expect(savedGroup.name).toEqual(group.name);
+      });
+    });
+
+    it('MEMBER는 해당하는 그룹을 반환받지 못한다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+        const participants = await usersFixture.getUsers(10);
+        const managers = await usersFixture.getUsers(10);
+
+        const group = await groupFixture.createGroups(
+          leader,
+          participants,
+          managers,
+        );
+        // when
+
+        const savedGroup = await groupRepository.findGroupByIdAndLeaderUser(
+          participants[0],
+          group.id,
+        );
+
+        // then
+        expect(savedGroup).toBeUndefined();
+      });
     });
   });
 });
