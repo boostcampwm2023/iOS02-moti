@@ -1,37 +1,37 @@
 //
-//  HomeViewController.swift
+//  GroupHomeViewController.swift
 //  
 //
-//  Created by 유정주 on 11/13/23.
+//  Created by 유정주 on 11/30/23.
 //
 
 import UIKit
-import Combine
-import Core
-import Data
 import Design
+import Core
+import Combine
+import Domain
 
-final class HomeViewController: BaseViewController<HomeView> {
-
-    // MARK: - Properties
-    weak var coordinator: HomeCoordinator?
-    private let viewModel: HomeViewModel
-    private var cancellables: Set<AnyCancellable> = []
-    private var isFetchingNextPage = false
+final class GroupHomeViewController: BaseViewController<HomeView> {
     
-    init(viewModel: HomeViewModel) {
+    // MARK: - Properties
+    weak var coordinator: GroupHomeCoordinator?
+    private let viewModel: GroupHomeViewModel
+    private var cancellables: Set<AnyCancellable> = []
+    
+    // MARK: - Init
+    init(viewModel: GroupHomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
-        fatalError()
+        fatalError("init(coder:) has not been implemented")
     }
     
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupNavigationBar()
+        setupNavigationBar(with: viewModel.group)
         addTargets()
         bind()
         
@@ -39,15 +39,6 @@ final class HomeViewController: BaseViewController<HomeView> {
         setupCategoryDataSource()
         
         viewModel.action(.launch)
-    }
-    
-    // MARK: - Methods
-    func delete(achievementId: Int) {
-        viewModel.action(.delete(achievementId: achievementId))
-    }
-    
-    func updateAchievement(achievementId: Int, newCategoryId: Int) {
-        viewModel.action(.updateAchievement(id: achievementId, newCategoryId: newCategoryId))
     }
     
     private func bind() {
@@ -59,9 +50,8 @@ final class HomeViewController: BaseViewController<HomeView> {
                 Logger.debug(state)
                 switch state {
                 case .finish:
-                    isFetchingNextPage = false
+                    break
                 case .error(let message):
-                    isFetchingNextPage = false
                     Logger.error("Fetch Achievement Error: \(message)")
                 default: break
                 }
@@ -85,57 +75,24 @@ final class HomeViewController: BaseViewController<HomeView> {
                 }
             }
             .store(in: &cancellables)
-        
-        viewModel.$addCategoryState
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] state in
-                guard let self else { return }
-                switch state {
-                case .none: break
-                case .loading:
-                    layoutView.catergoryAddButton.isEnabled = false
-                case .finish:
-                    layoutView.catergoryAddButton.isEnabled = true
-                case .error(let message):
-                    layoutView.catergoryAddButton.isEnabled = true
-                    showErrorAlert(message: message)
-                }
-            }
-            .store(in: &cancellables)
-        
-        viewModel.$categoryState
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] state in
-                guard let self else { return }
-                switch state {
-                case .initial: break
-                case .updated(let category):
-                    Logger.debug("Updated: \(category)")
-                    layoutView.updateAchievementHeader(with: category)
-                }
-            }
-            .store(in: &cancellables)
     }
     
+    // MARK: - Actions
     private func addTargets() {
-        layoutView.catergoryAddButton.addTarget(self, action: #selector(showAlert), for: .touchUpInside)
+        layoutView.catergoryAddButton.addTarget(self, action: #selector(showAddGroupCategoryAlert), for: .touchUpInside)
     }
     
-    @objc private func showAlert() {
+    @objc private func showAddGroupCategoryAlert() {
         showTextFieldAlert(
             title: "추가할 카테고리 이름을 입력하세요.",
             okTitle: "생성",
             placeholder: "카테고리 이름은 최대 10글자입니다."
         ) { [weak self] text in
             guard let self, let text else { return }
-            viewModel.action(.addCategory(name: text))
+            Logger.debug("그룹 카테고리 생성 입력: \(text)")
         }
     }
-    
-    private func showErrorAlert(message: String) {
-        showOneButtonAlert(title: "에러", message: message)
-    }
-    
+
     // MARK: - Setup
     private func setupAchievementDataSource() {
         layoutView.achievementCollectionView.delegate = self
@@ -185,25 +142,24 @@ final class HomeViewController: BaseViewController<HomeView> {
         viewModel.setupCategoryDataSource(diffableDataSource)
     }
     
-    func setupNavigationBar() {
-        let logoItem = UIImageView(image: MotiImage.logoBlue)
-        logoItem.contentMode = .scaleAspectFit
-        let leftItem = UIBarButtonItem(customView: logoItem)
-        leftItem.customView?.atl
-            .width(constant: 60)
-        navigationItem.leftBarButtonItem = leftItem
-
+    func setupNavigationBar(with group: Group) {
+        navigationItem.title = group.name
+        
         // 오른쪽 프로필 버튼
-        let profileImage = UIImage(
-            systemName: "person.crop.circle.fill",
-            withConfiguration: UIImage.SymbolConfiguration(font: .large)
-        )
-        let profileButton = UIButton(type: .system)
-        profileButton.setImage(profileImage, for: .normal)
-        profileButton.contentMode = .scaleAspectFit
-        profileButton.tintColor = .primaryDarkGray
-        let profileItem = UIBarButtonItem(customView: profileButton)
-
+        let avatarItemSize: CGFloat = 34
+        let avatarImageView = UIImageView()
+        avatarImageView.contentMode = .scaleAspectFit
+        avatarImageView.clipsToBounds = true
+        avatarImageView.layer.cornerRadius = avatarItemSize / 2
+        if let groupProfileImageURL = group.avatarUrl {
+            avatarImageView.jf.setImage(with: groupProfileImageURL)
+        } else {
+            avatarImageView.backgroundColor = .primaryGray
+        }
+        let profileItem = UIBarButtonItem(customView: avatarImageView)
+        profileItem.customView?.atl
+            .size(width: avatarItemSize, height: avatarItemSize)
+        
         // 오른쪽 더보기 버튼
         let moreItem = UIBarButtonItem(
             image: SymbolImage.ellipsisCircle,
@@ -222,7 +178,8 @@ final class HomeViewController: BaseViewController<HomeView> {
     }
 }
 
-extension HomeViewController: UICollectionViewDelegate {
+// MARK: - UICollectionViewDelegate
+extension GroupHomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell {
@@ -231,8 +188,7 @@ extension HomeViewController: UICollectionViewDelegate {
         } else if let cell = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
             // 달성 기록 리스트 셀을 눌렀을 때
             // 상세 정보 화면으로 이동
-            let achievement = viewModel.findAchievement(at: indexPath.row)
-            coordinator?.moveToDetailAchievementViewController(achievement: achievement)
+            
         }
     }
     
@@ -248,7 +204,7 @@ extension HomeViewController: UICollectionViewDelegate {
         })
         
         guard let category = viewModel.findCategory(at: row) else { return }
-        Logger.debug("Selected Category: \(category.name)")
+        Logger.debug("Selected Group Category: \(category.name)")
         viewModel.action(.fetchAchievementList(category: category))
         layoutView.updateAchievementHeader(with: category)
     }
@@ -266,17 +222,5 @@ extension HomeViewController: UICollectionViewDelegate {
         guard let cell = cell as? AchievementCollectionViewCell else { return }
         cell.cancelDownloadImage()
     }
-    
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let actualPos = scrollView.panGestureRecognizer.translation(in: scrollView.superview)
-        let pos = scrollView.contentOffset.y
-        let diff = layoutView.achievementCollectionView.contentSize.height - scrollView.frame.size.height
-        
-        // 아래로 드래그 && 마지막까지 스크롤
-        if actualPos.y < 0 && pos > diff && !isFetchingNextPage {
-            Logger.debug("Fetch New Data")
-            isFetchingNextPage = true
-            viewModel.action(.fetchNextPage)
-        }
-    }
+
 }

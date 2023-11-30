@@ -111,6 +111,8 @@ extension GroupListViewController: UICollectionViewDelegate {
             cell.transform = .identity
         })
 
-        Logger.debug("Clicked \(viewModel.findGroup(at: indexPath.row))")
+        let selectedGroup = viewModel.findGroup(at: indexPath.row)
+        Logger.debug("Clicked \(selectedGroup)")
+        coordinator?.moveToGroupHomeViewController(group: selectedGroup)
     }
 }
