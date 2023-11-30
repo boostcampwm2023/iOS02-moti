@@ -64,7 +64,7 @@ extension CaptureCoordinator: CaptureViewControllerDelegate {
 }
 
 extension CaptureCoordinator: EditAchievementCoordinatorDelegate {
-    func doneButtonDidClickedFromDetail(updateAchievementRequestValue: UpdateAchievementRequestValue) {
+    func doneButtonDidClickedFromDetail(updatedAchievement: Achievement) {
         
     }
     

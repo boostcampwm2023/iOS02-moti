@@ -12,7 +12,7 @@ import Combine
 import Domain
 
 protocol EditAchievementViewControllerDelegate: AnyObject {
-    func doneButtonDidClickedFromDetailView(updateAchievementRequestValue: UpdateAchievementRequestValue)
+    func doneButtonDidClickedFromDetailView(updatedAchievement: Achievement)
     func doneButtonDidClickedFromCaptureView(newAchievement: Achievement)
 }
 
@@ -143,8 +143,8 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
                 guard let self else { return }
                 switch state {
                 case .none, .loading: break
-                case .finish(let updateAchievementRequestValue):
-                    delegate?.doneButtonDidClickedFromDetailView(updateAchievementRequestValue: updateAchievementRequestValue)
+                case .finish(let updatedAchievement):
+                    delegate?.doneButtonDidClickedFromDetailView(updatedAchievement: updatedAchievement)
                 case .error:
                     Logger.error("Achievement Update Error")
                 }
@@ -173,18 +173,13 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     }
     
     @objc func doneButtonDidClicked() {
-        if let achievement { // 상세 화면에서 넘어옴 => 수정 API
-            let updateAchievementRequestValue = UpdateAchievementRequestValue(
-                id: achievement.id,
-                body: UpdateAchievementRequestBody(
-                    title: layoutView.titleTextField.text ?? "",
-                    content: bottomSheet.text,
-                    categoryId: findSelectedCategory().id
-                )
+        if let achievement = achievement { // 상세 화면에서 넘어옴 => 수정 API
+            let updatedData = UpdateAchievementRequestBody(
+                title: layoutView.titleTextField.text ?? "",
+                content: bottomSheet.text,
+                categoryId: findSelectedCategory().id
             )
-            
-            viewModel.action(.updateAchievement(updateAchievementRequestValue: updateAchievementRequestValue))
-            
+            viewModel.action(.updateAchievement(achievement: achievement, updateData: updatedData))
         } else { // 촬영 화면에서 넘어옴 => 생성 API
             var title = ""
             if let text = layoutView.titleTextField.text, !text.isEmpty {
