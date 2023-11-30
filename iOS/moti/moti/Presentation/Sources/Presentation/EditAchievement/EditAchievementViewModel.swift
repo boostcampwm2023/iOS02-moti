@@ -12,7 +12,7 @@ import Core
 final class EditAchievementViewModel {
     
     enum Action {
-        case saveImage(data: Data, imageExtension: ImageExtension)
+        case saveImage(data: Data)
         case fetchCategories
         case updateAchievement(updateAchievementRequestValue: UpdateAchievementRequestValue)
     }
@@ -61,8 +61,8 @@ final class EditAchievementViewModel {
 
     func action(_ action: Action) {
         switch action {
-        case .saveImage(let data, let imageExtension):
-            saveImageData(data, imageExtension)
+        case .saveImage(let data):
+            saveImageData(data)
         case .fetchCategories:
             fetchCategories()
         case .updateAchievement(let updateAchievementRequestValue):
@@ -98,8 +98,8 @@ final class EditAchievementViewModel {
         }
     }
     
-    private func saveImageData(_ data: Data, _ imageExtension: ImageExtension) {
-        Logger.debug("Save Image: \(data.count / 1000)KB / imageExtension: \(imageExtension.rawValue)")
+    private func saveImageData(_ data: Data) {
+        Logger.debug("Save Image: \(data.count / 1000)KB / \(Double(data.count) / 1000.0 / 1000.0)MB")
         
         Task {
             do {
@@ -107,7 +107,7 @@ final class EditAchievementViewModel {
                 
                 let requestValue = SaveImageRequestValue(
                     boundary: UUID().uuidString,
-                    contentType: imageExtension.rawValue,
+                    contentType: "jpeg", // heic로 테스트 해봤지만 전송되는 파일 데이터가 jpeg라서 의미 없음을 확인함. 따라서 jpeg로 통일해서 전송
                     imageData: data
                 )
                 let (isSuccess, imageId) = try await saveImageUseCase.excute(requestValue: requestValue)
