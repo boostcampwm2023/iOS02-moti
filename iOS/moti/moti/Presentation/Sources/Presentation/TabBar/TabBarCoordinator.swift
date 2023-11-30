@@ -85,12 +85,18 @@ private extension TabBarCoordinator {
     }
     
     func makeGroupTabPage() -> UINavigationController {
-        let groupListVC = GroupListViewController()
+        let groupVM = GroupListViewModel()
+        let groupListVC = GroupListViewController(viewModel: groupVM)
         
         groupListVC.tabBarItem.image = SymbolImage.groupTabItem
         groupListVC.tabBarItem.title = TabItemType.group.title
         
-        return UINavigationController(rootViewController: groupListVC)
+        let navVC = UINavigationController(rootViewController: groupListVC)
+        
+        let groupListCoordinator = GroupListCoordinator(navVC, self)
+        groupListVC.coordinator = groupListCoordinator
+        childCoordinators.append(groupListCoordinator)
+        return navVC
     }
     
     func setupIndividualHomeNavigationBar(viewController: UIViewController) {
