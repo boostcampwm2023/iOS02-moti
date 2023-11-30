@@ -31,8 +31,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     // MARK: - Init
     init(
         viewModel: EditAchievementViewModel,
-        image: UIImage,
-        imageExtension: ImageExtension
+        image: UIImage
     ) {
         self.viewModel = viewModel
         self.bottomSheet = TextViewBottomSheet()
@@ -40,7 +39,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
         
         layoutView.configure(image: image)
         if let imageData = image.jpegData(compressionQuality: 1.0) {
-            viewModel.action(.saveImage(data: imageData, imageExtension: imageExtension))
+            viewModel.action(.saveImage(data: imageData))
         }
     }
     

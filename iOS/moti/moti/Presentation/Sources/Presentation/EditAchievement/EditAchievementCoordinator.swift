@@ -54,7 +54,7 @@ final class EditAchievementCoordinator: Coordinator {
         navigationController.present(navVC, animated: true)
     }
     
-    func startAfterCapture(image: UIImage, imageExtension: ImageExtension) {
+    func startAfterCapture(image: UIImage) {
         let editAchievementVM = EditAchievementViewModel(
             saveImageUseCase: .init(repository: ImageRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
@@ -62,8 +62,7 @@ final class EditAchievementCoordinator: Coordinator {
         )
         let editAchievementVC = EditAchievementViewController(
             viewModel: editAchievementVM,
-            image: image,
-            imageExtension: imageExtension
+            image: image
         )
         editAchievementVC.coordinator = self
         editAchievementVC.delegate = self
