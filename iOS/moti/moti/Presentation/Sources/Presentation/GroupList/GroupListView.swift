@@ -9,5 +9,51 @@ import UIKit
 
 final class GroupListView: UIView {
 
+    private(set) lazy var groupListCollectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout())
+        collectionView.backgroundColor = .motiBackground
+        collectionView.register(with: AchievementCollectionViewCell.self)
+        return collectionView
+    }()
+    
+    // MARK: - Init
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupUI()
+    }
 
+}
+
+// MARK: - Setup
+private extension GroupListView {
+    private func setupUI() {
+        groupListCollectionView.atl
+            .top(equalTo: safeAreaLayoutGuide.topAnchor)
+            .bottom(equalTo: bottomAnchor)
+            .horizontal(equalTo: safeAreaLayoutGuide)
+    }
+}
+
+private extension GroupListView {
+    func makeCollectionViewLayout() -> UICollectionViewLayout {
+        let itemPadding: CGFloat = 20
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1))
+        let itemInset = NSDirectionalEdgeInsets(top: itemPadding, leading: 0, bottom: itemPadding, trailing: 0)
+        
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: itemSize.widthDimension)
+        
+        return CompositionalLayoutFactory.makeVerticalCompositionalLayout(
+            itemSize: itemSize,
+            itemInset: itemInset,
+            groupSize: groupSize)
+    }
 }
