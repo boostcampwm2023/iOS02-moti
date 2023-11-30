@@ -11,7 +11,7 @@ import Data
 import Domain
 
 protocol DetailAchievementCoordinatorDelegate: AnyObject {
-    func deleteButtonAction(achievementId: Int)
+    func deleteButtonDidClicked(achievementId: Int)
     func updateAchievement(updatedAchievement: Achievement)
     func achievementDidPosted(newAchievement: Achievement)
 }
@@ -64,7 +64,7 @@ extension DetailAchievementCoordinator: DetailAchievementViewControllerDelegate 
     
     func deleteButtonDidClicked(achievementId: Int) {
         finish(animated: true)
-        delegate?.deleteButtonAction(achievementId: achievementId)
+        delegate?.deleteButtonDidClicked(achievementId: achievementId)
     }
 }
 

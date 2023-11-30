@@ -40,6 +40,7 @@ final class HomeViewModel {
     private var achievements: [Achievement] = [] {
         didSet {
             achievementDataSource?.update(data: achievements)
+            syncCurrentCategoryWithStorage()
         }
     }
     

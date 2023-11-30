@@ -46,7 +46,7 @@ public final class HomeCoordinator: Coordinator {
 }
 
 extension HomeCoordinator: DetailAchievementCoordinatorDelegate {
-    func deleteButtonAction(achievementId: Int) {
+    func deleteButtonDidClicked(achievementId: Int) {
         currentViewController?.deleteAchievementDataSourceItem(achievementId: achievementId)
     }
     
