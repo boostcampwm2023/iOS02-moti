@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -9,6 +10,7 @@ import {
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -19,6 +21,7 @@ import { GroupResponse } from '../dto/group-response.dto';
 import { User } from '../../../users/domain/user.domain';
 import { CreateGroupRequest } from '../dto/create-group-request.dto';
 import { ApiData } from '../../../common/api/api-data';
+import { GroupListResponse } from '../dto/group-list-response';
 
 @Controller('/api/v1/groups')
 @ApiTags('그룹 API')
@@ -44,5 +47,21 @@ export class GroupController {
     return ApiData.success(
       await this.groupService.create(user, createGroupRequest),
     );
+  }
+
+  @ApiOperation({
+    summary: '그룹 리스트 API',
+    description: '유저가 속해 있는 그룹 리스트를 조회한다.',
+  })
+  @ApiOkResponse({
+    description: '그룹 리스트',
+    type: GroupListResponse,
+  })
+  @ApiBearerAuth('accessToken')
+  @Get()
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  async getGroups(@AuthenticatedUser() user: User) {
+    return ApiData.success(await this.groupService.getGroups(user.id));
   }
 }
