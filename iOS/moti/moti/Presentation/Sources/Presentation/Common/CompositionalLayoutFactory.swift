@@ -14,6 +14,7 @@ enum CompositionalLayoutFactory {
         groupSize: NSCollectionLayoutSize,
         subitemCount: Int = 1,
         groupInset: NSDirectionalEdgeInsets? = nil,
+        groupEdgeSpacing: NSCollectionLayoutEdgeSpacing? = nil,
         sectionHeaderSize: NSCollectionLayoutSize? = nil
     ) -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
@@ -25,6 +26,9 @@ enum CompositionalLayoutFactory {
             let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: Array(repeating: item, count: subitemCount))
             if let groupInset = groupInset {
                 group.contentInsets = groupInset
+            }
+            if let groupEdgeSpacing = groupEdgeSpacing {
+                group.edgeSpacing = groupEdgeSpacing
             }
             
             let section = NSCollectionLayoutSection(group: group)

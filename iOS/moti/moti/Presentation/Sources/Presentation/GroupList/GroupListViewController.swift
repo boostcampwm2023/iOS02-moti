@@ -29,39 +29,31 @@ final class GroupListViewController: BaseViewController<GroupListView> {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupGroupListDataSource()
+        
+        viewModel.action(.launch)
     }
 
     private func setupGroupListDataSource() {
         layoutView.groupListCollectionView.delegate = self
-        let dataSource = HomeViewModel.AchievementDataSource.DataSource(
-            collectionView: layoutView.achievementCollectionView,
+        let dataSource = GroupListViewModel.GroupDataSource.DataSource(
+            collectionView: layoutView.groupListCollectionView,
             cellProvider: { collectionView, indexPath, item in
-                let cell: AchievementCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
+                let cell: GroupListCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
                 
                 if item.id < 0 {
                     cell.showSkeleton()
                 } else {
                     cell.hideSkeleton()
-                    cell.configure(imageURL: item.imageURL)
+                    cell.configure(with: item)
                 }
                 
                 return cell
             }
         )
         
-        dataSource.supplementaryViewProvider = { collecionView, elementKind, indexPath in
-            guard elementKind == UICollectionView.elementKindSectionHeader else { return nil }
-            
-            let headerView = collecionView.dequeueReusableSupplementaryView(
-                ofKind: elementKind,
-                withReuseIdentifier: HeaderView.identifier,
-                for: indexPath) as? HeaderView
-            
-            return headerView
-        }
-        
-        let diffableDataSource = HomeViewModel.AchievementDataSource(dataSource: dataSource)
-        viewModel.setupAchievementDataSource(diffableDataSource)
+        let diffableDataSource = GroupListViewModel.GroupDataSource(dataSource: dataSource)
+        viewModel.setupGroupDataSource(diffableDataSource)
     }
 
 }
@@ -103,5 +95,22 @@ private extension GroupListViewController {
         )
 
         navigationItem.rightBarButtonItems = [profileItem, createGroupItem, editGroupItem]
+    }
+}
+
+extension GroupListViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? GroupListCollectionViewCell else {
+            return
+        }
+
+        UIView.animate(withDuration: 0.08, animations: {
+            let scale = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            cell.transform = scale
+        }, completion: { _ in
+            cell.transform = .identity
+        })
+
+        Logger.debug("Clicked \(viewModel.findGroup(at: indexPath.row))")
     }
 }

@@ -6,11 +6,26 @@
 //
 
 import UIKit
+import Domain
+import Jeongfisher
+import Design
 
 final class GroupListCollectionViewCell: UICollectionViewCell {
     
+    // MARK: - Properties
     private let iconSize: CGFloat = 60
     
+    override var isHighlighted: Bool {
+        didSet {
+            if isHighlighted {
+                bounceAnimation()
+            } else {
+                normalAnimation()
+            }
+        }
+    }
+    
+    // MARK: - Views
     private lazy var iconImageView = {
         let imageView = UIImageView()
         
@@ -25,7 +40,7 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
     private var labelStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.spacing = 10
+        stackView.spacing = 2
         stackView.distribution = .fillEqually
         return stackView
     }()
@@ -39,14 +54,14 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
     
     private let continuedLabel = {
         let label = UILabel()
-        label.font = .mediumBold
+        label.font = .medium
         label.numberOfLines = 1
         return label
     }()
     
     private let lastChallengedLabel = {
         let label = UILabel()
-        label.font = .mediumBold
+        label.font = .medium
         label.numberOfLines = 1
         return label
     }()
@@ -61,11 +76,37 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
         super.init(coder: coder)
         setupUI()
     }
+    
+    // MARK: - Methods
+    func configure(with group: Group) {
+        if let url = group.avatarUrl {
+            iconImageView.jf.setImage(with: url)
+        }
+        titleLabel.text = group.name
+        continuedLabel.text = "총 \(group.continued)회 달성"
+        lastChallengedLabel.text = group.displayLastChallenged
+    }
+    
+    func showSkeleton() {
+        
+    }
+    
+    func hideSkeleton() {
+        
+    }
+    
+    func cancelDownloadImage() {
+        iconImageView.jf.cancelDownloadImage()
+    }
 }
 
 // MARK: - Setup
 private extension GroupListCollectionViewCell {
     func setupUI() {
+        self.layer.cornerRadius = CornerRadius.big
+        self.layer.borderWidth = 1
+        self.layer.borderColor = UIColor.primaryDarkGray.cgColor
+        
         setupIconImageView()
         setupStackView()
     }

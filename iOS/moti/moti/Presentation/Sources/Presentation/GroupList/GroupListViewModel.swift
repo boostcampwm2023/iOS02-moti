@@ -60,8 +60,6 @@ extension GroupListViewModel {
         groupListState = .loading
         
         Task {
-            sleep(1)
-            
             groups = [
                 Group(id: 0, name: "test1", avatarUrl: nil, continued: 10, lastChallenged: .now),
                 Group(id: 0, name: "test2", avatarUrl: nil, continued: 20, lastChallenged: .now),
