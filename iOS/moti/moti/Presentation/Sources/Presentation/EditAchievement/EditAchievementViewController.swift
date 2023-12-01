@@ -64,7 +64,8 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
         super.viewDidLoad()
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(
-            barButtonSystemItem: .done,
+            title: "완료",
+            style: .done,
             target: self,
             action: #selector(doneButtonDidClicked)
         )
@@ -124,11 +125,13 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
                     // 완료 버튼 비활성화
                     if let doneButton = navigationItem.rightBarButtonItem {
                         doneButton.isEnabled = false
+                        navigationItem.rightBarButtonItem?.title = "로딩 중"
                     }
                 case .finish:
                     // 완료 버튼 활성화
                     if let doneButton = navigationItem.rightBarButtonItem {
                         doneButton.isEnabled = true
+                        navigationItem.rightBarButtonItem?.title = "완료"
                     }
                 case .error:
                     // TODO: Alert 띄우고, 다시 업로드 진행하기
@@ -173,31 +176,42 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     }
     
     @objc func doneButtonDidClicked() {
+        // 카테고리
+        guard let category = findSelectedCategory() else {
+            hideBottomSheet()
+            showErrorAlert(message: "카테고리를 선택하세요.", okAction: {
+                self.showBottomSheet()
+            })
+            return
+        }
+        
+        // 제목
+        let title: String
+        if let text = layoutView.titleTextField.text, !text.isEmpty {
+            title = text
+        } else {
+            guard let placeholder = layoutView.titleTextField.placeholder else { return }
+            title = placeholder
+        }
+        
         if let achievement = achievement { // 상세 화면에서 넘어옴 => 수정 API
             let updatedData = UpdateAchievementRequestBody(
-                title: layoutView.titleTextField.text ?? "",
+                title: title,
                 content: bottomSheet.text,
-                categoryId: findSelectedCategory().id
+                categoryId: category.id
             )
             viewModel.action(.updateAchievement(achievement: achievement, updateData: updatedData))
         } else { // 촬영 화면에서 넘어옴 => 생성 API
-            var title = ""
-            if let text = layoutView.titleTextField.text, !text.isEmpty {
-                title = text
-            } else {
-                guard let placeholder = layoutView.titleTextField.placeholder else { return }
-                title = placeholder
-            }
             
             viewModel.action(.postAchievement(
                 title: title,
                 content: bottomSheet.text,
-                categoryId: findSelectedCategory().id)
+                categoryId: category.id)
             )
         }
     }
     
-    private func findSelectedCategory() -> CategoryItem {
+    private func findSelectedCategory() -> CategoryItem? {
         let selectedRow = layoutView.categoryPickerView.selectedRow(inComponent: 0)
         return viewModel.findCategory(at: selectedRow)
     }
@@ -245,7 +259,8 @@ extension EditAchievementViewController {
 
 extension EditAchievementViewController: UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        layoutView.update(category: viewModel.findCategory(at: row).name)
+        guard let category = viewModel.findCategory(at: row) else { return }
+        layoutView.update(category: category.name)
     }
 }
 
@@ -259,6 +274,7 @@ extension EditAchievementViewController: UIPickerViewDataSource {
     }
 
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return viewModel.findCategory(at: row).name
+        guard let category = viewModel.findCategory(at: row) else { return nil }
+        return category.name
     }
 }

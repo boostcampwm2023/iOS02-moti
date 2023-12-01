@@ -17,14 +17,21 @@ class BaseViewController<LayoutView: UIView>: UIViewController {
         }
         view = layoutView
     }
-    
+}
+
+// MARK: - Alert
+extension BaseViewController {
+    /// 에러 상황일 때 호출하는 Alert
     func showErrorAlert(
-        message: String? = nil
+        title: String = "에러",
+        message: String? = nil,
+        okAction: (() -> Void)? = nil
     ) {
-        let alertVC = AlertFactory.makeOneButtonAlert(title: "에러", message: message)
+        let alertVC = AlertFactory.makeOneButtonAlert(title: title, message: message, okAction: okAction)
         present(alertVC, animated: true)
     }
     
+    /// 버튼이 하나인 일반 Alert
     func showOneButtonAlert(
         title: String? = nil,
         message: String? = nil,
@@ -35,13 +42,23 @@ class BaseViewController<LayoutView: UIView>: UIViewController {
         present(alertVC, animated: true)
     }
     
+    /// 버튼이 두 개인 일반 Alert
     func showTwoButtonAlert(
         title: String? = nil,
         message: String? = nil,
         okTitle: String? = "확인",
-        okAction: (() -> Void)? = nil
+        okAction: (() -> Void)? = nil,
+        cancelTitle: String? = "취소",
+        cancelAction: (() -> Void)? = nil
     ) {
-        let alertVC = AlertFactory.makeTwoButtonAlert(title: title, message: message, okTitle: okTitle, okAction: okAction)
+        let alertVC = AlertFactory.makeTwoButtonAlert(
+            title: title,
+            message: message,
+            okTitle: okTitle,
+            okAction: okAction,
+            cancelTitle: cancelTitle,
+            cancelAction: cancelAction
+        )
         present(alertVC, animated: true)
     }
     
