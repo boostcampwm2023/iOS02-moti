@@ -14,7 +14,7 @@ final class DetailAchievementViewModel {
     enum DetailAchievementViewModelAction {
         case launch
         case delete
-        case update(updateAchievementRequestValue: UpdateAchievementRequestValue)
+        case update(updatedAchievement: Achievement)
     }
     
     enum LaunchState {
@@ -55,8 +55,8 @@ final class DetailAchievementViewModel {
             fetchDetailAchievement()
         case .delete:
             deleteAchievement()
-        case .update(let updateAchievementRequestValue):
-            updateAchievement(updateAchievementRequestValue: updateAchievementRequestValue)
+        case .update(let updatedAchievement):
+            self.achievement = updatedAchievement
         }
     }
     
@@ -97,12 +97,5 @@ final class DetailAchievementViewModel {
                 deleteState = .failed(message: error.localizedDescription)
             }
         }
-    }
-    
-    private func updateAchievement(updateAchievementRequestValue: UpdateAchievementRequestValue) {
-        let category = CategoryStorage.shared.find(categoryId: updateAchievementRequestValue.body.categoryId)
-        achievement.category = category
-        achievement.title = updateAchievementRequestValue.body.title
-        achievement.body = updateAchievementRequestValue.body.content
     }
 }

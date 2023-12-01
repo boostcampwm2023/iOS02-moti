@@ -40,6 +40,7 @@ final class HomeViewModel {
     private var achievements: [Achievement] = [] {
         didSet {
             achievementDataSource?.update(data: achievements)
+            syncCurrentCategoryWithStorage()
         }
     }
     
@@ -94,10 +95,10 @@ final class HomeViewModel {
             fetchNextAchievementList()
         case .fetchAchievementList(let category):
             fetchCategoryAchievementList(category: category)
-        case .delete(let achievementId):
+        case .deleteAchievementDataSourceItem(let achievementId):
             deleteOfDataSource(achievementId: achievementId)
-        case .updateAchievement(let id, let newCategoryId):
-            updateAchievementCategory(achievementId: id, newCategoryId: newCategoryId)
+        case .updateAchievement(let updatedAchievement):
+            updateAchievementCategory(updatedAchievement: updatedAchievement)
         case .postAchievement(let newAchievement):
             postAchievement(newAchievement: newAchievement)
         }
@@ -161,20 +162,16 @@ private extension HomeViewModel {
     func deleteOfDataSource(achievementId: Int) {
         guard let foundIndex = firstIndexOf(achievementId: achievementId) else { return }
         achievements.remove(at: foundIndex)
-        
-        syncCurrentCategoryWithStorage()
     }
     
     /// 도전 기록의 카테고리를 변경하는 액션
-    func updateAchievementCategory(achievementId: Int, newCategoryId: Int) {
-        guard let currentCategory else { return }
-        
-        CategoryStorage.shared.decrease(categoryId: currentCategory.id)
-        CategoryStorage.shared.increase(categoryId: newCategoryId)
+    func updateAchievementCategory(updatedAchievement: Achievement) {
+        guard let currentCategory,
+              let updatedCategory = updatedAchievement.category else { return }
         syncCurrentCategoryWithStorage()
         
-        if currentCategory.id != 0 && currentCategory.id != newCategoryId {
-            deleteOfDataSource(achievementId: achievementId)
+        if currentCategory.id != 0 && currentCategory.id != updatedCategory.id {
+            deleteOfDataSource(achievementId: updatedAchievement.id)
         }
     }
     

@@ -60,9 +60,9 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
         layoutView.cancelDownloadImage()
     }
     
-    func update(updateAchievementRequestValue: UpdateAchievementRequestValue) {
-        viewModel.action(.update(updateAchievementRequestValue: updateAchievementRequestValue))
-        layoutView.update(updateAchievementRequestValue: updateAchievementRequestValue)
+    func update(updatedAchievement: Achievement) {
+        viewModel.action(.update(updatedAchievement: updatedAchievement))
+        layoutView.update(updatedAchievement: updatedAchievement)
     }
     
     private func setupUI() {

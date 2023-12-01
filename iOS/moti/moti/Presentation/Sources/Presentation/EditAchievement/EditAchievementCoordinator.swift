@@ -11,7 +11,7 @@ import Data
 import Domain
 
 protocol EditAchievementCoordinatorDelegate: AnyObject {
-    func doneButtonDidClickedFromDetail(updateAchievementRequestValue: UpdateAchievementRequestValue)
+    func doneButtonDidClickedFromDetail(updatedAchievement: Achievement)
     func doneButtonDidClickedFromCapture(newAchievement: Achievement)
 }
 
@@ -37,8 +37,8 @@ final class EditAchievementCoordinator: Coordinator {
         let editAchievementVM = EditAchievementViewModel(
             saveImageUseCase: .init(repository: ImageRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
-            updateAchievementUseCase: .init(repository: AchievementRepository()), 
-            postAchievementUseCase: .init(repository: AchievementRepository())
+            updateAchievementUseCase: .init(repository: AchievementRepository(), categoryStorage: CategoryStorage.shared),
+            postAchievementUseCase: .init(repository: AchievementRepository(), categoryStorage: CategoryStorage.shared)
         )
         let editAchievementVC = EditAchievementViewController(
             viewModel: editAchievementVM,
@@ -60,8 +60,8 @@ final class EditAchievementCoordinator: Coordinator {
         let editAchievementVM = EditAchievementViewModel(
             saveImageUseCase: .init(repository: ImageRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
-            updateAchievementUseCase: .init(repository: AchievementRepository()),
-            postAchievementUseCase: .init(repository: AchievementRepository())
+            updateAchievementUseCase: .init(repository: AchievementRepository(), categoryStorage: CategoryStorage.shared),
+            postAchievementUseCase: .init(repository: AchievementRepository(), categoryStorage: CategoryStorage.shared)
         )
         let editAchievementVC = EditAchievementViewController(
             viewModel: editAchievementVM,
@@ -89,9 +89,9 @@ final class EditAchievementCoordinator: Coordinator {
 }
 
 extension EditAchievementCoordinator: EditAchievementViewControllerDelegate {
-    func doneButtonDidClickedFromDetailView(updateAchievementRequestValue: UpdateAchievementRequestValue) {
+    func doneButtonDidClickedFromDetailView(updatedAchievement: Achievement) {
         parentCoordinator?.dismiss(child: self, animated: true)
-        delegate?.doneButtonDidClickedFromDetail(updateAchievementRequestValue: updateAchievementRequestValue)
+        delegate?.doneButtonDidClickedFromDetail(updatedAchievement: updatedAchievement)
     }
     
     func doneButtonDidClickedFromCaptureView(newAchievement: Achievement) {

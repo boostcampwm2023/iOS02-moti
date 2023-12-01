@@ -43,12 +43,12 @@ final class HomeViewController: BaseViewController<HomeView> {
     }
     
     // MARK: - Methods
-    func delete(achievementId: Int) {
-        viewModel.action(.delete(achievementId: achievementId))
+    func deleteAchievementDataSourceItem(achievementId: Int) {
+        viewModel.action(.deleteAchievementDataSourceItem(achievementId: achievementId))
     }
     
-    func updateAchievement(achievementId: Int, newCategoryId: Int) {
-        viewModel.action(.updateAchievement(id: achievementId, newCategoryId: newCategoryId))
+    func updateAchievement(updatedAchievement: Achievement) {
+        viewModel.action(.updateAchievement(updatedAchievement: updatedAchievement))
     }
     
     func achievementDidPosted(newAchievement: Achievement) {
@@ -114,9 +114,8 @@ final class HomeViewController: BaseViewController<HomeView> {
                 guard let self else { return }
                 switch state {
                 case .initial: break
-                case .updated(let category):
-                    Logger.debug("Updated: \(category)")
-                    layoutView.updateAchievementHeader(with: category)
+                case .updated(let updatedCategory):
+                    layoutView.updateAchievementHeader(with: updatedCategory)
                 }
             }
             .store(in: &cancellables)

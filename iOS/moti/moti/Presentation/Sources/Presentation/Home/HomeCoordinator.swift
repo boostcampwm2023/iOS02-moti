@@ -46,12 +46,12 @@ public final class HomeCoordinator: Coordinator {
 }
 
 extension HomeCoordinator: DetailAchievementCoordinatorDelegate {
-    func deleteButtonAction(achievementId: Int) {
-        currentViewController?.delete(achievementId: achievementId)
+    func deleteButtonDidClicked(achievementId: Int) {
+        currentViewController?.deleteAchievementDataSourceItem(achievementId: achievementId)
     }
     
-    func updateAchievement(achievementId: Int, newCategoryId: Int) {
-        currentViewController?.updateAchievement(achievementId: achievementId, newCategoryId: newCategoryId)
+    func updateAchievement(updatedAchievement: Achievement) {
+        currentViewController?.updateAchievement(updatedAchievement: updatedAchievement)
     }
     
     func achievementDidPosted(newAchievement: Achievement) {

@@ -11,8 +11,8 @@ import Data
 import Domain
 
 protocol DetailAchievementCoordinatorDelegate: AnyObject {
-    func deleteButtonAction(achievementId: Int)
-    func updateAchievement(achievementId: Int, newCategoryId: Int)
+    func deleteButtonDidClicked(achievementId: Int)
+    func updateAchievement(updatedAchievement: Achievement)
     func achievementDidPosted(newAchievement: Achievement)
 }
 
@@ -64,17 +64,17 @@ extension DetailAchievementCoordinator: DetailAchievementViewControllerDelegate 
     
     func deleteButtonDidClicked(achievementId: Int) {
         finish(animated: true)
-        delegate?.deleteButtonAction(achievementId: achievementId)
+        delegate?.deleteButtonDidClicked(achievementId: achievementId)
     }
 }
 
 extension DetailAchievementCoordinator: EditAchievementCoordinatorDelegate {
-    func doneButtonDidClickedFromDetail(updateAchievementRequestValue: UpdateAchievementRequestValue) {
-        detailAchievementViewController?.update(updateAchievementRequestValue: updateAchievementRequestValue)
-        delegate?.updateAchievement(achievementId: updateAchievementRequestValue.id, newCategoryId: updateAchievementRequestValue.body.categoryId)
+    func doneButtonDidClickedFromDetail(updatedAchievement: Achievement) {
+        detailAchievementViewController?.update(updatedAchievement: updatedAchievement)
+        delegate?.updateAchievement(updatedAchievement: updatedAchievement)
     }
     
     func doneButtonDidClickedFromCapture(newAchievement: Achievement) {
-        delegate?.achievementDidPosted(newAchievement: newAchievement)
+
     }
 }

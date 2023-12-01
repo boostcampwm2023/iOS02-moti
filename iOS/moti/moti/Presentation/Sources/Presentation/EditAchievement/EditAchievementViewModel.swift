@@ -14,7 +14,7 @@ final class EditAchievementViewModel {
     enum Action {
         case saveImage(data: Data)
         case fetchCategories
-        case updateAchievement(updateAchievementRequestValue: UpdateAchievementRequestValue)
+        case updateAchievement(achievement: Achievement, updateData: UpdateAchievementRequestBody)
         case postAchievement(title: String, content: String, categoryId: Int)
     }
     
@@ -34,7 +34,7 @@ final class EditAchievementViewModel {
     enum UpdateAchievementState {
         case none
         case loading
-        case finish(updateAchievementRequestValue: UpdateAchievementRequestValue)
+        case finish(updatedAchievement: Achievement)
         case error
     }
     
@@ -80,8 +80,8 @@ final class EditAchievementViewModel {
             saveImageData(data)
         case .fetchCategories:
             fetchCategories()
-        case .updateAchievement(let updateAchievementRequestValue):
-            updateAchievement(updateAchievementRequestValue: updateAchievementRequestValue)
+        case .updateAchievement(let achievement, let updateData):
+            updateAchievement(achievement: achievement, updateData: updateData)
         case .postAchievement(let title, let content, let categoryId):
             postAchievement(title: title, content: content, categoryId: categoryId)
         }
@@ -138,13 +138,21 @@ final class EditAchievementViewModel {
         
     }
     
-    private func updateAchievement(updateAchievementRequestValue: UpdateAchievementRequestValue) {
+    private func updateAchievement(achievement: Achievement, updateData: UpdateAchievementRequestBody) {
         Task {
             do {
                 updateAchievementState = .loading
-                let isSuccess = try await updateAchievementUseCase.execute(requestValue: updateAchievementRequestValue)
-                if isSuccess {
-                    updateAchievementState = .finish(updateAchievementRequestValue: updateAchievementRequestValue)
+                let updateAchievementRequestValue = UpdateAchievementRequestValue(
+                    id: achievement.id,
+                    body: updateData
+                )
+                
+                let (isSuccess, updatedAchievement) = try await updateAchievementUseCase.execute(
+                    oldAchievement: achievement,
+                    requestValue: updateAchievementRequestValue
+                )
+                if isSuccess, let updatedAchievement = updatedAchievement {
+                    updateAchievementState = .finish(updatedAchievement: updatedAchievement)
                 } else {
                     updateAchievementState = .error
                 }
