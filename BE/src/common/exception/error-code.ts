@@ -67,4 +67,12 @@ export const ERROR_INFO = {
     statusCode: 400,
     message: '그룹에 카테고리를 만들 수 없습니다.',
   },
+  NO_SUCH_USER_GROUP: {
+    statusCode: 400,
+    message: '그룹의 멤버가 아닙니다.',
+  },
+  LEADER_NOT_ALLOWED_TO_LEAVE: {
+    statusCode: 400,
+    message: '그룹의 리더는 탈퇴를 할 수 없습니다.',
+  },
 } as const;
