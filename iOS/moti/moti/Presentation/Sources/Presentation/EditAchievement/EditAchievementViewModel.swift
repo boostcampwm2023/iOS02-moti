@@ -87,7 +87,8 @@ final class EditAchievementViewModel {
         }
     }
     
-    func findCategory(at index: Int) -> CategoryItem {
+    func findCategory(at index: Int) -> CategoryItem? {
+        guard categories.count < index else { return nil }
         return categories[index]
     }
     
@@ -102,7 +103,7 @@ final class EditAchievementViewModel {
         Task {
             do {
                 categoryState = .loading
-                categories = try await fetchCategoryListUseCase.execute()
+                categories = [.init(id: 0, name: "전체", continued: 0, lastChallenged: nil)]//try await fetchCategoryListUseCase.execute()
                 if !categories.isEmpty {
                     // "전체" 카테고리 제거
                     categories.removeFirst()

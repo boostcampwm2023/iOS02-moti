@@ -9,8 +9,8 @@ import UIKit
 
 public enum AlertFactory {
     public static func makeOneButtonAlert(
-        title: String?,
-        message: String?,
+        title: String? = "알림",
+        message: String? = nil,
         okTitle: String? = "확인",
         okAction: (() -> Void)? = nil
     ) -> UIAlertController {
@@ -24,16 +24,20 @@ public enum AlertFactory {
     }
     
     public static func makeTwoButtonAlert(
-        title: String?,
-        message: String?,
-        okTitle: String?,
-        okAction: (() -> Void)?
+        title: String? = "알림",
+        message: String? = nil,
+        okTitle: String? = "확인",
+        okAction: (() -> Void)? = nil,
+        cancelTitle: String? = "취소",
+        cancelAction: (() -> Void)? = nil
     ) -> UIAlertController {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let okAlert = UIAlertAction(title: okTitle, style: .default) { _ in
             okAction?()
         }
-        let cancelAlert = UIAlertAction(title: "취소", style: .cancel)
+        let cancelAlert = UIAlertAction(title: cancelTitle, style: .cancel) { _ in
+            cancelAction?()
+        }
         
         alertVC.addAction(cancelAlert)
         alertVC.addAction(okAlert)
