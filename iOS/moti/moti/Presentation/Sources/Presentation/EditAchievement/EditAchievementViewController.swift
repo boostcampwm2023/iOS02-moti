@@ -125,7 +125,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
                     // 완료 버튼 비활성화
                     if let doneButton = navigationItem.rightBarButtonItem {
                         doneButton.isEnabled = false
-                        navigationItem.rightBarButtonItem?.title = "업로드 중"
+                        navigationItem.rightBarButtonItem?.title = "로딩 중"
                     }
                 case .finish:
                     // 완료 버튼 활성화
