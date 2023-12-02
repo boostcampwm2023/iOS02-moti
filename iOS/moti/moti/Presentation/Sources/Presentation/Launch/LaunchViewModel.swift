@@ -70,14 +70,9 @@ final class LaunchViewModel {
     
     private func requestAutoLogin() {
         Task {
-            do {
-                autoLoginState = .loading
-                let isSuccess = try await autoLoginUseCase.excute()
-                autoLoginState = isSuccess ? .success : .failed(message: "최초 로그인")
-            } catch {
-                Logger.error(error)
-                autoLoginState = .failed(message: error.localizedDescription)
-            }
+            autoLoginState = .loading
+            let isSuccess = await autoLoginUseCase.excute()
+            autoLoginState = isSuccess ? .success : .failed(message: "최초 로그인")
         }
     }
 }

@@ -17,12 +17,27 @@ public struct LoginRequestValue: RequestValue {
 
 public struct LoginUseCase {
     private let repository: LoginRepositoryProtocol
+    private let keychainStorage: KeychainStorageProtocol
     
-    public init(repository: LoginRepositoryProtocol) {
+    public init(
+        repository: LoginRepositoryProtocol,
+        keychainStorage: KeychainStorageProtocol
+    ) {
         self.repository = repository
+        self.keychainStorage = keychainStorage
+    }
+
+    public func excute(requestValue: LoginRequestValue) async throws -> Bool {
+        let userToken = try await repository.login(requestValue: requestValue)
+        saveUserToken(userToken)
+        
+        return true
     }
     
-    public func excute(requestValue: LoginRequestValue) async throws -> UserToken {
-        return try await repository.login(requestValue: requestValue)
+    private func saveUserToken(_ userToken: UserToken) {
+        guard let accessToken = userToken.accessToken.data(using: .utf8),
+              let refreshToken = userToken.refreshToken.data(using: .utf8) else { return }
+        keychainStorage.write(key: .accessToken, data: accessToken)
+        keychainStorage.write(key: .refreshToken, data: refreshToken)
     }
 }

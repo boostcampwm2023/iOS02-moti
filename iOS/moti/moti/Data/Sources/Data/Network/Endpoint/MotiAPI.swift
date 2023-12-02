@@ -109,7 +109,8 @@ extension MotiAPI {
         case .version, .login:
             break
         default:
-            if let accessToken = keychainStorage.read(key: .accessToken) {
+            if let accessTokenData = keychainStorage.read(key: .accessToken),
+               let accessToken = String(data: accessTokenData, encoding: .utf8) {
                 header["Authorization"] = "Bearer \(accessToken)"
             }
         }

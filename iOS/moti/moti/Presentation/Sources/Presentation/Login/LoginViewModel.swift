@@ -11,31 +11,45 @@ import Domain
 
 final class LoginViewModel {
     
+    enum LoginViewModelAction {
+        case login(identityToken: String)
+    }
+    
+    enum LoginState {
+        case none
+        case loading
+        case success
+        case failed
+        case error(message: String)
+    }
+    
     // MARK: - Properties
     private let loginUseCase: LoginUseCase
-    @Published private(set) var userToken: UserToken?
+    @Published private(set) var loginState: LoginState = .none
     
     // MARK: - Init
     init(loginUseCase: LoginUseCase) {
         self.loginUseCase = loginUseCase
     }
     
-    func requestLogin(identityToken: String) {
-        Task {
-            let requestValue = LoginRequestValue(identityToken: identityToken)
-            do {
-                userToken = try await loginUseCase.excute(requestValue: requestValue)
-                if let token = userToken {
-                    saveToken(token)
-                }
-            } catch {
-                Logger.error(error)
-            }
+    func action(_ actions: LoginViewModelAction) {
+        switch actions {
+        case .login(let identityToken):
+            requestLogin(identityToken: identityToken)
         }
     }
     
-    func saveToken(_ token: UserToken) {
-        UserDefaults.standard.setValue(token.refreshToken, forKey: "refreshToken")
-        UserDefaults.standard.setValue(token.accessToken, forKey: "accessToken")
+    private func requestLogin(identityToken: String) {
+        Task {
+            do {
+                loginState = .loading
+                
+                let requestValue = LoginRequestValue(identityToken: identityToken)
+                let isSuccess = try await loginUseCase.excute(requestValue: requestValue)
+                loginState = isSuccess ? .success : .failed
+            } catch {
+                loginState = .error(message: error.localizedDescription)
+            }
+        }
     }
 }
