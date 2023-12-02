@@ -110,8 +110,8 @@ final class HomeViewModel {
             updateAchievementCategory(updatedAchievement: updatedAchievement)
         case .postAchievement(let newAchievement):
             postAchievement(newAchievement: newAchievement)
-        case .deleteAchievement(let achievementId):
-            deleteAchievement(id: achievementId)
+        case .deleteAchievement(let achievementId, let categoryId):
+            deleteAchievement(achievementId: achievementId, categoryId: categoryId)
         case .fetchDetailAchievement(let achievementId):
             fetchDetailAchievement(id: achievementId)
         }
@@ -187,13 +187,33 @@ private extension HomeViewModel {
         achievements.insert(newAchievement, at: 0)
     }
     
-    func deleteAchievement(id achievementId: Int) {
-        
+    func deleteAchievement(achievementId: Int, categoryId: Int) {
+        Task {
+            do {
+                deleteAchievementState.send(.loading)
+                let requestValue = DeleteAchievementRequestValue(id: achievementId)
+                let isSuccess = try await deleteAchievementUseCase.execute(
+                    requestValue: requestValue,
+                    categoryId: categoryId
+                )
+                
+                if isSuccess {
+                    deleteAchievementState.send(.success)
+                    deleteOfDataSource(achievementId: achievementId)
+                } else {
+                    deleteAchievementState.send(.failed)
+                }
+            } catch {
+                Logger.debug("delete achievement error: \(error)")
+                deleteAchievementState.send(.error(message: error.localizedDescription))
+            }
+        }
     }
     
     func fetchDetailAchievement(id achievementId: Int) {
         Task {
             do {
+                fetchDetailAchievementState.send(.loading)
                 let achievement = try await fetchDetailAchievementUseCase.execute(
                     requestValue: FetchDetailAchievementRequestValue(id: achievementId))
                 fetchDetailAchievementState.send(.finish(achievement: achievement))

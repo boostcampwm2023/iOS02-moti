@@ -17,7 +17,7 @@ extension HomeViewModel {
         case deleteAchievementDataSourceItem(achievementId: Int)
         case updateAchievement(updatedAchievement: Achievement)
         case postAchievement(newAchievement: Achievement)
-        case deleteAchievement(achievementId: Int)
+        case deleteAchievement(achievementId: Int, categoryId: Int)
         case fetchDetailAchievement(achievementId: Int)
     }
     
