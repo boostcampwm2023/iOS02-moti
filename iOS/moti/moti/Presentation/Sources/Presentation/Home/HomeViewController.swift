@@ -122,10 +122,10 @@ final class HomeViewController: BaseViewController<HomeView> {
     }
     
     private func addTargets() {
-        layoutView.catergoryAddButton.addTarget(self, action: #selector(showAlert), for: .touchUpInside)
+        layoutView.catergoryAddButton.addTarget(self, action: #selector(showCreateCategoryAlert), for: .touchUpInside)
     }
     
-    @objc private func showAlert() {
+    @objc private func showCreateCategoryAlert() {
         showTextFieldAlert(
             title: "추가할 카테고리 이름을 입력하세요.",
             okTitle: "생성",
@@ -134,10 +134,6 @@ final class HomeViewController: BaseViewController<HomeView> {
             guard let self, let text else { return }
             viewModel.action(.addCategory(name: text))
         }
-    }
-    
-    private func showErrorAlert(message: String) {
-        showOneButtonAlert(title: "에러", message: message)
     }
     
     // MARK: - Setup
@@ -189,6 +185,15 @@ final class HomeViewController: BaseViewController<HomeView> {
         viewModel.setupCategoryDataSource(diffableDataSource)
     }
     
+    private func selectFirstCategory() {
+        let firstIndexPath = IndexPath(item: 0, section: 0)
+        layoutView.categoryCollectionView.selectItem(at: firstIndexPath, animated: false, scrollPosition: .init())
+        collectionView(layoutView.categoryCollectionView.self, didSelectItemAt: firstIndexPath)
+    }
+}
+
+// MARK: - NavigationBar
+private extension HomeViewController {
     func setupNavigationBar() {
         let logoItem = UIImageView(image: MotiImage.logoBlue)
         logoItem.contentMode = .scaleAspectFit
@@ -196,7 +201,7 @@ final class HomeViewController: BaseViewController<HomeView> {
         leftItem.customView?.atl
             .width(constant: 60)
         navigationItem.leftBarButtonItem = leftItem
-
+        
         // 오른쪽 프로필 버튼
         let profileImage = UIImage(
             systemName: "person.crop.circle.fill",
@@ -207,7 +212,7 @@ final class HomeViewController: BaseViewController<HomeView> {
         profileButton.contentMode = .scaleAspectFit
         profileButton.tintColor = .primaryDarkGray
         let profileItem = UIBarButtonItem(customView: profileButton)
-
+        
         // 오른쪽 더보기 버튼
         let moreItem = UIBarButtonItem(
             image: SymbolImage.ellipsisCircle,
@@ -215,17 +220,20 @@ final class HomeViewController: BaseViewController<HomeView> {
             target: self,
             action: nil
         )
-
+        let appInfoAction = UIAction(title: "앱 정보", handler: { _ in
+            self.moveToAppInfoViewController()
+        })
+        moreItem.menu = UIMenu(children: [appInfoAction])
+        
         navigationItem.rightBarButtonItems = [profileItem, moreItem]
     }
     
-    private func selectFirstCategory() {
-        let firstIndexPath = IndexPath(item: 0, section: 0)
-        layoutView.categoryCollectionView.selectItem(at: firstIndexPath, animated: false, scrollPosition: .init())
-        collectionView(layoutView.categoryCollectionView.self, didSelectItemAt: firstIndexPath)
+    func moveToAppInfoViewController() {
+        
     }
 }
 
+// MARK: - UICollectionViewDelegate
 extension HomeViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
