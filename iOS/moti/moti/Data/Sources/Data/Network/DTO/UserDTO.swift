@@ -28,7 +28,7 @@ extension UserToken {
     init(dto: UserTokenDTO) {
         self.init(
             accessToken: dto.accessToken ?? "",
-            refreshToken: dto.refreshToken ?? "",
+            refreshToken: dto.refreshToken,
             user: dto.user != nil ? User(dto: dto.user!) : User())
     }
 }
