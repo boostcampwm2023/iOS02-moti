@@ -47,17 +47,14 @@ extension BaseViewController {
         title: String? = nil,
         message: String? = nil,
         okTitle: String? = "확인",
-        okAction: (() -> Void)? = nil,
-        cancelTitle: String? = "취소",
-        cancelAction: (() -> Void)? = nil
+        okAction: (() -> Void)? = nil
     ) {
         let alertVC = AlertFactory.makeTwoButtonAlert(
             title: title,
             message: message,
             okTitle: okTitle,
             okAction: okAction,
-            cancelTitle: cancelTitle,
-            cancelAction: cancelAction
+            cancelTitle: "취소"
         )
         present(alertVC, animated: true)
     }

@@ -162,13 +162,27 @@ private extension HomeViewController {
         let appInfoAction = UIAction(title: "앱 정보", handler: { _ in
             self.moveToAppInfoViewController()
         })
-        moreItem.menu = UIMenu(children: [appInfoAction])
+        let logoutAction = UIAction(title: "로그아웃", handler: { _ in
+            self.logout()
+        })
+        moreItem.menu = UIMenu(children: [appInfoAction, logoutAction])
         
         navigationItem.rightBarButtonItems = [profileItem, moreItem]
     }
     
     func moveToAppInfoViewController() {
         coordinator?.moveToAppInfoViewController()
+    }
+    
+    func logout() {
+        showTwoButtonAlert(
+            title: "로그아웃",
+            message: "정말 로그아웃을 하시겠습니까?",
+            okTitle: "로그아웃", 
+            okAction: {
+                self.viewModel.action(.logout)
+            }
+        )
     }
 }
 
