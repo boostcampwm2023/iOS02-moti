@@ -24,11 +24,13 @@ export class GroupRepository extends TransactionalRepository<GroupEntity> {
         'group.id as id',
         'group.name as name',
         'group.avatarUrl as avatarUrl',
+        'user_group.grade as grade',
       ])
       .addSelect('COUNT(achievements.id)', 'continued')
       .addSelect('MAX(achievements.created_at)', 'lastChallenged')
       .where('user_group.user_id = :userId', { userId })
       .groupBy('group.id')
+      .addGroupBy('user_group.grade')
       .getRawMany<IGroupPreview>();
 
     return groupPreviews.map((groupPreview) => new GroupPreview(groupPreview));
