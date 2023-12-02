@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Core
 
 public struct AutoLoginRequestValue: RequestValue {
     public let refreshToken: String
@@ -41,7 +40,6 @@ public struct AutoLoginUseCase {
             saveUserToken(userToken)
             return true
         } catch {
-            Logger.error(error)
             resetUserToken()
             return false
         }
