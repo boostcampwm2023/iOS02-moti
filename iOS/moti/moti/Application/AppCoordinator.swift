@@ -61,7 +61,7 @@ extension AppCoordinator: LaunchCoodinatorDelegate {
 }
 
 extension AppCoordinator: LoginCoordinatorDelegate {
-    func finishLogin(token: UserToken) {
+    func finishLogin() {
         Logger.info("Success Login. 홈 화면으로 이동")
         moveHomeViewController()
     }
