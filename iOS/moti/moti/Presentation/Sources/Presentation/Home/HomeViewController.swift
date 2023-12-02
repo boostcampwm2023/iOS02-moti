@@ -56,7 +56,7 @@ final class HomeViewController: BaseViewController<HomeView> {
     }
     
     private func bind() {
-        viewModel.$achievementState
+        viewModel.$achievementListState
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
