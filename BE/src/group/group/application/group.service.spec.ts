@@ -21,6 +21,8 @@ import { GroupAchievementFixture } from '../../../../test/group/achievement/grou
 import { GroupAchievementTestModule } from '../../../../test/group/achievement/group-achievement-test.module';
 import { GroupCategoryTestModule } from '../../../../test/group/category/group-category-test.module';
 import { dateFormat } from '../../../common/utils/date-formatter';
+import { LeaderNotAllowedToLeaveException } from '../exception/leader-not-allowed-to-leave.exception';
+import { NoSuchUserGroupException } from '../exception/no-such-user-group.exception';
 
 describe('GroupSerivce Test', () => {
   let groupService: GroupService;
@@ -169,6 +171,59 @@ describe('GroupSerivce Test', () => {
       const groupListResponse = await groupService.getGroups(user.id);
       // then
       expect(groupListResponse.data.length).toEqual(0);
+    });
+  });
+
+  test('내가 속한 그룹에서 탈퇴할 수 있다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+
+      // when
+      const groupLeaveResponse = await groupService.removeUser(
+        user2.id,
+        group.id,
+      );
+      // then
+      expect(groupLeaveResponse.groupId).toEqual(group.id);
+      expect(groupLeaveResponse.userId).toEqual(user2.id);
+    });
+  });
+  test('리더가 탈퇴 시도를 하는 경우에는 LeaderNotAllowedToLeaveException를 던진다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+
+      // when
+      // then
+      await expect(groupService.removeUser(user1.id, group.id)).rejects.toThrow(
+        LeaderNotAllowedToLeaveException,
+      );
+    });
+  });
+  test('내가 속한 그룹이 아닌 그룹에 대한 탈퇴 시도에 대해서는 NoSuchUserGroupException 예외를 던진다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const user3 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+
+      // when
+      // then
+      await expect(groupService.removeUser(user3.id, group.id)).rejects.toThrow(
+        NoSuchUserGroupException,
+      );
     });
   });
 });
