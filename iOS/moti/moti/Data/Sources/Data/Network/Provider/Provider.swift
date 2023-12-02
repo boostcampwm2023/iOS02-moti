@@ -80,6 +80,9 @@ public struct Provider: ProviderProtocol {
         switch statusCode {
         case 200..<300:
             return body
+        case 401:
+            NotificationCenter.default.post(name: .accessTokenDidExpired, object: nil)
+            throw NetworkError.statusCode(code: response.statusCode, message: "유효하지 않은 토큰입니다.")
         default:
             throw NetworkError.statusCode(code: response.statusCode, message: body.message ?? "nil")
         }
