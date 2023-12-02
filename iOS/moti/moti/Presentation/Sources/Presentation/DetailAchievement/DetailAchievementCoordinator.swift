@@ -69,12 +69,8 @@ extension DetailAchievementCoordinator: DetailAchievementViewControllerDelegate 
 }
 
 extension DetailAchievementCoordinator: EditAchievementCoordinatorDelegate {
-    func doneButtonDidClickedFromDetail(updatedAchievement: Achievement) {
-        detailAchievementViewController?.update(updatedAchievement: updatedAchievement)
-        delegate?.updateAchievement(updatedAchievement: updatedAchievement)
-    }
-    
-    func doneButtonDidClickedFromCapture(newAchievement: Achievement) {
-
+    func doneButtonDidClicked(achievement: Achievement) {
+        detailAchievementViewController?.update(updatedAchievement: achievement)
+        delegate?.updateAchievement(updatedAchievement: achievement)
     }
 }

@@ -12,10 +12,15 @@ import Data
 import Design
 import Domain
 
+protocol HomeViewControllerDelegate: AnyObject {
+    func editMenuDidClicked(achievement: Achievement)
+}
+
 final class HomeViewController: BaseViewController<HomeView> {
 
     // MARK: - Properties
     weak var coordinator: HomeCoordinator?
+    weak var delegate: HomeViewControllerDelegate?
     private let viewModel: HomeViewModel
     private var cancellables: Set<AnyCancellable> = []
     private var isFetchingNextPage = false
@@ -53,72 +58,6 @@ final class HomeViewController: BaseViewController<HomeView> {
     
     func achievementDidPosted(newAchievement: Achievement) {
         viewModel.action(.postAchievement(newAchievement: newAchievement))
-    }
-    
-    private func bind() {
-        viewModel.$achievementState
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] state in
-                guard let self else { return }
-                // state 에 따른 뷰 처리 - 스켈레톤 뷰, fetch 에러 뷰 등
-                Logger.debug(state)
-                switch state {
-                case .finish:
-                    isFetchingNextPage = false
-                case .error(let message):
-                    isFetchingNextPage = false
-                    Logger.error("Fetch Achievement Error: \(message)")
-                default: break
-                }
-                
-            }
-            .store(in: &cancellables)
-        
-        viewModel.$categoryListState
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] categoryState in
-                guard let self else { return }
-                switch categoryState {
-                case .initial:
-                    // TODO: 스켈레톤
-                    break
-                case .finish:
-                    // 첫 번째 아이템 선택
-                    self.selectFirstCategory()
-                case .error(let message):
-                    Logger.error("Category State Error: \(message)")
-                }
-            }
-            .store(in: &cancellables)
-        
-        viewModel.$addCategoryState
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] state in
-                guard let self else { return }
-                switch state {
-                case .none: break
-                case .loading:
-                    layoutView.catergoryAddButton.isEnabled = false
-                case .finish:
-                    layoutView.catergoryAddButton.isEnabled = true
-                case .error(let message):
-                    layoutView.catergoryAddButton.isEnabled = true
-                    showErrorAlert(message: message)
-                }
-            }
-            .store(in: &cancellables)
-        
-        viewModel.$categoryState
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] state in
-                guard let self else { return }
-                switch state {
-                case .initial: break
-                case .updated(let updatedCategory):
-                    layoutView.updateAchievementHeader(with: updatedCategory)
-                }
-            }
-            .store(in: &cancellables)
     }
     
     private func addTargets() {
@@ -279,6 +218,31 @@ extension HomeViewController: UICollectionViewDelegate {
         cell.cancelDownloadImage()
     }
     
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+        guard let firstIndexPath = indexPaths.first else { return nil }
+        
+        let selectedItem = viewModel.findAchievement(at: firstIndexPath.row)
+        
+        let config = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            let editAchievementAction = UIAction(title: "수정") { _ in
+                self?.viewModel.action(.fetchDetailAchievement(achievementId: selectedItem.id))
+            }
+            
+            let deleteAchievementAction = UIAction(title: "삭제", attributes: .destructive) { _ in
+                self?.showDestructiveTwoButtonAlert(
+                    title: "정말로 삭제하시겠습니까?",
+                    message: "삭제된 도전 기록은 되돌릴 수 없습니다."
+                ) {
+                    self?.viewModel.action(.deleteAchievement(achievementId: selectedItem.id, categoryId: 1))
+                }
+            }
+            
+            return UIMenu(options: .displayInline, children: [editAchievementAction, deleteAchievementAction])
+        }
+
+        return config
+    }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let actualPos = scrollView.panGestureRecognizer.translation(in: scrollView.superview)
         let pos = scrollView.contentOffset.y
@@ -290,5 +254,123 @@ extension HomeViewController: UICollectionViewDelegate {
             isFetchingNextPage = true
             viewModel.action(.fetchNextPage)
         }
+    }
+}
+
+// MARK: - Binding
+private extension HomeViewController {
+    func bind() {
+        bindAchievement()
+        bindCategory()
+    }
+    
+    func bindAchievement() {
+        viewModel.$achievementListState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                // state 에 따른 뷰 처리 - 스켈레톤 뷰, fetch 에러 뷰 등
+                Logger.debug(state)
+                switch state {
+                case .finish:
+                    isFetchingNextPage = false
+                case .error(let message):
+                    isFetchingNextPage = false
+                    Logger.error("Fetch Achievement Error: \(message)")
+                default: break
+                }
+                
+            }
+            .store(in: &cancellables)
+        
+        viewModel.fetchDetailAchievementState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .none: break
+                case .loading:
+                    // TODO: Loading Indicator 표시
+                    break
+                case .finish(let achievement):
+                    // TODO: Loading Indicator 제거
+                    print("detail: \(achievement)")
+                    coordinator?.moveToEditAchievementViewController(achievement: achievement)
+                case .error(let message):
+                    // TODO: Loading Indicator 제거
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.deleteAchievementState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .none: break
+                case .loading:
+                    // TODO: Loading Indicator 표시
+                    break
+                case .success:
+                    // TODO: Loading Indicator 제거
+                    break
+                case .failed:
+                    // TODO: Loading Indicator 제거
+                    showErrorAlert(message: "제거에 실패했습니다. 다시 시도해 주세요.")
+                case .error(let message):
+                    // TODO: Loading Indicator 제거
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    func bindCategory() {
+        viewModel.$categoryListState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] categoryState in
+                guard let self else { return }
+                switch categoryState {
+                case .initial:
+                    // TODO: 스켈레톤
+                    break
+                case .finish:
+                    // 첫 번째 아이템 선택
+                    self.selectFirstCategory()
+                case .error(let message):
+                    Logger.error("Category State Error: \(message)")
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$categoryState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .initial: break
+                case .updated(let updatedCategory):
+                    layoutView.updateAchievementHeader(with: updatedCategory)
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$addCategoryState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .none: break
+                case .loading:
+                    layoutView.catergoryAddButton.isEnabled = false
+                case .finish:
+                    layoutView.catergoryAddButton.isEnabled = true
+                case .error(let message):
+                    layoutView.catergoryAddButton.isEnabled = true
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
     }
 }

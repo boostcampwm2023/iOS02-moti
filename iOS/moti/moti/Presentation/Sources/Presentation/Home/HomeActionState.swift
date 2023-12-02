@@ -17,6 +17,8 @@ extension HomeViewModel {
         case deleteAchievementDataSourceItem(achievementId: Int)
         case updateAchievement(updatedAchievement: Achievement)
         case postAchievement(newAchievement: Achievement)
+        case deleteAchievement(achievementId: Int, categoryId: Int)
+        case fetchDetailAchievement(achievementId: Int)
     }
     
     enum CategoryListState {
@@ -37,10 +39,25 @@ extension HomeViewModel {
         case error(message: String)
     }
     
-    enum AchievementState {
+    enum AchievementListState {
         case initial
         case loading
         case finish
+        case error(message: String)
+    }
+    
+    enum FetchDetailAchievementState {
+        case none
+        case loading
+        case finish(achievement: Achievement)
+        case error(message: String)
+    }
+    
+    enum DeleteAchievementState {
+        case none
+        case loading
+        case success
+        case failed
         case error(message: String)
     }
 }
