@@ -38,6 +38,16 @@ public final class LoginCoordinator: Coordinator {
         
         navigationController.viewControllers = [loginVC]
     }
+    
+    public func startWithAlert(message: String) {
+        let loginUseCase = LoginUseCase(repository: LoginRepository(), keychainStorage: KeychainStorage.shared)
+        let loginVM = LoginViewModel(loginUseCase: loginUseCase)
+        let loginVC = LoginViewController(viewModel: loginVM, alertMessage: message)
+        loginVC.coordinator = self
+        loginVC.delegate = self
+        
+        navigationController.viewControllers = [loginVC]
+    }
 }
 
 extension LoginCoordinator: LoginViewControllerDelegate {
