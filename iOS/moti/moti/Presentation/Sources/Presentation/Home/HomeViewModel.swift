@@ -39,7 +39,7 @@ final class HomeViewModel {
     private let deleteAchievementUseCase: DeleteAchievementUseCase
     private let fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
     
-    private let skeletonAchievements: [Achievement] = (-20...(-1)).map { Achievement(id: $0, title: "", imageURL: nil) }
+    private let skeletonAchievements: [Achievement] = (-20...(-1)).map { _ in Achievement.makeSkeleton() }
     private var achievements: [Achievement] = [] {
         didSet {
             achievementDataSource?.update(data: achievements)

@@ -56,3 +56,9 @@ public struct Achievement: Hashable {
         self.date = nil
     }
 }
+
+public extension Achievement {
+    static func makeSkeleton() -> Achievement {
+        return .init(id: -(UUID().hashValue), title: "", imageURL: nil, categoryId: 0)
+    }
+}
