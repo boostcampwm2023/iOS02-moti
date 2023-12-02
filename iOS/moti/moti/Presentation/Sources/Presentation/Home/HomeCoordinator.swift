@@ -84,11 +84,7 @@ extension HomeCoordinator: DetailAchievementCoordinatorDelegate {
 
 // MARK: - EditAchievementCoordinatorDelegate
 extension HomeCoordinator: EditAchievementCoordinatorDelegate {
-    func doneButtonDidClickedFromDetail(updatedAchievement: Achievement) {
-        currentViewController?.updateAchievement(updatedAchievement: updatedAchievement)
-    }
-    
-    func doneButtonDidClickedFromCapture(newAchievement: Achievement) {
-
+    func doneButtonDidClicked(achievement: Achievement) {
+        currentViewController?.updateAchievement(updatedAchievement: achievement)
     }
 }
