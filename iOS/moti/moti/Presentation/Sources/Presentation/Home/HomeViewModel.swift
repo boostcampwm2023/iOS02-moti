@@ -192,7 +192,16 @@ private extension HomeViewModel {
     }
     
     func fetchDetailAchievement(id achievementId: Int) {
-        
+        Task {
+            do {
+                let achievement = try await fetchDetailAchievementUseCase.execute(
+                    requestValue: FetchDetailAchievementRequestValue(id: achievementId))
+                fetchDetailAchievementState.send(.finish(achievement: achievement))
+            } catch {
+                Logger.debug("detail achievement fetch error: \(error)")
+                fetchDetailAchievementState.send(.error(message: error.localizedDescription))
+            }
+        }
     }
 }
 

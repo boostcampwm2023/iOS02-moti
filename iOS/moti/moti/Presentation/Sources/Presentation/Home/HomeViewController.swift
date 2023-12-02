@@ -119,6 +119,26 @@ final class HomeViewController: BaseViewController<HomeView> {
                 }
             }
             .store(in: &cancellables)
+        
+        viewModel.fetchDetailAchievementState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .none: break
+                case .loading:
+                    // TODO: Loading Indicator 표시
+                    break
+                case .finish(let achievement):
+                    // TODO: 편집 화면으로 이동
+                    // TODO: Loading Indicator 제거
+                    print("detail: \(achievement)")
+                case .error(let message):
+                    // TODO: Loading Indicator 제거
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
     }
     
     private func addTargets() {
