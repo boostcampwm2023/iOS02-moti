@@ -67,7 +67,7 @@ export class ObjectStorageFileStore extends FileStore {
       return {
         uploadFileName: filename,
         originalFileName: originalFilename,
-        uploadFullPath: sendData.Location,
+        uploadFullPath: this.convertToHttps(sendData.Location),
         fileKey: fileId,
       };
     } catch (e) {
@@ -81,5 +81,14 @@ export class ObjectStorageFileStore extends FileStore {
 
   private getFullPath(filename: string, storeOptions: StoreOptions) {
     return path.join(storeOptions?.basePath || '', filename);
+  }
+
+  private convertToHttps(url) {
+    if (url.startsWith("https://")) {
+      return url;
+    } else if (url.startsWith("http://")) {
+      return url.replace(/^http:\/\//, 'https://');
+    }
+    return url;
   }
 }
