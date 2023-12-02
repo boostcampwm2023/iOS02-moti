@@ -162,6 +162,7 @@ describe('AchievementRepository test', () => {
 
       // then
       expect(findAll.length).toEqual(10);
+      expect(findAll[0].category.id).toEqual(category.id);
     });
   });
 
@@ -181,6 +182,32 @@ describe('AchievementRepository test', () => {
       // when
       const achievementPaginationOption: PaginateAchievementRequest = {
         categoryId: 0,
+        take: 12,
+      };
+      const findAll = await achievementRepository.findAll(
+        user.id,
+        achievementPaginationOption,
+      );
+
+      // then
+      expect(findAll.length).toEqual(12);
+    });
+  });
+
+  test('카테고리 ID가 -1인 경우에는 카테고리 미설정 달성 기록을 조회한다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+
+      const achievements: Achievement[] =
+        await achievementFixture.getAchievements(10, user, null);
+      achievements.push(
+        ...(await achievementFixture.getAchievements(10, user, null)),
+      );
+
+      // when
+      const achievementPaginationOption: PaginateAchievementRequest = {
+        categoryId: -1,
         take: 12,
       };
       const findAll = await achievementRepository.findAll(

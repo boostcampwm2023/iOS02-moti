@@ -2,7 +2,7 @@ import { CustomRepository } from '../../config/typeorm/custom-repository.decorat
 import { TransactionalRepository } from '../../config/transaction-manager/transactional-repository';
 import { AchievementEntity } from './achievement.entity';
 import { Achievement } from '../domain/achievement.domain';
-import { FindOptionsWhere, LessThan } from 'typeorm';
+import { FindOptionsWhere, IsNull, LessThan } from 'typeorm';
 import { PaginateAchievementRequest } from '../dto/paginate-achievement-request';
 import { AchievementDetailResponse } from '../dto/achievement-detail-response';
 import { IAchievementDetail } from '../index';
@@ -19,6 +19,9 @@ export class AchievementRepository extends TransactionalRepository<AchievementEn
     if (achievementPaginationOption?.categoryId !== 0) {
       where.category = { id: achievementPaginationOption.categoryId };
     }
+    if (achievementPaginationOption?.categoryId === -1) {
+      where.category = { id: IsNull() };
+    }
     if (achievementPaginationOption.whereIdLessThan) {
       where.id = LessThan(achievementPaginationOption.whereIdLessThan);
     }
@@ -26,6 +29,9 @@ export class AchievementRepository extends TransactionalRepository<AchievementEn
       where,
       order: { createdAt: 'DESC' },
       take: achievementPaginationOption.take,
+      relations: {
+        category: true,
+      },
     });
     return achievementEntities.map((achievementEntity) =>
       achievementEntity.toModel(),
