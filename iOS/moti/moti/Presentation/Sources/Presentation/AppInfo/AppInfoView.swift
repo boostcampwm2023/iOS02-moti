@@ -45,7 +45,7 @@ final class AppInfoView: UIView {
         return button
     }()
     private(set) var updateButton = {
-        let button = UIButton(type: .system)
+        let button = BounceButton()
         button.clipsToBounds = true
         button.layer.cornerRadius = CornerRadius.big
         button.titleLabel?.font = .medium
@@ -66,8 +66,6 @@ final class AppInfoView: UIView {
     func configure(with version: Version) {
         versionLabel.text = "현재 버전 : \(version.current)\n최신 버전 : \(version.latest)"
         
-        let buttonTitle = version.canUpdate ? "최신 버전으로 업데이트" : "최신 버전"
-        updateButton.setTitle(buttonTitle, for: .normal)
         if version.canUpdate {
             enableUpdateButton()
         } else {
@@ -76,17 +74,13 @@ final class AppInfoView: UIView {
     }
     
     private func enableUpdateButton() {
-        updateButton.isEnabled = true
+        updateButton.setTitle("최신 버전으로 업데이트", for: .normal)
         updateButton.alpha = 1
-        updateButton.backgroundColor = .primaryBlue
-        updateButton.setTitleColor(.white, for: .normal)
     }
     
     private func disableUpdateButton() {
-        updateButton.isEnabled = false
+        updateButton.setTitle("최신 버전", for: .normal)
         updateButton.alpha = 0.5
-        updateButton.backgroundColor = .primaryDarkGray
-        updateButton.setTitleColor(.black, for: .normal)
     }
 }
 
