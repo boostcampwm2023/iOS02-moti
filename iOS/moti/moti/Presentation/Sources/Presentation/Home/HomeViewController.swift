@@ -233,7 +233,7 @@ extension HomeViewController: UICollectionViewDelegate {
                     title: "정말로 삭제하시겠습니까?",
                     message: "삭제된 도전 기록은 되돌릴 수 없습니다."
                 ) {
-                    self?.viewModel.action(.deleteAchievement(achievementId: selectedItem.id, categoryId: 1))
+                    self?.viewModel.action(.deleteAchievement(achievementId: selectedItem.id, categoryId: selectedItem.categoryId))
                 }
             }
             

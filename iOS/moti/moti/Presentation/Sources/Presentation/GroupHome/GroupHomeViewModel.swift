@@ -33,8 +33,8 @@ final class GroupHomeViewModel {
             achievementDataSource?.update(data: achievements)
         }
     }
-    private let skeletonAchievements: [Achievement] = (-20...(-1)).map { Achievement(id: $0, title: "", imageURL: nil) }
-    
+    private let skeletonAchievements: [Achievement] = (-20...(-1)).map { _ in Achievement.makeSkeleton() }
+
     // State
     @Published private(set) var categoryListState: CategoryListState = .initial
     @Published private(set) var achievementState: AchievementState = .initial
@@ -111,18 +111,7 @@ private extension GroupHomeViewModel {
             do {
                 achievementState = .loading
                 
-                achievements = [
-                    .init(id: 10, title: "그룹 도전1", imageURL: nil),
-                    .init(id: 11, title: "그룹 도전2", imageURL: nil),
-                    .init(id: 12, title: "그룹 도전3", imageURL: nil),
-                    .init(id: 13, title: "그룹 도전4", imageURL: nil),
-                    .init(id: 14, title: "그룹 도전5", imageURL: nil),
-                    .init(id: 15, title: "그룹 도전6", imageURL: nil),
-                    .init(id: 16, title: "그룹 도전7", imageURL: nil),
-                    .init(id: 17, title: "그룹 도전8", imageURL: nil),
-                    .init(id: 18, title: "그룹 도전9", imageURL: nil),
-                    .init(id: 19, title: "그룹 도전10", imageURL: nil)
-                ]
+                achievements = []
                 
                 achievementState = .finish
             } catch {
