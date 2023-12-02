@@ -29,10 +29,13 @@ public final class HomeCoordinator: Coordinator {
         let homeVM = HomeViewModel(
             fetchAchievementListUseCase: .init(repository: AchievementRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository()), 
-            addCategoryUseCase: .init(repository: CategoryListRepository())
+            addCategoryUseCase: .init(repository: CategoryListRepository()),
+            deleteAchievementUseCase: .init(repository: AchievementRepository(), storage: CategoryStorage.shared),
+            fetchDetailAchievementUseCase: .init(repository: AchievementRepository())
         )
         let homeVC = HomeViewController(viewModel: homeVM)
         homeVC.coordinator = self
+        homeVC.delegate = self
         currentViewController = homeVC
         navigationController.viewControllers = [homeVC]
     }
@@ -44,6 +47,10 @@ public final class HomeCoordinator: Coordinator {
         detailAchievementCoordinator.start(achievement: achievement)
     }
     
+    func moveToEditAchievementViewController(achievement: Achievement) {
+        
+    }
+    
     func moveToAppInfoViewController() {
         let appInfoCoordinator = AppInfoCoordinator(navigationController, self)
         childCoordinators.append(appInfoCoordinator)
@@ -51,6 +58,13 @@ public final class HomeCoordinator: Coordinator {
     }
 }
 
+extension HomeCoordinator: HomeViewControllerDelegate {
+    func editMenuDidClicked(achievement: Achievement) {
+        moveToEditAchievementViewController(achievement: achievement)
+    }
+}
+
+// MARK: - DetailAchievementCoordinatorDelegate
 extension HomeCoordinator: DetailAchievementCoordinatorDelegate {
     func deleteButtonDidClicked(achievementId: Int) {
         currentViewController?.deleteAchievementDataSourceItem(achievementId: achievementId)

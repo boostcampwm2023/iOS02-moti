@@ -12,10 +12,15 @@ import Data
 import Design
 import Domain
 
+protocol HomeViewControllerDelegate: AnyObject {
+    func editMenuDidClicked(achievement: Achievement)
+}
+
 final class HomeViewController: BaseViewController<HomeView> {
 
     // MARK: - Properties
     weak var coordinator: HomeCoordinator?
+    weak var delegate: HomeViewControllerDelegate?
     private let viewModel: HomeViewModel
     private var cancellables: Set<AnyCancellable> = []
     private var isFetchingNextPage = false
