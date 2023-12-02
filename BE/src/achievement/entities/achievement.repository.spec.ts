@@ -162,6 +162,7 @@ describe('AchievementRepository test', () => {
 
       // then
       expect(findAll.length).toEqual(10);
+      expect(findAll[0].category.id).toEqual(category.id);
     });
   });
 

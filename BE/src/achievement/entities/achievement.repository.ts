@@ -26,6 +26,9 @@ export class AchievementRepository extends TransactionalRepository<AchievementEn
       where,
       order: { createdAt: 'DESC' },
       take: achievementPaginationOption.take,
+      relations: {
+        category: true,
+      },
     });
     return achievementEntities.map((achievementEntity) =>
       achievementEntity.toModel(),
