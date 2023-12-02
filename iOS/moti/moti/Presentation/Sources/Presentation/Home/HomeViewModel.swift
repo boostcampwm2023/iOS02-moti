@@ -9,6 +9,7 @@ import Foundation
 import Domain
 import Core
 import Data
+import Combine
 
 final class HomeViewModel {
     typealias AchievementDataSource = ListDiffableDataSource<Achievement>
@@ -35,8 +36,10 @@ final class HomeViewModel {
     // Achievement
     private var achievementDataSource: AchievementDataSource?
     private let fetchAchievementListUseCase: FetchAchievementListUseCase
-
-    private let skeletonAchievements: [Achievement] = (-20...(-1)).map { Achievement(id: $0, title: "", imageURL: nil) }
+    private let deleteAchievementUseCase: DeleteAchievementUseCase
+    private let fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
+    
+    private let skeletonAchievements: [Achievement] = (-20...(-1)).map { _ in Achievement.makeSkeleton() }
     private var achievements: [Achievement] = [] {
         didSet {
             achievementDataSource?.update(data: achievements)
@@ -52,18 +55,24 @@ final class HomeViewModel {
     // State
     @Published private(set) var categoryListState: CategoryListState = .initial
     @Published private(set) var addCategoryState: AddCategoryState = .none
-    @Published private(set) var achievementState: AchievementState = .initial
     @Published private(set) var categoryState: CategoryState = .initial
+    @Published private(set) var achievementListState: AchievementListState = .initial
+    private(set) var deleteAchievementState = PassthroughSubject<DeleteAchievementState, Never>()
+    private(set) var fetchDetailAchievementState = PassthroughSubject<FetchDetailAchievementState, Never>()
     
     // MARK: - Init
     init(
         fetchAchievementListUseCase: FetchAchievementListUseCase,
         fetchCategoryListUseCase: FetchCategoryListUseCase,
-        addCategoryUseCase: AddCategoryUseCase
+        addCategoryUseCase: AddCategoryUseCase,
+        deleteAchievementUseCase: DeleteAchievementUseCase,
+        fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
     ) {
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
         self.fetchCategoryListUseCase = fetchCategoryListUseCase
         self.addCategoryUseCase = addCategoryUseCase
+        self.deleteAchievementUseCase = deleteAchievementUseCase
+        self.fetchDetailAchievementUseCase = fetchDetailAchievementUseCase
     }
     
     // MARK: - Methods
@@ -101,6 +110,10 @@ final class HomeViewModel {
             updateAchievementCategory(updatedAchievement: updatedAchievement)
         case .postAchievement(let newAchievement):
             postAchievement(newAchievement: newAchievement)
+        case .deleteAchievement(let achievementId, let categoryId):
+            deleteAchievement(achievementId: achievementId, categoryId: categoryId)
+        case .fetchDetailAchievement(let achievementId):
+            fetchDetailAchievement(id: achievementId)
         }
     }
 }
@@ -158,12 +171,6 @@ private extension HomeViewModel {
          fetchAchievementList(requestValue: requestValue)
     }
     
-    /// 도전 기록을 삭제하는 액션
-    func deleteOfDataSource(achievementId: Int) {
-        guard let foundIndex = firstIndexOf(achievementId: achievementId) else { return }
-        achievements.remove(at: foundIndex)
-    }
-    
     /// 도전 기록의 카테고리를 변경하는 액션
     func updateAchievementCategory(updatedAchievement: Achievement) {
         guard let currentCategory,
@@ -178,6 +185,43 @@ private extension HomeViewModel {
     /// 새로 생성된 도전 기록을 추가하는 액션
     func postAchievement(newAchievement: Achievement) {
         achievements.insert(newAchievement, at: 0)
+    }
+    
+    func deleteAchievement(achievementId: Int, categoryId: Int) {
+        Task {
+            do {
+                deleteAchievementState.send(.loading)
+                let requestValue = DeleteAchievementRequestValue(id: achievementId)
+                let isSuccess = try await deleteAchievementUseCase.execute(
+                    requestValue: requestValue,
+                    categoryId: categoryId
+                )
+                
+                if isSuccess {
+                    deleteAchievementState.send(.success)
+                    deleteOfDataSource(achievementId: achievementId)
+                } else {
+                    deleteAchievementState.send(.failed)
+                }
+            } catch {
+                Logger.debug("delete achievement error: \(error)")
+                deleteAchievementState.send(.error(message: error.localizedDescription))
+            }
+        }
+    }
+    
+    func fetchDetailAchievement(id achievementId: Int) {
+        Task {
+            do {
+                fetchDetailAchievementState.send(.loading)
+                let achievement = try await fetchDetailAchievementUseCase.execute(
+                    requestValue: FetchDetailAchievementRequestValue(id: achievementId))
+                fetchDetailAchievementState.send(.finish(achievement: achievement))
+            } catch {
+                Logger.debug("detail achievement fetch error: \(error)")
+                fetchDetailAchievementState.send(.error(message: error.localizedDescription))
+            }
+        }
     }
 }
 
@@ -195,7 +239,7 @@ private extension HomeViewModel {
         nextAchievementTask?.cancel()
         nextAchievementTask = Task {
             do {
-                achievementState = .loading
+                achievementListState = .loading
                 let (newAchievements, next) = try await fetchAchievementListUseCase.execute(requestValue: requestValue)
                 let isFirstRequest = requestValue?.whereIdLessThan == nil
                 if isFirstRequest {
@@ -206,13 +250,13 @@ private extension HomeViewModel {
                 }
                 
                 nextRequestValue = next
-                achievementState = .finish
+                achievementListState = .finish
             } catch {
                 if let nextAchievementTask, nextAchievementTask.isCancelled {
                     Logger.debug("NextAchievementTask is Cancelled")
-                    achievementState = .finish
+                    achievementListState = .finish
                 } else {
-                    achievementState = .error(message: error.localizedDescription)
+                    achievementListState = .error(message: error.localizedDescription)
                 }
             }
         }
@@ -221,6 +265,12 @@ private extension HomeViewModel {
     /// Achievement의 첫 번째 index를 구하는 메서드
     func firstIndexOf(achievementId: Int) -> Int? {
         return achievements.firstIndex { $0.id == achievementId }
+    }
+    
+    /// 도전 기록을 데이터소스에서 제거하는 액션
+    func deleteOfDataSource(achievementId: Int) {
+        guard let foundIndex = firstIndexOf(achievementId: achievementId) else { return }
+        achievements.remove(at: foundIndex)
     }
     
     func syncCurrentCategoryWithStorage() {

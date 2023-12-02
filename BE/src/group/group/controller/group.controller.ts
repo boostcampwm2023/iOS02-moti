@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -22,6 +24,8 @@ import { User } from '../../../users/domain/user.domain';
 import { CreateGroupRequest } from '../dto/create-group-request.dto';
 import { ApiData } from '../../../common/api/api-data';
 import { GroupListResponse } from '../dto/group-list-response';
+import { ParseIntPipe } from '../../../common/pipe/parse-int.pipe';
+import { GroupLeaveResponse } from '../dto/group-leave-response.dto';
 
 @Controller('/api/v1/groups')
 @ApiTags('그룹 API')
@@ -63,5 +67,26 @@ export class GroupController {
   @HttpCode(HttpStatus.OK)
   async getGroups(@AuthenticatedUser() user: User) {
     return ApiData.success(await this.groupService.getGroups(user.id));
+  }
+
+  @ApiOperation({
+    summary: '그룹 탈퇴 API',
+    description: '유저가 속해 있는 그룹에서 탈퇴한다.',
+  })
+  @ApiOkResponse({
+    description: '그룹 탈퇴',
+    type: GroupLeaveResponse,
+  })
+  @ApiBearerAuth('accessToken')
+  @Delete(':groupId/participation')
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  async leaveGroup(
+    @AuthenticatedUser() user: User,
+    @Param('groupId', ParseIntPipe) groupId: number,
+  ) {
+    return ApiData.success(
+      await this.groupService.removeUser(user.id, groupId),
+    );
   }
 }
