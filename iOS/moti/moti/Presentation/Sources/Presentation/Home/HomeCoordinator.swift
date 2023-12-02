@@ -48,7 +48,10 @@ public final class HomeCoordinator: Coordinator {
     }
     
     func moveToEditAchievementViewController(achievement: Achievement) {
-        
+        let editAchievementCoordinator = EditAchievementCoordinator(navigationController, self)
+        editAchievementCoordinator.delegate = self
+        childCoordinators.append(editAchievementCoordinator)
+        editAchievementCoordinator.start(achievement: achievement)
     }
     
     func moveToAppInfoViewController() {
@@ -76,5 +79,16 @@ extension HomeCoordinator: DetailAchievementCoordinatorDelegate {
     
     func achievementDidPosted(newAchievement: Achievement) {
         currentViewController?.achievementDidPosted(newAchievement: newAchievement)
+    }
+}
+
+// MARK: - EditAchievementCoordinatorDelegate
+extension HomeCoordinator: EditAchievementCoordinatorDelegate {
+    func doneButtonDidClickedFromDetail(updatedAchievement: Achievement) {
+        currentViewController?.updateAchievement(updatedAchievement: updatedAchievement)
+    }
+    
+    func doneButtonDidClickedFromCapture(newAchievement: Achievement) {
+
     }
 }
