@@ -27,31 +27,26 @@ struct AchievementListResponseNextDTO: Codable {
 }
 
 struct AchievementSimpleDTO: Codable {
-    let id: Int?
+    let id: Int
     let thumbnailUrl: URL?
-    let title: String?
+    let title: String
+    let categoryId: Int
     
-    init(id: Int?, thumbnailUrl: URL?, title: String?) {
+    init(id: Int, thumbnailUrl: URL?, title: String, categoryId: Int) {
         self.id = id
         self.thumbnailUrl = thumbnailUrl
         self.title = title
-    }
-    
-    init(dto: DetailAchievementDTO) {
-        self.init(
-            id: dto.id,
-            thumbnailUrl: dto.imageUrl,
-            title: dto.title
-        )
+        self.categoryId = categoryId
     }
 }
 
 extension Achievement {
     init(dto: AchievementSimpleDTO) {
         self.init(
-            id: dto.id ?? -1,
-            title: dto.title ?? "",
-            imageURL: dto.thumbnailUrl
+            id: dto.id,
+            title: dto.title,
+            imageURL: dto.thumbnailUrl,
+            categoryId: dto.categoryId
         )
     }
 }
