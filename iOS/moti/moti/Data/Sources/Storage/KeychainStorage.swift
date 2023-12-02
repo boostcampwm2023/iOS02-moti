@@ -8,8 +8,12 @@
 import Foundation
 import Domain
 
-final class KeychainStorage: KeychainStorageProtocol {
-    func read(key: KeychainKey) -> Data? {
+public final class KeychainStorage: KeychainStorageProtocol {
+    public static let shared = KeychainStorage()
+    
+    private init() { }
+    
+    public func read(key: KeychainKey) -> Data? {
         let query = NSDictionary(dictionary: [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: key.rawValue,
@@ -23,7 +27,7 @@ final class KeychainStorage: KeychainStorageProtocol {
         return data as? Data
     }
     
-    func write(key: KeychainKey, data: Data) {
+    public func write(key: KeychainKey, data: Data) {
         let query = NSDictionary(dictionary: [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: key.rawValue,
@@ -33,7 +37,7 @@ final class KeychainStorage: KeychainStorageProtocol {
         SecItemAdd(query, nil)
     }
     
-    func remove(key: KeychainKey) {
+    public func remove(key: KeychainKey) {
         guard let data = read(key: key) else { return }
         let query = NSDictionary(dictionary: [
             kSecClass: kSecClassGenericPassword,

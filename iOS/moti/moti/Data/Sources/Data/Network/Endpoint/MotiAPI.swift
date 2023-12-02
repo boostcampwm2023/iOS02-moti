@@ -20,6 +20,10 @@ enum MotiAPI: EndpointProtocol {
     case deleteAchievement(requestValue: DeleteAchievementRequestValue)
     case updateAchievement(requestValue: UpdateAchievementRequestValue)
     case postAchievement(requestValue: PostAchievementRequestValue)
+    
+    private var keychainStorage: KeychainStorageProtocol {
+        return KeychainStorage.shared
+    }
 }
 
 extension MotiAPI {
@@ -105,8 +109,7 @@ extension MotiAPI {
         case .version, .login:
             break
         default:
-            // TODO: Keychain Storage로 변경
-            if let accessToken = UserDefaults.standard.string(forKey: "accessToken") {
+            if let accessToken = keychainStorage.read(key: .accessToken) {
                 header["Authorization"] = "Bearer \(accessToken)"
             }
         }
