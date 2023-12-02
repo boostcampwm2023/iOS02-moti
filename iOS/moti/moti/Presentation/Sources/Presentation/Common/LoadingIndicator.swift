@@ -17,7 +17,7 @@ extension LoadingIndicator {
         DispatchQueue.main.async {
             let loadingIndicatorView: UIActivityIndicatorView
             loadingIndicatorView = UIActivityIndicatorView(style: .medium)
-            loadingIndicatorView.frame = self.view.frame //다른 UI가 눌리지 않도록
+            loadingIndicatorView.frame = self.view.frame // 다른 UI가 눌리지 않도록
             loadingIndicatorView.color = .primaryBlue
             self.view.addSubview(loadingIndicatorView)
 

@@ -16,7 +16,7 @@ protocol HomeViewControllerDelegate: AnyObject {
     func editMenuDidClicked(achievement: Achievement)
 }
 
-final class HomeViewController: BaseViewController<HomeView> {
+final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
 
     // MARK: - Properties
     weak var coordinator: HomeCoordinator?
@@ -179,7 +179,7 @@ extension HomeViewController: UICollectionViewDelegate {
         if let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell {
             // 카테고리 셀을 눌렀을 때
             categoryCellDidSelected(cell: cell, row: indexPath.row)
-        } else if let cell = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
+        } else if let _ = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
             // 달성 기록 리스트 셀을 눌렀을 때
             // 상세 정보 화면으로 이동
             let achievement = viewModel.findAchievement(at: indexPath.row)
@@ -204,7 +204,12 @@ extension HomeViewController: UICollectionViewDelegate {
         layoutView.updateAchievementHeader(with: category)
     }
     
-    func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplaySupplementaryView view: UICollectionReusableView,
+        forElementKind elementKind: String, 
+        at indexPath: IndexPath
+    ) {
         guard elementKind == UICollectionView.elementKindSectionHeader,
               let headerView = view as? HeaderView else { return }
         
@@ -218,7 +223,11 @@ extension HomeViewController: UICollectionViewDelegate {
         cell.cancelDownloadImage()
     }
     
-    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemsAt indexPaths: [IndexPath],
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
         guard let firstIndexPath = indexPaths.first else { return nil }
         
         let selectedItem = viewModel.findAchievement(at: firstIndexPath.row)
@@ -290,14 +299,12 @@ private extension HomeViewController {
                 switch state {
                 case .none: break
                 case .loading:
-                    // TODO: Loading Indicator 표시
-                    break
+                    showLoadingIndicator()
                 case .finish(let achievement):
-                    // TODO: Loading Indicator 제거
-                    print("detail: \(achievement)")
+                    hideLoadingIndicator()
                     coordinator?.moveToEditAchievementViewController(achievement: achievement)
                 case .error(let message):
-                    // TODO: Loading Indicator 제거
+                    hideLoadingIndicator()
                     showErrorAlert(message: message)
                 }
             }
@@ -310,16 +317,14 @@ private extension HomeViewController {
                 switch state {
                 case .none: break
                 case .loading:
-                    // TODO: Loading Indicator 표시
-                    break
+                    showLoadingIndicator()
                 case .success:
-                    // TODO: Loading Indicator 제거
-                    break
+                    hideLoadingIndicator()
                 case .failed:
-                    // TODO: Loading Indicator 제거
+                    hideLoadingIndicator()
                     showErrorAlert(message: "제거에 실패했습니다. 다시 시도해 주세요.")
                 case .error(let message):
-                    // TODO: Loading Indicator 제거
+                    hideLoadingIndicator()
                     showErrorAlert(message: message)
                 }
             }
