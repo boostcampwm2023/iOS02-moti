@@ -21,7 +21,7 @@ export class AchievementResponse {
     this.id = id;
     this.thumbnailUrl = thumbnailUrl;
     this.title = title;
-    this.categoryId = category ? category.id : null;
+    this.categoryId = category ? category.id : -1;
   }
 
   static from(achievement: Achievement) {
