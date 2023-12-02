@@ -229,7 +229,7 @@ private extension HomeViewController {
     }
     
     func moveToAppInfoViewController() {
-        
+        coordinator?.moveToAppInfoViewController()
     }
 }
 

@@ -30,6 +30,10 @@ final class AppInfoCoordinator: Coordinator {
         let version = Version(latest: latest, required: required, privacyPolicy: privacyPolicy)
         let appInfoVC = AppInfoViewController(version: version)
         appInfoVC.coordinator = self
-        navigationController.pushViewController(appInfoVC, animated: true)
+        navigationController.present(appInfoVC, animated: true)
+    }
+    
+    func finish(animated: Bool = true) {
+        parentCoordinator?.dismiss(child: self, animated: animated)
     }
 }

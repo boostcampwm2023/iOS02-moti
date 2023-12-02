@@ -26,7 +26,7 @@ final class AppInfoView: UIView {
     }()
     private var titleLabel = {
         let label = UILabel()
-        label.text = "모티"
+        label.text = "moti"
         label.font = .xlargeBold
         return label
     }()
@@ -39,7 +39,7 @@ final class AppInfoView: UIView {
     private(set) var policyButton = {
         let button = UIButton(type: .system)
         button.setTitle("개인정보처리방침", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        button.titleLabel?.font = .medium
         button.setTitleColor(.systemBlue, for: .normal)
         button.alpha = 0.8
         return button
@@ -47,12 +47,8 @@ final class AppInfoView: UIView {
     private(set) var updateButton = {
         let button = UIButton(type: .system)
         button.clipsToBounds = true
-        button.layer.masksToBounds = true
-        button.layer.cornerRadius = 20
-        button.titleLabel?.font = .large
-        button.backgroundColor = .primaryBlue
-        button.setTitleColor(.white, for: .normal)
-        
+        button.layer.cornerRadius = CornerRadius.big
+        button.titleLabel?.font = .medium
         return button
     }()
     
@@ -69,9 +65,28 @@ final class AppInfoView: UIView {
     
     func configure(with version: Version) {
         versionLabel.text = "현재 버전 : \(version.current)\n최신 버전 : \(version.latest)"
-        let buttonTitle = version.canUpdate ? "최신 버전으로 업데이트" : "최신 버전입니다."
+        
+        let buttonTitle = version.canUpdate ? "최신 버전으로 업데이트" : "최신 버전"
         updateButton.setTitle(buttonTitle, for: .normal)
-        updateButton.isEnabled = version.canUpdate
+        if version.canUpdate {
+            enableUpdateButton()
+        } else {
+            disableUpdateButton()
+        }
+    }
+    
+    private func enableUpdateButton() {
+        updateButton.isEnabled = true
+        updateButton.alpha = 1
+        updateButton.backgroundColor = .primaryBlue
+        updateButton.setTitleColor(.white, for: .normal)
+    }
+    
+    private func disableUpdateButton() {
+        updateButton.isEnabled = false
+        updateButton.alpha = 0.5
+        updateButton.backgroundColor = .primaryDarkGray
+        updateButton.setTitleColor(.black, for: .normal)
     }
 }
 
