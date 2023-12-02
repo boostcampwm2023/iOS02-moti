@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Core
 
 public struct AutoLoginRequestValue: RequestValue {
     public let refreshToken: String
@@ -41,17 +40,14 @@ public struct AutoLoginUseCase {
             saveUserToken(userToken)
             return true
         } catch {
-            Logger.error(error)
             resetUserToken()
             return false
         }
     }
     
     private func saveUserToken(_ userToken: UserToken) {
-        guard let accessToken = userToken.accessToken.data(using: .utf8),
-              let refreshToken = userToken.refreshToken.data(using: .utf8) else { return }
+        guard let accessToken = userToken.accessToken.data(using: .utf8) else { return }
         keychainStorage.write(key: .accessToken, data: accessToken)
-        keychainStorage.write(key: .refreshToken, data: refreshToken)
     }
     
     private func resetUserToken() {

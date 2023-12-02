@@ -37,11 +37,17 @@ public final class HomeCoordinator: Coordinator {
         navigationController.viewControllers = [homeVC]
     }
     
-    public func moveToDetailAchievementViewController(achievement: Achievement) {
+    func moveToDetailAchievementViewController(achievement: Achievement) {
         let detailAchievementCoordinator = DetailAchievementCoordinator(navigationController, self)
         detailAchievementCoordinator.delegate = self
         childCoordinators.append(detailAchievementCoordinator)
         detailAchievementCoordinator.start(achievement: achievement)
+    }
+    
+    func moveToAppInfoViewController() {
+        let appInfoCoordinator = AppInfoCoordinator(navigationController, self)
+        childCoordinators.append(appInfoCoordinator)
+        appInfoCoordinator.start()
     }
 }
 

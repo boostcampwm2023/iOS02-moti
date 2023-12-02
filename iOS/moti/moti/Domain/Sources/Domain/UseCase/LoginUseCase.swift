@@ -35,9 +35,12 @@ public struct LoginUseCase {
     }
     
     private func saveUserToken(_ userToken: UserToken) {
-        guard let accessToken = userToken.accessToken.data(using: .utf8),
-              let refreshToken = userToken.refreshToken.data(using: .utf8) else { return }
-        keychainStorage.write(key: .accessToken, data: accessToken)
-        keychainStorage.write(key: .refreshToken, data: refreshToken)
+        if let accessToken = userToken.accessToken.data(using: .utf8) {
+            keychainStorage.write(key: .accessToken, data: accessToken)
+        }
+        
+        if let refreshToken = userToken.refreshToken?.data(using: .utf8) {
+            keychainStorage.write(key: .refreshToken, data: refreshToken)
+        }
     }
 }
