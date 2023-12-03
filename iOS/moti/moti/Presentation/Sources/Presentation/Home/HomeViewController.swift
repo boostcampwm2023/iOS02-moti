@@ -267,7 +267,11 @@ extension HomeViewController: UICollectionViewDelegate {
                 }
             }
             
-            return UIMenu(options: .displayInline, children: [editAchievementAction, deleteAchievementAction])
+            return UIMenu(
+                title: selectedItem.title,
+                options: .displayInline, 
+                children: [editAchievementAction, deleteAchievementAction]
+            )
         }
 
         return config
