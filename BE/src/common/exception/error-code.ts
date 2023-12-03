@@ -75,4 +75,12 @@ export const ERROR_INFO = {
     statusCode: 400,
     message: '그룹의 리더는 탈퇴를 할 수 없습니다.',
   },
+  NO_SUCH_GROUP_ACHIEVEMENT: {
+    statusCode: 400,
+    message: '존재하지 않는 그룹 달성기록 입니다.',
+  },
+  INVALID_REJECT_REQUEST: {
+    statusCode: 400,
+    message: '유효하지 않은 차단 요청입니다.',
+  },
 } as const;

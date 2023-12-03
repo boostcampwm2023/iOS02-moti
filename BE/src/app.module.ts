@@ -16,6 +16,7 @@ import { UuidHolderModule } from './common/application/uuid-holder/uuid.module';
 import { ImageModule } from './image/image.module';
 import { GroupModule } from './group/group/group.module';
 import { GroupCategoryModule } from './group/category/group-category.module';
+import { GroupAchievementModule } from './group/achievement/group-achievement.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { GroupCategoryModule } from './group/category/group-category.module';
     ImageModule,
     GroupModule,
     GroupCategoryModule,
+    GroupAchievementModule,
   ],
   controllers: [AppController],
   providers: [AppService],
