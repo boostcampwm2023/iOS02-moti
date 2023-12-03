@@ -48,7 +48,12 @@ final class HomeView: UIView {
     // 당겨서 새로고침 로딩뷰
     let refreshControl = {
         let refreshControl = UIRefreshControl()
-        refreshControl.tintColor = .primaryBlue
+        refreshControl.attributedTitle = NSAttributedString(
+            string: "로딩 중...",
+            attributes: [
+                NSAttributedString.Key.font: UIFont.medium
+            ]
+        )
         return refreshControl
     }()
     
