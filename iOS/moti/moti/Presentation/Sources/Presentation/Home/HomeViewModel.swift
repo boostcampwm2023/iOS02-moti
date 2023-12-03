@@ -188,8 +188,8 @@ private extension HomeViewModel {
     /// 도전 기록의 카테고리를 변경하는 액션
     func updateAchievement(updatedAchievement: Achievement) {
         // 홈 화면 데이터 업데이트
-        for i in 0..<achievements.count where achievements[i].id == updatedAchievement.id {
-            achievements[i] = updatedAchievement
+        for index in 0..<achievements.count where achievements[index].id == updatedAchievement.id {
+            achievements[index] = updatedAchievement
         }
         
         // 카테고리가 변경된거면 홈 화면 리스트 갱신
