@@ -53,6 +53,8 @@ export class ImageEntity {
   }
 
   static strictFrom(image: Image): ImageEntity {
+    if (isNullOrUndefined(image)) return image;
+
     const imageEntity = new ImageEntity();
     imageEntity.id = image.id;
     imageEntity.originalName = image.originalName;

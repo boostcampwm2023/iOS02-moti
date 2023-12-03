@@ -31,8 +31,8 @@ export class Achievement {
   }
 
   update(achievementUpdate: AchievementUpdate) {
-    this.title = achievementUpdate.title || this.title;
-    this.content = achievementUpdate.content || this.content;
-    this.category = achievementUpdate.category || this.category;
+    this.title = achievementUpdate.title;
+    this.content = achievementUpdate.content;
+    this.category = achievementUpdate.category;
   }
 }
