@@ -26,6 +26,25 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        layoutView.configure(achievement: viewModel.achievement)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.hideTabBar()
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.showTabBar()
+        }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        layoutView.cancelDownloadImage()
     }
 }
