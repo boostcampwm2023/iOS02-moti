@@ -25,6 +25,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
     private var cancellables: Set<AnyCancellable> = []
     private var isFetchingNextPage = false
     
+    // MARK: - Init
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -247,7 +248,8 @@ extension HomeViewController: UICollectionViewDelegate {
         contextMenuConfigurationForItemsAt indexPaths: [IndexPath],
         point: CGPoint
     ) -> UIContextMenuConfiguration? {
-        guard let firstIndexPath = indexPaths.first else { return nil }
+        guard collectionView == layoutView.achievementCollectionView,
+              let firstIndexPath = indexPaths.first else { return nil }
         
         let selectedItem = viewModel.findAchievement(at: firstIndexPath.row)
         
