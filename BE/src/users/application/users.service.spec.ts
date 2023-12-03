@@ -87,8 +87,8 @@ describe('UsersService Test', () => {
       );
 
       // then
-      expect(rejectUserResponse.userId).toEqual(user1.id);
-      expect(rejectUserResponse.blockedUserId).toEqual(user2.id);
+      expect(rejectUserResponse.userCode).toEqual(user1.userCode);
+      expect(rejectUserResponse.blockedUserCode).toEqual(user2.userCode);
     });
   });
 

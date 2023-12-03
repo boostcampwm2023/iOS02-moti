@@ -56,7 +56,7 @@ describe('UserController Test', () => {
     it('성공 시 200을 반환한다.', async () => {
       // given
       const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
-      const rejectUserResponse = new RejectUserResponse(1, 2);
+      const rejectUserResponse = new RejectUserResponse('ABCDEF1', 'ABCDEF2');
 
       when(mockUsersService.reject(anyOfClass(User), anyString())).thenResolve(
         rejectUserResponse,
@@ -70,8 +70,8 @@ describe('UserController Test', () => {
         .expect((res: request.Response) => {
           expect(res.body.success).toEqual(true);
           expect(res.body.data).toEqual({
-            userId: 1,
-            blockedUserId: 2,
+            userCode: 'ABCDEF1',
+            blockedUserCode: 'ABCDEF2',
           });
         });
     });
