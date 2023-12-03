@@ -86,6 +86,7 @@ final class GroupDetailAchievementView: UIView {
         
         bodyTextView.text = achievement.body
         infoView.configure(items: [
+            ("작성자", "@ABCDEFG"),
             (achievement.category?.name ?? "", "\(achievement.category?.continued ?? 0)회차"),
             ("날짜", (achievement.date ?? .now).convertStringYYYY년_MM월_dd일())
         ])
@@ -158,7 +159,7 @@ private extension GroupDetailAchievementView {
         addSubview(emojiButtonStackView)
         emojiButtonStackView.atl
             .height(constant: 40)
-            .top(equalTo: imageView.bottomAnchor, constant: 10)
+            .top(equalTo: imageView.bottomAnchor, constant: 20)
             .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
         
         // TODO: Emoji Enum으로 정의
@@ -179,7 +180,7 @@ private extension GroupDetailAchievementView {
     private func setupBodyTitleLabel() {
         scrollView.addSubview(bodyTitleLabel)
         bodyTitleLabel.atl
-            .top(equalTo: emojiButtonStackView.bottomAnchor, constant: 10)
+            .top(equalTo: emojiButtonStackView.bottomAnchor, constant: 20)
             .left(equalTo: titleLabel.leftAnchor)
         
         addDividerToBottom(view: bodyTitleLabel)
