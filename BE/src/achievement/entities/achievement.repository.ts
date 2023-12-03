@@ -6,6 +6,9 @@ import { FindOptionsWhere, LessThan } from 'typeorm';
 import { PaginateAchievementRequest } from '../dto/paginate-achievement-request';
 import { AchievementDetailResponse } from '../dto/achievement-detail-response';
 import { IAchievementDetail } from '../index';
+import { User } from '../../users/domain/user.domain';
+import { ICategoryMetaData } from '../../category';
+import { CategoryMetaData } from '../../category/dto/category-metadata';
 
 @CustomRepository(AchievementEntity)
 export class AchievementRepository extends TransactionalRepository<AchievementEntity> {
@@ -53,7 +56,7 @@ export class AchievementRepository extends TransactionalRepository<AchievementEn
       .leftJoin(
         'achievement',
         'a',
-        'a.category_id = achievement.category_id AND a.id <= achievement.id',
+        'COALESCE(a.category_id, -1) = COALESCE(achievement.category_id, -1) AND a.id <= achievement.id',
       )
       .leftJoin('image', 'i', 'i.achievement_id = achievement.id')
       .where('achievement.id = :achievementId', { achievementId })
@@ -62,6 +65,22 @@ export class AchievementRepository extends TransactionalRepository<AchievementEn
 
     if (result.id) return new AchievementDetailResponse(result);
     return null;
+  }
+
+  async findByCategoryWithCount(user: User) {
+    const categories = await this.repository
+      .createQueryBuilder('achievement')
+      .select('COALESCE(category.id, -1) as categoryId')
+      .addSelect('category.name', 'categoryName')
+      .addSelect('MAX(achievement.created_at)', 'insertedAt')
+      .addSelect('COUNT(*)', 'achievementCount')
+      .leftJoin('achievement.category', 'category')
+      .where('achievement.user_id = :user', { user: user.id })
+      .orderBy('category.id', 'ASC')
+      .groupBy('category.id')
+      .getRawMany<ICategoryMetaData>();
+
+    return categories.map((category) => new CategoryMetaData(category));
   }
 
   async findByIdAndUser(userId: number, id: number): Promise<Achievement> {
