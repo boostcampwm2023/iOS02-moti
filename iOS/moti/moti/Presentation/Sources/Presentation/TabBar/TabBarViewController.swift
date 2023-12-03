@@ -23,6 +23,7 @@ final class TabBarViewController: UITabBarController {
     private var tabBarHeight: CGFloat {
         return tabBar.frame.height
     }
+    private var isShowing = true
     
     // MARK: - Life Cycles
     override func viewDidLoad() {
@@ -47,22 +48,34 @@ final class TabBarViewController: UITabBarController {
     // MARK: - Methods
     /// 탭바를 보일 때 호출
     func showTabBar() {
+        guard !isShowing else { return }
+        isShowing = true
+        
         self.tabBar.isHidden = false
         self.captureButton.isHidden = false
         self.borderView.isHidden = false
         
         UIView.animate(withDuration: 0.3, animations: {
-            self.tabBar.transform = .identity
-            self.captureButton.transform = .identity
-            self.borderView.transform = .identity
+            self.tabBar.frame.origin.y -= self.tabBarHeight
+            self.captureButton.frame.origin.y -= (self.tabBarHeight + 30)
+            self.borderView.frame.origin.y -= self.tabBarHeight
         })
     }
     
     /// 탭바를 숨길 때 호출
     func hideTabBar() {
-        self.tabBar.isHidden = true
-        self.captureButton.isHidden = true
-        self.borderView.isHidden = true
+        guard isShowing else { return }
+        isShowing = false
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.tabBar.frame.origin.y += self.tabBarHeight
+            self.captureButton.frame.origin.y += (self.tabBarHeight + 30)
+            self.borderView.frame.origin.y += self.tabBarHeight
+        }, completion: { _ in
+            self.tabBar.isHidden = true
+            self.captureButton.isHidden = true
+            self.borderView.isHidden = true
+        })
     }
 }
 
