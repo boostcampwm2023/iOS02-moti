@@ -109,7 +109,7 @@ final class HomeViewModel {
         case .deleteAchievementDataSourceItem(let achievementId):
             deleteOfDataSource(achievementId: achievementId)
         case .updateAchievement(let updatedAchievement):
-            updateAchievementCategory(updatedAchievement: updatedAchievement)
+            updateAchievement(updatedAchievement: updatedAchievement)
         case .postAchievement(let newAchievement):
             postAchievement(newAchievement: newAchievement)
         case .deleteAchievement(let achievementId, let categoryId):
@@ -186,7 +186,13 @@ private extension HomeViewModel {
     }
     
     /// 도전 기록의 카테고리를 변경하는 액션
-    func updateAchievementCategory(updatedAchievement: Achievement) {
+    func updateAchievement(updatedAchievement: Achievement) {
+        // 홈 화면 데이터 업데이트
+        for i in 0..<achievements.count where achievements[i].id == updatedAchievement.id {
+            achievements[i] = updatedAchievement
+        }
+        
+        // 카테고리가 변경된거면 홈 화면 리스트 갱신
         guard let currentCategory,
               let updatedCategory = updatedAchievement.category else { return }
         syncCurrentCategoryWithStorage()
