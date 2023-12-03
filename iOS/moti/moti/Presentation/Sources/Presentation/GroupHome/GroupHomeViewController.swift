@@ -185,10 +185,19 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         if let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell {
             // 카테고리 셀을 눌렀을 때
             categoryCellDidSelected(cell: cell, row: indexPath.row)
-        } else if let cell = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
+        } else if let _ = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
             // 달성 기록 리스트 셀을 눌렀을 때
             // 상세 정보 화면으로 이동
-            
+//            let achievement = viewModel.findAchievement(at: indexPath.row)
+            let testAchievement = Achievement(
+                id: 1,
+                category: .init(id: 1, name: "테스트", continued: 10, lastChallenged: .now),
+                title: "테스트 제목",
+                imageURL: URL(string: "https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg"),
+                body: "테스트 내용입니다.",
+                date: .now
+            )
+            coordinator?.moveToGroupDetailAchievementViewController(achievement: testAchievement)
         }
     }
     

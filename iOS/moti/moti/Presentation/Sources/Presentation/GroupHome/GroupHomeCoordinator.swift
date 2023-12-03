@@ -35,7 +35,7 @@ final class GroupHomeCoordinator: Coordinator {
     
     func moveToGroupDetailAchievementViewController(achievement: Achievement) {
         let groupDetailAchievementCoordinator = GroupDetailAchievementCoordinator(navigationController, self)
-        groupDetailAchievementCoordinator.start()
+        groupDetailAchievementCoordinator.start(achievement: achievement)
         childCoordinators.append(groupDetailAchievementCoordinator)
     }
 }

@@ -111,7 +111,16 @@ private extension GroupHomeViewModel {
             do {
                 achievementState = .loading
                 
-                achievements = []
+                achievements = [
+                    Achievement(
+                        id: 1,
+                        category: .init(id: 1, name: "테스트", continued: 10, lastChallenged: .now),
+                        title: "테스트 제목",
+                        imageURL: URL(string: "https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg"),
+                        body: "테스트 내용입니다.",
+                        date: .now
+                    )
+                ]
                 
                 achievementState = .finish
             } catch {
