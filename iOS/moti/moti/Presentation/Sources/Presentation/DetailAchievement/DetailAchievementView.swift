@@ -56,44 +56,7 @@ final class DetailAchievementView: UIView {
         return textView
     }()
     
-    private let infoTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "정보"
-        label.numberOfLines = 1
-        label.textColor = .gray
-        label.font = .medium
-        return label
-    }()
-    
-    private let categoryInfoLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 1
-        label.font = .medium
-        return label
-    }()
-    
-    private let continuedInfoLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 1
-        label.textColor = .gray
-        label.font = .medium
-        return label
-    }()
-    
-    private let dateTitleInfoLabel: UILabel = {
-        let label = UILabel()
-        label.text = "날짜"
-        label.font = .medium
-        return label
-    }()
-    
-    private let dateInfoLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 1
-        label.textColor = .gray
-        label.font = .medium
-        return label
-    }()
+    private let infoView = DetailInfoListView()
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -114,12 +77,10 @@ final class DetailAchievementView: UIView {
         }
         
         bodyTextView.text = achievement.body
-        categoryInfoLabel.text = achievement.category?.name
-        continuedInfoLabel.text = "\(achievement.category?.continued ?? 0)회차"
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy년 MM월 dd일"
-        let dateString = dateFormatter.string(from: achievement.date ?? .now)
-        dateInfoLabel.text = dateString
+        infoView.configure(items: [
+            (achievement.category?.name ?? "", "\(achievement.category?.continued ?? 0)회차"),
+            ("날짜", (achievement.date ?? .now).convertStringYYYY년_MM월_dd일())
+        ])
     }
     
     func update(title: String) {
@@ -148,8 +109,7 @@ private extension DetailAchievementView {
         
         setupBodyTitleLabel()
         setupBodyTextView()
-        setupInfoTitleLabel()
-        setupInfoLabels()
+        setupInfoView()
     }
     
     private func setupScrollView() {
@@ -205,40 +165,12 @@ private extension DetailAchievementView {
         bodyTextView.isScrollEnabled = false
     }
     
-    private func setupInfoTitleLabel() {
-        scrollView.addSubview(infoTitleLabel)
-        infoTitleLabel.atl
-            .top(equalTo: bodyTextView.bottomAnchor, constant: 20)
-            .left(equalTo: bodyTitleLabel.leftAnchor)
-        
-        addDividerToBottom(view: infoTitleLabel)
-    }
-    
-    private func setupInfoLabels() {
-        scrollView.addSubview(categoryInfoLabel)
-        categoryInfoLabel.atl
-            .top(equalTo: infoTitleLabel.bottomAnchor, constant: 20)
-            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
-        
-        scrollView.addSubview(continuedInfoLabel)
-        continuedInfoLabel.atl
-            .top(equalTo: infoTitleLabel.bottomAnchor, constant: 20)
-            .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -20)
-        
-        addDividerToBottom(view: continuedInfoLabel)
-        
-        scrollView.addSubview(dateTitleInfoLabel)
-        dateTitleInfoLabel.atl
-            .top(equalTo: categoryInfoLabel.bottomAnchor, constant: 20)
-            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
-        
-        scrollView.addSubview(dateInfoLabel)
-        dateInfoLabel.atl
-            .top(equalTo: continuedInfoLabel.bottomAnchor, constant: 20)
-            .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -20)
+    private func setupInfoView() {
+        scrollView.addSubview(infoView)
+        infoView.atl
+            .top(equalTo: bodyTextView.bottomAnchor, constant: 10)
             .bottom(equalTo: scrollView.bottomAnchor, constant: -30)
-        
-        addDividerToBottom(view: dateInfoLabel)
+            .horizontal(equalTo: scrollView.safeAreaLayoutGuide)
     }
     
     private func addDividerToBottom(view: UIView) {
