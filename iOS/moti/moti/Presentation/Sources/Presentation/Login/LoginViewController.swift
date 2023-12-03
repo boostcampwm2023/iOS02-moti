@@ -23,9 +23,18 @@ final class LoginViewController: BaseViewController<LoginView> {
     private let viewModel: LoginViewModel
     private var cancellables: Set<AnyCancellable> = []
     
+    private let alertMessage: String?
+    
     // MARK: - Init
     init(viewModel: LoginViewModel) {
         self.viewModel = viewModel
+        self.alertMessage = nil
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    init(viewModel: LoginViewModel, alertMessage: String) {
+        self.viewModel = viewModel
+        self.alertMessage = alertMessage
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -48,6 +57,10 @@ final class LoginViewController: BaseViewController<LoginView> {
         // view.window가 필요하므로 viewDidAppear에서 setup
         // viewDidLayoutSubviews부터 window가 생기지만, 한 번만 호출하기 위해 viewDidAppear에서 호출
         setupAppleLoginRequester()
+        
+        if let alertMessage = alertMessage {
+            showOneButtonAlert(message: alertMessage)
+        }
     }
     
     private func bind() {

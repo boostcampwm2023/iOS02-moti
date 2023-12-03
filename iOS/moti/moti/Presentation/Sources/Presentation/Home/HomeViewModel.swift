@@ -114,6 +114,10 @@ final class HomeViewModel {
             deleteAchievement(achievementId: achievementId, categoryId: categoryId)
         case .fetchDetailAchievement(let achievementId):
             fetchDetailAchievement(id: achievementId)
+        case .logout:
+            NotificationCenter.default.post(name: .logout, object: nil)
+            KeychainStorage.shared.remove(key: .accessToken)
+            KeychainStorage.shared.remove(key: .refreshToken)
         }
     }
 }
