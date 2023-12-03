@@ -271,16 +271,38 @@ extension HomeViewController: UICollectionViewDelegate {
         return config
     }
     
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        // 드래그를 시작하면 탭바 숨기기
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.hideTabBar()
+        }
+    }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let actualPos = scrollView.panGestureRecognizer.translation(in: scrollView.superview)
         let pos = scrollView.contentOffset.y
         let diff = layoutView.achievementCollectionView.contentSize.height - scrollView.frame.size.height
-        
+     
         // 아래로 드래그 && 마지막까지 스크롤
         if actualPos.y < 0 && pos > diff && !isFetchingNextPage {
             Logger.debug("Fetch New Data")
             isFetchingNextPage = true
             viewModel.action(.fetchNextPage)
+        }
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        // 감속을 아예 하지 않으면 탭바를 보인다. -> 드래그를 천천히 하는 상황
+        if !decelerate, let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.showTabBar()
+        }
+    }
+    
+    // 스크롤뷰 움직임이 끝날 때 호출
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        // 스크롤뷰 감속이 끝나면 탭바를 보인다.
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.showTabBar()
         }
     }
 }
