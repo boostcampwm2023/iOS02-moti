@@ -104,6 +104,8 @@ final class HomeViewModel {
             fetchNextAchievementList()
         case .fetchAchievementList(let category):
             fetchCategoryAchievementList(category: category)
+        case .refreshAchievementList:
+            refreshAchievementList()
         case .deleteAchievementDataSourceItem(let achievementId):
             deleteOfDataSource(achievementId: achievementId)
         case .updateAchievement(let updatedAchievement):
@@ -172,7 +174,15 @@ private extension HomeViewModel {
         currentCategory = category
         
         let requestValue = FetchAchievementListRequestValue(categoryId: category.id, take: nil, whereIdLessThan: nil)
-         fetchAchievementList(requestValue: requestValue)
+        fetchAchievementList(requestValue: requestValue)
+    }
+    
+    /// 도전 기록 리스트를 새로고침 하는 액션
+    func refreshAchievementList() {
+        guard let currentCategory = currentCategory else { return }
+        
+        let requestValue = FetchAchievementListRequestValue(categoryId: currentCategory.id, take: nil, whereIdLessThan: nil)
+        fetchAchievementList(requestValue: requestValue)
     }
     
     /// 도전 기록의 카테고리를 변경하는 액션

@@ -62,6 +62,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
     
     private func addTargets() {
         layoutView.catergoryAddButton.addTarget(self, action: #selector(showCreateCategoryAlert), for: .touchUpInside)
+        layoutView.refreshControl.addTarget(self, action: #selector(refreshAchievementList), for: .valueChanged)
     }
     
     @objc private func showCreateCategoryAlert() {
@@ -73,6 +74,10 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
             guard let self, let text else { return }
             viewModel.action(.addCategory(name: text))
         }
+    }
+    
+    @objc private func refreshAchievementList() {
+        viewModel.action(.refreshAchievementList)
     }
     
     // MARK: - Setup
@@ -297,8 +302,10 @@ private extension HomeViewController {
                 switch state {
                 case .finish:
                     isFetchingNextPage = false
+                    layoutView.endRefreshing()
                 case .error(let message):
                     isFetchingNextPage = false
+                    layoutView.endRefreshing()
                     Logger.error("Fetch Achievement Error: \(message)")
                 default: break
                 }

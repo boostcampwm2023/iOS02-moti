@@ -39,9 +39,22 @@ final class HomeView: UIView {
     private(set) lazy var achievementCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeAchievementCollectionView())
         collectionView.backgroundColor = .motiBackground
+        collectionView.refreshControl = refreshControl
         collectionView.register(with: AchievementCollectionViewCell.self)
         collectionView.register(with: HeaderView.self, elementKind: UICollectionView.elementKindSectionHeader)
         return collectionView
+    }()
+    
+    // 당겨서 새로고침 로딩뷰
+    let refreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.attributedTitle = NSAttributedString(
+            string: "로딩 중...",
+            attributes: [
+                NSAttributedString.Key.font: UIFont.medium
+            ]
+        )
+        return refreshControl
     }()
     
     // MARK: - Init
@@ -62,6 +75,14 @@ final class HomeView: UIView {
         ).first as? HeaderView else { return }
         
         header.configure(category: category)
+    }
+    
+    func endRefreshing() {
+        if refreshControl.isRefreshing {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.refreshControl.endRefreshing()
+            }
+        }
     }
 }
 

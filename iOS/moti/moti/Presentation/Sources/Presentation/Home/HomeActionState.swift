@@ -14,6 +14,7 @@ extension HomeViewModel {
         case addCategory(name: String)
         case fetchNextPage
         case fetchAchievementList(category: CategoryItem)
+        case refreshAchievementList
         case deleteAchievementDataSourceItem(achievementId: Int)
         case updateAchievement(updatedAchievement: Achievement)
         case postAchievement(newAchievement: Achievement)
