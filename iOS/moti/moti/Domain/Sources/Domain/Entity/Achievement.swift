@@ -13,12 +13,15 @@ public struct Achievement: Hashable {
         didSet {
             // categoryId 속성 동기화
             guard let category else { return }
-            categoryId = category.id
+            _categoryId = category.id
         }
     }
     // CategoryItem 속성을 바꾸는 것보다 Id만 하나 추가하는 게 수정 범위가 더 적다고 판단하여 추가
     // 카테고리 id만 필요한 경우 해당 속성 사용
-    public var categoryId: Int
+    public var categoryId: Int {
+        return _categoryId
+    }
+    private var _categoryId: Int
     public var title: String
     public let imageURL: URL?
     public var body: String?
@@ -34,7 +37,7 @@ public struct Achievement: Hashable {
     ) {
         self.id = id
         self.category = category
-        self.categoryId = category.id
+        self._categoryId = category.id
         self.title = title
         self.imageURL = imageURL
         self.body = body
@@ -49,7 +52,7 @@ public struct Achievement: Hashable {
     ) {
         self.id = id
         self.category = nil
-        self.categoryId = categoryId
+        self._categoryId = categoryId
         self.title = title
         self.imageURL = imageURL
         self.body = nil
