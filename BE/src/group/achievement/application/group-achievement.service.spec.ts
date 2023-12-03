@@ -111,7 +111,7 @@ describe('GroupAchievementService Test', () => {
       ).rejects.toThrow(NoSuchGroupAchievementException);
     });
   });
-  test('다른 그룹의 달성기록을 차단하려고 하면 NoSuchGroupAchievementException를 던진다.', async () => {
+  test('다른 그룹의 달성기록을 차단하려고 하면 InvalidRejectRequestException를 던진다.', async () => {
     await transactionTest(dataSource, async () => {
       // given
       const user1 = await usersFixture.getUser('ABC');
