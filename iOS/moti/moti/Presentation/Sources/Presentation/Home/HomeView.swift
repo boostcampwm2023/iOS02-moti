@@ -79,7 +79,9 @@ final class HomeView: UIView {
     
     func endRefreshing() {
         if refreshControl.isRefreshing {
-            refreshControl.endRefreshing()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.refreshControl.endRefreshing()
+            }
         }
     }
 }
