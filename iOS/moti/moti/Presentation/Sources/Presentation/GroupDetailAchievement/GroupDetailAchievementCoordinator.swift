@@ -24,8 +24,8 @@ final class GroupDetailAchievementCoordinator: Coordinator {
     
     func start() { }
     
-    func start(achievement: Achievement) {
-        let groupDetailAchievementVM = GroupDetailAchievementViewModel(achievement: achievement)
+    func start(achievement: Achievement, group: Group) {
+        let groupDetailAchievementVM = GroupDetailAchievementViewModel(achievement: achievement, group: group)
         let groupDetailAchievementVC = GroupDetailAchievementViewController(viewModel: groupDetailAchievementVM)
         groupDetailAchievementVC.coordinator = self
         navigationController.pushViewController(groupDetailAchievementVC, animated: true)

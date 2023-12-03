@@ -41,6 +41,14 @@ final class GroupDetailAchievementView: UIView {
         return imageView
     }()
     
+    private let emojiButtonStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .horizontal
+        stackView.spacing = 10
+        stackView.distribution = .equalSpacing
+        return stackView
+    }()
+    
     private let bodyTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "내용"
@@ -107,6 +115,8 @@ private extension GroupDetailAchievementView {
         setupTitleLabel()
         setupImageView()
         
+        setupEmojiButtons()
+        
         setupBodyTitleLabel()
         setupBodyTextView()
         setupInfoView()
@@ -144,10 +154,32 @@ private extension GroupDetailAchievementView {
             .height(equalTo: imageView.widthAnchor)
     }
     
+    private func setupEmojiButtons() {
+        addSubview(emojiButtonStackView)
+        emojiButtonStackView.atl
+            .height(constant: 40)
+            .top(equalTo: imageView.bottomAnchor, constant: 10)
+            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
+        
+        // TODO: Emoji Enum으로 정의
+        let likeEmojiButton = EmojiButton()
+        likeEmojiButton.configure(emoji: "👍", count: 1, isSelectedEmoji: true)
+        
+        let fireEmojiButton = EmojiButton()
+        fireEmojiButton.configure(emoji: "🔥", count: 1, isSelectedEmoji: false)
+        
+        let smileEmojiButton = EmojiButton()
+        smileEmojiButton.configure(emoji: "🥰", count: 0, isSelectedEmoji: false)
+        
+        emojiButtonStackView.addArrangedSubview(likeEmojiButton)
+        emojiButtonStackView.addArrangedSubview(fireEmojiButton)
+        emojiButtonStackView.addArrangedSubview(smileEmojiButton)
+    }
+    
     private func setupBodyTitleLabel() {
         scrollView.addSubview(bodyTitleLabel)
         bodyTitleLabel.atl
-            .top(equalTo: imageView.bottomAnchor, constant: 70)
+            .top(equalTo: emojiButtonStackView.bottomAnchor, constant: 10)
             .left(equalTo: titleLabel.leftAnchor)
         
         addDividerToBottom(view: bodyTitleLabel)

@@ -10,8 +10,10 @@ import Domain
 
 final class GroupDetailAchievementViewModel {
     private(set) var achievement: Achievement
+    let group: Group
 
-    init(achievement: Achievement) {
+    init(achievement: Achievement, group: Group) {
         self.achievement = achievement
+        self.group = group
     }
 }

@@ -197,7 +197,10 @@ extension GroupHomeViewController: UICollectionViewDelegate {
                 body: "테스트 내용입니다.",
                 date: .now
             )
-            coordinator?.moveToGroupDetailAchievementViewController(achievement: testAchievement)
+            coordinator?.moveToGroupDetailAchievementViewController(
+                achievement: testAchievement,
+                group: viewModel.group
+            )
         }
     }
     

@@ -10,7 +10,7 @@ import UIKit
 open class BounceButton: UIButton {
     open override var isHighlighted: Bool {
         didSet {
-            isHighlighted ? hightlight() : normal()
+            highlightAction()
         }
     }
     
@@ -35,6 +35,14 @@ open class BounceButton: UIButton {
         setTitleColor(.bounceButtonHighlightTitleColor, for: .highlighted)
         
         self.applyNormalUI()
+    }
+    
+    open func highlightAction() {
+        if isHighlighted {
+            hightlight()
+        } else {
+            normal()
+        }
     }
     
     private func hightlight() {
