@@ -26,7 +26,6 @@ final class DetailInfoListView: UIView {
     private var stackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.distribution = .fillEqually
         return stackView
     }()
     
@@ -50,6 +49,14 @@ final class DetailInfoListView: UIView {
         let listItemView = DetailInfoListItemView()
         listItemView.configure(title: title, content: content)
         stackView.addArrangedSubview(listItemView)
+        listItemView.atl
+            .height(constant: 34)
+        
+        let divider = UIView()
+        divider.backgroundColor = .systemGray5
+        stackView.addArrangedSubview(divider)
+        divider.atl
+            .height(constant: 1)
     }
     
     private func setupUI() {
@@ -61,12 +68,13 @@ final class DetailInfoListView: UIView {
         addSubview(divider)
         divider.atl
             .height(constant: 1)
-            .top(equalTo: bottomAnchor, constant: 9)
+            .top(equalTo: titleLabel.bottomAnchor, constant: 9)
             .horizontal(equalTo: safeAreaLayoutGuide)
         
         addSubview(stackView)
         stackView.atl
-            .top(equalTo: titleLabel.bottomAnchor)
+            .top(equalTo: divider.bottomAnchor)
+            .bottom(equalTo: bottomAnchor)
             .horizontal(equalTo: safeAreaLayoutGuide)
     }
 }
@@ -85,12 +93,6 @@ final class DetailInfoListItemView: UIView {
         label.textColor = .gray
         label.font = .medium
         return label
-    }()
-    
-    private let divider = {
-        let view = UIView()
-        view.backgroundColor = .systemGray5
-        return view
     }()
 
     override init(frame: CGRect) {
@@ -111,17 +113,14 @@ final class DetailInfoListItemView: UIView {
     private func setupUI() {
         addSubview(titleLabel)
         titleLabel.atl
+            .top(equalTo: safeAreaLayoutGuide.topAnchor)
+            .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor)
             .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
         
         addSubview(contentLabel)
         contentLabel.atl
+            .top(equalTo: safeAreaLayoutGuide.topAnchor)
+            .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor)
             .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -20)
-        
-        addSubview(divider)
-        divider.atl
-            .height(constant: 1)
-            .top(equalTo: bottomAnchor, constant: 9)
-            .left(equalTo: leftAnchor, constant: 20)
-            .right(equalTo: rightAnchor)
     }
 }
