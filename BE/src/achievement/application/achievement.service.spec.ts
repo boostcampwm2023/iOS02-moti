@@ -281,6 +281,40 @@ describe('AchievementService Test', () => {
     });
   });
 
+  test('달성 기록의 카테고리를 미설정으로 수정한다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const category = await categoryFixture.getCategory(user, 'ABC');
+      const image = await imageFixture.getImage(user);
+
+      const achievement = await achievementFixture.getAchievement(
+        user,
+        category,
+        image,
+      );
+
+      const request = new AchievementUpdateRequest(
+        'update title',
+        'update content',
+        -1,
+      );
+
+      // when
+      await achievementService.update(user.id, achievement.id, request);
+
+      // then
+      const updated = await achievementRepository.findAchievementDetail(
+        user.id,
+        achievement.id,
+      );
+
+      expect(updated.category.id).toEqual(-1);
+      expect(updated.title).toEqual('update title');
+      expect(updated.content).toEqual('update content');
+    });
+  });
+
   test('내 달성기록이 아닌 경우는 NoSuchAchievementException 예외를 던진다.', async () => {
     await transactionTest(dataSource, async () => {
       // given
@@ -353,6 +387,32 @@ describe('AchievementService Test', () => {
         expect(response.content).toEqual('create content');
         expect(response.category.id).toEqual(category.id);
         expect(response.category.name).toEqual(category.name);
+        expect(response.category.achieveCount).toEqual(1);
+      });
+    });
+
+    it('성공적으로 생성하면 생성된 achievement를 반환한다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser('ABC');
+        const image = await imageFixture.getImage(user);
+
+        const request = new AchievementCreateRequest(
+          'create title',
+          'create content',
+          -1,
+          image.id,
+        );
+
+        // when
+        const response = await achievementService.create(user, request);
+
+        // then
+        expect(response.id).toBeDefined();
+        expect(response.title).toEqual('create title');
+        expect(response.content).toEqual('create content');
+        expect(response.category.id).toEqual(-1);
+        expect(response.category.name).toEqual('미설정');
         expect(response.category.achieveCount).toEqual(1);
       });
     });
