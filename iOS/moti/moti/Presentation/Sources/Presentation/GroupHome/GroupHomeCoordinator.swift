@@ -32,4 +32,10 @@ final class GroupHomeCoordinator: Coordinator {
         currentViewController = groupHomeVC
         navigationController.pushViewController(groupHomeVC, animated: true)
     }
+    
+    func moveToGroupDetailAchievementViewController(achievement: Achievement) {
+        let groupDetailAchievementCoordinator = GroupDetailAchievementCoordinator(navigationController, self)
+        groupDetailAchievementCoordinator.start()
+        childCoordinators.append(groupDetailAchievementCoordinator)
+    }
 }
