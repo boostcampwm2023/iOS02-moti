@@ -41,6 +41,7 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         startSession()
+        layoutView.captureButton.isEnabled = true
     }
     
     override func viewWillDisappear(_ animated: Bool) {
