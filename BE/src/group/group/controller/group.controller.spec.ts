@@ -20,6 +20,7 @@ import { CreateGroupRequest } from '../dto/create-group-request.dto';
 import { User } from '../../../users/domain/user.domain';
 import { GroupResponse } from '../dto/group-response.dto';
 import { GroupListResponse } from '../dto/group-list-response';
+import { UserGroupGrade } from '../domain/user-group-grade';
 import { GroupLeaveResponse } from '../dto/group-leave-response.dto';
 import { NoSuchUserGroupException } from '../exception/no-such-user-group.exception';
 import { LeaderNotAllowedToLeaveException } from '../exception/leader-not-allowed-to-leave.exception';
@@ -145,6 +146,7 @@ describe('GroupController', () => {
           avatarUrl: 'avatarUrl1',
           continued: 2,
           lastChallenged: '2023-11-29T21:58:402Z',
+          grade: UserGroupGrade.LEADER,
         },
         {
           id: 2,
@@ -152,6 +154,7 @@ describe('GroupController', () => {
           avatarUrl: 'avatarUrl2',
           continued: 3,
           lastChallenged: null,
+          grade: UserGroupGrade.PARTICIPANT,
         },
       ]);
 
@@ -175,6 +178,7 @@ describe('GroupController', () => {
                 id: 1,
                 lastChallenged: '2023-11-29T21:58:402Z',
                 name: 'Test Group1',
+                grade: UserGroupGrade.LEADER,
               },
               {
                 avatarUrl: 'avatarUrl2',
@@ -182,6 +186,7 @@ describe('GroupController', () => {
                 id: 2,
                 lastChallenged: null,
                 name: 'Test Group2',
+                grade: UserGroupGrade.PARTICIPANT,
               },
             ],
           });

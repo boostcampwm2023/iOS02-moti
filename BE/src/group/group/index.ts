@@ -4,4 +4,5 @@ export interface IGroupPreview {
   avatarUrl: string;
   continued: string;
   lastChallenged: Date;
+  grade: string;
 }

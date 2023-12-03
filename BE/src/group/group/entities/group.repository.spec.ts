@@ -92,8 +92,11 @@ describe('GroupRepository Test', () => {
       // then
       expect(groups.length).toEqual(3);
       expect(groups[0].name).toEqual('Test Group1');
+      expect(groups[0].grade).toEqual(UserGroupGrade.LEADER);
       expect(groups[1].name).toEqual('Test Group2');
+      expect(groups[1].grade).toEqual(UserGroupGrade.LEADER);
       expect(groups[2].name).toEqual('Test Group3');
+      expect(groups[2].grade).toEqual(UserGroupGrade.LEADER);
     });
   });
 
