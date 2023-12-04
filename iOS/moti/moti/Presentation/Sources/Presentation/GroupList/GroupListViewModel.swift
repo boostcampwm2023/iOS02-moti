@@ -60,10 +60,7 @@ extension GroupListViewModel {
         groupListState = .loading
         
         Task {
-            groups = [
-                Group(id: 0, name: "독서 모임", avatarUrl: URL(string: "https://kr.object.ncloudstorage.com/motimate/group-1.jpg"), continued: 10, lastChallenged: .now),
-                Group(id: 1, name: "강아지 산책 모임", avatarUrl: URL(string: "https://kr.object.ncloudstorage.com/motimate/group-2.jpg"), continued: 20, lastChallenged: .now)
-            ]
+            groups = []
             groupListState = .finish
         }
     }
