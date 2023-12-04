@@ -8,6 +8,7 @@
 import Foundation
 import Domain
 import Core
+import Combine
 
 final class GroupHomeViewModel {
     typealias AchievementDataSource = ListDiffableDataSource<Achievement>
@@ -28,6 +29,7 @@ final class GroupHomeViewModel {
     
     // Achievement
     private var achievementDataSource: AchievementDataSource?
+    private let fetchAchievementListUseCase: FetchAchievementListUseCase
     private var achievements: [Achievement] = [] {
         didSet {
             achievementDataSource?.update(data: achievements)
@@ -35,13 +37,22 @@ final class GroupHomeViewModel {
     }
     private let skeletonAchievements: [Achievement] = (-20...(-1)).map { _ in Achievement.makeSkeleton() }
 
+    // Pagenation
+    private var lastRequestNextValue: FetchAchievementListRequestValue?
+    private var nextRequestValue: FetchAchievementListRequestValue?
+    private var nextAchievementTask: Task<Void, Never>?
+    
     // State
-    @Published private(set) var categoryListState: CategoryListState = .initial
-    @Published private(set) var achievementState: AchievementState = .initial
+    private(set) var categoryListState = PassthroughSubject<CategoryListState, Never>()
+    private(set) var achievementListState = PassthroughSubject<AchievementListState, Never>()
 
     // MARK: - Init
-    init(group: Group) {
+    init(
+        group: Group,
+        fetchAchievementListUseCase: FetchAchievementListUseCase
+    ) {
         self.group = group
+        self.fetchAchievementListUseCase = fetchAchievementListUseCase
     }
     
     // MARK: - Methods
@@ -78,18 +89,31 @@ private extension GroupHomeViewModel {
     func fetchCategories() {
         Task {
             do {
+                categoryListState.send(.loading)
                 categories = [
                     .init(id: 10, name: "그룹 카테고리1"),
                     .init(id: 11, name: "그룹 카테고리2"),
                     .init(id: 12, name: "그룹 카테고리3")
                 ]
-                categoryListState = .finish
+                categoryListState.send(.finish)
             } catch {
-                categoryListState = .error(message: error.localizedDescription)
+                categoryListState.send(.error(message: error.localizedDescription))
             }
         }
     }
     
+    /// 다음 도전 기록 리스트를 가져오는 액션
+    func fetchNextAchievementList() {
+        guard let requestValue = nextRequestValue,
+              lastRequestNextValue?.whereIdLessThan != nextRequestValue?.whereIdLessThan else {
+            Logger.debug("마지막 페이지입니다.")
+            return
+        }
+        lastRequestNextValue = requestValue
+        fetchAchievementList(requestValue: requestValue)
+    }
+    
+    /// 카테고리의 도전 기록 리스트를 가져오는 액션
     func fetchCategoryAchievementList(category: CategoryItem) {
         guard currentCategory != category else {
             Logger.debug("현재 카테고리입니다.")
@@ -99,32 +123,51 @@ private extension GroupHomeViewModel {
         currentCategory = category
         
         let requestValue = FetchAchievementListRequestValue(categoryId: category.id, take: nil, whereIdLessThan: nil)
-        fetchAchievementList()
+        fetchAchievementList(requestValue: requestValue)
+    }
+    
+    /// 도전 기록 리스트를 새로고침 하는 액션
+    func refreshAchievementList() {
+        guard let currentCategory = currentCategory else { return }
+        
+        let requestValue = FetchAchievementListRequestValue(categoryId: currentCategory.id, take: nil, whereIdLessThan: nil)
+        fetchAchievementList(requestValue: requestValue)
     }
 }
 
 // MARK: - Methods
 private extension GroupHomeViewModel {
     /// 도전 기록을 가져오는 메서드
-    func fetchAchievementList() {
-        Task {
+    func fetchAchievementList(requestValue: FetchAchievementListRequestValue? = nil) {
+        if requestValue?.whereIdLessThan == nil {
+            // 새로운 카테고리 데이터를 가져오기 때문에 빈 배열로 초기화
+            achievements = skeletonAchievements
+            nextRequestValue = nil
+            lastRequestNextValue = nil
+        }
+        
+        nextAchievementTask?.cancel()
+        nextAchievementTask = Task {
             do {
-                achievementState = .loading
+                achievementListState.send(.loading)
+                let (newAchievements, next) = try await fetchAchievementListUseCase.execute(requestValue: requestValue)
+                let isFirstRequest = requestValue?.whereIdLessThan == nil
+                if isFirstRequest {
+                    achievements = newAchievements
+                } else {
+                    // 다음 페이지 요청이면 Append
+                    achievements.append(contentsOf: newAchievements)
+                }
                 
-                achievements = [
-                    Achievement(
-                        id: 1,
-                        category: .init(id: 1, name: "테스트", continued: 10, lastChallenged: .now),
-                        title: "테스트 제목",
-                        imageURL: URL(string: "https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg"),
-                        body: "테스트 내용입니다.",
-                        date: .now
-                    )
-                ]
-                
-                achievementState = .finish
+                nextRequestValue = next
+                achievementListState.send(.finish)
             } catch {
-                achievementState = .error(message: error.localizedDescription)
+                if let nextAchievementTask, nextAchievementTask.isCancelled {
+                    Logger.debug("NextAchievementTask is Cancelled")
+                    achievementListState.send(.finish)
+                } else {
+                    achievementListState.send(.error(message: error.localizedDescription))
+                }
             }
         }
     }

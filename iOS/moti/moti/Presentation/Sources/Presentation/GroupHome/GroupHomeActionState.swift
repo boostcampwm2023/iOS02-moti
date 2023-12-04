@@ -15,13 +15,12 @@ extension GroupHomeViewModel {
     }
     
     enum CategoryListState {
-        case initial
+        case loading
         case finish
         case error(message: String)
     }
     
-    enum AchievementState {
-        case initial
+    enum AchievementListState {
         case loading
         case finish
         case error(message: String)

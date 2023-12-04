@@ -11,17 +11,61 @@ import Core
 
 public struct GroupAchievementRepository: GroupAchievementRepositoryProtocol {
     private let provider: ProviderProtocol
+    public let groupId: Int
     
-    public init(provider: ProviderProtocol = Provider()) {
+    public init(provider: ProviderProtocol = Provider(), groupId: Int) {
         self.provider = provider
+        self.groupId = groupId
     }
     
     public func fetchAchievementList(
-        requestValue: FetchAchievementListRequestValue? = nil,
-        groupId: Int
+        requestValue: FetchAchievementListRequestValue? = nil
     ) async throws -> ([Achievement], FetchAchievementListRequestValue?) {
-        let endpoint = MotiAPI.fetchGroupAchievementList(requestValue: requestValue, groupId: groupId)
-        let responseDTO = try await provider.request(with: endpoint, type: AchievementListResponseDTO.self)
+        let sampleJson = """
+        {
+            "success": true,
+            "data": {
+                "data": [
+                    {
+                        "id": 16,
+                        "thumbnailUrl": ""https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg"",
+                        "title": "test16",
+                        "userCode": "abcd2df"
+                    },
+                    {
+                        "id": 15,
+                        "thumbnailUrl": ""https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg"",
+                        "title": "test15",
+                        "userCode": "abcd2df"
+                    },
+                    {
+                        "id": 14,
+                        "thumbnailUrl": ""https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg"",
+                        "title": "test14",
+                        "userCode": "abcd2df"
+                    },
+                    {
+                        "id": 5,
+                        "thumbnailUrl": ""https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg"",
+                        "title": "test13",
+                        "userCode": "abcd2df"
+                    },
+                ],
+                "count": 4,
+                "next": {
+                    "take": 30,
+                    "whereIdLessThan": 5,
+                    "categoryId": -1
+                }
+            }
+        }
+        """
+        
+        // 실제 API 요청
+//        let endpoint = MotiAPI.fetchGroupAchievementList(requestValue: requestValue, groupId: groupId)
+//        let responseDTO = try await provider.request(with: endpoint, type: AchievementListResponseDTO.self)
+        guard let testData = sampleJson.data(using: .utf8) else { throw NetworkError.decode }
+        let responseDTO = try JSONDecoder().decode(AchievementListResponseDTO.self, from: testData)
         
         guard let achievementListDataDTO = responseDTO.data else { throw NetworkError.decode }
         guard let achievementListDTO = achievementListDataDTO.data else { throw NetworkError.decode }
@@ -40,7 +84,7 @@ public struct GroupAchievementRepository: GroupAchievementRepositoryProtocol {
         }
     }
     
-    public func deleteAchievement(requestValue: DeleteAchievementRequestValue, groupId: Int) async throws -> Bool {
+    public func deleteAchievement(requestValue: DeleteAchievementRequestValue) async throws -> Bool {
         let endpoint = MotiAPI.deleteGroupAchievement(requestValue: requestValue, groupId: groupId)
         let responseDTO = try await provider.request(with: endpoint, type: DeleteAchievementResponseDTO.self)
         
@@ -48,7 +92,7 @@ public struct GroupAchievementRepository: GroupAchievementRepositoryProtocol {
         return isSuccess
     }
     
-    public func fetchDetailAchievement(requestValue: FetchDetailAchievementRequestValue, groupId: Int) async throws -> Achievement {
+    public func fetchDetailAchievement(requestValue: FetchDetailAchievementRequestValue) async throws -> Achievement {
         let endpoint = MotiAPI.fetchGroupDetailAchievement(requestValue: requestValue, groupId: groupId)
         let responseDTO = try await provider.request(with: endpoint, type: DetailAchievementResponseDTO.self)
         
@@ -56,7 +100,7 @@ public struct GroupAchievementRepository: GroupAchievementRepositoryProtocol {
         return Achievement(dto: detailAchievementDTO)
     }
     
-    public func updateAchievement(requestValue: UpdateAchievementRequestValue, groupId: Int) async throws -> Bool {
+    public func updateAchievement(requestValue: UpdateAchievementRequestValue) async throws -> Bool {
         let endpoint = MotiAPI.updateGroupAchievement(requestValue: requestValue, groupId: groupId)
         let responseDTO = try await provider.request(with: endpoint, type: UpdateAchievementResponseDTO.self)
         
@@ -64,7 +108,7 @@ public struct GroupAchievementRepository: GroupAchievementRepositoryProtocol {
         return isSuccess
     }
     
-    public func postAchievement(requestValue: PostAchievementRequestValue, groupId: Int) async throws -> Achievement {
+    public func postAchievement(requestValue: PostAchievementRequestValue) async throws -> Achievement {
         let endpoint = MotiAPI.postGroupAchievement(requestValue: requestValue, groupId: groupId)
         let responseDTO = try await provider.request(with: endpoint, type: DetailAchievementResponseDTO.self)
 
