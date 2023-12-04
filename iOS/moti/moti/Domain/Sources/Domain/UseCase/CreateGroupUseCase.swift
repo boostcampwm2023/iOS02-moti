@@ -11,7 +11,7 @@ public struct CreateGroupRequestValue: RequestValue {
     private let name: String
     private let avatarUrl: URL?
     
-    init(name: String, avatarUrl: URL? = nil) {
+    public init(name: String, avatarUrl: URL? = nil) {
         self.name = name
         self.avatarUrl = avatarUrl
     }
@@ -24,7 +24,7 @@ public struct CreateGroupUseCase {
         self.groupRepository = groupRepository
     }
     
-    func execute(requestValue: CreateGroupRequestValue) async throws -> Group {
+    public func execute(requestValue: CreateGroupRequestValue) async throws -> Group {
         return try await groupRepository.createGroup(requestValue: requestValue)
     }
 }
