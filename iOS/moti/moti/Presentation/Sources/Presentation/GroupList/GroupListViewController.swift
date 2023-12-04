@@ -32,6 +32,7 @@ final class GroupListViewController: BaseViewController<GroupListView> {
         super.viewDidLoad()
         setupUI()
         setupGroupListDataSource()
+        bind()
         
         viewModel.action(.launch)
     }
@@ -157,7 +158,6 @@ extension GroupListViewController: LoadingIndicator {
                 case .loading:
                     // TODO: 스켈레톤
                     showLoadingIndicator()
-                    break
                 case .finish:
                     hideLoadingIndicator()
                 case .error(let message):
@@ -174,7 +174,6 @@ extension GroupListViewController: LoadingIndicator {
                 switch state {
                 case .loading:
                     showLoadingIndicator()
-                    break
                 case .finish:
                     hideLoadingIndicator()
                 case .error(let message):
