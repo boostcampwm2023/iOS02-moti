@@ -11,6 +11,7 @@ public enum UserDefaultsKey: String {
     case requiredVersion
     case latestVersion
     case privacyPolicy
+    case userCode
 }
 
 public extension UserDefaults {

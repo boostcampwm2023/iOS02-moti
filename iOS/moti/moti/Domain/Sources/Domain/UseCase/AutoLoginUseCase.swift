@@ -48,6 +48,7 @@ public struct AutoLoginUseCase {
     private func saveUserToken(_ userToken: UserToken) {
         guard let accessToken = userToken.accessToken.data(using: .utf8) else { return }
         keychainStorage.write(key: .accessToken, data: accessToken)
+        UserDefaults.standard.saveString(key: .userCode, string: userToken.user.code)
     }
     
     private func resetUserToken() {
