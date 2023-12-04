@@ -2,6 +2,8 @@ import { UserEntity } from './user.entity';
 import { CustomRepository } from '../../config/typeorm/custom-repository.decorator';
 import { User } from '../domain/user.domain';
 import { TransactionalRepository } from '../../config/transaction-manager/transactional-repository';
+import { IGroupUserInfo } from '../index';
+import { GroupUserInfo } from '../dto/group-user-info.dto';
 
 @CustomRepository(UserEntity)
 export class UserRepository extends TransactionalRepository<UserEntity> {
@@ -45,5 +47,25 @@ export class UserRepository extends TransactionalRepository<UserEntity> {
       relations: ['userRoles'],
     });
     return userEntity?.toModel();
+  }
+
+  async findByGroupId(groupId: number) {
+    const groupUsersInfo = await this.repository
+      .createQueryBuilder('user')
+      .leftJoin('user.userGroup', 'user_group')
+      .leftJoin('user.groupAchievement', 'group_achievement')
+      .select([
+        'user.avatarUrl as avatarUrl',
+        'user.userCode as userCode',
+        'user_group.grade as grade',
+      ])
+      .addSelect('MAX(group_achievement.created_at)', 'lastChallenged')
+      .andWhere('user_group.group.id = :groupId', { groupId })
+      .groupBy('user.id')
+      .addGroupBy('user_group.grade')
+      .getRawMany<IGroupUserInfo>();
+    return groupUsersInfo.map(
+      (groupUserInfo) => new GroupUserInfo(groupUserInfo),
+    );
   }
 }

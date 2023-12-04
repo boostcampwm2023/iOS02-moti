@@ -83,6 +83,14 @@ export const ERROR_INFO = {
     statusCode: 400,
     message: '유효하지 않은 차단 요청입니다.',
   },
+  INVITE_PERMISSION_DENIED: {
+    statusCode: 400,
+    message: '그룹원 초대 권한이 없습니다.',
+  },
+  DUPLICATED_INVITE: {
+    statusCode: 400,
+    message: '이미 초대된 그룹원 입니다.',
+  },
   NO_SUCH_GROUP_USER: {
     statusCode: 400,
     message: '유저가 속한 그룹이 아닙니다.',
@@ -90,5 +98,9 @@ export const ERROR_INFO = {
   NO_SUCH_USER: {
     statusCode: 400,
     message: '존재하지 않는 유저입니다.',
+  },
+  ONLY_LEADER_ALLOWED_ASSIGN_GRADE: {
+    statusCode: 400,
+    message: '그룹의 리더만 권한 조정이 가능합니다.',
   },
 } as const;

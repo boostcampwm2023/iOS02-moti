@@ -23,6 +23,10 @@ import { GroupCategoryTestModule } from '../../../../test/group/category/group-c
 import { dateFormat } from '../../../common/utils/date-formatter';
 import { LeaderNotAllowedToLeaveException } from '../exception/leader-not-allowed-to-leave.exception';
 import { NoSuchUserGroupException } from '../exception/no-such-user-group.exception';
+import { InviteGroupRequest } from '../dto/invite-group-request.dto';
+import { InvitePermissionDeniedException } from '../exception/invite-permission-denied.exception';
+import { AssignGradeRequest } from '../dto/assign-grade-request.dto';
+import { OnlyLeaderAllowedAssignGradeException } from '../exception/only-leader-allowed-assign-grade.exception';
 
 describe('GroupSerivce Test', () => {
   let groupService: GroupService;
@@ -224,6 +228,253 @@ describe('GroupSerivce Test', () => {
       await expect(groupService.removeUser(user3.id, group.id)).rejects.toThrow(
         NoSuchUserGroupException,
       );
+    });
+  });
+
+  test('리더는 다른 그룹원을 초대할 수 있다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('GHI');
+      const group = await groupFixture.createGroup('Test Group', user1);
+
+      // when
+      const inviteGroupResponse = await groupService.invite(
+        user1,
+        group.id,
+        new InviteGroupRequest(user2.userCode),
+      );
+
+      // then
+      expect(inviteGroupResponse.groupId).toEqual(group.id);
+      expect(inviteGroupResponse.userCode).toEqual(user2.userCode);
+    });
+  });
+  test('매니저는 다른 그룹원을 초대할 수 있다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.MANAGER);
+      const user3 = await usersFixture.getUser('GHI');
+
+      // when
+      const inviteGroupResponse = await groupService.invite(
+        user2,
+        group.id,
+        new InviteGroupRequest(user3.userCode),
+      );
+
+      // then
+      expect(inviteGroupResponse.groupId).toEqual(group.id);
+      expect(inviteGroupResponse.userCode).toEqual(user3.userCode);
+    });
+  });
+  test('일반 멤버가 초대 요청을 하면 InvitePermissionDeniedException을 던진다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+      const user3 = await usersFixture.getUser('GHI');
+
+      // when
+      // then
+      await expect(
+        groupService.invite(
+          user2,
+          group.id,
+          new InviteGroupRequest(user3.userCode),
+        ),
+      ).rejects.toThrow(InvitePermissionDeniedException);
+    });
+  });
+  test('자신이 속하지 않은 그룹에 대해서 초대를 요청하면 NoSuchUserGroupException을 던진다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group1 = await groupFixture.createGroup('Test Group', user1);
+      const group2 = await groupFixture.createGroup('Test Group2', user2);
+      const user3 = await usersFixture.getUser('GHI');
+
+      // when
+      // then
+      await expect(
+        groupService.invite(
+          user1,
+          group2.id,
+          new InviteGroupRequest(user3.userCode),
+        ),
+      ).rejects.toThrow(NoSuchUserGroupException);
+    });
+  });
+  test('자신이 속한 그룹의 그룹원 리스트를 조회한다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+      const achievement1 = await groupAchievementFixture.createGroupAchievement(
+        user1,
+        group,
+        null,
+        'user1 ga1',
+      );
+      const achievement2 = await groupAchievementFixture.createGroupAchievement(
+        user1,
+        group,
+        null,
+        'user1 ga2',
+      );
+      const achievement3 = await groupAchievementFixture.createGroupAchievement(
+        user2,
+        group,
+        null,
+        'user2 ga1',
+      );
+      // when
+      const groupUserListResponse = await groupService.getGroupUsers(
+        user1,
+        group.id,
+      );
+
+      // then
+      expect(groupUserListResponse.data.length).toEqual(2);
+      expect(groupUserListResponse.data[0].userCode).toEqual(user1.userCode);
+      expect(groupUserListResponse.data[0].avatarUrl).toEqual(user1.avatarUrl);
+      expect(groupUserListResponse.data[0].grade).toEqual(
+        UserGroupGrade.LEADER,
+      );
+      expect(groupUserListResponse.data[0].lastChallenged).toEqual(
+        dateFormat(achievement2.createdAt),
+      );
+      expect(groupUserListResponse.data[1].userCode).toEqual(user2.userCode);
+      expect(groupUserListResponse.data[1].avatarUrl).toEqual(user2.avatarUrl);
+      expect(groupUserListResponse.data[1].grade).toEqual(
+        UserGroupGrade.PARTICIPANT,
+      );
+      expect(groupUserListResponse.data[1].lastChallenged).toEqual(
+        dateFormat(achievement3.createdAt),
+      );
+    });
+  });
+
+  test('자신이 속한 그룹의 그룹원 리스트를 조회한다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+      const achievement1 = await groupAchievementFixture.createGroupAchievement(
+        user1,
+        group,
+        null,
+        'user1 ga1',
+      );
+      const achievement2 = await groupAchievementFixture.createGroupAchievement(
+        user1,
+        group,
+        null,
+        'user1 ga2',
+      );
+      const achievement3 = await groupAchievementFixture.createGroupAchievement(
+        user2,
+        group,
+        null,
+        'user2 ga1',
+      );
+      // when
+      const groupUserListResponse = await groupService.getGroupUsers(
+        user1,
+        group.id,
+      );
+
+      // then
+      expect(groupUserListResponse.data.length).toEqual(2);
+      expect(groupUserListResponse.data[0].userCode).toEqual(user1.userCode);
+      expect(groupUserListResponse.data[0].avatarUrl).toEqual(user1.avatarUrl);
+      expect(groupUserListResponse.data[0].grade).toEqual(
+        UserGroupGrade.LEADER,
+      );
+      expect(groupUserListResponse.data[0].lastChallenged).toEqual(
+        dateFormat(achievement2.createdAt),
+      );
+      expect(groupUserListResponse.data[1].userCode).toEqual(user2.userCode);
+      expect(groupUserListResponse.data[1].avatarUrl).toEqual(user2.avatarUrl);
+      expect(groupUserListResponse.data[1].grade).toEqual(
+        UserGroupGrade.PARTICIPANT,
+      );
+      expect(groupUserListResponse.data[1].lastChallenged).toEqual(
+        dateFormat(achievement3.createdAt),
+      );
+    });
+  });
+  test('자신이 속하지 않은 그룹원 리스트를 조회하려하면 NoSuchUserGroupException를 던진다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+
+      // when
+      // then
+      await expect(groupService.getGroupUsers(user2, group.id)).rejects.toThrow(
+        NoSuchUserGroupException,
+      );
+    });
+  });
+
+  test('리더는 그룹원의 권한을 변경할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+      // when
+      const assignGradeResponse = await groupService.updateGroupGrade(
+        user1,
+        group.id,
+        user2.userCode,
+        new AssignGradeRequest(UserGroupGrade.MANAGER),
+      );
+
+      // then
+      expect(assignGradeResponse.grade).toEqual(UserGroupGrade.MANAGER);
+      expect(assignGradeResponse.userCode).toEqual(user2.userCode);
+      expect(assignGradeResponse.groupId).toEqual(group.id);
+    });
+  });
+  test('리더가 아닌 그룹원이 권한 변경을 시도할 경우 OnlyLeaderAllowedAssignGradeException를 던진다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+
+      // when
+      // then
+      await expect(
+        groupService.updateGroupGrade(
+          user2,
+          group.id,
+          user1.userCode,
+          new AssignGradeRequest(UserGroupGrade.PARTICIPANT),
+        ),
+      ).rejects.toThrow(OnlyLeaderAllowedAssignGradeException);
     });
   });
 });

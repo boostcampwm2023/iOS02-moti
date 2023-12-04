@@ -26,6 +26,11 @@ import { ApiData } from '../../../common/api/api-data';
 import { GroupListResponse } from '../dto/group-list-response';
 import { ParseIntPipe } from '../../../common/pipe/parse-int.pipe';
 import { GroupLeaveResponse } from '../dto/group-leave-response.dto';
+import { InviteGroupRequest } from '../dto/invite-group-request.dto';
+import { InviteGroupResponse } from '../dto/invite-group-response';
+import { GroupUserListResponse } from '../dto/group-user-list-response';
+import { AssignGradeRequest } from '../dto/assign-grade-request.dto';
+import { AssignGradeResponse } from '../dto/assign-grade-response.dto';
 
 @Controller('/api/v1/groups')
 @ApiTags('그룹 API')
@@ -88,5 +93,75 @@ export class GroupController {
     return ApiData.success(
       await this.groupService.removeUser(user.id, groupId),
     );
+  }
+
+  @ApiOperation({
+    summary: '그룹원 초대 API',
+    description: '그룹에 사용자를 초대한다.',
+  })
+  @ApiOkResponse({
+    description: '그룹원 초대',
+    type: InviteGroupResponse,
+  })
+  @ApiBearerAuth('accessToken')
+  @Post(':groupId/users')
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  async invite(
+    @AuthenticatedUser() user: User,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Body() inviteGroupRequest: InviteGroupRequest,
+  ) {
+    return ApiData.success(
+      await this.groupService.invite(user, groupId, inviteGroupRequest),
+    );
+  }
+
+  @ApiOperation({
+    summary: '그룹원 리스트 API',
+    description: '그룹원 리스트를 조회한다.',
+  })
+  @ApiOkResponse({
+    description: '그룹원 리스트',
+    type: GroupUserListResponse,
+  })
+  @ApiBearerAuth('accessToken')
+  @Get(':groupId/users')
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  async getGroupUsers(
+    @AuthenticatedUser() user: User,
+    @Param('groupId', ParseIntPipe) groupId: number,
+  ) {
+    return ApiData.success(
+      await this.groupService.getGroupUsers(user, groupId),
+    );
+  }
+
+  @ApiOperation({
+    summary: '그룹원 권한 수정 API',
+    description: '그룹원의 권한을 수정한다.',
+  })
+  @ApiOkResponse({
+    description: '그룹원 권한 수정',
+    type: AssignGradeResponse,
+  })
+  @ApiBearerAuth('accessToken')
+  @Post(':groupId/users/:userCode/auth')
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  async assignGrade(
+    @AuthenticatedUser() user: User,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Param('userCode') targetUserCode: string,
+    @Body() inviteGroupRequest: AssignGradeRequest,
+  ) {
+    const assignGradeResponse = await this.groupService.updateGroupGrade(
+      user,
+      groupId,
+      targetUserCode,
+      inviteGroupRequest,
+    );
+    return ApiData.success(assignGradeResponse);
   }
 }
