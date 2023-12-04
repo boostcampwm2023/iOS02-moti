@@ -22,6 +22,16 @@ final class GroupInfoView: UIView {
         return imageView
     }()
     
+    private lazy var cameraIcon: UIButton = {
+        let button = UIButton()
+        button.layer.cornerRadius = cameraIconSzie / 2
+        button.setImage(SymbolImage.camera, for: .normal)
+        button.backgroundColor = .gray
+        button.tintColor = .motiBackground
+        button.alpha = 0.7
+        return button
+    }()
+    
     private let groupNameLabel: UILabel = {
         let label = UILabel()
         label.font = .largeBold
@@ -43,6 +53,10 @@ final class GroupInfoView: UIView {
         groupNameLabel.text = group.name
         if let url = group.avatarUrl {
             imageView.jf.setImage(with: url)
+        }
+        
+        if group.grade != .leader {
+            cameraIcon.isHidden = true
         }
     }
     
