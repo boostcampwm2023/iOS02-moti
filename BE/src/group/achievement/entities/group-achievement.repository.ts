@@ -2,6 +2,8 @@ import { TransactionalRepository } from '../../../config/transaction-manager/tra
 import { CustomRepository } from '../../../config/typeorm/custom-repository.decorator';
 import { GroupAchievementEntity } from './group-achievement.entity';
 import { GroupAchievement } from '../domain/group-achievement.domain';
+import { IGroupAchievementDetail } from '../index';
+import { GroupAchievementDetailResponse } from '../dto/group-achievement-detail-response';
 
 @CustomRepository(GroupAchievementEntity)
 export class GroupAchievementRepository extends TransactionalRepository<GroupAchievementEntity> {
@@ -23,5 +25,39 @@ export class GroupAchievementRepository extends TransactionalRepository<GroupAch
       .where('group_achievement.id = :id', { id })
       .getOne();
     return groupAchievementEntity?.toModel();
+  }
+
+  async findAchievementDetail(userId: number, achievementId: number) {
+    const result = await this.repository
+      .createQueryBuilder('groupAchievement')
+      .leftJoinAndSelect('groupAchievement.groupCategory', 'gc')
+      .select('groupAchievement.id', 'id')
+      .addSelect('groupAchievement.title', 'title')
+      .addSelect('groupAchievement.content', 'content')
+      .addSelect('i.imageUrl', 'imageUrl')
+      .addSelect('groupAchievement.createdAt', 'createdAt')
+      .addSelect('gc.id', 'categoryId')
+      .addSelect('gc.name', 'categoryName')
+      .addSelect('COUNT(ga.id)', 'achieveCount')
+      .addSelect('user.userCode', 'userCode')
+      .leftJoin(
+        'group_achievement',
+        'ga',
+        'COALESCE(ga.group_category_id, -1) = COALESCE(groupAchievement.group_category_id, -1) AND ga.id <= groupAchievement.id',
+      )
+      .leftJoin('image', 'i', 'i.group_achievement_id = groupAchievement.id')
+      .leftJoin('groupAchievement.user', 'user')
+      .where('groupAchievement.id = :achievementId', { achievementId })
+      .andWhere('groupAchievement.user_id = :userId', { userId })
+      .getRawOne<IGroupAchievementDetail>();
+
+    if (result.id) return new GroupAchievementDetailResponse(result);
+    return null;
+  }
+
+  async saveAchievement(achievement: GroupAchievement) {
+    const achievementEntity = GroupAchievementEntity.from(achievement);
+    const saved = await this.repository.save(achievementEntity);
+    return saved.toModel();
   }
 }
