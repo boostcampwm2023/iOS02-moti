@@ -8,12 +8,14 @@
 import UIKit
 import Core
 import Design
+import Combine
 
 final class GroupListViewController: BaseViewController<GroupListView> {
 
     // MARK: - Properties
     weak var coordinator: GroupListCoordinator?
     private let viewModel: GroupListViewModel
+    private var cancellables: Set<AnyCancellable> = []
     
     // MARK: - Init
     init(viewModel: GroupListViewModel) {
@@ -65,6 +67,7 @@ final class GroupListViewController: BaseViewController<GroupListView> {
             okAction: { [weak self] text in
                 guard let self, let text else { return }
                 Logger.debug("그룹 생성 입력: \(text)")
+                viewModel.action(.createGroup(groupName: text))
             })
         
         if let textField = textFieldAlertVC.textFields?.first {
@@ -140,5 +143,45 @@ extension GroupListViewController: UITextFieldDelegate {
         guard let text = textField.text else { return true }
         let newLength = text.count + string.count - range.length
         return newLength <= 10
+    }
+}
+
+// MARK: - Bind
+extension GroupListViewController: LoadingIndicator {
+    func bind() {
+        viewModel.groupListState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    // TODO: 스켈레톤
+                    showLoadingIndicator()
+                    break
+                case .finish:
+                    hideLoadingIndicator()
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.createGroupState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                    break
+                case .finish:
+                    hideLoadingIndicator()
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
     }
 }

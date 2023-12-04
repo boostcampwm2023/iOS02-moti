@@ -24,7 +24,10 @@ final class GroupListCoordinator: Coordinator {
     }
     
     func start() {
-        let groupVM = GroupListViewModel(fetchGroupListUseCase: .init(groupRepository: GroupRepository()))
+        let groupVM = GroupListViewModel(
+            fetchGroupListUseCase: .init(groupRepository: GroupRepository()),
+            createGroupUseCase: .init(groupRepository: GroupRepository())
+        )
         let groupListVC = GroupListViewController(viewModel: groupVM)
         groupListVC.coordinator = self
         navigationController.viewControllers = [groupListVC]

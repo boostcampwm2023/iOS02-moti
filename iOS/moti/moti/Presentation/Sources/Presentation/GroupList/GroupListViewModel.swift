@@ -17,7 +17,6 @@ final class GroupListViewModel {
     }
     
     enum GroupListState {
-        case initial
         case loading
         case finish
         case error(message: String)
@@ -41,7 +40,7 @@ final class GroupListViewModel {
         }
     }
     
-    @Published private(set) var groupListState: GroupListState = .initial
+    private(set) var groupListState = PassthroughSubject<GroupListState, Never>()
     private(set) var createGroupState = PassthroughSubject<CreateGroupState, Never>()
     
     // MARK: - Init
@@ -76,15 +75,14 @@ final class GroupListViewModel {
 // MARK: - Action
 extension GroupListViewModel {
     private func fetchGroupList() {
-        groupListState = .loading
-        
         Task {
+            groupListState.send(.loading)
             do {
                 groups = try await fetchGroupListUseCase.execute()
-                groupListState = .finish
+                groupListState.send(.finish)
             } catch {
                 Logger.error("\(#function) error: \(error.localizedDescription)")
-                groupListState = .error(message: error.localizedDescription)
+                groupListState.send(.error(message: error.localizedDescription))
             }
         }
     }
