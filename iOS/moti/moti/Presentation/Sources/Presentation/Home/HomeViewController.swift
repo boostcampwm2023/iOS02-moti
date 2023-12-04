@@ -62,7 +62,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
     }
     
     private func addTargets() {
-        layoutView.catergoryAddButton.addTarget(self, action: #selector(showCreateCategoryAlert), for: .touchUpInside)
+        layoutView.categoryAddButton.addTarget(self, action: #selector(showCreateCategoryAlert), for: .touchUpInside)
         layoutView.refreshControl.addTarget(self, action: #selector(refreshAchievementList), for: .valueChanged)
     }
     
@@ -417,11 +417,11 @@ private extension HomeViewController {
                 switch state {
                 case .none: break
                 case .loading:
-                    layoutView.catergoryAddButton.isEnabled = false
+                    layoutView.categoryAddButton.isEnabled = false
                 case .finish:
-                    layoutView.catergoryAddButton.isEnabled = true
+                    layoutView.categoryAddButton.isEnabled = true
                 case .error(let message):
-                    layoutView.catergoryAddButton.isEnabled = true
+                    layoutView.categoryAddButton.isEnabled = true
                     showErrorAlert(message: message)
                 }
             }
