@@ -28,6 +28,7 @@ import { ParseIntPipe } from '../../../common/pipe/parse-int.pipe';
 import { GroupLeaveResponse } from '../dto/group-leave-response.dto';
 import { InviteGroupRequest } from '../dto/invite-group-request.dto';
 import { InviteGroupResponse } from '../dto/invite-group-response';
+import { GroupUserListResponse } from '../dto/group-user-list-response';
 
 @Controller('/api/v1/groups')
 @ApiTags('그룹 API')
@@ -111,6 +112,27 @@ export class GroupController {
   ) {
     return ApiData.success(
       await this.groupService.invite(user, groupId, inviteGroupRequest),
+    );
+  }
+
+  @ApiOperation({
+    summary: '그룹원 리스트 API',
+    description: '그룹원 리스트를 조회한다.',
+  })
+  @ApiOkResponse({
+    description: '그룹원 리스트',
+    type: GroupUserListResponse,
+  })
+  @ApiBearerAuth('accessToken')
+  @Get(':groupId/users')
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  async getGroupUsers(
+    @AuthenticatedUser() user: User,
+    @Param('groupId', ParseIntPipe) groupId: number,
+  ) {
+    return ApiData.success(
+      await this.groupService.getGroupUsers(user, groupId),
     );
   }
 }

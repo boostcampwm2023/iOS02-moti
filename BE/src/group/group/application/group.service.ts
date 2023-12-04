@@ -17,6 +17,7 @@ import { InviteGroupResponse } from '../dto/invite-group-response';
 import { UserGroup } from '../domain/user-group.doamin';
 import { InvitePermissionDeniedException } from '../exception/invite-permission-denied.exception';
 import { DuplicatedInviteException } from '../exception/duplicated-invite.exception';
+import { GroupUserListResponse } from '../dto/group-user-list-response';
 
 @Injectable()
 export class GroupService {
@@ -45,7 +46,6 @@ export class GroupService {
   @Transactional()
   async removeUser(userId: number, groupId: number) {
     const userGroup = await this.getUserGroup(userId, groupId);
-    if (!userGroup) throw new NoSuchUserGroupException();
     if (userGroup.grade === UserGroupGrade.LEADER)
       throw new LeaderNotAllowedToLeaveException();
 
@@ -61,7 +61,7 @@ export class GroupService {
   ) {
     const userGroup = await this.getUserGroup(user.id, groupId);
 
-    this.checkValidInvite(userGroup);
+    this.checkPermission(userGroup);
     await this.checkDuplicatedInvite(inviteGroupRequest.userCode, groupId);
 
     const group = await this.groupRepository.findById(groupId);
@@ -76,11 +76,21 @@ export class GroupService {
     return new InviteGroupResponse(saved.group.id, invited.userCode);
   }
 
+  @Transactional({ readonly: true })
+  async getGroupUsers(user: User, groupId: number) {
+    await this.getUserGroup(user.id, groupId);
+    return new GroupUserListResponse(
+      await this.userRepository.findByGroupId(groupId),
+    );
+  }
+
   private async getUserGroup(userId: number, groupId: number) {
-    return await this.userGroupRepository.findOneByUserIdAndGroupId(
+    const userGroup = await this.userGroupRepository.findOneByUserIdAndGroupId(
       userId,
       groupId,
     );
+    if (!userGroup) throw new NoSuchUserGroupException();
+    return userGroup;
   }
 
   private async checkDuplicatedInvite(userCode: string, groupId: number) {
@@ -92,8 +102,7 @@ export class GroupService {
     if (userGroup) throw new DuplicatedInviteException();
   }
 
-  private checkValidInvite(userGroup: UserGroup) {
-    if (!userGroup) throw new NoSuchUserGroupException();
+  private checkPermission(userGroup: UserGroup) {
     if (
       userGroup.grade !== UserGroupGrade.LEADER &&
       userGroup.grade !== UserGroupGrade.MANAGER

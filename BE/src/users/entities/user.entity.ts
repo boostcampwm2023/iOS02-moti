@@ -3,6 +3,8 @@ import { BaseTimeEntity } from '../../common/entities/base.entity';
 import { User } from '../domain/user.domain';
 import { UsersRoleEntity } from './users-role.entity';
 import { isNullOrUndefined } from '../../common/utils/is-null-or-undefined';
+import { UserGroupEntity } from '../../group/group/entities/user-group.entity';
+import { GroupAchievementEntity } from '../../group/achievement/entities/group-achievement.entity';
 
 @Entity({ name: 'user' })
 export class UserEntity extends BaseTimeEntity {
@@ -22,6 +24,15 @@ export class UserEntity extends BaseTimeEntity {
     cascade: ['insert'],
   })
   userRoles: UsersRoleEntity[];
+
+  @OneToMany(() => UserGroupEntity, (userGroup) => userGroup.user)
+  userGroup: UserGroupEntity;
+
+  @OneToMany(
+    () => GroupAchievementEntity,
+    (groupAchievement) => groupAchievement.user,
+  )
+  groupAchievement: GroupAchievementEntity;
 
   static from(user: User): UserEntity {
     if (isNullOrUndefined(user)) return user;

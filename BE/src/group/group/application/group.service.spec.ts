@@ -313,4 +313,124 @@ describe('GroupSerivce Test', () => {
       ).rejects.toThrow(NoSuchUserGroupException);
     });
   });
+  test('자신이 속한 그룹의 그룹원 리스트를 조회한다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+      const achievement1 = await groupAchievementFixture.createGroupAchievement(
+        user1,
+        group,
+        null,
+        'user1 ga1',
+      );
+      const achievement2 = await groupAchievementFixture.createGroupAchievement(
+        user1,
+        group,
+        null,
+        'user1 ga2',
+      );
+      const achievement3 = await groupAchievementFixture.createGroupAchievement(
+        user2,
+        group,
+        null,
+        'user2 ga1',
+      );
+      // when
+      const groupUserListResponse = await groupService.getGroupUsers(
+        user1,
+        group.id,
+      );
+
+      // then
+      expect(groupUserListResponse.data.length).toEqual(2);
+      expect(groupUserListResponse.data[0].userCode).toEqual(user1.userCode);
+      expect(groupUserListResponse.data[0].avatarUrl).toEqual(user1.avatarUrl);
+      expect(groupUserListResponse.data[0].grade).toEqual(
+        UserGroupGrade.LEADER,
+      );
+      expect(groupUserListResponse.data[0].lastChallenged).toEqual(
+        dateFormat(achievement2.createdAt),
+      );
+      expect(groupUserListResponse.data[1].userCode).toEqual(user2.userCode);
+      expect(groupUserListResponse.data[1].avatarUrl).toEqual(user2.avatarUrl);
+      expect(groupUserListResponse.data[1].grade).toEqual(
+        UserGroupGrade.PARTICIPANT,
+      );
+      expect(groupUserListResponse.data[1].lastChallenged).toEqual(
+        dateFormat(achievement3.createdAt),
+      );
+    });
+  });
+
+  test('자신이 속한 그룹의 그룹원 리스트를 조회한다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+      const achievement1 = await groupAchievementFixture.createGroupAchievement(
+        user1,
+        group,
+        null,
+        'user1 ga1',
+      );
+      const achievement2 = await groupAchievementFixture.createGroupAchievement(
+        user1,
+        group,
+        null,
+        'user1 ga2',
+      );
+      const achievement3 = await groupAchievementFixture.createGroupAchievement(
+        user2,
+        group,
+        null,
+        'user2 ga1',
+      );
+      // when
+      const groupUserListResponse = await groupService.getGroupUsers(
+        user1,
+        group.id,
+      );
+
+      // then
+      expect(groupUserListResponse.data.length).toEqual(2);
+      expect(groupUserListResponse.data[0].userCode).toEqual(user1.userCode);
+      expect(groupUserListResponse.data[0].avatarUrl).toEqual(user1.avatarUrl);
+      expect(groupUserListResponse.data[0].grade).toEqual(
+        UserGroupGrade.LEADER,
+      );
+      expect(groupUserListResponse.data[0].lastChallenged).toEqual(
+        dateFormat(achievement2.createdAt),
+      );
+      expect(groupUserListResponse.data[1].userCode).toEqual(user2.userCode);
+      expect(groupUserListResponse.data[1].avatarUrl).toEqual(user2.avatarUrl);
+      expect(groupUserListResponse.data[1].grade).toEqual(
+        UserGroupGrade.PARTICIPANT,
+      );
+      expect(groupUserListResponse.data[1].lastChallenged).toEqual(
+        dateFormat(achievement3.createdAt),
+      );
+    });
+  });
+  test('자신이 속하지 않은 그룹원 리스트를 조회하려하면 NoSuchUserGroupException를 던진다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+
+      // when
+      // then
+      await expect(groupService.getGroupUsers(user2, group.id)).rejects.toThrow(
+        NoSuchUserGroupException,
+      );
+    });
+  });
 });
