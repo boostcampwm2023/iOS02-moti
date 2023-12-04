@@ -76,6 +76,9 @@ final class GroupInfoView: UIView {
 
 extension GroupInfoView {
     private func setupUI() {
+        // TODO: 그룹 프로필 편집 도입시 보여야 함
+        cameraIcon.isHidden = true
+        
         addSubview(imageView)
         imageView.atl
             .size(width: imageViewSize, height: imageViewSize)
