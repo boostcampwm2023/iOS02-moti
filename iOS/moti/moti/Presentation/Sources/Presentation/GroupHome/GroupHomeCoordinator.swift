@@ -38,4 +38,10 @@ final class GroupHomeCoordinator: Coordinator {
         groupDetailAchievementCoordinator.start(achievement: achievement, group: group)
         childCoordinators.append(groupDetailAchievementCoordinator)
     }
+    
+    func moveToGroupInfoViewController(group: Group) {
+        let groupInfoCoordinator = GroupInfoCoordinator(navigationController, self)
+        groupInfoCoordinator.start(group: group)
+        childCoordinators.append(groupInfoCoordinator)
+    }
 }

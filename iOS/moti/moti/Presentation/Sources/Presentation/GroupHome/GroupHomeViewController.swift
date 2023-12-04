@@ -156,6 +156,10 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
         } else {
             avatarImageView.backgroundColor = .primaryGray
         }
+        let avatarImageTapGesture = UITapGestureRecognizer(target: self, action: #selector(avatarImageTapAction))
+        avatarImageView.isUserInteractionEnabled = true
+        avatarImageView.addGestureRecognizer(avatarImageTapGesture)
+        
         let profileItem = UIBarButtonItem(customView: avatarImageView)
         profileItem.customView?.atl
             .size(width: avatarItemSize, height: avatarItemSize)
@@ -169,6 +173,10 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
         )
 
         navigationItem.rightBarButtonItems = [profileItem, moreItem]
+    }
+    
+    @objc private func avatarImageTapAction() {
+        coordinator?.moveToGroupInfoViewController(group: viewModel.group)
     }
     
     private func selectFirstCategory() {
