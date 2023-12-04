@@ -29,14 +29,26 @@ final class GroupMemberViewController: BaseViewController<GroupMemberView> {
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
+        title = "그룹원"
+        setupGroupMemberDataSource()
         
         bind()
         viewModel.action(.launch)
     }
     
-    private func setupUI() {
-        title = "그룹원"
+    private func setupGroupMemberDataSource() {
+        layoutView.groupMemberCollectionView.delegate = self
+        let dataSource = GroupMemberViewModel.GroupMemberDataSource.DataSource(
+            collectionView: layoutView.groupMemberCollectionView,
+            cellProvider: { collectionView, indexPath, item in
+                let cell: GroupMemberCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
+                cell.configure(with: item)
+                return cell
+            }
+        )
+        
+        let diffableDataSource = GroupMemberViewModel.GroupMemberDataSource(dataSource: dataSource)
+        viewModel.setupDataSource(diffableDataSource)
     }
     
     private func bind() {
@@ -55,4 +67,8 @@ final class GroupMemberViewController: BaseViewController<GroupMemberView> {
             }
             .store(in: &cancellables)
     }
+}
+
+extension GroupMemberViewController: UICollectionViewDelegate {
+    
 }
