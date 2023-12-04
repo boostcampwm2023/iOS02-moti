@@ -6,13 +6,27 @@ import { User } from '../../../users/domain/user.domain';
 import { RejectGroupAchievementResponse } from '../dto/reject-group-achievement-response.dto';
 import { NoSuchGroupAchievementException } from '../exception/no-such-group-achievement.exception';
 import { InvalidRejectRequestException } from '../exception/invalid-reject-request.exception';
+import { Transactional } from '../../../config/transaction-manager';
+import { GroupAchievementCreateRequest } from '../dto/group-achievement-create-request';
+import { GroupCategoryRepository } from '../../category/entities/group-category.repository';
+import { ImageRepository } from '../../../image/entities/image.repository';
+import { InvalidCategoryException } from '../../../achievement/exception/invalid-category.exception';
+import { NoUserImageException } from '../../../achievement/exception/no-user-image-exception';
+import { GroupRepository } from '../../group/entities/group.repository';
+import { NoSuchGroupUserException } from '../exception/no-such-group-user.exception';
+import { NoSuchAchievementException } from '../../../achievement/exception/no-such-achievement.exception';
 
 @Injectable()
 export class GroupAchievementService {
   constructor(
     private readonly groupAchievementRepository: GroupAchievementRepository,
+    private readonly groupCategoryRepository: GroupCategoryRepository,
+    private readonly groupRepository: GroupRepository,
+    private readonly imageRepository: ImageRepository,
     private readonly userBlockedGroupAchievementRepository: UserBlockedGroupAchievementRepository,
   ) {}
+
+  @Transactional()
   async reject(user: User, groupId: number, achievementId: number) {
     const achievement =
       await this.groupAchievementRepository.findById(achievementId);
@@ -26,5 +40,59 @@ export class GroupAchievementService {
       );
 
     return RejectGroupAchievementResponse.from(userBlockedGroupAchievement);
+  }
+
+  @Transactional()
+  async create(
+    user: User,
+    groupId: number,
+    achieveCreate: GroupAchievementCreateRequest,
+  ) {
+    const category = await this.getCategory(user.id, achieveCreate.categoryId);
+    const image = await this.getUserImage(achieveCreate.photoId, user);
+    const group = await this.getGroup(groupId, user);
+    const achievement = achieveCreate.toModel(user, group, category, image);
+    const saved =
+      await this.groupAchievementRepository.saveAchievement(achievement);
+    return this.getAchievementResponse(user.id, saved.id);
+  }
+
+  private async getCategory(userId: number, ctgId: number) {
+    if (ctgId === -1) return null;
+
+    const ctg = await this.groupCategoryRepository.findByIdAndUser(
+      userId,
+      ctgId,
+    );
+    if (!ctg) throw new InvalidCategoryException();
+    return ctg;
+  }
+
+  private async getUserImage(imageId: number, user: User) {
+    const image = await this.imageRepository.findByIdAndUserAndNotAchievement(
+      imageId,
+      user,
+    );
+
+    if (!image) throw new NoUserImageException();
+    return image;
+  }
+
+  private async getGroup(groupId: number, user: User) {
+    const group = await this.groupRepository.findByIdAndUser(groupId, user);
+    if (!group) throw new NoSuchGroupUserException();
+
+    return group;
+  }
+
+  private async getAchievementResponse(userId: number, achieveId: number) {
+    const achievement =
+      await this.groupAchievementRepository.findAchievementDetail(
+        userId,
+        achieveId,
+      );
+    if (!achievement) throw new NoSuchAchievementException();
+
+    return achievement;
   }
 }
