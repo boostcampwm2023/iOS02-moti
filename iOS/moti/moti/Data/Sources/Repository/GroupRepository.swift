@@ -31,4 +31,13 @@ public struct GroupRepository: GroupRepositoryProtocol {
         // 생성한 사람은 항상 leader
         return Group(dto: groupDTO, grade: .leader)
     }
+    
+    public func fetchGroupMemberList(requestValue: FetchGroupMemberListRequestValue) async throws -> [GroupMember] {
+        let endpoint = MotiAPI.fetchGroupMemberList(requestValue: requestValue)
+        let responseDTO = try await provider.request(with: endpoint, type: FetchGroupMemberListResponseDTO.self)
+        guard let groupMemberListDTO = responseDTO.data?.data else { throw NetworkError.decode }
+        
+        return groupMemberListDTO.map { GroupMember(dto: $0) }
+    }
+
 }
