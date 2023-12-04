@@ -8,6 +8,7 @@
 import UIKit
 import Core
 import Domain
+import Data
 
 final class GroupHomeCoordinator: Coordinator {
     public let parentCoordinator: Coordinator?
@@ -26,7 +27,10 @@ final class GroupHomeCoordinator: Coordinator {
     func start() { }
     
     func start(group: Group) {
-        let groupHomeVM = GroupHomeViewModel(group: group)
+        let groupHomeVM = GroupHomeViewModel(
+            group: group,
+            fetchAchievementListUseCase: .init(repository: GroupAchievementRepository(groupId: group.id))
+        )
         let groupHomeVC = GroupHomeViewController(viewModel: groupHomeVM)
         groupHomeVC.coordinator = self
         currentViewController = groupHomeVC

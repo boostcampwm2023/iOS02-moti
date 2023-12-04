@@ -18,6 +18,7 @@ struct AchievementListResponseDataDTO: Codable {
     let data: [AchievementSimpleDTO]?
     let count: Int?
     let next: AchievementListResponseNextDTO?
+    let category: CategoryDTO?
 }
 
 struct AchievementListResponseNextDTO: Codable {

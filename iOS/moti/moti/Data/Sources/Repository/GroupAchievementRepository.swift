@@ -25,31 +25,41 @@ public struct GroupAchievementRepository: GroupAchievementRepositoryProtocol {
         {
             "success": true,
             "data": {
+                "category": {
+                    "id": -1,
+                    "name": "미설정",
+                    "continued": 10,
+                    "lastChallenged": "2011-04-10T20:09:31Z"
+                },
                 "data": [
                     {
                         "id": 16,
-                        "thumbnailUrl": ""https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg"",
+                        "thumbnailUrl": "https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg",
                         "title": "test16",
+                        "categoryId": -1,
                         "userCode": "abcd2df"
                     },
                     {
                         "id": 15,
-                        "thumbnailUrl": ""https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg"",
+                        "thumbnailUrl": "https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg",
                         "title": "test15",
+                        "categoryId": -1,
                         "userCode": "abcd2df"
                     },
                     {
                         "id": 14,
-                        "thumbnailUrl": ""https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg"",
+                        "thumbnailUrl": "https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg",
                         "title": "test14",
+                        "categoryId": -1,
                         "userCode": "abcd2df"
                     },
                     {
                         "id": 5,
-                        "thumbnailUrl": ""https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg"",
+                        "thumbnailUrl": "https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg",
                         "title": "test13",
+                        "categoryId": -1,
                         "userCode": "abcd2df"
-                    },
+                    }
                 ],
                 "count": 4,
                 "next": {

@@ -79,6 +79,10 @@ final class GroupHomeViewModel {
             fetchCategories()
         case .fetchAchievementList(let category):
             fetchCategoryAchievementList(category: category)
+        case .fetchNextPage:
+            fetchNextAchievementList()
+        case .refreshAchievementList:
+            refreshAchievementList()
         }
     }
 }
