@@ -22,4 +22,13 @@ public struct GroupRepository: GroupRepositoryProtocol {
         
         return groupDTOs.map { Group(dto: $0) }
     }
+    
+    public func createGroup(requestValue: CreateGroupRequestValue) async throws -> Group {
+        let endpoint = MotiAPI.createGroup(requestValue: requestValue)
+        let responseDTO = try await provider.request(with: endpoint, type: CreateGroupDTO.self)
+        guard let groupDTO = responseDTO.data else { throw NetworkError.decode }
+        
+        // 생성한 사람은 항상 leader
+        return Group(dto: groupDTO, grade: .leader)
+    }
 }

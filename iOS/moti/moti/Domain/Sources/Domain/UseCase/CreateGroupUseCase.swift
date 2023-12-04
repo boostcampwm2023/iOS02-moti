@@ -25,6 +25,6 @@ public struct CreateGroupUseCase {
     }
     
     func execute(requestValue: CreateGroupRequestValue) async throws -> Group {
-        return try await groupRepository.createGroup()
+        return try await groupRepository.createGroup(requestValue: requestValue)
     }
 }
