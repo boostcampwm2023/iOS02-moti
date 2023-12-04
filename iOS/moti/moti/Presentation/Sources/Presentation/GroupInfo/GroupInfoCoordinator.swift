@@ -30,4 +30,9 @@ final class GroupInfoCoordinator: Coordinator {
         navigationController.pushViewController(groupInfoVC, animated: true)
     }
     
+    func moveToGroupMemberViewController(group: Group) {
+        let groupMemberCoordinator = GroupMemberCoordinator(navigationController, self)
+        groupMemberCoordinator.start(group: group)
+        childCoordinators.append(groupMemberCoordinator)
+    }
 }
