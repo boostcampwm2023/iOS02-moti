@@ -5,11 +5,13 @@ import { GroupRepository } from './entities/group.repository';
 import { GroupService } from './application/group.service';
 import { UserGroupRepository } from './entities/user-group.repository';
 import { GroupAvatarHolder } from './application/group-avatar.holder';
+import { UserRepository } from '../../users/entities/user.repository';
 
 @Module({
   imports: [
     CustomTypeOrmModule.forCustomRepository([
       GroupRepository,
+      UserRepository,
       UserGroupRepository,
     ]),
   ],

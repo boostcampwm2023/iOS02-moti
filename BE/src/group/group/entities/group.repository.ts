@@ -36,6 +36,15 @@ export class GroupRepository extends TransactionalRepository<GroupEntity> {
     return groupPreviews.map((groupPreview) => new GroupPreview(groupPreview));
   }
 
+  async findById(id: number) {
+    const group = await this.repository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    return group?.toModel();
+  }
+
   async findGroupByIdAndLeaderUser(user: User, id: number): Promise<Group> {
     const group = await this.repository.findOne({
       where: {

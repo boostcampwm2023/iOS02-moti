@@ -24,6 +24,10 @@ import { UserGroupGrade } from '../domain/user-group-grade';
 import { GroupLeaveResponse } from '../dto/group-leave-response.dto';
 import { NoSuchUserGroupException } from '../exception/no-such-user-group.exception';
 import { LeaderNotAllowedToLeaveException } from '../exception/leader-not-allowed-to-leave.exception';
+import { InviteGroupRequest } from '../dto/invite-group-request.dto';
+import { InviteGroupResponse } from '../dto/invite-group-response';
+import { InvitePermissionDeniedException } from '../exception/invite-permission-denied.exception';
+import { DuplicatedInviteException } from '../exception/duplicated-invite.exception';
 
 describe('GroupController', () => {
   let app: INestApplication;
@@ -288,6 +292,141 @@ describe('GroupController', () => {
           expect(res.body.message).toEqual(
             '그룹의 리더는 탈퇴를 할 수 없습니다.',
           );
+        });
+    });
+    it('잘못된 인증시 401을 반환한다.', async () => {
+      // given
+      const accessToken = 'abcd.abcd.efgh';
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get('/api/v1/groups')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('잘못된 토큰입니다.');
+        });
+    });
+    it('만료된 인증정보에 401을 반환한다.', async () => {
+      // given
+      const { accessToken } =
+        await authFixture.getExpiredAccessTokenUser('ABC');
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get('/api/v1/groups')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('만료된 토큰입니다.');
+        });
+    });
+  });
+
+  describe('그룹원을 초대할 수 있다.', () => {
+    it('성공 시 200을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      const inviteGroupResponse = new InviteGroupResponse(1, 'ABCDEF2');
+
+      when(
+        mockGroupService.invite(
+          anyOfClass(User),
+          anyNumber(),
+          anyOfClass(InviteGroupRequest),
+        ),
+      ).thenResolve(inviteGroupResponse);
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .post('/api/v1/groups/1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(new InviteGroupRequest('ABCDEF2'))
+        .expect(200)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(true);
+          expect(res.body.data).toEqual({
+            groupId: 1,
+            userCode: 'ABCDEF2',
+          });
+        });
+    });
+    it('사용자가 속한 그룹이 아닌 경우 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupService.invite(
+          anyOfClass(User),
+          anyNumber(),
+          anyOfClass(InviteGroupRequest),
+        ),
+      ).thenThrow(new NoSuchUserGroupException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .post('/api/v1/groups/1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(new InviteGroupRequest('ABCDEF2'))
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(false);
+          expect(res.body.message).toEqual('그룹의 멤버가 아닙니다.');
+        });
+    });
+    it('리더나 매니저가 아닌 경우 경우 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupService.invite(
+          anyOfClass(User),
+          anyNumber(),
+          anyOfClass(InviteGroupRequest),
+        ),
+      ).thenThrow(new InvitePermissionDeniedException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .post('/api/v1/groups/1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(new InviteGroupRequest('ABCDEF2'))
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(false);
+          expect(res.body.message).toEqual('그룹원 초대 권한이 없습니다.');
+        });
+    });
+    it('이미 초대된 유저를 초대하는 경우 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupService.invite(
+          anyOfClass(User),
+          anyNumber(),
+          anyOfClass(InviteGroupRequest),
+        ),
+      ).thenThrow(new DuplicatedInviteException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .post('/api/v1/groups/1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(new InviteGroupRequest('ABCDEF2'))
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(false);
+          expect(res.body.message).toEqual('이미 초대된 그룹원 입니다.');
         });
     });
     it('잘못된 인증시 401을 반환한다.', async () => {

@@ -54,6 +54,21 @@ describe('GroupRepository Test', () => {
     });
   });
 
+  test('그룹 단건 조회를 할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const group = await groupFixture.createGroup('Test Group', user);
+
+      // when
+      const savedGroup = await groupRepository.findById(group.id);
+
+      // then
+      expect(savedGroup.name).toEqual('Test Group');
+      expect(savedGroup.id).toEqual(group.id);
+    });
+  });
+
   test('그룹을 생성하면 생성한 유저가 리더가 된다.', async () => {
     await transactionTest(dataSource, async () => {
       // given
