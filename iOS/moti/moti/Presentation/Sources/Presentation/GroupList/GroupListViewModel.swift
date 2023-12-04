@@ -23,8 +23,8 @@ final class GroupListViewModel {
 
     typealias GroupDataSource = ListDiffableDataSource<Group>
     
+    private let fetchGroupListUseCase: FetchGroupListUseCase
     private var groupDataSource: GroupDataSource?
-
     private var groups: [Group] = [] {
         didSet {
             groupDataSource?.update(data: groups)
@@ -33,8 +33,8 @@ final class GroupListViewModel {
     
     @Published private(set) var groupListState: GroupListState = .initial
     
-    init() {
-        
+    init(fetchGroupListUseCase: FetchGroupListUseCase) {
+        self.fetchGroupListUseCase = fetchGroupListUseCase
     }
     
     func setupGroupDataSource(_ dataSource: GroupDataSource) {
@@ -60,8 +60,13 @@ extension GroupListViewModel {
         groupListState = .loading
         
         Task {
-            groups = []
-            groupListState = .finish
+            do {
+                groups = try await fetchGroupListUseCase.excute()
+                groupListState = .finish
+            } catch {
+                Logger.error("\(#function) error: \(error.localizedDescription)")
+                groupListState = .error(message: error.localizedDescription)
+            }
         }
     }
 }

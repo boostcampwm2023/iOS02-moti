@@ -11,6 +11,10 @@ import Domain
 struct FetchGroupListDTO: ResponseDataDTO {
     let success: Bool?
     let message: String?
+    let data: FetchGroupListDataDTO?
+}
+
+struct FetchGroupListDataDTO: Codable {
     let data: [GroupDTO]?
 }
 
