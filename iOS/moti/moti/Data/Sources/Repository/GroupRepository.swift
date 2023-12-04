@@ -17,8 +17,10 @@ public struct GroupRepository: GroupRepositoryProtocol {
     
     public func fetchGroupList() async throws -> [Group] {
         let endpoint = MotiAPI.fetchGroupList
+        let responseDTO = try await provider.request(with: endpoint, type: FetchGroupListDTO.self)
         
+        guard let groupDTOs = responseDTO.data else { throw NetworkError.decode }
         
-        return []
+        return groupDTOs.map { Group(dto: $0) }
     }
 }
