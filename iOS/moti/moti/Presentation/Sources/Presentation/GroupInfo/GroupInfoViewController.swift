@@ -14,10 +14,14 @@ final class GroupInfoViewController: BaseViewController<GroupInfoView> {
     // MARK: - Properties
     weak var coordinator: GroupInfoCoordinator?
     private let group: Group
+    private let dataSource = GroupInfoTableViewDataSource()
     
     // MARK: - Init
     init(group: Group) {
         self.group = group
+        if group.grade == .leader {
+            dataSource.appendLeaderSection()
+        }
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -31,6 +35,8 @@ final class GroupInfoViewController: BaseViewController<GroupInfoView> {
         
         title = "그룹 정보"
         layoutView.configure(group: group)
+        layoutView.tableView.delegate = self
+        layoutView.tableView.dataSource = dataSource
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -53,3 +59,6 @@ final class GroupInfoViewController: BaseViewController<GroupInfoView> {
     }
 }
 
+extension GroupInfoViewController: UITableViewDelegate {
+    
+}
