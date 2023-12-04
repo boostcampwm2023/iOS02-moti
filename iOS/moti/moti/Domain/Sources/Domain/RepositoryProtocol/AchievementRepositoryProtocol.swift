@@ -28,3 +28,30 @@ public protocol AchievementRepositoryProtocol {
         requestValue: PostAchievementRequestValue
     ) async throws -> Achievement
 }
+
+public protocol GroupAchievementRepositoryProtocol {
+    func fetchAchievementList(
+        requestValue: FetchAchievementListRequestValue?,
+        groupId: Int
+    ) async throws -> ([Achievement], FetchAchievementListRequestValue?)
+    
+    func deleteAchievement(
+        requestValue: DeleteAchievementRequestValue,
+        groupId: Int
+    ) async throws -> Bool
+    
+    func fetchDetailAchievement(
+        requestValue: FetchDetailAchievementRequestValue,
+        groupId: Int
+    ) async throws -> Achievement
+    
+    func updateAchievement(
+        requestValue: UpdateAchievementRequestValue,
+        groupId: Int
+    ) async throws -> Bool
+    
+    func postAchievement(
+        requestValue: PostAchievementRequestValue,
+        groupId: Int
+    ) async throws -> Achievement
+}

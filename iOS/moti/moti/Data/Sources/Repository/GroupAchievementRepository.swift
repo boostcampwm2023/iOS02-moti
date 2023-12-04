@@ -9,7 +9,7 @@ import Foundation
 import Domain
 import Core
 
-public struct GroupAchievementRepository: AchievementRepositoryProtocol {
+public struct GroupAchievementRepository: GroupAchievementRepositoryProtocol {
     private let provider: ProviderProtocol
     
     public init(provider: ProviderProtocol = Provider()) {
@@ -17,9 +17,10 @@ public struct GroupAchievementRepository: AchievementRepositoryProtocol {
     }
     
     public func fetchAchievementList(
-        requestValue: FetchAchievementListRequestValue? = nil
+        requestValue: FetchAchievementListRequestValue? = nil,
+        groupId: Int
     ) async throws -> ([Achievement], FetchAchievementListRequestValue?) {
-        let endpoint = MotiAPI.fetchAchievementList(requestValue: requestValue)
+        let endpoint = MotiAPI.fetchGroupAchievementList(requestValue: requestValue, groupId: groupId)
         let responseDTO = try await provider.request(with: endpoint, type: AchievementListResponseDTO.self)
         
         guard let achievementListDataDTO = responseDTO.data else { throw NetworkError.decode }
@@ -39,32 +40,32 @@ public struct GroupAchievementRepository: AchievementRepositoryProtocol {
         }
     }
     
-    public func deleteAchievement(requestValue: DeleteAchievementRequestValue) async throws -> Bool {
-        let endpoint = MotiAPI.deleteAchievement(requestValue: requestValue)
+    public func deleteAchievement(requestValue: DeleteAchievementRequestValue, groupId: Int) async throws -> Bool {
+        let endpoint = MotiAPI.deleteGroupAchievement(requestValue: requestValue, groupId: groupId)
         let responseDTO = try await provider.request(with: endpoint, type: DeleteAchievementResponseDTO.self)
         
         guard let isSuccess = responseDTO.success else { throw NetworkError.decode }
         return isSuccess
     }
     
-    public func fetchDetailAchievement(requestValue: FetchDetailAchievementRequestValue) async throws -> Achievement {
-        let endpoint = MotiAPI.fetchDetailAchievement(requestValue: requestValue)
+    public func fetchDetailAchievement(requestValue: FetchDetailAchievementRequestValue, groupId: Int) async throws -> Achievement {
+        let endpoint = MotiAPI.fetchGroupDetailAchievement(requestValue: requestValue, groupId: groupId)
         let responseDTO = try await provider.request(with: endpoint, type: DetailAchievementResponseDTO.self)
         
         guard let detailAchievementDTO = responseDTO.data else { throw NetworkError.decode }
         return Achievement(dto: detailAchievementDTO)
     }
     
-    public func updateAchievement(requestValue: UpdateAchievementRequestValue) async throws -> Bool {
-        let endpoint = MotiAPI.updateAchievement(requestValue: requestValue)
+    public func updateAchievement(requestValue: UpdateAchievementRequestValue, groupId: Int) async throws -> Bool {
+        let endpoint = MotiAPI.updateGroupAchievement(requestValue: requestValue, groupId: groupId)
         let responseDTO = try await provider.request(with: endpoint, type: UpdateAchievementResponseDTO.self)
         
         guard let isSuccess = responseDTO.success else { throw NetworkError.decode }
         return isSuccess
     }
     
-    public func postAchievement(requestValue: PostAchievementRequestValue) async throws -> Achievement {
-        let endpoint = MotiAPI.postAchievement(requestValue: requestValue)
+    public func postAchievement(requestValue: PostAchievementRequestValue, groupId: Int) async throws -> Achievement {
+        let endpoint = MotiAPI.postGroupAchievement(requestValue: requestValue, groupId: groupId)
         let responseDTO = try await provider.request(with: endpoint, type: DetailAchievementResponseDTO.self)
 
         guard let detailAchievementDataDTO = responseDTO.data else { throw NetworkError.decode }
