@@ -20,7 +20,7 @@ public struct GroupAchievementRepository: GroupAchievementRepositoryProtocol {
     
     public func fetchAchievementList(
         requestValue: FetchAchievementListRequestValue? = nil
-    ) async throws -> ([Achievement], FetchAchievementListRequestValue?) {
+    ) async throws -> AchievementListItem {
         let sampleJson = """
         {
             "success": true,
@@ -90,9 +90,9 @@ public struct GroupAchievementRepository: GroupAchievementRepositoryProtocol {
                 whereIdLessThan: nextDTO.whereIdLessThan ?? -1
             )
             
-            return (achievements, next)
+            return AchievementListItem(achievements: achievements, next: next)
         } else {
-            return (achievements, nil)
+            return AchievementListItem(achievements: achievements)
         }
     }
     

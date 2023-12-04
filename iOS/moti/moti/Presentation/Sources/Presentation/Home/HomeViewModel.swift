@@ -260,16 +260,16 @@ private extension HomeViewModel {
         nextAchievementTask = Task {
             do {
                 achievementListState = .loading
-                let (newAchievements, next) = try await fetchAchievementListUseCase.execute(requestValue: requestValue)
+                let achievementListItem = try await fetchAchievementListUseCase.execute(requestValue: requestValue)
                 let isFirstRequest = requestValue?.whereIdLessThan == nil
                 if isFirstRequest {
-                    achievements = newAchievements
+                    achievements = achievementListItem.achievements
                 } else {
                     // 다음 페이지 요청이면 Append
-                    achievements.append(contentsOf: newAchievements)
+                    achievements.append(contentsOf: achievementListItem.achievements)
                 }
                 
-                nextRequestValue = next
+                nextRequestValue = achievementListItem.next
                 achievementListState = .finish
             } catch {
                 if let nextAchievementTask, nextAchievementTask.isCancelled {
