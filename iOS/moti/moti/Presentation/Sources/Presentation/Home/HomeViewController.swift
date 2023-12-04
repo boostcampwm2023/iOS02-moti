@@ -47,7 +47,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
         
         viewModel.action(.launch)
     }
-    
+
     // MARK: - Methods
     func deleteAchievementDataSourceItem(achievementId: Int) {
         viewModel.action(.deleteAchievementDataSourceItem(achievementId: achievementId))
@@ -59,6 +59,10 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
     
     func achievementDidPosted(newAchievement: Achievement) {
         viewModel.action(.postAchievement(newAchievement: newAchievement))
+        
+        let celebrateVC = CelebrateViewController(achievement: newAchievement)
+        celebrateVC.modalPresentationStyle = .fullScreen
+        present(celebrateVC, animated: false)
     }
     
     private func addTargets() {
