@@ -83,4 +83,8 @@ export const ERROR_INFO = {
     statusCode: 400,
     message: '유효하지 않은 차단 요청입니다.',
   },
+  NO_SUCH_GROUP_USER: {
+    statusCode: 400,
+    message: '유저가 속한 그룹이 아닙니다.',
+  },
 } as const;
