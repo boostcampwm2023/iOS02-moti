@@ -11,14 +11,21 @@ import Domain
 
 final class GroupInfoView: UIView {
     
+    let imageViewSize: CGFloat = 130
     // MARK: - Views
-    private let imageView: UIImageView = {
+    private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.cornerRadius = imageViewSize / 2
         imageView.backgroundColor = .primaryDarkGray
         imageView.image = MotiImage.skeleton
-        imageView.clipsToBounds = true
         return imageView
+    }()
+    
+    private let groupNameLabel: UILabel = {
+        let label = UILabel()
+        label.font = .largeBold
+        return label
     }()
     
     // MARK: - Init
@@ -33,6 +40,7 @@ final class GroupInfoView: UIView {
     }
     
     func configure(group: Group) {
+        groupNameLabel.text = group.name
         if let url = group.avatarUrl {
             imageView.jf.setImage(with: url)
         }
@@ -48,6 +56,13 @@ extension GroupInfoView {
     private func setupUI() {
         addSubview(imageView)
         imageView.atl
-            .center(of: self)
+            .size(width: imageViewSize, height: imageViewSize)
+            .top(equalTo: safeAreaLayoutGuide.topAnchor, constant: 30)
+            .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
+        
+        addSubview(groupNameLabel)
+        groupNameLabel.atl
+            .top(equalTo: imageView.bottomAnchor, constant: 20)
+            .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
     }
 }
