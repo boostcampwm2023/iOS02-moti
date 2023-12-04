@@ -6,6 +6,7 @@ import { User } from '../../../users/domain/user.domain';
 import { RejectGroupAchievementResponse } from '../dto/reject-group-achievement-response.dto';
 import { NoSuchGroupAchievementException } from '../exception/no-such-group-achievement.exception';
 import { InvalidRejectRequestException } from '../exception/invalid-reject-request.exception';
+import { Transactional } from '../../../config/transaction-manager';
 
 @Injectable()
 export class GroupAchievementService {
@@ -13,6 +14,7 @@ export class GroupAchievementService {
     private readonly groupAchievementRepository: GroupAchievementRepository,
     private readonly userBlockedGroupAchievementRepository: UserBlockedGroupAchievementRepository,
   ) {}
+  @Transactional()
   async reject(user: User, groupId: number, achievementId: number) {
     const achievement =
       await this.groupAchievementRepository.findById(achievementId);
