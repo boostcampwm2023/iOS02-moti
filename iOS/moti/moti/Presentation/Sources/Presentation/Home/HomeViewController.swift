@@ -62,19 +62,25 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
     }
     
     private func addTargets() {
-        layoutView.catergoryAddButton.addTarget(self, action: #selector(showCreateCategoryAlert), for: .touchUpInside)
+        layoutView.categoryAddButton.addTarget(self, action: #selector(showCreateCategoryAlert), for: .touchUpInside)
         layoutView.refreshControl.addTarget(self, action: #selector(refreshAchievementList), for: .valueChanged)
     }
     
     @objc private func showCreateCategoryAlert() {
-        showTextFieldAlert(
+        let textFieldAlertVC = AlertFactory.makeTextFieldAlert(
             title: "추가할 카테고리 이름을 입력하세요.",
             okTitle: "생성",
-            placeholder: "카테고리 이름은 최대 10글자입니다."
-        ) { [weak self] text in
-            guard let self, let text else { return }
-            viewModel.action(.addCategory(name: text))
+            placeholder: "카테고리 이름은 최대 10글자입니다.",
+            okAction: { [weak self] text in
+                guard let self, let text else { return }
+                viewModel.action(.addCategory(name: text))
+            })
+        
+        if let textField = textFieldAlertVC.textFields?.first {
+            textField.delegate = self
         }
+        
+        present(textFieldAlertVC, animated: true)
     }
     
     @objc private func refreshAchievementList() {
@@ -417,14 +423,23 @@ private extension HomeViewController {
                 switch state {
                 case .none: break
                 case .loading:
-                    layoutView.catergoryAddButton.isEnabled = false
+                    layoutView.categoryAddButton.isEnabled = false
                 case .finish:
-                    layoutView.catergoryAddButton.isEnabled = true
+                    layoutView.categoryAddButton.isEnabled = true
                 case .error(let message):
-                    layoutView.catergoryAddButton.isEnabled = true
+                    layoutView.categoryAddButton.isEnabled = true
                     showErrorAlert(message: message)
                 }
             }
             .store(in: &cancellables)
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension HomeViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let text = textField.text else { return true }
+        let newLength = text.count + string.count - range.length
+        return newLength <= 10
     }
 }

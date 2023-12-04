@@ -11,6 +11,7 @@ import { AchievementEntity } from '../../achievement/entities/achievement.entity
 import { Image } from '../domain/image.domain';
 import { UserEntity } from '../../users/entities/user.entity';
 import { isNullOrUndefined } from '../../common/utils/is-null-or-undefined';
+import { GroupAchievementEntity } from '../../group/achievement/entities/group-achievement.entity';
 
 @Entity({ name: 'image' })
 export class ImageEntity {
@@ -38,6 +39,11 @@ export class ImageEntity {
   @JoinColumn({ name: 'achievement_id', referencedColumnName: 'id' })
   achievement: AchievementEntity;
 
+  @Index()
+  @OneToOne(() => GroupAchievementEntity, { nullable: true })
+  @JoinColumn({ name: 'group_achievement_id', referencedColumnName: 'id' })
+  groupAchievement: GroupAchievementEntity;
+
   static from(image: Image): ImageEntity {
     if (isNullOrUndefined(image)) return image;
 
@@ -48,6 +54,9 @@ export class ImageEntity {
     imageEntity.thumbnailUrl = image.thumbnailUrl;
     imageEntity.imageKey = image.imageKey;
     imageEntity.achievement = AchievementEntity.strictFrom(image.achievement);
+    imageEntity.groupAchievement = GroupAchievementEntity.strictFrom(
+      image.groupAchievement,
+    );
     imageEntity.user = UserEntity.from(image.user);
     return imageEntity;
   }

@@ -26,6 +26,7 @@ export class AchievementCreateRequest {
     { allowNaN: false, allowInfinity: false },
     { message: '사진을 선택해주세요' },
   )
+  @ApiProperty({ description: 'photoId' })
   photoId: number;
 
   constructor(

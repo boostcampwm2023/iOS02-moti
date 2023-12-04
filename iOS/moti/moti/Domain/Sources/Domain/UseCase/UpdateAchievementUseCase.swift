@@ -69,7 +69,8 @@ public struct UpdateAchievementUseCase {
             title: newData.title,
             imageURL: oldAchievement.imageURL, 
             body: newData.content,
-            date: achievementDate
+            date: achievementDate,
+            userCode: oldAchievement.userCode
         )
         return (true, updatedAchievement)
     }

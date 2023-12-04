@@ -26,6 +26,7 @@ public struct Achievement: Hashable {
     public let imageURL: URL?
     public var body: String?
     public let date: Date?
+    public let userCode: String
     
     public init(
         id: Int,
@@ -33,7 +34,8 @@ public struct Achievement: Hashable {
         title: String,
         imageURL: URL?,
         body: String?,
-        date: Date
+        date: Date,
+        userCode: String? = nil
     ) {
         self.id = id
         self.category = category
@@ -42,13 +44,19 @@ public struct Achievement: Hashable {
         self.imageURL = imageURL
         self.body = body
         self.date = date
+        if let userCode = userCode {
+            self.userCode = userCode
+        } else {
+            self.userCode = UserDefaults.standard.readString(key: .userCode) ?? ""
+        }
     }
     
     public init(
         id: Int,
         title: String,
         imageURL: URL?,
-        categoryId: Int
+        categoryId: Int,
+        userCode: String? = nil
     ) {
         self.id = id
         self.category = nil
@@ -57,11 +65,16 @@ public struct Achievement: Hashable {
         self.imageURL = imageURL
         self.body = nil
         self.date = nil
+        if let userCode = userCode {
+            self.userCode = userCode
+        } else {
+            self.userCode = UserDefaults.standard.readString(key: .userCode) ?? ""
+        }
     }
 }
 
 public extension Achievement {
     static func makeSkeleton() -> Achievement {
-        return .init(id: -(UUID().hashValue), title: "", imageURL: nil, categoryId: 0)
+        return .init(id: -(UUID().hashValue), title: "", imageURL: nil, categoryId: 0, userCode: "")
     }
 }

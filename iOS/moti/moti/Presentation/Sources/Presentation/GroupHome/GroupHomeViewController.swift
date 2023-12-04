@@ -42,29 +42,29 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
     }
     
     private func bind() {
-        viewModel.$achievementState
+        viewModel.achievementListState
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
                 // state 에 따른 뷰 처리 - 스켈레톤 뷰, fetch 에러 뷰 등
                 Logger.debug(state)
                 switch state {
+                case .loading:
+                    break
                 case .finish:
                     break
                 case .error(let message):
                     Logger.error("Fetch Achievement Error: \(message)")
-                default: break
                 }
-                
             }
             .store(in: &cancellables)
         
-        viewModel.$categoryListState
+        viewModel.categoryListState
             .receive(on: DispatchQueue.main)
             .sink { [weak self] categoryState in
                 guard let self else { return }
                 switch categoryState {
-                case .initial:
+                case .loading:
                     // TODO: 스켈레톤
                     break
                 case .finish:
@@ -79,18 +79,24 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
     
     // MARK: - Actions
     private func addTargets() {
-        layoutView.catergoryAddButton.addTarget(self, action: #selector(showAddGroupCategoryAlert), for: .touchUpInside)
+        layoutView.categoryAddButton.addTarget(self, action: #selector(showAddGroupCategoryAlert), for: .touchUpInside)
     }
     
     @objc private func showAddGroupCategoryAlert() {
-        showTextFieldAlert(
+        let textFieldAlertVC = AlertFactory.makeTextFieldAlert(
             title: "추가할 카테고리 이름을 입력하세요.",
             okTitle: "생성",
-            placeholder: "카테고리 이름은 최대 10글자입니다."
-        ) { [weak self] text in
-            guard let self, let text else { return }
-            Logger.debug("그룹 카테고리 생성 입력: \(text)")
+            placeholder: "카테고리 이름은 최대 10글자입니다.",
+            okAction: { [weak self] text in
+                guard let self, let text else { return }
+                Logger.debug("그룹 카테고리 생성 입력: \(text)")
+            })
+        
+        if let textField = textFieldAlertVC.textFields?.first {
+            textField.delegate = self
         }
+        
+        present(textFieldAlertVC, animated: true)
     }
 
     // MARK: - Setup
@@ -156,6 +162,10 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
         } else {
             avatarImageView.backgroundColor = .primaryGray
         }
+        let avatarImageTapGesture = UITapGestureRecognizer(target: self, action: #selector(avatarImageTapAction))
+        avatarImageView.isUserInteractionEnabled = true
+        avatarImageView.addGestureRecognizer(avatarImageTapGesture)
+        
         let profileItem = UIBarButtonItem(customView: avatarImageView)
         profileItem.customView?.atl
             .size(width: avatarItemSize, height: avatarItemSize)
@@ -169,6 +179,10 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
         )
 
         navigationItem.rightBarButtonItems = [profileItem, moreItem]
+    }
+    
+    @objc private func avatarImageTapAction() {
+        coordinator?.moveToGroupInfoViewController(group: viewModel.group)
     }
     
     private func selectFirstCategory() {
@@ -235,4 +249,13 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         cell.cancelDownloadImage()
     }
 
+}
+
+// MARK: - UITextFieldDelegate
+extension GroupHomeViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let text = textField.text else { return true }
+        let newLength = text.count + string.count - range.length
+        return newLength <= 10
+    }
 }

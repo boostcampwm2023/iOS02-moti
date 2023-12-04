@@ -4,11 +4,17 @@ import { GroupAchievementService } from './application/group-achievement.service
 import { GroupAchievementController } from './controller/group-achievement.controller';
 import { Module } from '@nestjs/common';
 import { UserBlockedGroupAchievementRepository } from './entities/user-blocked-group-achievement.repository';
+import { GroupCategoryRepository } from '../category/entities/group-category.repository';
+import { GroupRepository } from '../group/entities/group.repository';
+import { ImageRepository } from '../../image/entities/image.repository';
 
 @Module({
   imports: [
     CustomTypeOrmModule.forCustomRepository([
       GroupAchievementRepository,
+      GroupCategoryRepository,
+      GroupRepository,
+      ImageRepository,
       UserBlockedGroupAchievementRepository,
     ]),
   ],

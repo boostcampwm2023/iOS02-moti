@@ -2,6 +2,7 @@ import { Achievement } from '../../achievement/domain/achievement.domain';
 import { User } from '../../users/domain/user.domain';
 import { FileStore, UploadFile } from '../../common/application/file-store';
 import { File } from '../../common/application/file-store';
+import { GroupAchievement } from '../../group/achievement/domain/group-achievement.domain';
 
 export class Image {
   id: number;
@@ -9,8 +10,9 @@ export class Image {
   originalName: string;
   imageUrl: string;
   thumbnailUrl: string = null;
-  achievement: Achievement;
   imageKey: string;
+  achievement: Achievement;
+  groupAchievement: GroupAchievement;
 
   async uploadOriginalImage(
     file: File,

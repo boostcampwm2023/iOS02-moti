@@ -1,7 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthTestModule } from '../../../../test/auth/auth-test.module';
 import { AppModule } from '../../../app.module';
-import { anyNumber, anyOfClass, instance, mock, when } from 'ts-mockito';
+import {
+  anyNumber,
+  anyOfClass,
+  anything,
+  instance,
+  mock,
+  when,
+} from 'ts-mockito';
 import { AuthFixture } from '../../../../test/auth/auth-fixture';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { validationPipeOptions } from '../../../config/validation';
@@ -14,6 +21,9 @@ import { User } from '../../../users/domain/user.domain';
 import { InvalidRejectRequestException } from '../exception/invalid-reject-request.exception';
 import { NoSuchGroupAchievementException } from '../exception/no-such-group-achievement.exception';
 import { GroupAchievementService } from '../application/group-achievement.service';
+import { InvalidCategoryException } from '../../../achievement/exception/invalid-category.exception';
+import { NoUserImageException } from '../../../achievement/exception/no-user-image-exception';
+import { GroupAchievementDetailResponse } from '../dto/group-achievement-detail-response';
 
 describe('GroupAchievementController', () => {
   let app: INestApplication;
@@ -161,6 +171,162 @@ describe('GroupAchievementController', () => {
         .expect((res: request.Response) => {
           expect(res.body.success).toBe(false);
           expect(res.body.message).toBe('만료된 토큰입니다.');
+        });
+    });
+  });
+
+  describe('create는 달성기록을 생성할 수 있다.', () => {
+    it('성공 시 200을 반환한다.', async () => {
+      // given
+      const { accessToken, user } =
+        await authFixture.getAuthenticatedUser('ABC');
+
+      const achievementDetail = new GroupAchievementDetailResponse({
+        id: 1004,
+        title: '다이어트 1일차',
+        content: '다이어트 1일차입니다.',
+        imageUrl: 'file://abcd-efgh-ijkl-mnop.jpg',
+        categoryId: 2,
+        categoryName: '다이어트',
+        createdAt: new Date(),
+        achieveCount: 2,
+        userCode: user.userCode,
+      });
+
+      when(
+        mockGroupAchievementService.create(anything(), anything(), anything()),
+      ).thenResolve(achievementDetail);
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .post('/api/v1/groups/1/achievements')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          title: '다이어트 1일차',
+          content: '다이어트 1일차입니다.',
+          categoryId: 2,
+          photoId: 3,
+        })
+        .expect(201)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(true);
+          expect(res.body.data).toEqual(achievementDetail);
+        });
+    });
+
+    it('잘못된 create 요청시 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .post('/api/v1/groups/1/achievements')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.data.title).toBe('잘못된 제목입니다.');
+          expect(res.body.data.content).toBe('잘못된 내용입니다.');
+          expect(res.body.data.categoryId).toBe('카테고리를 선택해주세요');
+        });
+    });
+
+    it('잘못된 인증시 401을 반환한다.', async () => {
+      // given
+      const accessToken = 'abcd.abcd.efgh';
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .post('/api/v1/groups/1/achievements')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          title: '다이어트 1일차',
+          content: '다이어트 1일차입니다.',
+          categoryId: 2,
+          photoId: 3,
+        })
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('잘못된 토큰입니다.');
+        });
+    });
+
+    it('만료된 인증정보에 401을 반환한다.', async () => {
+      // given
+      const { accessToken } =
+        await authFixture.getExpiredAccessTokenUser('ABC');
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .post('/api/v1/groups/1/achievements')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          title: '다이어트 1일차',
+          content: '다이어트 1일차입니다.',
+          categoryId: 2,
+          photoId: 3,
+        })
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('만료된 토큰입니다.');
+        });
+    });
+
+    it('잘못된 카테고리 요청시 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupAchievementService.create(anything(), anything(), anything()),
+      ).thenThrow(new InvalidCategoryException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .post('/api/v1/groups/1/achievements')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          title: '다이어트 1일차',
+          content: '다이어트 1일차입니다.',
+          categoryId: 100,
+          photoId: 3,
+        })
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('유효하지 않은 카테고리입니다.');
+        });
+    });
+
+    it('잘못된 이미지 요청시 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupAchievementService.create(anything(), anything(), anything()),
+      ).thenThrow(new NoUserImageException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .post('/api/v1/groups/1/achievements')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({
+          title: '다이어트 1일차',
+          content: '다이어트 1일차입니다.',
+          categoryId: 2,
+          photoId: 100,
+        })
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('이미지를 찾을 수 없습니다.');
         });
     });
   });

@@ -10,7 +10,7 @@ import Foundation
 public protocol AchievementRepositoryProtocol {
     func fetchAchievementList(
         requestValue: FetchAchievementListRequestValue?
-    ) async throws -> ([Achievement], FetchAchievementListRequestValue?)
+    ) async throws -> AchievementListItem
     
     func deleteAchievement(
         requestValue: DeleteAchievementRequestValue
@@ -27,4 +27,8 @@ public protocol AchievementRepositoryProtocol {
     func postAchievement(
         requestValue: PostAchievementRequestValue
     ) async throws -> Achievement
+}
+
+public protocol GroupAchievementRepositoryProtocol: AchievementRepositoryProtocol {
+    var groupId: Int { get }
 }

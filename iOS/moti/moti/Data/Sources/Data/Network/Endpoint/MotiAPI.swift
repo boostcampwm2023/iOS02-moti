@@ -9,18 +9,30 @@ import Foundation
 import Domain
 
 enum MotiAPI: EndpointProtocol {
+    // 공용
     case version
     case login(requestValue: LoginRequestValue)
     case autoLogin(requestValue: AutoLoginRequestValue)
+    case saveImage(requestValue: SaveImageRequestValue)
+    // 개인
     case fetchAchievementList(requestValue: FetchAchievementListRequestValue?)
     case fetchCategoryList
     case addCategory(requestValue: AddCategoryRequestValue)
     case fetchDetailAchievement(requestValue: FetchDetailAchievementRequestValue)
-    case saveImage(requestValue: SaveImageRequestValue)
     case deleteAchievement(requestValue: DeleteAchievementRequestValue)
     case updateAchievement(requestValue: UpdateAchievementRequestValue)
     case postAchievement(requestValue: PostAchievementRequestValue)
-    
+    // 그룹
+    case fetchGroupList
+    case createGroup(requestValue: CreateGroupRequestValue)
+    case fetchGroupAchievementList(requestValue: FetchAchievementListRequestValue?, groupId: Int)
+    case fetchGroupCategoryList(groupId: Int)
+    case addGroupCategory(requestValue: AddCategoryRequestValue, groupId: Int)
+    case fetchGroupDetailAchievement(requestValue: FetchDetailAchievementRequestValue, groupId: Int)
+    case deleteGroupAchievement(requestValue: DeleteAchievementRequestValue, groupId: Int)
+    case updateGroupAchievement(requestValue: UpdateAchievementRequestValue, groupId: Int)
+    case postGroupAchievement(requestValue: PostAchievementRequestValue, groupId: Int)
+
     private var keychainStorage: KeychainStorageProtocol {
         return KeychainStorage.shared
     }
@@ -48,6 +60,22 @@ extension MotiAPI {
         case .deleteAchievement(let requestValue): return "/achievements/\(requestValue.id)"
         case .updateAchievement(let requestValue): return "/achievements/\(requestValue.id)"
         case .postAchievement: return "/achievements"
+        case .fetchGroupList: return "/groups"
+        case .createGroup: return "/groups"
+        case .fetchGroupAchievementList(_, let groupId):
+            return "/groups/\(groupId)/achievements"
+        case .fetchGroupCategoryList(let groupId):
+            return "/groups/\(groupId)/categories"
+        case .addGroupCategory(_, let groupId):
+            return "/groups/\(groupId)/categories"
+        case .fetchGroupDetailAchievement(let requestValue, let groupId):
+            return "/groups/\(groupId)/achievements/\(requestValue.id)"
+        case .deleteGroupAchievement(let requestValue, let groupId):
+            return "/groups/\(groupId)/achievements/\(requestValue.id)"
+        case .updateGroupAchievement(let requestValue, let groupId):
+            return "/groups/\(groupId)/achievements/\(requestValue.id)"
+        case .postGroupAchievement(_, let groupId):
+            return "/groups/\(groupId)/achievements"
         }
     }
     
@@ -64,6 +92,15 @@ extension MotiAPI {
         case .deleteAchievement: return .delete
         case .updateAchievement: return .put
         case .postAchievement: return .post
+        case .fetchGroupList: return .get
+        case .createGroup: return .post
+        case .fetchGroupAchievementList: return .get
+        case .fetchGroupCategoryList: return .get
+        case .addGroupCategory: return .post
+        case .fetchGroupDetailAchievement: return .get
+        case .deleteGroupAchievement: return .delete
+        case .updateGroupAchievement: return .put
+        case .postGroupAchievement: return .post
         }
     }
     
@@ -87,6 +124,14 @@ extension MotiAPI {
         case .updateAchievement(let requestValue):
             return requestValue.body
         case .postAchievement(let requestValue):
+            return requestValue
+        case .createGroup(let requestValue):
+            return requestValue
+        case .addGroupCategory(let requestValue, _):
+            return requestValue
+        case .updateGroupAchievement(let requestValue, _):
+            return requestValue.body
+        case .postGroupAchievement(let requestValue, _):
             return requestValue
         default:
             return nil
