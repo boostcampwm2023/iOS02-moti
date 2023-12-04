@@ -83,14 +83,20 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
     }
     
     @objc private func showAddGroupCategoryAlert() {
-        showTextFieldAlert(
+        let textFieldAlertVC = AlertFactory.makeTextFieldAlert(
             title: "추가할 카테고리 이름을 입력하세요.",
             okTitle: "생성",
-            placeholder: "카테고리 이름은 최대 10글자입니다."
-        ) { [weak self] text in
-            guard let self, let text else { return }
-            Logger.debug("그룹 카테고리 생성 입력: \(text)")
+            placeholder: "카테고리 이름은 최대 10글자입니다.",
+            okAction: { [weak self] text in
+                guard let self, let text else { return }
+                Logger.debug("그룹 카테고리 생성 입력: \(text)")
+            })
+        
+        if let textField = textFieldAlertVC.textFields?.first {
+            textField.delegate = self
         }
+        
+        present(textFieldAlertVC, animated: true)
     }
 
     // MARK: - Setup
@@ -235,4 +241,13 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         cell.cancelDownloadImage()
     }
 
+}
+
+// MARK: - UITextFieldDelegate
+extension GroupHomeViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let text = textField.text else { return true }
+        let newLength = text.count + string.count - range.length
+        return newLength <= 10
+    }
 }

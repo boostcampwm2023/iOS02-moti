@@ -56,6 +56,23 @@ final class GroupListViewController: BaseViewController<GroupListView> {
         viewModel.setupGroupDataSource(diffableDataSource)
     }
 
+    // MARK: - Actions
+    @objc private func showCreateGroupTextFieldAlert() {
+        let textFieldAlertVC = AlertFactory.makeTextFieldAlert(
+            title: "생성할 그룹 이름을 입력하세요.",
+            okTitle: "생성",
+            placeholder: "그룹 이름은 최대 10글자입니다.",
+            okAction: { [weak self] text in
+                guard let self, let text else { return }
+                Logger.debug("그룹 생성 입력: \(text)")
+            })
+        
+        if let textField = textFieldAlertVC.textFields?.first {
+            textField.delegate = self
+        }
+        
+        present(textFieldAlertVC, animated: true)
+    }
 }
 
 // MARK: - Setup
@@ -91,7 +108,7 @@ private extension GroupListViewController {
         
         let createGroupItem = UIBarButtonItem(
             title: "생성", style: .plain, target: self,
-            action: nil
+            action: #selector(showCreateGroupTextFieldAlert)
         )
 
         navigationItem.rightBarButtonItems = [profileItem, createGroupItem, editGroupItem]
@@ -114,5 +131,14 @@ extension GroupListViewController: UICollectionViewDelegate {
         let selectedGroup = viewModel.findGroup(at: indexPath.row)
         Logger.debug("Clicked \(selectedGroup)")
         coordinator?.moveToGroupHomeViewController(group: selectedGroup)
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension GroupListViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let text = textField.text else { return true }
+        let newLength = text.count + string.count - range.length
+        return newLength <= 10
     }
 }
