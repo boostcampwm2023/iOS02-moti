@@ -31,6 +31,7 @@ export class ImageRepository extends TransactionalRepository<ImageEntity> {
         id: user.id,
       },
       achievement: IsNull(),
+      groupAchievement: IsNull(),
     });
 
     return imageEntity?.toModel();
