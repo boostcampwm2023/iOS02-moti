@@ -11,17 +11,18 @@ import Domain
 extension GroupHomeViewModel {
     enum GroupHomeViewModelAction {
         case launch
+        case fetchNextPage
         case fetchAchievementList(category: CategoryItem)
+        case refreshAchievementList
     }
     
     enum CategoryListState {
-        case initial
+        case loading
         case finish
         case error(message: String)
     }
     
-    enum AchievementState {
-        case initial
+    enum AchievementListState {
         case loading
         case finish
         case error(message: String)

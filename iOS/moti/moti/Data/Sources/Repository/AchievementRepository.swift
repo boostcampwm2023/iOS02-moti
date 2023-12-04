@@ -18,7 +18,7 @@ public struct AchievementRepository: AchievementRepositoryProtocol {
     
     public func fetchAchievementList(
         requestValue: FetchAchievementListRequestValue? = nil
-    ) async throws -> ([Achievement], FetchAchievementListRequestValue?) {
+    ) async throws -> AchievementListItem {
         let endpoint = MotiAPI.fetchAchievementList(requestValue: requestValue)
         let responseDTO = try await provider.request(with: endpoint, type: AchievementListResponseDTO.self)
         
@@ -33,9 +33,9 @@ public struct AchievementRepository: AchievementRepositoryProtocol {
                 whereIdLessThan: nextDTO.whereIdLessThan ?? -1
             )
             
-            return (achievements, next)
+            return AchievementListItem(achievements: achievements, next: next)
         } else {
-            return (achievements, nil)
+            return AchievementListItem(achievements: achievements)
         }
     }
     

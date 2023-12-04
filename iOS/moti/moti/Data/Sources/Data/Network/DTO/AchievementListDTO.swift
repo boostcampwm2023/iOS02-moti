@@ -18,6 +18,7 @@ struct AchievementListResponseDataDTO: Codable {
     let data: [AchievementSimpleDTO]?
     let count: Int?
     let next: AchievementListResponseNextDTO?
+    let category: CategoryDTO?
 }
 
 struct AchievementListResponseNextDTO: Codable {
@@ -31,13 +32,7 @@ struct AchievementSimpleDTO: Codable {
     let thumbnailUrl: URL?
     let title: String
     let categoryId: Int
-    
-    init(id: Int, thumbnailUrl: URL?, title: String, categoryId: Int) {
-        self.id = id
-        self.thumbnailUrl = thumbnailUrl
-        self.title = title
-        self.categoryId = categoryId
-    }
+    let userCode: String?
 }
 
 extension Achievement {
@@ -46,7 +41,8 @@ extension Achievement {
             id: dto.id,
             title: dto.title,
             imageURL: dto.thumbnailUrl,
-            categoryId: dto.categoryId
+            categoryId: dto.categoryId,
+            userCode: dto.userCode
         )
     }
 }

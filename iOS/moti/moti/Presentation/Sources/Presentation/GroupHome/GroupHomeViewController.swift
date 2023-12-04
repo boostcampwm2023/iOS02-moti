@@ -42,29 +42,29 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
     }
     
     private func bind() {
-        viewModel.$achievementState
+        viewModel.achievementListState
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
                 // state 에 따른 뷰 처리 - 스켈레톤 뷰, fetch 에러 뷰 등
                 Logger.debug(state)
                 switch state {
+                case .loading:
+                    break
                 case .finish:
                     break
                 case .error(let message):
                     Logger.error("Fetch Achievement Error: \(message)")
-                default: break
                 }
-                
             }
             .store(in: &cancellables)
         
-        viewModel.$categoryListState
+        viewModel.categoryListState
             .receive(on: DispatchQueue.main)
             .sink { [weak self] categoryState in
                 guard let self else { return }
                 switch categoryState {
-                case .initial:
+                case .loading:
                     // TODO: 스켈레톤
                     break
                 case .finish:

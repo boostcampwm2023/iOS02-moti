@@ -42,5 +42,7 @@ public struct LoginUseCase {
         if let refreshToken = userToken.refreshToken?.data(using: .utf8) {
             keychainStorage.write(key: .refreshToken, data: refreshToken)
         }
+        
+        UserDefaults.standard.saveString(key: .userCode, string: userToken.user.code)
     }
 }
