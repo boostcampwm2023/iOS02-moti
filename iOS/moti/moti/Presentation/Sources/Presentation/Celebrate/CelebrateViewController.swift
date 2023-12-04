@@ -42,12 +42,13 @@ final class CelebrateViewController: UIViewController {
         label.numberOfLines = 0
         label.textAlignment = .center
         label.textColor = .white
+        label.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
         return label
     }()
     private lazy var guideLabel = {
         let label = UILabel()
         label.text = "화면을 터치하면 사라집니다."
-        label.font = .mediumBold
+        label.font = .boldSystemFont(ofSize: 17)
         label.numberOfLines = 0
         label.textAlignment = .center
         label.textColor = .white
@@ -76,6 +77,13 @@ final class CelebrateViewController: UIViewController {
             .all(of: view)
         setupCloseButton()
         setupLabels()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        UIView.animate(withDuration: 0.15, delay: 0, options: [.curveEaseOut], animations: {
+            self.titleLabel.transform = .identity
+        })
     }
     
     // MARK: - Setup
