@@ -15,7 +15,13 @@ export class UserGroupRepository extends TransactionalRepository<UserGroupEntity
       .createQueryBuilder('user_group')
       .leftJoin('user_group.user', 'user')
       .leftJoin('user_group.group', 'group')
-      .select(['user_group.grade', 'user.id', 'group.id'])
+      .select([
+        'user_group.id',
+        'user_group.grade',
+        'user.id',
+        'user.userCode',
+        'group.id',
+      ])
       .where('user.id = :userId', { userId })
       .andWhere('group.id = :groupId', { groupId })
       .getOne();
@@ -27,7 +33,13 @@ export class UserGroupRepository extends TransactionalRepository<UserGroupEntity
       .createQueryBuilder('user_group')
       .leftJoin('user_group.user', 'user')
       .leftJoin('user_group.group', 'group')
-      .select(['user_group.grade', 'user.id', 'group.id'])
+      .select([
+        'user_group.id',
+        'user_group.grade',
+        'user.id',
+        'user.userCode',
+        'group.id',
+      ])
       .where('user.userCode = :userCode', { userCode })
       .andWhere('group.id = :groupId', { groupId })
       .getOne();

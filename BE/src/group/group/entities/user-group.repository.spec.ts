@@ -76,6 +76,7 @@ describe('UserGroupRepository Test', () => {
       // then
       expect(userGroup1.grade).toEqual(UserGroupGrade.LEADER);
       expect(userGroup1.user.id).toEqual(user1.id);
+      expect(userGroup1.user.userCode).toEqual(user1.userCode);
       expect(userGroup1.group.id).toEqual(group.id);
       expect(userGroup2.grade).toEqual(UserGroupGrade.PARTICIPANT);
       expect(userGroup2.user.id).toEqual(user2.id);
@@ -104,6 +105,7 @@ describe('UserGroupRepository Test', () => {
       // then
       expect(userGroup1.grade).toEqual(UserGroupGrade.LEADER);
       expect(userGroup1.user.id).toEqual(user1.id);
+      expect(userGroup1.user.userCode).toEqual(user1.userCode);
       expect(userGroup1.group.id).toEqual(group.id);
       expect(userGroup2.grade).toEqual(UserGroupGrade.PARTICIPANT);
       expect(userGroup2.user.id).toEqual(user2.id);
@@ -116,7 +118,7 @@ describe('UserGroupRepository Test', () => {
       // given
       const user1 = await usersFixture.getUser('ABC');
       const group = await groupFixture.createGroup('Test Group', user1);
-      const user2 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
 
       // when
       const userGroup = await userGroupRepository.saveUserGroup(

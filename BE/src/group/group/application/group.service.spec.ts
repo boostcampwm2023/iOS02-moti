@@ -25,6 +25,8 @@ import { LeaderNotAllowedToLeaveException } from '../exception/leader-not-allowe
 import { NoSuchUserGroupException } from '../exception/no-such-user-group.exception';
 import { InviteGroupRequest } from '../dto/invite-group-request.dto';
 import { InvitePermissionDeniedException } from '../exception/invite-permission-denied.exception';
+import { AssignGradeRequest } from '../dto/assign-grade-request.dto';
+import { OnlyLeaderAllowedAssignGradeException } from '../exception/only-leader-allowed-assign-grade.exception';
 
 describe('GroupSerivce Test', () => {
   let groupService: GroupService;
@@ -431,6 +433,48 @@ describe('GroupSerivce Test', () => {
       await expect(groupService.getGroupUsers(user2, group.id)).rejects.toThrow(
         NoSuchUserGroupException,
       );
+    });
+  });
+
+  test('리더는 그룹원의 권한을 변경할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+      // when
+      const assignGradeResponse = await groupService.updateGroupGrade(
+        user1,
+        group.id,
+        user2.userCode,
+        new AssignGradeRequest(UserGroupGrade.MANAGER),
+      );
+
+      // then
+      expect(assignGradeResponse.grade).toEqual(UserGroupGrade.MANAGER);
+      expect(assignGradeResponse.userCode).toEqual(user2.userCode);
+      expect(assignGradeResponse.groupId).toEqual(group.id);
+    });
+  });
+  test('리더가 아닌 그룹원이 권한 변경을 시도할 경우 OnlyLeaderAllowedAssignGradeException를 던진다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+
+      // when
+      // then
+      await expect(
+        groupService.updateGroupGrade(
+          user2,
+          group.id,
+          user1.userCode,
+          new AssignGradeRequest(UserGroupGrade.PARTICIPANT),
+        ),
+      ).rejects.toThrow(OnlyLeaderAllowedAssignGradeException);
     });
   });
 });

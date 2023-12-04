@@ -1,8 +1,8 @@
 import {
+  Column,
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserEntity } from '../../../users/entities/user.entity';
@@ -25,7 +25,7 @@ export class UserGroupEntity extends BaseTimeEntity {
   @JoinColumn({ name: 'group_id', referencedColumnName: 'id' })
   group: GroupEntity;
 
-  @PrimaryColumn({
+  @Column({
     type: 'simple-enum',
     enum: UserGroupGrade,
     default: UserGroupGrade.PARTICIPANT,
@@ -33,16 +33,19 @@ export class UserGroupEntity extends BaseTimeEntity {
   grade: UserGroupGrade = UserGroupGrade.PARTICIPANT;
 
   toModel(): UserGroup {
-    return new UserGroup(
+    const usergroup = new UserGroup(
       this.user?.toModel() || null,
       this.group?.toModel() || null,
       this.grade,
     );
+    usergroup.id = this.id;
+    return usergroup;
   }
 
   static from(userGroup: UserGroup): UserGroupEntity {
     if (isNullOrUndefined(userGroup)) return userGroup;
     const userGroupEntity = new UserGroupEntity();
+    userGroupEntity.id = userGroup.id;
     userGroupEntity.user = UserEntity.from(userGroup.user);
     userGroupEntity.group = GroupEntity.strictFrom(userGroup.group);
     userGroupEntity.grade = userGroup.grade;

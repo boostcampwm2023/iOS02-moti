@@ -18,6 +18,9 @@ import { UserGroup } from '../domain/user-group.doamin';
 import { InvitePermissionDeniedException } from '../exception/invite-permission-denied.exception';
 import { DuplicatedInviteException } from '../exception/duplicated-invite.exception';
 import { GroupUserListResponse } from '../dto/group-user-list-response';
+import { AssignGradeRequest } from '../dto/assign-grade-request.dto';
+import { AssignGradeResponse } from '../dto/assign-grade-response.dto';
+import { OnlyLeaderAllowedAssignGradeException } from '../exception/only-leader-allowed-assign-grade.exception';
 
 @Injectable()
 export class GroupService {
@@ -81,6 +84,27 @@ export class GroupService {
     await this.getUserGroup(user.id, groupId);
     return new GroupUserListResponse(
       await this.userRepository.findByGroupId(groupId),
+    );
+  }
+
+  @Transactional()
+  async updateGroupGrade(
+    user: User,
+    groupId: number,
+    targetUserCode: string,
+    assignGradeRequest: AssignGradeRequest,
+  ) {
+    const requester = await this.getUserGroup(user.id, groupId);
+    if (requester.grade !== UserGroupGrade.LEADER)
+      throw new OnlyLeaderAllowedAssignGradeException();
+    const userGroup =
+      await this.userGroupRepository.findOneByUserCodeAndGroupId(
+        targetUserCode,
+        groupId,
+      );
+    userGroup.changeGrade(assignGradeRequest.grade);
+    return AssignGradeResponse.from(
+      await this.userGroupRepository.saveUserGroup(userGroup),
     );
   }
 

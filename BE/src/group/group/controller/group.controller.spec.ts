@@ -5,6 +5,7 @@ import { AppModule } from '../../../app.module';
 import {
   anyNumber,
   anyOfClass,
+  anyString,
   anything,
   instance,
   mock,
@@ -29,6 +30,9 @@ import { InviteGroupResponse } from '../dto/invite-group-response';
 import { InvitePermissionDeniedException } from '../exception/invite-permission-denied.exception';
 import { DuplicatedInviteException } from '../exception/duplicated-invite.exception';
 import { GroupUserListResponse } from '../dto/group-user-list-response';
+import { AssignGradeResponse } from '../dto/assign-grade-response.dto';
+import { AssignGradeRequest } from '../dto/assign-grade-request.dto';
+import { OnlyLeaderAllowedAssignGradeException } from '../exception/only-leader-allowed-assign-grade.exception';
 
 describe('GroupController', () => {
   let app: INestApplication;
@@ -528,6 +532,129 @@ describe('GroupController', () => {
       return request(app.getHttpServer())
         .get('/api/v1/groups/1/users')
         .set('Authorization', `Bearer ${accessToken}`)
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(false);
+          expect(res.body.message).toEqual('그룹의 멤버가 아닙니다.');
+        });
+    });
+
+    it('잘못된 인증시 401을 반환한다.', async () => {
+      // given
+      const accessToken = 'abcd.abcd.efgh';
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get('/api/v1/groups/1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('잘못된 토큰입니다.');
+        });
+    });
+    it('만료된 인증정보에 401을 반환한다.', async () => {
+      // given
+      const { accessToken } =
+        await authFixture.getExpiredAccessTokenUser('ABC');
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get('/api/v1/groups/1/users')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('만료된 토큰입니다.');
+        });
+    });
+  });
+
+  describe('리더는 그룹원의 권한을 변경할 수 있다.', () => {
+    it('성공 시 200을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      const assignGradeResponse = new AssignGradeResponse(
+        1,
+        'ABCDEF1',
+        UserGroupGrade.MANAGER,
+      );
+
+      when(
+        mockGroupService.updateGroupGrade(
+          anyOfClass(User),
+          anyNumber(),
+          anyString(),
+          anyOfClass(AssignGradeRequest),
+        ),
+      ).thenResolve(assignGradeResponse);
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .post('/api/v1/groups/1/users/ABCDEF1/auth')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(new AssignGradeRequest(UserGroupGrade.MANAGER))
+        .expect(200)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(true);
+          expect(res.body.data).toEqual({
+            groupId: 1,
+            userCode: 'ABCDEF1',
+            grade: UserGroupGrade.MANAGER,
+          });
+        });
+    });
+    it('리더가 아닌 경우 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupService.updateGroupGrade(
+          anyOfClass(User),
+          anyNumber(),
+          anyString(),
+          anyOfClass(AssignGradeRequest),
+        ),
+      ).thenThrow(new OnlyLeaderAllowedAssignGradeException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .post('/api/v1/groups/1/users/ABCDEF1/auth')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(new AssignGradeRequest(UserGroupGrade.MANAGER))
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(false);
+          expect(res.body.message).toEqual(
+            '그룹의 리더만 권한 조정이 가능합니다.',
+          );
+        });
+    });
+
+    it('초대하려는 멤버가 그룹원이 아닌 경우 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupService.updateGroupGrade(
+          anyOfClass(User),
+          anyNumber(),
+          anyString(),
+          anyOfClass(AssignGradeRequest),
+        ),
+      ).thenThrow(new NoSuchUserGroupException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .post('/api/v1/groups/1/users/ABCDEF1/auth')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(new AssignGradeRequest(UserGroupGrade.MANAGER))
         .expect(400)
         .expect((res: request.Response) => {
           expect(res.body.success).toEqual(false);

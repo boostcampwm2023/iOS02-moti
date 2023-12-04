@@ -65,8 +65,10 @@ describe('GroupCategoryRepository test', () => {
         // then
         expect(saved).toBeInstanceOf(GroupCategory);
         expect(saved.name).toEqual('카테고리1');
-        expect(saved.group).toEqual(group);
-        expect(saved.user).toEqual(user);
+        expect(saved.group.id).toEqual(group.id);
+        expect(saved.group.name).toEqual(group.name);
+        expect(saved.group.avatarUrl).toEqual(group.avatarUrl);
+        expect(saved.group.userGroups.length).toEqual(group.userGroups.length);
       });
     });
   });
