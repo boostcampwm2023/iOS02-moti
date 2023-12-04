@@ -15,22 +15,42 @@ final class CelebrateViewController: UIViewController {
     private let achievement: Achievement
     private let emitterLayer = CAEmitterLayer()
     private let emojiImages: [CGImage?] = [
-        EmojiImage.fire.cgImage,
-        EmojiImage.like.cgImage,
         EmojiImage.party.cgImage,
-        EmojiImage.smile.cgImage,
-        EmojiImage.star.cgImage,
-        MotiImage.logoBlue.cgImage
+        EmojiImage.party.cgImage,
+        EmojiImage.fire.cgImage,
+        MotiImage.logoBlue.cgImage,
+        MotiImage.logoWhite.cgImage
     ]
     private var velocities = [200, 300, 400]
     
     // MARK: - Views
-    private lazy var label = {
+    private let backgroundView = {
+        let view = UIView()
+        view.backgroundColor = .black
+        view.alpha = 0.5
+        return view
+    }()
+    private let closeButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
+        button.tintColor = .white
+        return button
+    }()
+    private lazy var titleLabel = {
         let label = UILabel()
         label.font = .xlargeBold
         label.numberOfLines = 0
-        label.text = "\(achievement.title)\n성공을 축하합니다!"
         label.textAlignment = .center
+        label.textColor = .white
+        return label
+    }()
+    private lazy var guideLabel = {
+        let label = UILabel()
+        label.text = "화면을 터치하면 사라집니다."
+        label.font = .mediumBold
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        label.textColor = .white
         return label
     }()
     
@@ -47,15 +67,15 @@ final class CelebrateViewController: UIViewController {
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .motiBackground
-        view.alpha = 0.5
         
         setUpEmitterLayer()
         setUpTapGestureRecognizer()
         
-        view.addSubview(label)
-        label.atl
-            .center(of: view)
+        view.addSubview(backgroundView)
+        backgroundView.atl
+            .all(of: view)
+        setupCloseButton()
+        setupLabels()
     }
     
     // MARK: - Setup
@@ -65,7 +85,7 @@ final class CelebrateViewController: UIViewController {
         emitterLayer.emitterPosition = CGPoint(x: view.bounds.width / 2, y: -10)
         
         // layer에 뿌려질 셀
-        emitterLayer.emitterCells = (0..<10).map { _ in makeEmitterCell() }
+        emitterLayer.emitterCells = (0..<emojiImages.count).map { makeEmitterCell(index: $0) }
         
         // 레이어 얹어주면 방출 시작되는 것 보임
         view.layer.addSublayer(emitterLayer)
@@ -77,31 +97,55 @@ final class CelebrateViewController: UIViewController {
         view.isUserInteractionEnabled = true
     }
     
-    // MARK: - Actions
-    @objc private func handleTap() {
+    private func setupLabels() {
+        titleLabel.text = "축하합니다!\n\"\(achievement.title)\"\n성공"
+        view.addSubview(titleLabel)
+        titleLabel.atl
+            .centerY(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
+            .horizontal(equalTo: view.safeAreaLayoutGuide, constant: 40)
         
+        view.addSubview(guideLabel)
+        guideLabel.atl
+            .centerX(equalTo: view.safeAreaLayoutGuide.centerXAnchor)
+            .top(equalTo: titleLabel.bottomAnchor, constant: 40)
     }
     
-    private func makeEmitterCell() -> CAEmitterCell {
+    private func setupCloseButton() {
+        closeButton.addTarget(self, action: #selector(handleTap), for: .touchUpInside)
+        view.addSubview(closeButton)
+        closeButton.atl
+            .size(width: 60, height: 60)
+            .top(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20)
+            .right(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20)
+    }
+    
+    // MARK: - Actions
+    @objc private func handleTap() {
+        UIView.animate(withDuration: 0.2, animations: {
+            self.view.alpha = 0
+        }, completion: { _ in
+            self.dismiss(animated: false)
+        })
+    }
+    
+    private func makeEmitterCell(index: Int) -> CAEmitterCell {
         let cell = CAEmitterCell()
         
-        if let emoji = emojiImages.randomElement() {
-            cell.contents = emoji
-            if emoji == MotiImage.logoBlue.cgImage {
-                // 크기의 scale 값. 기본은 1.0. 0.1로 하면 0.1배로 보여줌
-                cell.scale = 0.1
-            } else {
-                cell.scale = 0.2
-            }
+        let emoji = emojiImages[index]
+        cell.contents = emoji
+        if emoji == MotiImage.logoBlue.cgImage || 
+            emoji == MotiImage.logoWhite.cgImage {
+            // 크기의 scale 값. 기본은 1.0. 0.1로 하면 0.1배로 보여줌
+            cell.scale = 0.1
+        } else {
+            cell.scale = 0.2
         }
+        cell.scaleRange = 0.05
         // 1초에 생성하는 셀 개수
         cell.birthRate = 3
         // 셀을 유지하는 시간(n초)
         cell.lifetime = 5
-        // lifetime의 범위 (1로 하면 2~4가 됨. 3 +- 1)
-        cell.lifetimeRange = 1
         // scale의 범위
-        cell.scaleRange = 0.1
         // 수치가 높을수록 빠르게 더 멀리 방출됨
         if let random = velocities.randomElement() {
             cell.velocity = CGFloat(random)

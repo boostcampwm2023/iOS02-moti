@@ -23,7 +23,7 @@ final class EditAchievementView: UIView {
     let titleTextField = {
         let textField = UITextField()
         textField.font = .largeBold
-        textField.placeholder = "도전 성공"
+        textField.placeholder = "\(Date().convertStringMM월_dd일()) 도전"
         textField.returnKeyType = .done
         return textField
     }()
