@@ -147,6 +147,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
                 switch state {
                 case .none, .loading: break
                 case .finish(let updatedAchievement):
+                    hideBottomSheet()
                     delegate?.doneButtonDidClickedFromDetailView(updatedAchievement: updatedAchievement)
                 case .error:
                     Logger.error("Achievement Update Error")
@@ -161,6 +162,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
                 switch state {
                 case .none, .loading: break
                 case .finish(let newAchievement):
+                    hideBottomSheet()
                     delegate?.doneButtonDidClickedFromCaptureView(newAchievement: newAchievement)
                 case .error:
                     Logger.error("Achievement Post Error")
