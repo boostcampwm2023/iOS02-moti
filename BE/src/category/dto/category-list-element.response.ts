@@ -31,12 +31,24 @@ export class CategoryListElementResponse {
     });
   }
 
+  static notAssignedCategoryElement() {
+    return new CategoryListElementResponse({
+      categoryId: -1,
+      categoryName: '미설정',
+      insertedAt: null,
+      achievementCount: 0,
+    });
+  }
+
   static build(
     categoryMetaData: CategoryMetaData[],
   ): CategoryListElementResponse[] {
     const totalItem = CategoryListElementResponse.totalCategoryElement();
     const categories: CategoryListElementResponse[] = [];
     categories.push(totalItem);
+
+    if (categoryMetaData.length === 0 || categoryMetaData[0].categoryId !== -1)
+      categories.push(CategoryListElementResponse.notAssignedCategoryElement());
 
     categoryMetaData?.forEach((category) => {
       if (

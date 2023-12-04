@@ -7,8 +7,10 @@ export class CategoryMetaData {
   achievementCount: number;
 
   constructor(categoryMetaData: ICategoryMetaData) {
-    this.categoryId = categoryMetaData.categoryId;
-    this.categoryName = categoryMetaData.categoryName;
+    this.categoryId = isNaN(parseInt(categoryMetaData.categoryId))
+      ? -1
+      : parseInt(categoryMetaData.categoryId);
+    this.categoryName = categoryMetaData.categoryName || '미설정';
     this.insertedAt = categoryMetaData.insertedAt
       ? new Date(categoryMetaData.insertedAt)
       : null;

@@ -77,6 +77,8 @@ export class AchievementService {
   }
 
   private async getCategory(userId: number, ctgId: number) {
+    if (ctgId === -1) return null;
+
     const ctg = await this.categoryRepository.findByIdAndUser(userId, ctgId);
     if (!ctg) throw new InvalidCategoryException();
     return ctg;

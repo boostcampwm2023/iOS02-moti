@@ -1,5 +1,5 @@
 export interface ICategoryMetaData {
-  categoryId: number;
+  categoryId: string;
   categoryName: string;
   insertedAt: string;
   achievementCount: string;

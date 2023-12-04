@@ -22,10 +22,10 @@ export class CategoryRepository extends TransactionalRepository<CategoryEntity> 
   async findByUserWithCount(user: User): Promise<CategoryMetaData[]> {
     const categories = await this.repository
       .createQueryBuilder('category')
-      .select('category.id', 'categoryId')
+      .select('category.id as categoryId')
       .addSelect('category.name', 'categoryName')
       .addSelect('MAX(achievement.created_at)', 'insertedAt')
-      .addSelect('COUNT(achievement.id)', 'achievementCount')
+      .addSelect('COUNT(*)', 'achievementCount')
       .leftJoin('category.achievements', 'achievement')
       .where('category.user_id = :user', { user: user.id })
       .orderBy('category.id', 'ASC')

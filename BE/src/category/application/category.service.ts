@@ -5,10 +5,14 @@ import { Transactional } from '../../config/transaction-manager';
 import { Category } from '../domain/category.domain';
 import { User } from '../../users/domain/user.domain';
 import { CategoryMetaData } from '../dto/category-metadata';
+import { AchievementRepository } from '../../achievement/entities/achievement.repository';
 
 @Injectable()
 export class CategoryService {
-  constructor(private readonly categoryRepository: CategoryRepository) {}
+  constructor(
+    private readonly categoryRepository: CategoryRepository,
+    private readonly achievementRepository: AchievementRepository,
+  ) {}
 
   @Transactional()
   async saveCategory(
@@ -21,6 +25,6 @@ export class CategoryService {
 
   @Transactional({ readonly: true })
   async getCategoriesByUser(user: User): Promise<CategoryMetaData[]> {
-    return this.categoryRepository.findByUserWithCount(user);
+    return this.achievementRepository.findByCategoryWithCount(user);
   }
 }
