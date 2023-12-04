@@ -91,4 +91,8 @@ export const ERROR_INFO = {
     statusCode: 400,
     message: '이미 초대된 그룹원 입니다.',
   },
+  ONLY_LEADER_ALLOWED_ASSIGN_GRADE: {
+    statusCode: 400,
+    message: '그룹의 리더만 권한 조정이 가능합니다.',
+  },
 } as const;
