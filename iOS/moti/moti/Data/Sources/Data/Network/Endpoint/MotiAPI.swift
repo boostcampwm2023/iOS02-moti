@@ -20,6 +20,8 @@ enum MotiAPI: EndpointProtocol {
     case deleteAchievement(requestValue: DeleteAchievementRequestValue)
     case updateAchievement(requestValue: UpdateAchievementRequestValue)
     case postAchievement(requestValue: PostAchievementRequestValue)
+    case fetchGroupList
+    case createGroup(requestValue: CreateGroupRequestValue)
     
     private var keychainStorage: KeychainStorageProtocol {
         return KeychainStorage.shared
@@ -48,6 +50,8 @@ extension MotiAPI {
         case .deleteAchievement(let requestValue): return "/achievements/\(requestValue.id)"
         case .updateAchievement(let requestValue): return "/achievements/\(requestValue.id)"
         case .postAchievement: return "/achievements"
+        case .fetchGroupList: return "/groups"
+        case .createGroup: return "/groups"
         }
     }
     
@@ -64,6 +68,8 @@ extension MotiAPI {
         case .deleteAchievement: return .delete
         case .updateAchievement: return .put
         case .postAchievement: return .post
+        case .fetchGroupList: return .get
+        case .createGroup: return .post
         }
     }
     
@@ -87,6 +93,8 @@ extension MotiAPI {
         case .updateAchievement(let requestValue):
             return requestValue.body
         case .postAchievement(let requestValue):
+            return requestValue
+        case .createGroup(let requestValue):
             return requestValue
         default:
             return nil

@@ -79,18 +79,24 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
     
     // MARK: - Actions
     private func addTargets() {
-        layoutView.catergoryAddButton.addTarget(self, action: #selector(showAddGroupCategoryAlert), for: .touchUpInside)
+        layoutView.categoryAddButton.addTarget(self, action: #selector(showAddGroupCategoryAlert), for: .touchUpInside)
     }
     
     @objc private func showAddGroupCategoryAlert() {
-        showTextFieldAlert(
+        let textFieldAlertVC = AlertFactory.makeTextFieldAlert(
             title: "추가할 카테고리 이름을 입력하세요.",
             okTitle: "생성",
-            placeholder: "카테고리 이름은 최대 10글자입니다."
-        ) { [weak self] text in
-            guard let self, let text else { return }
-            Logger.debug("그룹 카테고리 생성 입력: \(text)")
+            placeholder: "카테고리 이름은 최대 10글자입니다.",
+            okAction: { [weak self] text in
+                guard let self, let text else { return }
+                Logger.debug("그룹 카테고리 생성 입력: \(text)")
+            })
+        
+        if let textField = textFieldAlertVC.textFields?.first {
+            textField.delegate = self
         }
+        
+        present(textFieldAlertVC, animated: true)
     }
 
     // MARK: - Setup
@@ -156,6 +162,10 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
         } else {
             avatarImageView.backgroundColor = .primaryGray
         }
+        let avatarImageTapGesture = UITapGestureRecognizer(target: self, action: #selector(avatarImageTapAction))
+        avatarImageView.isUserInteractionEnabled = true
+        avatarImageView.addGestureRecognizer(avatarImageTapGesture)
+        
         let profileItem = UIBarButtonItem(customView: avatarImageView)
         profileItem.customView?.atl
             .size(width: avatarItemSize, height: avatarItemSize)
@@ -169,6 +179,10 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
         )
 
         navigationItem.rightBarButtonItems = [profileItem, moreItem]
+    }
+    
+    @objc private func avatarImageTapAction() {
+        coordinator?.moveToGroupInfoViewController(group: viewModel.group)
     }
     
     private func selectFirstCategory() {
@@ -185,10 +199,22 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         if let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell {
             // 카테고리 셀을 눌렀을 때
             categoryCellDidSelected(cell: cell, row: indexPath.row)
-        } else if let cell = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
+        } else if let _ = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
             // 달성 기록 리스트 셀을 눌렀을 때
             // 상세 정보 화면으로 이동
-            
+//            let achievement = viewModel.findAchievement(at: indexPath.row)
+            let testAchievement = Achievement(
+                id: 1,
+                category: .init(id: 1, name: "테스트", continued: 10, lastChallenged: .now),
+                title: "테스트 제목",
+                imageURL: URL(string: "https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg"),
+                body: "테스트 내용입니다.",
+                date: .now
+            )
+            coordinator?.moveToGroupDetailAchievementViewController(
+                achievement: testAchievement,
+                group: viewModel.group
+            )
         }
     }
     
@@ -223,4 +249,13 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         cell.cancelDownloadImage()
     }
 
+}
+
+// MARK: - UITextFieldDelegate
+extension GroupHomeViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let text = textField.text else { return true }
+        let newLength = text.count + string.count - range.length
+        return newLength <= 10
+    }
 }

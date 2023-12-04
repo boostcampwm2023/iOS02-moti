@@ -13,7 +13,7 @@ final class HomeView: UIView {
     
     // MARK: - Views
     // 카테고리 추가 버튼
-    let catergoryAddButton: BounceButton = {
+    let categoryAddButton: BounceButton = {
         let button = BounceButton()
         button.setTitle("+", for: .normal)
         return button
@@ -95,8 +95,8 @@ private extension HomeView {
     }
     
     private func setupCategoryAddButton() {
-        addSubview(catergoryAddButton)
-        catergoryAddButton.atl
+        addSubview(categoryAddButton)
+        categoryAddButton.atl
             .size(width: 37, height: 37)
             .top(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 10)
             .left(equalTo: self.safeAreaLayoutGuide.leftAnchor, constant: 10)
@@ -104,9 +104,9 @@ private extension HomeView {
         addSubview(separatorView)
         separatorView.atl
             .width(constant: 1)
-            .height(equalTo: catergoryAddButton.heightAnchor)
-            .centerY(equalTo: catergoryAddButton.centerYAnchor)
-            .left(equalTo: catergoryAddButton.rightAnchor, constant: 5)
+            .height(equalTo: categoryAddButton.heightAnchor)
+            .centerY(equalTo: categoryAddButton.centerYAnchor)
+            .left(equalTo: categoryAddButton.rightAnchor, constant: 5)
     }
     
     private func setupCategoryCollectionView() {

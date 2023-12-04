@@ -8,14 +8,21 @@
 import Foundation
 import Domain
 import Core
+import Combine
 
 final class GroupListViewModel {
     enum GroupListViewModelAction {
         case launch
+        case createGroup(groupName: String)
     }
     
     enum GroupListState {
-        case initial
+        case loading
+        case finish
+        case error(message: String)
+    }
+    
+    enum CreateGroupState {
         case loading
         case finish
         case error(message: String)
@@ -23,20 +30,29 @@ final class GroupListViewModel {
 
     typealias GroupDataSource = ListDiffableDataSource<Group>
     
+    // MARK: - Properties
+    private let fetchGroupListUseCase: FetchGroupListUseCase
+    private let createGroupUseCase: CreateGroupUseCase
     private var groupDataSource: GroupDataSource?
-
     private var groups: [Group] = [] {
         didSet {
             groupDataSource?.update(data: groups)
         }
     }
     
-    @Published private(set) var groupListState: GroupListState = .initial
+    private(set) var groupListState = PassthroughSubject<GroupListState, Never>()
+    private(set) var createGroupState = PassthroughSubject<CreateGroupState, Never>()
     
-    init() {
-        
+    // MARK: - Init
+    init(
+        fetchGroupListUseCase: FetchGroupListUseCase,
+        createGroupUseCase: CreateGroupUseCase
+    ) {
+        self.fetchGroupListUseCase = fetchGroupListUseCase
+        self.createGroupUseCase = createGroupUseCase
     }
     
+    // MARK: - Setup
     func setupGroupDataSource(_ dataSource: GroupDataSource) {
         self.groupDataSource = dataSource
         groupDataSource?.update(data: [])
@@ -50,6 +66,8 @@ final class GroupListViewModel {
         switch action {
         case .launch:
             fetchGroupList()
+        case .createGroup(let groupName):
+            createGroup(name: groupName)
         }
     }
 }
@@ -57,14 +75,30 @@ final class GroupListViewModel {
 // MARK: - Action
 extension GroupListViewModel {
     private func fetchGroupList() {
-        groupListState = .loading
-        
         Task {
-            groups = [
-                Group(id: 0, name: "독서 모임", avatarUrl: URL(string: "https://kr.object.ncloudstorage.com/motimate/group-1.jpg"), continued: 10, lastChallenged: .now),
-                Group(id: 1, name: "강아지 산책 모임", avatarUrl: URL(string: "https://kr.object.ncloudstorage.com/motimate/group-2.jpg"), continued: 20, lastChallenged: .now)
-            ]
-            groupListState = .finish
+            groupListState.send(.loading)
+            do {
+                groups = try await fetchGroupListUseCase.execute()
+                groupListState.send(.finish)
+            } catch {
+                Logger.error("\(#function) error: \(error.localizedDescription)")
+                groupListState.send(.error(message: error.localizedDescription))
+            }
+        }
+    }
+    
+    private func createGroup(name: String) {
+        Task {
+            createGroupState.send(.loading)
+            do {
+                let requestValue = CreateGroupRequestValue(name: name)
+                let newGroup = try await createGroupUseCase.execute(requestValue: requestValue)
+                groups.append(newGroup)
+                createGroupState.send(.finish)
+            } catch {
+                Logger.error("\(#function) error: \(error.localizedDescription)")
+                createGroupState.send(.error(message: error.localizedDescription))
+            }
         }
     }
 }

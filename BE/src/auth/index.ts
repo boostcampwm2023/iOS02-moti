@@ -18,3 +18,7 @@ export interface JwtRolePayloads extends JwtClaim {
 }
 
 export type Payload = { iat: number; exp: number } & JwtClaim;
+
+export interface IOauthHandler {
+  getUserIdentifier(token: string): Promise<string>;
+}

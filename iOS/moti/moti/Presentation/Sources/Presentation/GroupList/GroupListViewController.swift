@@ -8,12 +8,14 @@
 import UIKit
 import Core
 import Design
+import Combine
 
 final class GroupListViewController: BaseViewController<GroupListView> {
 
     // MARK: - Properties
     weak var coordinator: GroupListCoordinator?
     private let viewModel: GroupListViewModel
+    private var cancellables: Set<AnyCancellable> = []
     
     // MARK: - Init
     init(viewModel: GroupListViewModel) {
@@ -30,6 +32,7 @@ final class GroupListViewController: BaseViewController<GroupListView> {
         super.viewDidLoad()
         setupUI()
         setupGroupListDataSource()
+        bind()
         
         viewModel.action(.launch)
     }
@@ -56,6 +59,24 @@ final class GroupListViewController: BaseViewController<GroupListView> {
         viewModel.setupGroupDataSource(diffableDataSource)
     }
 
+    // MARK: - Actions
+    @objc private func showCreateGroupTextFieldAlert() {
+        let textFieldAlertVC = AlertFactory.makeTextFieldAlert(
+            title: "생성할 그룹 이름을 입력하세요.",
+            okTitle: "생성",
+            placeholder: "그룹 이름은 최대 10글자입니다.",
+            okAction: { [weak self] text in
+                guard let self, let text else { return }
+                Logger.debug("그룹 생성 입력: \(text)")
+                viewModel.action(.createGroup(groupName: text))
+            })
+        
+        if let textField = textFieldAlertVC.textFields?.first {
+            textField.delegate = self
+        }
+        
+        present(textFieldAlertVC, animated: true)
+    }
 }
 
 // MARK: - Setup
@@ -91,7 +112,7 @@ private extension GroupListViewController {
         
         let createGroupItem = UIBarButtonItem(
             title: "생성", style: .plain, target: self,
-            action: nil
+            action: #selector(showCreateGroupTextFieldAlert)
         )
 
         navigationItem.rightBarButtonItems = [profileItem, createGroupItem, editGroupItem]
@@ -114,5 +135,52 @@ extension GroupListViewController: UICollectionViewDelegate {
         let selectedGroup = viewModel.findGroup(at: indexPath.row)
         Logger.debug("Clicked \(selectedGroup)")
         coordinator?.moveToGroupHomeViewController(group: selectedGroup)
+    }
+}
+
+// MARK: - UITextFieldDelegate
+extension GroupListViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let text = textField.text else { return true }
+        let newLength = text.count + string.count - range.length
+        return newLength <= 10
+    }
+}
+
+// MARK: - Bind
+extension GroupListViewController: LoadingIndicator {
+    func bind() {
+        viewModel.groupListState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    // TODO: 스켈레톤
+                    showLoadingIndicator()
+                case .finish:
+                    hideLoadingIndicator()
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.createGroupState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .finish:
+                    hideLoadingIndicator()
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
     }
 }
