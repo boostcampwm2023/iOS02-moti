@@ -14,15 +14,13 @@ final class GroupInfoViewController: BaseViewController<GroupInfoView> {
     // MARK: - Properties
     weak var coordinator: GroupInfoCoordinator?
     private let group: Group
-    var sectionHeaders = ["그룹"]
-    var cellTexts = [["그룹원", "탈퇴"]]
+    private let dataSource = GroupInfoTableViewDataSource()
     
     // MARK: - Init
     init(group: Group) {
         self.group = group
         if group.grade == .leader {
-            sectionHeaders.append("관리")
-            cellTexts.append(["그룹원 관리"])
+            dataSource.appendLeaderSection()
         }
         super.init(nibName: nil, bundle: nil)
     }
@@ -38,7 +36,7 @@ final class GroupInfoViewController: BaseViewController<GroupInfoView> {
         title = "그룹 정보"
         layoutView.configure(group: group)
         layoutView.tableView.delegate = self
-        layoutView.tableView.dataSource = self
+        layoutView.tableView.dataSource = dataSource
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -63,29 +61,4 @@ final class GroupInfoViewController: BaseViewController<GroupInfoView> {
 
 extension GroupInfoViewController: UITableViewDelegate {
     
-}
-
-extension GroupInfoViewController: UITableViewDataSource {
-    // MARK: - Section
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return sectionHeaders.count
-    }
-
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return sectionHeaders[section]
-    }
-    
-    // MARK: - Row
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cellTexts[section].count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = layoutView.tableView.dequeueReusableCell(
-            withIdentifier: GroupInfoTableViewCell.identifier) as? GroupInfoTableViewCell else {
-            return UITableViewCell()
-        }
-        cell.configure(with: cellTexts[indexPath.section][indexPath.row])
-        return cell
-    }
 }
