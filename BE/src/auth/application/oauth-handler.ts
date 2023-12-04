@@ -2,10 +2,10 @@ import { OauthRequester } from './oauth-requester';
 import { Injectable } from '@nestjs/common';
 import { IdentityToken } from './identity-token';
 import { JwtUtils } from './jwt-utils';
-import { PublicKey } from '../index';
+import { IOauthHandler, PublicKey } from '../index';
 
 @Injectable()
-export class OauthHandler {
+export class OauthHandler implements IOauthHandler {
   constructor(
     private readonly oauthRequester: OauthRequester,
     private readonly jwtUtils: JwtUtils,
