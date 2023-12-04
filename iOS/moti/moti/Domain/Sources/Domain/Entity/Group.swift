@@ -11,6 +11,15 @@ public enum GroupGrade: Hashable {
     case leader // 그룹장
     case manager // 관리자
     case participant // 참가자
+    
+    public init?(grade: String) {
+        switch grade {
+        case "LEADER": self = .leader
+        case "MANAGER": self = .manager
+        case "PARTICIPANT": self = .participant
+        default: return nil
+        }
+    }
 }
 
 public struct Group: Hashable {

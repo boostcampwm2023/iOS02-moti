@@ -16,6 +16,9 @@ public struct GroupRepository: GroupRepositoryProtocol {
     }
     
     public func fetchGroupList() async throws -> [Group] {
+        let endpoint = MotiAPI.fetchGroupList
+        
+        
         return []
     }
 }
