@@ -14,7 +14,7 @@ public struct FetchGroupListUseCase {
         self.groupRepository = groupRepository
     }
     
-    public func excute() async throws -> [Group] {
+    public func execute() async throws -> [Group] {
         return try await groupRepository.fetchGroupList()
     }
 }

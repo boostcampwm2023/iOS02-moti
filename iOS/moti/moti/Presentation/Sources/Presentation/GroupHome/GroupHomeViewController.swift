@@ -79,7 +79,7 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
     
     // MARK: - Actions
     private func addTargets() {
-        layoutView.catergoryAddButton.addTarget(self, action: #selector(showAddGroupCategoryAlert), for: .touchUpInside)
+        layoutView.categoryAddButton.addTarget(self, action: #selector(showAddGroupCategoryAlert), for: .touchUpInside)
     }
     
     @objc private func showAddGroupCategoryAlert() {
