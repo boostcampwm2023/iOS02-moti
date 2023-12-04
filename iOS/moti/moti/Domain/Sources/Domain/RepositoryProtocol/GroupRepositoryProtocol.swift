@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol GroupRepositoryProtocol {
+public protocol GroupRepositoryProtocol {
     func fetchGroupList() async throws -> [Group]
 }
