@@ -11,4 +11,12 @@ export class GroupCategoryRepository extends TransactionalRepository<GroupCatego
     const saved = await this.repository.save(groupCategoryEntity);
     return saved.toModel();
   }
+
+  async findByIdAndUser(userId: number, ctgId: number) {
+    const groupCategoryEntity = await this.repository.findOneBy({
+      user: { id: userId },
+      id: ctgId,
+    });
+    return groupCategoryEntity?.toModel();
+  }
 }
