@@ -30,7 +30,6 @@ final class GroupInfoViewController: BaseViewController<GroupInfoView> {
         super.viewDidLoad()
         
         title = "그룹 정보"
-        print("hello!")
         layoutView.configure(group: group)
     }
     
