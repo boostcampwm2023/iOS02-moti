@@ -47,7 +47,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
         
         viewModel.action(.launch)
     }
-    
+
     // MARK: - Methods
     func deleteAchievementDataSourceItem(achievementId: Int) {
         viewModel.action(.deleteAchievementDataSourceItem(achievementId: achievementId))
@@ -59,6 +59,10 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
     
     func achievementDidPosted(newAchievement: Achievement) {
         viewModel.action(.postAchievement(newAchievement: newAchievement))
+        // 화면이 전환되고 즉시 표시하면 애니메이션이 부자연스러움
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.showCelebrate(with: newAchievement)
+        }
     }
     
     private func addTargets() {
@@ -85,6 +89,12 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
     
     @objc private func refreshAchievementList() {
         viewModel.action(.refreshAchievementList)
+    }
+    
+    private func showCelebrate(with achievement: Achievement) {
+        let celebrateVC = CelebrateViewController(achievement: achievement)
+        celebrateVC.modalPresentationStyle = .overFullScreen
+        present(celebrateVC, animated: true)
     }
     
     // MARK: - Setup

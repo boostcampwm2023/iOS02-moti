@@ -104,10 +104,7 @@ final class EditAchievementViewModel {
             do {
                 categoryState = .loading
                 categories = try await fetchCategoryListUseCase.execute()
-                if !categories.isEmpty {
-                    // "전체" 카테고리 제거
-                    categories.removeFirst()
-                }
+                    .filter { $0.id != 0 } // "전체" 카테고리 제거
             } catch {
                 categories = []
             }
