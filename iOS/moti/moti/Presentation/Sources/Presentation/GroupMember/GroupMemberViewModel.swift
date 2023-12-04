@@ -20,6 +20,16 @@ final class GroupMemberViewModel {
         case failed(message: String)
     }
     
+    typealias GroupMemberDataSource = ListDiffableDataSource<GroupMember>
+    
+    // MARK: - Properties
+    private var groupMemberDataSource: GroupMemberDataSource?
+    private var groupMembers: [GroupMember] = [] {
+        didSet {
+            groupMemberDataSource?.update(data: groupMembers)
+        }
+    }
+    
     private let fetchGroupMemberListUseCase: FetchGroupMemberListUseCase
     
     @Published private(set) var launchState: LaunchState = .initial
@@ -34,6 +44,11 @@ final class GroupMemberViewModel {
         self.group = group
     }
     
+    func setupDataSource(_ dataSource: GroupMemberDataSource) {
+        self.groupMemberDataSource = dataSource
+        groupMemberDataSource?.update(data: [])
+    }
+    
     func action(_ action: GroupMemberViewModelAction) {
         switch action {
         case .launch:
@@ -46,8 +61,8 @@ final class GroupMemberViewModel {
             do {
                 let groupMembers = try await fetchGroupMemberListUseCase.execute(
                     requestValue: FetchGroupMemberListRequestValue(groupId: group.id))
+                self.groupMembers = groupMembers
                 launchState = .success
-                print("@@@", groupMembers)
             } catch {
                 Logger.debug("group members fetch error: \(error)")
                 launchState = .failed(message: error.localizedDescription)
