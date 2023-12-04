@@ -83,4 +83,8 @@ export const ERROR_INFO = {
     statusCode: 400,
     message: '유효하지 않은 차단 요청입니다.',
   },
+  NO_SUCH_USER: {
+    statusCode: 400,
+    message: '존재하지 않는 유저입니다.',
+  },
 } as const;
