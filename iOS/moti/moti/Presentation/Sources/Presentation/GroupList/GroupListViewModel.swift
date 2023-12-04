@@ -61,7 +61,7 @@ extension GroupListViewModel {
         
         Task {
             do {
-                groups = try await fetchGroupListUseCase.excute()
+                groups = try await fetchGroupListUseCase.execute()
                 groupListState = .finish
             } catch {
                 Logger.error("\(#function) error: \(error.localizedDescription)")
