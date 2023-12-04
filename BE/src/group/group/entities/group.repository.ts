@@ -51,4 +51,19 @@ export class GroupRepository extends TransactionalRepository<GroupEntity> {
     });
     return group?.toModel();
   }
+
+  async findByIdAndUser(id: number, user: User): Promise<Group> {
+    const group = await this.repository.findOne({
+      where: {
+        id: id,
+        userGroups: {
+          user: {
+            id: user.id,
+          },
+        },
+      },
+      relations: ['userGroups.user'],
+    });
+    return group?.toModel();
+  }
 }

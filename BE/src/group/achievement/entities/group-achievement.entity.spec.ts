@@ -6,6 +6,7 @@ import { GroupAchievement } from '../domain/group-achievement.domain';
 import { UserEntity } from '../../../users/entities/user.entity';
 import { GroupEntity } from '../../group/entities/group.entity';
 import { GroupCategoryEntity } from '../../category/entities/group-category.entity';
+import { ImageFixture } from '../../../../test/image/image-fixture';
 
 describe('GroupAchievementEntity Test', () => {
   describe('from으로 GroupAchievement에 대한 GroupAchievementEntity를 만들 수 있다.', () => {
@@ -14,12 +15,14 @@ describe('GroupAchievementEntity Test', () => {
       const user = UsersFixture.user('ABC');
       const group = GroupFixture.group();
       const groupCategory = GroupCategoryFixture.groupCategory(user, group);
+      const image = ImageFixture.image(user);
       const groupAchievement = new GroupAchievement(
         'title',
         user,
         group,
         groupCategory,
         'content',
+        image,
       );
 
       // when
@@ -35,6 +38,7 @@ describe('GroupAchievementEntity Test', () => {
         GroupCategoryEntity.from(groupCategory),
       );
       expect(groupAchievementEntity.content).toBe(groupAchievement.content);
+      expect(groupAchievementEntity.image.id).toEqual(image.id);
     });
 
     it('user와 group, groupCategory가 없는 경우에도 변환이 가능하다.', () => {
@@ -45,6 +49,7 @@ describe('GroupAchievementEntity Test', () => {
         null,
         null,
         'content',
+        null,
       );
 
       // when
@@ -57,6 +62,7 @@ describe('GroupAchievementEntity Test', () => {
       expect(groupAchievementEntity.user).toBeNull();
       expect(groupAchievementEntity.group).toBeNull();
       expect(groupAchievementEntity.groupCategory).toBeNull();
+      expect(groupAchievementEntity.image).toBeNull();
       expect(groupAchievementEntity.content).toBe(groupAchievement.content);
     });
   });

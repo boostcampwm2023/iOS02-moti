@@ -73,7 +73,6 @@ describe('UserBlockedGroupAchievementRepository Test', () => {
           user2,
           group,
           null,
-          'title',
         );
       // when
       const saved =

@@ -84,7 +84,6 @@ describe('GroupCategoryController Test', () => {
         })
         .expect(201)
         .expect((res: request.Response) => {
-          console.log(res.body);
           expect(res.body.success).toEqual(true);
           expect(res.body.data).toEqual({
             id: 1004,
@@ -126,7 +125,6 @@ describe('GroupCategoryController Test', () => {
         })
         .expect(400)
         .expect((res: request.Response) => {
-          console.log(res.body);
           expect(res.body.success).toEqual(false);
           expect(res.body.message).toEqual(
             '그룹에 카테고리를 만들 수 없습니다.',
@@ -188,7 +186,6 @@ describe('GroupCategoryController Test', () => {
         })
         .expect(400)
         .expect((res: request.Response) => {
-          console.log(res.body);
           expect(res.body.success).toBe(false);
           expect(res.body.data.name).toBe('잘못된 카테고리 이름입니다.');
         });

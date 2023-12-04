@@ -1,12 +1,13 @@
-import { IsNotEmptyString } from '../../config/config/validation-decorator';
-import { IsNumber, IsString } from 'class-validator';
+import { User } from '../../../users/domain/user.domain';
+import { Group } from '../../group/domain/group.domain';
+import { GroupAchievement } from '../domain/group-achievement.domain';
+import { Image } from '../../../image/domain/image.domain';
+import { IsNotEmptyString } from '../../../config/config/validation-decorator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Achievement } from '../domain/achievement.domain';
-import { User } from '../../users/domain/user.domain';
-import { Category } from '../../category/domain/category.domain';
-import { Image } from '../../image/domain/image.domain';
+import { IsNumber, IsString } from 'class-validator';
+import { GroupCategory } from '../../category/domain/group.category';
 
-export class AchievementCreateRequest {
+export class GroupAchievementCreateRequest {
   @IsNotEmptyString({ message: '잘못된 제목입니다.' })
   @ApiProperty({ description: 'title' })
   title: string;
@@ -41,7 +42,19 @@ export class AchievementCreateRequest {
     this.photoId = photoId;
   }
 
-  toModel(user: User, category: Category, image: Image): Achievement {
-    return new Achievement(user, category, this.title, this.content, image);
+  toModel(
+    user: User,
+    group: Group,
+    category: GroupCategory,
+    image: Image,
+  ): GroupAchievement {
+    return new GroupAchievement(
+      this.title,
+      user,
+      group,
+      category,
+      this.content,
+      image,
+    );
   }
 }
