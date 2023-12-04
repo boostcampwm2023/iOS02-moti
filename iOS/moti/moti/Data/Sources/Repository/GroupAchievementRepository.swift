@@ -75,7 +75,9 @@ public struct GroupAchievementRepository: GroupAchievementRepositoryProtocol {
 //        let endpoint = MotiAPI.fetchGroupAchievementList(requestValue: requestValue, groupId: groupId)
 //        let responseDTO = try await provider.request(with: endpoint, type: AchievementListResponseDTO.self)
         guard let testData = sampleJson.data(using: .utf8) else { throw NetworkError.decode }
-        let responseDTO = try JSONDecoder().decode(AchievementListResponseDTO.self, from: testData)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        let responseDTO = try decoder.decode(AchievementListResponseDTO.self, from: testData)
         
         guard let achievementListDataDTO = responseDTO.data else { throw NetworkError.decode }
         guard let achievementListDTO = achievementListDataDTO.data else { throw NetworkError.decode }
