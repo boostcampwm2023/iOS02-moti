@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum GroupGrade: Hashable {
+public enum GroupGrade: Hashable, CustomStringConvertible {
     case leader // 그룹장
     case manager // 관리자
     case participant // 참가자
@@ -20,6 +20,14 @@ public enum GroupGrade: Hashable {
         default: return nil
         }
     }
+    
+    public var description: String {
+        switch self {
+        case .leader: return "그룹장"
+        case .manager: return "관리자"
+        case .participant: return "참가자"
+        }
+    }
 }
 
 public struct Group: Hashable {
@@ -29,20 +37,6 @@ public struct Group: Hashable {
     public var continued: Int
     public var lastChallenged: Date?
     public var grade: GroupGrade
-    
-    private let dateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        return dateFormatter
-    }()
-    
-    public var displayLastChallenged: String {
-        if let lastChallenged {
-            return dateFormatter.string(from: lastChallenged)
-        } else {
-            return "없음"
-        }
-    }
     
     public init(
         id: Int,

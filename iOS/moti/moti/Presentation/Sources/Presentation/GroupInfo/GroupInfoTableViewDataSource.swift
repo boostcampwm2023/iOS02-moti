@@ -17,6 +17,10 @@ final class GroupInfoTableViewDataSource: NSObject, UITableViewDataSource {
         cellTexts.append(["그룹원 관리"])
     }
     
+    func isLeader(indexPath: IndexPath) -> Bool {
+        return indexPath.section == 1 || (indexPath.section == 0 && indexPath.row == 0)
+    }
+    
     // MARK: - Section
     func numberOfSections(in tableView: UITableView) -> Int {
         return sectionHeaders.count

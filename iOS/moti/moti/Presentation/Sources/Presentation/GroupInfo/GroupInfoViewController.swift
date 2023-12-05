@@ -60,5 +60,9 @@ final class GroupInfoViewController: BaseViewController<GroupInfoView> {
 }
 
 extension GroupInfoViewController: UITableViewDelegate {
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if dataSource.isLeader(indexPath: indexPath) {
+            coordinator?.moveToGroupMemberViewController(group: group)
+        }
+    }
 }

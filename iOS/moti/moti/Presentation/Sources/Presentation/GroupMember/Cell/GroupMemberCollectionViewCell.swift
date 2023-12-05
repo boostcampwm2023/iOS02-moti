@@ -1,8 +1,8 @@
 //
-//  GroupListCollectionViewCell.swift
-//  
+//  GroupMemberCollectionViewCell.swift
 //
-//  Created by 유정주 on 11/30/23.
+//
+//  Created by Kihyun Lee on 12/5/23.
 //
 
 import UIKit
@@ -10,7 +10,7 @@ import Domain
 import Jeongfisher
 import Design
 
-final class GroupListCollectionViewCell: UICollectionViewCell {
+final class GroupMemberCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
     private let iconSize: CGFloat = 60
@@ -28,12 +28,11 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
     // MARK: - Views
     private lazy var iconImageView = {
         let imageView = UIImageView()
-        
-        imageView.contentMode = .scaleAspectFill
+        imageView.image = MotiImage.logoBlue
+        imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = iconSize / 2.0
         imageView.backgroundColor = .primaryGray
-        
         return imageView
     }()
     
@@ -45,16 +44,9 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
         return stackView
     }()
     
-    private let titleLabel = {
+    private let userCodeLabel = {
         let label = UILabel()
         label.font = .mediumBold
-        label.numberOfLines = 1
-        return label
-    }()
-    
-    private let continuedLabel = {
-        let label = UILabel()
-        label.font = .medium
         label.numberOfLines = 1
         return label
     }()
@@ -64,6 +56,12 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
         label.font = .medium
         label.numberOfLines = 1
         return label
+    }()
+    
+    private let gradeButton = {
+        let button = UIButton()
+        button.setTitleColor(.label, for: .normal)
+        return button
     }()
     
     // MARK: - Init
@@ -78,21 +76,13 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Methods
-    func configure(with group: Group) {
-        if let url = group.avatarUrl {
+    func configure(with groupMember: GroupMember) {
+        if let url = groupMember.user.avatarURL {
             iconImageView.jf.setImage(with: url)
         }
-        titleLabel.text = group.name
-        continuedLabel.text = "총 \(group.continued)회 달성"
-        lastChallengedLabel.text = group.lastChallenged?.convertStringYYYY년_MM월_dd일() ?? "없음"
-    }
-    
-    func showSkeleton() {
-        
-    }
-    
-    func hideSkeleton() {
-        
+        userCodeLabel.text = "@" + groupMember.user.code
+        lastChallengedLabel.text = groupMember.lastChallenged?.convertStringyyyy_MM_dd() ?? "없음"
+        gradeButton.setTitle(groupMember.grade.description, for: .normal)
     }
     
     func cancelDownloadImage() {
@@ -101,7 +91,7 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
 }
 
 // MARK: - Setup
-private extension GroupListCollectionViewCell {
+private extension GroupMemberCollectionViewCell {
     func setupUI() {
         self.layer.cornerRadius = CornerRadius.big
         self.layer.borderWidth = 1
@@ -109,6 +99,7 @@ private extension GroupListCollectionViewCell {
         
         setupIconImageView()
         setupStackView()
+        setupGradeButton()
     }
     
     func setupIconImageView() {
@@ -120,13 +111,19 @@ private extension GroupListCollectionViewCell {
     }
     
     func setupStackView() {
-        labelStackView.addArrangedSubview(titleLabel)
-        labelStackView.addArrangedSubview(continuedLabel)
+        labelStackView.addArrangedSubview(userCodeLabel)
         labelStackView.addArrangedSubview(lastChallengedLabel)
         
         addSubview(labelStackView)
         labelStackView.atl
             .centerY(equalTo: iconImageView.centerYAnchor)
             .left(equalTo: iconImageView.rightAnchor, constant: 20)
+    }
+    
+    func setupGradeButton() {
+        addSubview(gradeButton)
+        gradeButton.atl
+            .centerY(equalTo: iconImageView.centerYAnchor)
+            .right(equalTo: contentView.safeAreaLayoutGuide.rightAnchor, constant: -15)
     }
 }
