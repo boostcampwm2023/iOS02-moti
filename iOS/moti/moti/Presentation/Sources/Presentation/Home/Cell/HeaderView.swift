@@ -89,7 +89,8 @@ final class HeaderView: UICollectionViewCell {
     func configure(category: CategoryItem) {
         categoryLabel.text = category.name
         countLabel.text = "\(category.continued)"
-        dateLabel.text = "최근 달성일\n" + "\(category.displayLastChallenged)"
+        let dateString = category.lastChallenged?.convertStringyyyy_MM_dd() ?? "없음"
+        dateLabel.text = "최근 달성일\n" + "\(dateString)"
     }
     
     func showSkeleton() {
