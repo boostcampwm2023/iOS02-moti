@@ -8,6 +8,7 @@
 import UIKit
 import Combine
 import Core
+import Domain
 
 final class GroupMemberViewController: BaseViewController<GroupMemberView> {
 
@@ -91,10 +92,16 @@ extension GroupMemberViewController: UICollectionViewDelegate {
 }
 
 extension GroupMemberViewController: GroupMemberCollectionViewCellDelegate {
-    func menuDidClicked(completionHandler: @escaping () -> Void) {
-        showTwoButtonAlert(title: "권한을 수정하시겠습니까?", okTitle: "수정") {
-            print("viewModel - 권한 수정 action 후..?")
-            completionHandler()
+    func managerMenuDidClicked(groupMember: GroupMember) {
+        showTwoButtonAlert(title: "매니저 권한으로 수정하시겠습니까?", okTitle: "수정") { [weak self] in
+            guard let self else { return }
+            print("뷰모델 함수 호출 예정", self.viewModel.findIndex(groupMember: groupMember))
+        }
+    }
+    
+    func memberMenuDidClicked(groupMember: GroupMember) {
+        showTwoButtonAlert(title: "그룹원 권한으로 수정하시겠습니까?", okTitle: "수정") {
+            print("그룹원!")
         }
     }
 }

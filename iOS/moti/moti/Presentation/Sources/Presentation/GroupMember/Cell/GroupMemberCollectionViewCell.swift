@@ -11,7 +11,8 @@ import Jeongfisher
 import Design
 
 protocol GroupMemberCollectionViewCellDelegate: AnyObject {
-    func menuDidClicked(completionHandler: @escaping () -> Void)
+    func managerMenuDidClicked(groupMember: GroupMember)
+    func memberMenuDidClicked(groupMember: GroupMember)
 }
 
 final class GroupMemberCollectionViewCell: UICollectionViewCell {
@@ -93,11 +94,11 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     func configureForLeader(with groupMember: GroupMember) {
         configureForMember(with: groupMember)
         if groupMember.grade != .leader {
-            setupGradeButtonForLeader()
+            setupGradeButtonForLeader(groupMember: groupMember)
         }
     }
     
-    private func setupGradeButtonForLeader() {
+    private func setupGradeButtonForLeader(groupMember: GroupMember) {
         gradeButton.configuration = .plain()
         gradeButton.setImage(SymbolImage.chevronUpDown, for: .normal)
         gradeButton.tintColor = .label
@@ -107,15 +108,11 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
         gradeButton.showsMenuAsPrimaryAction = true
         let managerAction = UIAction(title: GroupGrade.manager.description) { [weak self] _ in
             guard let self else { return }
-            self.delegate?.menuDidClicked(
-                completionHandler: setButtonTitleWithManager
-            )
+            self.delegate?.managerMenuDidClicked(groupMember: groupMember)
         }
         let memberAction = UIAction(title: GroupGrade.participant.description) { [weak self] _ in
             guard let self else { return }
-            self.delegate?.menuDidClicked(
-                completionHandler: setButtonTitleWithMember
-            )
+            self.delegate?.memberMenuDidClicked(groupMember: groupMember)
         }
         gradeButton.menu = UIMenu(children: [managerAction, memberAction])
     }
