@@ -177,6 +177,22 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
             target: self,
             action: nil
         )
+        let inviteInfoAction = UIAction(title: "그룹원 초대", handler: { _ in
+            self.inviteMember()
+        })
+        let appInfoAction = UIAction(title: "앱 정보", handler: { _ in
+            self.moveToAppInfoViewController()
+        })
+        let logoutAction = UIAction(title: "로그아웃", handler: { _ in
+            self.logout()
+        })
+        
+        var children: [UIAction] = []
+        if group.grade == .leader || group.grade == .manager {
+            children.append(inviteInfoAction)
+        }
+        children.append(contentsOf: [appInfoAction, logoutAction])
+        moreItem.menu = UIMenu(children: children)
 
         navigationItem.rightBarButtonItems = [profileItem, moreItem]
     }
@@ -189,6 +205,33 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
         let firstIndexPath = IndexPath(item: 0, section: 0)
         layoutView.categoryCollectionView.selectItem(at: firstIndexPath, animated: false, scrollPosition: .init())
         collectionView(layoutView.categoryCollectionView.self, didSelectItemAt: firstIndexPath)
+    }
+    
+    func inviteMember() {
+        showTextFieldAlert(
+            title: "그룹원 초대",
+            okTitle: "초대",
+            placeholder: "초대할 유저의 7자리 유저코드를 입력하세요.",
+            okAction: { text in
+                guard let text = text else { return }
+                print("초대할 유저코드: \(text)")
+            }
+        )
+    }
+    
+    func moveToAppInfoViewController() {
+        coordinator?.moveToAppInfoViewController()
+    }
+    
+    func logout() {
+        showTwoButtonAlert(
+            title: "로그아웃",
+            message: "정말 로그아웃을 하시겠습니까?",
+            okTitle: "로그아웃",
+            okAction: {
+                self.viewModel.action(.logout)
+            }
+        )
     }
 }
 
@@ -235,7 +278,12 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         layoutView.updateAchievementHeader(with: category)
     }
     
-    func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplaySupplementaryView view: UICollectionReusableView,
+        forElementKind elementKind: String,
+        at indexPath: IndexPath
+    ) {
         guard elementKind == UICollectionView.elementKindSectionHeader,
               let headerView = view as? HeaderView else { return }
         
@@ -249,6 +297,58 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         cell.cancelDownloadImage()
     }
 
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemsAt indexPaths: [IndexPath],
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        guard collectionView == layoutView.achievementCollectionView,
+              let firstIndexPath = indexPaths.first else { return nil }
+        
+        let selectedItem = viewModel.findAchievement(at: firstIndexPath.row)
+        let isMyAchievement = viewModel.isMyAchievement(achievement: selectedItem)
+        let grade = viewModel.group.grade
+        
+        let config = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            // 작성자 본인에게만 표시
+            let editAction = UIAction(title: "수정", handler: { _ in
+                
+            })
+            // 작성자 본인, 관리자, 그룹장에게 표시
+            let deleteAction = UIAction(title: "삭제", attributes: .destructive, handler: { _ in
+                
+            })
+            // 작성자가 아닌 유저에게만 표시
+            let blockingAchievementAction = UIAction(title: "도전기록 차단", attributes: .destructive, handler: { _ in
+                
+            })
+            // 작성자가 아닌 유저에게만 표시
+            let blockingUserAction = UIAction(title: "사용자 차단", attributes: .destructive, handler: { _ in
+                
+            })
+            
+            var children: [UIAction] = []
+            if isMyAchievement {
+                children.append(contentsOf: [editAction, deleteAction])
+            } else if grade == .leader || grade == .manager {
+                children.append(contentsOf: [deleteAction])
+            } 
+            
+            // 그룹장, 관리자에게도 표시하기 위해 조건문 분리
+            if !isMyAchievement {
+                children.append(contentsOf: [blockingAchievementAction, blockingUserAction])
+            }
+            
+            return UIMenu(
+                title: selectedItem.title,
+                options: .displayInline,
+                children: children
+            )
+        }
+
+        return config
+
+    }
 }
 
 // MARK: - UITextFieldDelegate

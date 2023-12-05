@@ -48,4 +48,10 @@ final class GroupHomeCoordinator: Coordinator {
         groupInfoCoordinator.start(group: group)
         childCoordinators.append(groupInfoCoordinator)
     }
+    
+    func moveToAppInfoViewController() {
+        let appInfoCoordinator = AppInfoCoordinator(navigationController, self)
+        childCoordinators.append(appInfoCoordinator)
+        appInfoCoordinator.start()
+    }
 }

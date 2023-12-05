@@ -9,6 +9,7 @@ import Foundation
 import Domain
 import Core
 import Combine
+import Data
 
 final class GroupHomeViewModel {
     typealias AchievementDataSource = ListDiffableDataSource<Achievement>
@@ -73,6 +74,11 @@ final class GroupHomeViewModel {
         return categories[index]
     }
     
+    /// 파라미터로 받은 Achievement가 자신의 기록인지 확인하는 메서드
+    func isMyAchievement(achievement: Achievement) -> Bool {
+        return achievement.userCode == UserDefaults.standard.readString(key: .userCode)
+    }
+    
     func action(_ action: GroupHomeViewModelAction) {
         switch action {
         case .launch:
@@ -83,6 +89,10 @@ final class GroupHomeViewModel {
             fetchNextAchievementList()
         case .refreshAchievementList:
             refreshAchievementList()
+        case .logout:
+            NotificationCenter.default.post(name: .logout, object: nil)
+            KeychainStorage.shared.remove(key: .accessToken)
+            KeychainStorage.shared.remove(key: .refreshToken)
         }
     }
 }
