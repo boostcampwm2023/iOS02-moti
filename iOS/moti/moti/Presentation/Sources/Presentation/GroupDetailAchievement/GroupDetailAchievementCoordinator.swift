@@ -9,6 +9,10 @@ import UIKit
 import Core
 import Domain
 
+protocol GroupDetailAchievementCoordinatorDelegate: DetailAchievementCoordinatorDelegate {
+    
+}
+
 final class GroupDetailAchievementCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []

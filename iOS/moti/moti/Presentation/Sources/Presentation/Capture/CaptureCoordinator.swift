@@ -20,30 +20,29 @@ final class CaptureCoordinator: Coordinator {
     private var currentNavigationController: UINavigationController?
     weak var delegate: CaptureCoordinatorDelegate?
     
+    private let group: Group?
+    
     init(
         _ navigationController: UINavigationController,
         _ parentCoordinator: Coordinator?
     ) {
         self.navigationController = navigationController
         self.parentCoordinator = parentCoordinator
+        self.group = nil
+    }
+    
+    // 프로토콜 요구사항 때문에 따로 정의
+    init(
+        _ navigationController: UINavigationController,
+        _ parentCoordinator: Coordinator?,
+        group: Group
+    ) {
+        self.navigationController = navigationController
+        self.parentCoordinator = parentCoordinator
+        self.group = group
     }
     
     func start() { 
-        let captureVC = CaptureViewController()
-        captureVC.delegate = self
-        captureVC.coordinator = self
-        
-        captureVC.navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: "취소", style: .plain, target: self,
-            action: #selector(cancelButtonAction)
-        )
-        
-        captureVC.navigationItem.rightBarButtonItem = nil
-        
-        navigationController.pushViewController(captureVC, animated: true)
-    }
-    
-    func start(group: Group) {
         let captureVC = CaptureViewController(group: group)
         captureVC.delegate = self
         captureVC.coordinator = self
@@ -61,7 +60,7 @@ final class CaptureCoordinator: Coordinator {
     private func moveEditAchievementViewConrtoller(image: UIImage) {
         let editAchievementCoordinator = EditAchievementCoordinator(navigationController, self)
         editAchievementCoordinator.delegate = self
-        editAchievementCoordinator.startAfterCapture(image: image)
+        editAchievementCoordinator.startAfterCapture(image: image, group: group)
         childCoordinators.append(editAchievementCoordinator)
     }
     
