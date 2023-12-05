@@ -86,13 +86,11 @@ extension GroupDetailAchievementCoordinator: GroupDetailAchievementViewControlle
     }
     
     func blockingAchievementMenuDidClicked(achievementId: Int) {
-        // TODO: VC에서 achievement 데이터 필터링하기
         delegate?.blockingAchievementMenuDidClicked(achievementId: achievementId)
         finish(animated: true)
     }
     
     func blockingUserMenuDidClicked(userCode: String) {
-        // TODO: VC에서 user 관련 데이터 필터링하기
         delegate?.blockingUserMenuDidClicked(userCode: userCode)
         finish(animated: true)
     }
