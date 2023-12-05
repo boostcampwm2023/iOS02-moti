@@ -11,8 +11,8 @@ import Domain
 import Data
 
 protocol GroupDetailAchievementCoordinatorDelegate: DetailAchievementCoordinatorDelegate {
-    func blockingAchievementMenuDidClicked(achievement: Achievement)
-    func blockingUserMenuDidClicked(user: User)
+    func blockingAchievementMenuDidClicked(achievementId: Int)
+    func blockingUserMenuDidClicked(userCode: String)
 }
 
 final class GroupDetailAchievementCoordinator: Coordinator {
@@ -48,10 +48,13 @@ final class GroupDetailAchievementCoordinator: Coordinator {
     func start(achievement: Achievement) {
         guard let group else { return }
         
+        let blockingRepository = BlockingRepository(groupId: group.id)
         let achievementRepository = GroupAchievementRepository(groupId: group.id)
         let groupDetailAchievementVM = GroupDetailAchievementViewModel(
             fetchDetailAchievementUseCase: .init(repository: achievementRepository),
             deleteAchievementUseCase: .init(repository: achievementRepository, storage: nil),
+            blockingUserUseCase: .init(blockingRepository: blockingRepository),
+            blockingAchievementUseCase: .init(blockingRepository: blockingRepository),
             achievement: achievement,
             group: group
         )
@@ -82,15 +85,15 @@ extension GroupDetailAchievementCoordinator: GroupDetailAchievementViewControlle
         delegate?.deleteButtonDidClicked(achievementId: achievementId)
     }
     
-    func blockingAchievementMenuDidClicked(achievement: Achievement) {
+    func blockingAchievementMenuDidClicked(achievementId: Int) {
         // TODO: VC에서 achievement 데이터 필터링하기
-        delegate?.blockingAchievementMenuDidClicked(achievement: achievement)
+        delegate?.blockingAchievementMenuDidClicked(achievementId: achievementId)
         finish(animated: true)
     }
     
-    func blockingUserMenuDidClicked(user: User) {
+    func blockingUserMenuDidClicked(userCode: String) {
         // TODO: VC에서 user 관련 데이터 필터링하기
-        delegate?.blockingUserMenuDidClicked(user: user)
+        delegate?.blockingUserMenuDidClicked(userCode: userCode)
         finish(animated: true)
     }
 }

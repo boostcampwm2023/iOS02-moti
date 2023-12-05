@@ -100,12 +100,12 @@ extension GroupHomeCoordinator: GroupDetailAchievementCoordinatorDelegate {
         currentViewController?.postedAchievement(newAchievement: newAchievement)
     }
     
-    func blockingAchievementMenuDidClicked(achievement: Achievement) {
-        currentViewController?.blockedAchievement(achievement)
+    func blockingAchievementMenuDidClicked(achievementId: Int) {
+        currentViewController?.blockedAchievement(achievementId)
     }
     
-    func blockingUserMenuDidClicked(user: User) {
-        currentViewController?.blockedUser(user)
+    func blockingUserMenuDidClicked(userCode: String) {
+        currentViewController?.blockedUser(userCode)
     }
 }
 

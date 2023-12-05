@@ -140,11 +140,11 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
         }
     }
     
-    func blockedAchievement(_ achievement: Achievement) {
+    func blockedAchievement(_ achievementId: Int) {
         
     }
     
-    func blockedUser(_ user: User) {
+    func blockedUser(_ userCode: String) {
         
     }
     

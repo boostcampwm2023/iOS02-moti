@@ -46,7 +46,7 @@ final class GroupHomeViewModel {
     private let blockingUserUseCase: BlockingUserUseCase
     private let blockingAchievementUseCase: BlockingAchievementUseCase
 
-    // Pagenation
+    // Pagination
     private var lastRequestNextValue: FetchAchievementListRequestValue?
     private var nextRequestValue: FetchAchievementListRequestValue?
     private var nextAchievementTask: Task<Void, Never>?
@@ -116,6 +116,8 @@ final class GroupHomeViewModel {
             refreshAchievementList()
         case .deleteAchievementDataSourceItem(let achievementId):
             deleteOfDataSource(achievementId: achievementId)
+        case .deleteUserDataSourceItem(let userCode):
+            deleteOfDataSource(userCode: userCode)
         case .updateAchievement(let updatedAchievement):
             updateAchievement(updatedAchievement: updatedAchievement)
         case .postAchievement(let newAchievement):
@@ -258,18 +260,14 @@ private extension GroupHomeViewModel {
     
     /// 도전기록을 차단하는 액션
     func blocking(achievementId: Int) {
-        achievements = achievements.filter { $0.id != achievementId }
-        Task {
-            blockingAchievementUseCase.execute(achievementId: achievementId)
-        }
+        deleteOfDataSource(achievementId: achievementId)
+        blockingAchievementUseCase.execute(achievementId: achievementId)
     }
     
     /// 유저를 차단하는 액션
     func blocking(userCode: String) {
-        achievements = achievements.filter { $0.userCode != userCode }
-        Task {
-            blockingUserUseCase.execute(userCode: userCode)
-        }
+        deleteOfDataSource(userCode: userCode)
+        blockingUserUseCase.execute(userCode: userCode)
     }
 }
 
@@ -310,14 +308,13 @@ private extension GroupHomeViewModel {
         }
     }
     
-    /// Achievement의 첫 번째 index를 구하는 메서드
-    func firstIndexOf(achievementId: Int) -> Int? {
-        return achievements.firstIndex { $0.id == achievementId }
+    /// 도전 기록을 데이터소스에서 제거하는 액션
+    func deleteOfDataSource(achievementId: Int) {
+        achievements = achievements.filter { $0.id != achievementId }
     }
     
     /// 도전 기록을 데이터소스에서 제거하는 액션
-    func deleteOfDataSource(achievementId: Int) {
-        guard let foundIndex = firstIndexOf(achievementId: achievementId) else { return }
-        achievements.remove(at: foundIndex)
+    func deleteOfDataSource(userCode: String) {
+        achievements = achievements.filter { $0.userCode != userCode }
     }
 }
