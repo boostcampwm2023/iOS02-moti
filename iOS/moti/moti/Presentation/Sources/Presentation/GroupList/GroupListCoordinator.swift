@@ -25,9 +25,11 @@ final class GroupListCoordinator: Coordinator {
     }
     
     func start() {
+        let groupRepository = GroupRepository()
         let groupVM = GroupListViewModel(
-            fetchGroupListUseCase: .init(groupRepository: GroupRepository()),
-            createGroupUseCase: .init(groupRepository: GroupRepository())
+            fetchGroupListUseCase: .init(groupRepository: groupRepository),
+            createGroupUseCase: .init(groupRepository: groupRepository), 
+            dropGroupUseCase: .init(groupRepository: groupRepository)
         )
         let groupListVC = GroupListViewController(viewModel: groupVM)
         groupListVC.coordinator = self
@@ -45,6 +47,6 @@ final class GroupListCoordinator: Coordinator {
 
 extension GroupListCoordinator: GroupHomeCoordinatorDelegate {
     func dropCellDidClicked(groupId: Int) {
-        print(currentViewController, groupId)
+        currentViewController?.dropGroup(groupId: groupId)
     }
 }
