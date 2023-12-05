@@ -10,10 +10,15 @@ import Domain
 import Jeongfisher
 import Design
 
+protocol GroupMemberCollectionViewCellDelegate: AnyObject {
+    func menuDidClicked(completionHandler: @escaping () -> Void)
+}
+
 final class GroupMemberCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
     private let iconSize: CGFloat = 60
+    weak var delegate: GroupMemberCollectionViewCellDelegate?
     
     override var isHighlighted: Bool {
         didSet {
@@ -82,7 +87,7 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
         }
         userCodeLabel.text = "@" + groupMember.user.code
         lastChallengedLabel.text = groupMember.lastChallenged?.convertStringyyyy_MM_dd() ?? "없음"
-        gradeButton.setTitle(groupMember.grade.description + " ", for: .normal)
+        gradeButton.setTitle(groupMember.grade.description, for: .normal)
     }
     
     func configureForLeader(with groupMember: GroupMember) {
@@ -100,21 +105,27 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
         gradeButton.configuration?.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: -5)
         
         gradeButton.showsMenuAsPrimaryAction = true
-        let managerAction = UIAction(title: "관리자") { _ in
-            self.managerMenuDidClicked()
+        let managerAction = UIAction(title: GroupGrade.manager.description) { [weak self] _ in
+            guard let self else { return }
+            self.delegate?.menuDidClicked(
+                completionHandler: setButtonTitleWithManager
+            )
         }
-        let memberAction = UIAction(title: "그룹원") { _ in
-            self.memberMenuDidClicked()
+        let memberAction = UIAction(title: GroupGrade.participant.description) { [weak self] _ in
+            guard let self else { return }
+            self.delegate?.menuDidClicked(
+                completionHandler: setButtonTitleWithMember
+            )
         }
         gradeButton.menu = UIMenu(children: [managerAction, memberAction])
     }
     
-    private func managerMenuDidClicked() {
-        gradeButton.setTitle("관리자", for: .normal)
+    private func setButtonTitleWithManager() {
+        gradeButton.setTitle(GroupGrade.manager.description, for: .normal)
     }
     
-    private func memberMenuDidClicked() {
-        gradeButton.setTitle("그룹원", for: .normal)
+    private func setButtonTitleWithMember() {
+        gradeButton.setTitle(GroupGrade.participant.description, for: .normal)
     }
     
     func cancelDownloadImage() {

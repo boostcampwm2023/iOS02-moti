@@ -50,6 +50,7 @@ final class GroupMemberViewController: BaseViewController<GroupMemberView> {
                 } else {
                     cell.configureForMember(with: item)
                 }
+                cell.delegate = self
                 return cell
             }
         )
@@ -86,5 +87,14 @@ extension GroupMemberViewController: UICollectionViewDelegate {
         }, completion: { _ in
             cell.transform = .identity
         })
+    }
+}
+
+extension GroupMemberViewController: GroupMemberCollectionViewCellDelegate {
+    func menuDidClicked(completionHandler: @escaping () -> Void) {
+        showTwoButtonAlert(title: "권한을 수정하시겠습니까?", okTitle: "수정") {
+            print("viewModel - 권한 수정 action 후..?")
+            completionHandler()
+        }
     }
 }
