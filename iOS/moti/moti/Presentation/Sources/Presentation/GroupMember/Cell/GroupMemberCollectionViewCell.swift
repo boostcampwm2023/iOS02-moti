@@ -15,6 +15,16 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     // MARK: - Properties
     private let iconSize: CGFloat = 60
     
+    override var isHighlighted: Bool {
+        didSet {
+            if isHighlighted {
+                bounceAnimation()
+            } else {
+                normalAnimation()
+            }
+        }
+    }
+    
     // MARK: - Views
     private lazy var iconImageView = {
         let imageView = UIImageView()

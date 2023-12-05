@@ -84,5 +84,16 @@ final class GroupMemberViewController: BaseViewController<GroupMemberView> {
 }
 
 extension GroupMemberViewController: UICollectionViewDelegate {
-    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? GroupMemberCollectionViewCell else {
+            return
+        }
+        
+        UIView.animate(withDuration: 0.08, animations: {
+            let scale = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            cell.transform = scale
+        }, completion: { _ in
+            cell.transform = .identity
+        })
+    }
 }
