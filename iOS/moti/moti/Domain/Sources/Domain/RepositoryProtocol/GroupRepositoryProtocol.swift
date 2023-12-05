@@ -10,5 +10,4 @@ import Foundation
 public protocol GroupRepositoryProtocol {
     func fetchGroupList() async throws -> [Group]
     func createGroup(requestValue: CreateGroupRequestValue) async throws -> Group
-    func fetchGroupMemberList(requestValue: FetchGroupMemberListRequestValue) async throws -> [GroupMember]
 }

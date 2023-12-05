@@ -59,8 +59,7 @@ final class GroupMemberViewModel {
     private func fetchGroupMemberList() {
         Task {
             do {
-                let groupMembers = try await fetchGroupMemberListUseCase.execute(
-                    requestValue: FetchGroupMemberListRequestValue(groupId: group.id))
+                let groupMembers = try await fetchGroupMemberListUseCase.execute()
                 self.groupMembers = groupMembers
                 groupMemberListState.send(.success)
             } catch {

@@ -27,7 +27,9 @@ final class GroupMemberCoordinator: Coordinator {
     
     func start(group: Group) {
         let groupMemberVM = GroupMemberViewModel(
-            fetchGroupMemberListUseCase: .init(groupRepository: GroupRepository()),
+            fetchGroupMemberListUseCase: .init(
+                groupMemberRepository: GroupMemberRepository(groupId: group.id)
+            ),
             group: group
         )
         let groupMemberVC = GroupMemberViewController(viewModel: groupMemberVM)

@@ -7,22 +7,14 @@
 
 import Foundation
 
-public struct FetchGroupMemberListRequestValue: RequestValue {
-    public let groupId: Int
-    
-    public init(groupId: Int) {
-        self.groupId = groupId
-    }
-}
-
 public struct FetchGroupMemberListUseCase {
-    private let groupRepository: GroupRepositoryProtocol
+    private let groupMemberRepository: GroupMemberRepositoryProtocol
     
-    public init(groupRepository: GroupRepositoryProtocol) {
-        self.groupRepository = groupRepository
+    public init(groupMemberRepository: GroupMemberRepositoryProtocol) {
+        self.groupMemberRepository = groupMemberRepository
     }
     
-    public func execute(requestValue: FetchGroupMemberListRequestValue) async throws -> [GroupMember] {
-        return try await groupRepository.fetchGroupMemberList(requestValue: requestValue)
+    public func execute() async throws -> [GroupMember] {
+        return try await groupMemberRepository.fetchGroupMemberList()
     }
 }
