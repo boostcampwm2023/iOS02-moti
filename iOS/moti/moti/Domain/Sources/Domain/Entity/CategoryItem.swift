@@ -15,20 +15,6 @@ public struct CategoryItem: Hashable {
     public var continued: Int
     public var lastChallenged: Date?
     
-    private let dateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        return dateFormatter
-    }()
-    
-    public var displayLastChallenged: String {
-        if let lastChallenged {
-            return dateFormatter.string(from: lastChallenged)
-        } else {
-            return "없음"
-        }
-    }
-    
     public init(
         id: Int,
         name: String,
