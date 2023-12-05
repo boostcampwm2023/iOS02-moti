@@ -56,6 +56,10 @@ final class GroupMemberViewModel {
         }
     }
     
+    func findIndex(groupMember: GroupMember) -> Int? {
+        return groupMembers.firstIndex(of: groupMember)
+    }
+    
     private func fetchGroupMemberList() {
         Task {
             do {
