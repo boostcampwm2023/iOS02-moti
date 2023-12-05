@@ -281,7 +281,7 @@ private extension GroupHomeViewModel {
                 let requestValue = InviteMemberRequestValue(userCode: userCode)
                 let isSuccess = try await inviteMemberUseCase.excute(requestValue: requestValue)
                 if isSuccess {
-                    inviteMemberState.send(.success)
+                    inviteMemberState.send(.success(userCode: userCode))
                 } else {
                     inviteMemberState.send(.failed)
                 }
