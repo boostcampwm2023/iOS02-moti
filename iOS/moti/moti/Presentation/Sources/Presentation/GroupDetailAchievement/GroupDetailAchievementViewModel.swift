@@ -15,6 +15,8 @@ final class GroupDetailAchievementViewModel {
         case launch
         case delete
         case update(updatedAchievement: Achievement)
+        case blockingAchievement
+        case blockingUser
     }
     
     enum LaunchState {
@@ -32,6 +34,9 @@ final class GroupDetailAchievementViewModel {
     // MARK: - UseCase
     private let fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
     private let deleteAchievementUseCase: DeleteAchievementUseCase
+    // Blocking
+    private let blockingUserUseCase: BlockingUserUseCase
+    private let blockingAchievementUseCase: BlockingAchievementUseCase
     
     // MARK: - State
     private(set) var launchState = PassthroughSubject<LaunchState, Never>()
@@ -49,11 +54,15 @@ final class GroupDetailAchievementViewModel {
     init(
         fetchDetailAchievementUseCase: FetchDetailAchievementUseCase,
         deleteAchievementUseCase: DeleteAchievementUseCase,
-        achievement: Achievement, 
+        blockingUserUseCase: BlockingUserUseCase,
+        blockingAchievementUseCase: BlockingAchievementUseCase,
+        achievement: Achievement,
         group: Group
     ) {
         self.fetchDetailAchievementUseCase = fetchDetailAchievementUseCase
         self.deleteAchievementUseCase = deleteAchievementUseCase
+        self.blockingUserUseCase = blockingUserUseCase
+        self.blockingAchievementUseCase = blockingAchievementUseCase
         self.achievement = achievement
         self.group = group
     }
@@ -67,6 +76,10 @@ final class GroupDetailAchievementViewModel {
             deleteAchievement()
         case .update(let updatedAchievement):
             self.achievement = updatedAchievement
+        case .blockingAchievement:
+            blocking(achievementId: achievement.id)
+        case .blockingUser:
+            blocking(userCode: achievement.userCode)
         }
     }
 }
@@ -111,5 +124,15 @@ extension GroupDetailAchievementViewModel {
                 deleteState.send(.failed(message: error.localizedDescription))
             }
         }
+    }
+    
+    /// 도전기록을 차단하는 액션
+    func blocking(achievementId: Int) {
+        blockingAchievementUseCase.execute(achievementId: achievementId)
+    }
+    
+    /// 유저를 차단하는 액션
+    func blocking(userCode: String) {
+        blockingUserUseCase.execute(userCode: userCode)
     }
 }

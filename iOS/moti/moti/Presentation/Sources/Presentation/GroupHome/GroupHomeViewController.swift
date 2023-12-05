@@ -140,11 +140,11 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
         }
     }
     
-    func blockedAchievement(_ achievement: Achievement) {
+    func blockedAchievement(_ achievementId: Int) {
         
     }
     
-    func blockedUser(_ user: User) {
+    func blockedUser(_ userCode: String) {
         
     }
     
@@ -334,11 +334,11 @@ extension GroupHomeViewController: UICollectionViewDelegate {
             })
             // 작성자가 아닌 유저에게만 표시
             let blockingAchievementAction = UIAction(title: "도전기록 차단", attributes: .destructive, handler: { _ in
-                
+                self?.viewModel.action(.blockingAchievement(achievementId: selectedItem.id))
             })
             // 작성자가 아닌 유저에게만 표시
             let blockingUserAction = UIAction(title: "사용자 차단", attributes: .destructive, handler: { _ in
-                
+                self?.viewModel.action(.blockingUser(userCode: selectedItem.userCode))
             })
             
             var children: [UIAction] = []
@@ -461,7 +461,6 @@ private extension GroupHomeViewController {
             .store(in: &cancellables)
 
     }
-    
 }
 
 // MARK: - UITextFieldDelegate

@@ -41,8 +41,12 @@ final class GroupHomeViewModel {
         }
     }
     private let skeletonAchievements: [Achievement] = (-20...(-1)).map { _ in Achievement.makeSkeleton() }
+    
+    // Blocking
+    private let blockingUserUseCase: BlockingUserUseCase
+    private let blockingAchievementUseCase: BlockingAchievementUseCase
 
-    // Pagenation
+    // Pagination
     private var lastRequestNextValue: FetchAchievementListRequestValue?
     private var nextRequestValue: FetchAchievementListRequestValue?
     private var nextAchievementTask: Task<Void, Never>?
@@ -61,7 +65,9 @@ final class GroupHomeViewModel {
         fetchCategoryListUseCase: FetchCategoryListUseCase,
         addCategoryUseCase: AddCategoryUseCase,
         deleteAchievementUseCase: DeleteAchievementUseCase,
-        fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
+        fetchDetailAchievementUseCase: FetchDetailAchievementUseCase,
+        blockingUserUseCase: BlockingUserUseCase,
+        blockingAchievementUseCase: BlockingAchievementUseCase
     ) {
         self.group = group
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
@@ -69,6 +75,8 @@ final class GroupHomeViewModel {
         self.addCategoryUseCase = addCategoryUseCase
         self.deleteAchievementUseCase = deleteAchievementUseCase
         self.fetchDetailAchievementUseCase = fetchDetailAchievementUseCase
+        self.blockingUserUseCase = blockingUserUseCase
+        self.blockingAchievementUseCase = blockingAchievementUseCase
     }
     
     // MARK: - Methods
@@ -108,6 +116,8 @@ final class GroupHomeViewModel {
             refreshAchievementList()
         case .deleteAchievementDataSourceItem(let achievementId):
             deleteOfDataSource(achievementId: achievementId)
+        case .deleteUserDataSourceItem(let userCode):
+            deleteOfDataSource(userCode: userCode)
         case .updateAchievement(let updatedAchievement):
             updateAchievement(updatedAchievement: updatedAchievement)
         case .postAchievement(let newAchievement):
@@ -120,6 +130,10 @@ final class GroupHomeViewModel {
             NotificationCenter.default.post(name: .logout, object: nil)
             KeychainStorage.shared.remove(key: .accessToken)
             KeychainStorage.shared.remove(key: .refreshToken)
+        case .blockingAchievement(let achievementId):
+            blocking(achievementId: achievementId)
+        case .blockingUser(let userCode):
+            blocking(userCode: userCode)
         }
     }
 }
@@ -243,6 +257,18 @@ private extension GroupHomeViewModel {
             }
         }
     }
+    
+    /// 도전기록을 차단하는 액션
+    func blocking(achievementId: Int) {
+        deleteOfDataSource(achievementId: achievementId)
+        blockingAchievementUseCase.execute(achievementId: achievementId)
+    }
+    
+    /// 유저를 차단하는 액션
+    func blocking(userCode: String) {
+        deleteOfDataSource(userCode: userCode)
+        blockingUserUseCase.execute(userCode: userCode)
+    }
 }
 
 // MARK: - Methods
@@ -282,14 +308,13 @@ private extension GroupHomeViewModel {
         }
     }
     
-    /// Achievement의 첫 번째 index를 구하는 메서드
-    func firstIndexOf(achievementId: Int) -> Int? {
-        return achievements.firstIndex { $0.id == achievementId }
+    /// 도전 기록을 데이터소스에서 제거하는 액션
+    func deleteOfDataSource(achievementId: Int) {
+        achievements = achievements.filter { $0.id != achievementId }
     }
     
     /// 도전 기록을 데이터소스에서 제거하는 액션
-    func deleteOfDataSource(achievementId: Int) {
-        guard let foundIndex = firstIndexOf(achievementId: achievementId) else { return }
-        achievements.remove(at: foundIndex)
+    func deleteOfDataSource(userCode: String) {
+        achievements = achievements.filter { $0.userCode != userCode }
     }
 }
