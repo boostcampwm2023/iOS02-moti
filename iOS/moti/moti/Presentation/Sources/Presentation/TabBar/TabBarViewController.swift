@@ -24,12 +24,18 @@ final class TabBarViewController: UITabBarController {
         return tabBar.frame.height
     }
     private var isShowing = true
+    private var standardOriginY: CGFloat = 0
     
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         addTarget()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        standardOriginY = tabBar.frame.origin.y
     }
     
     func setupViewControllers(with viewControllers: [UIViewController]) {
@@ -55,10 +61,14 @@ final class TabBarViewController: UITabBarController {
         self.captureButton.isHidden = false
         self.borderView.isHidden = false
         
+        // TODO: 홈 -> 상세 -> 편집 -> 취소 -> 홈 시나리오에서
+        // 혼자서 tabBar.frame.y가 원상복구 되는 "원인" 찾아야 함
+        if tabBar.frame.origin.y == standardOriginY {
+            moveDownTabBar()
+        }
+        
         UIView.animate(withDuration: 0.3, animations: {
-            self.tabBar.frame.origin.y -= self.tabBarHeight
-            self.captureButton.frame.origin.y -= (self.tabBarHeight + 30)
-            self.borderView.frame.origin.y -= self.tabBarHeight
+            self.moveUpTabBar()
         })
     }
     
@@ -68,14 +78,24 @@ final class TabBarViewController: UITabBarController {
         isShowing = false
         
         UIView.animate(withDuration: 0.3, animations: {
-            self.tabBar.frame.origin.y += self.tabBarHeight
-            self.captureButton.frame.origin.y += (self.tabBarHeight + 30)
-            self.borderView.frame.origin.y += self.tabBarHeight
+            self.moveDownTabBar()
         }, completion: { _ in
             self.tabBar.isHidden = true
             self.captureButton.isHidden = true
             self.borderView.isHidden = true
         })
+    }
+    
+    private func moveUpTabBar() {
+        tabBar.frame.origin.y -= tabBarHeight
+        captureButton.frame.origin.y -= (tabBarHeight + 30)
+        borderView.frame.origin.y -= tabBarHeight
+    }
+    
+    private func moveDownTabBar() {
+        tabBar.frame.origin.y += tabBarHeight
+        captureButton.frame.origin.y += (tabBarHeight + 30)
+        borderView.frame.origin.y += tabBarHeight
     }
     
     // 그룹 리스트 화면에서 캡처 버튼을 숨겨야 함
