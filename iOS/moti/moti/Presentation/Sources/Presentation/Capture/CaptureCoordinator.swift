@@ -28,8 +28,10 @@ final class CaptureCoordinator: Coordinator {
         self.parentCoordinator = parentCoordinator
     }
     
-    func start() {
-        let captureVC = CaptureViewController()
+    func start() { }
+    
+    func start(group: Group? = nil) {
+        let captureVC = CaptureViewController(group: group)
         captureVC.delegate = self
         captureVC.coordinator = self
         
