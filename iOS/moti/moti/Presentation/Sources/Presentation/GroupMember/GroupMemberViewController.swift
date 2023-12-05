@@ -10,7 +10,7 @@ import Combine
 import Core
 import Domain
 
-final class GroupMemberViewController: BaseViewController<GroupMemberView> {
+final class GroupMemberViewController: BaseViewController<GroupMemberView>, HiddenTabBarViewController {
 
     // MARK: - Properties
     weak var coordinator: GroupMemberCoordinator?
