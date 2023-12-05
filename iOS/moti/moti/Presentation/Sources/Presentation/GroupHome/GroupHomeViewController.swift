@@ -177,7 +177,7 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
             target: self,
             action: nil
         )
-        let inviteInfoAction = UIAction(title: "그룹 초대", handler: { _ in
+        let inviteInfoAction = UIAction(title: "그룹원 초대", handler: { _ in
             self.inviteMember()
         })
         let appInfoAction = UIAction(title: "앱 정보", handler: { _ in
@@ -209,9 +209,9 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
     
     func inviteMember() {
         showTextFieldAlert(
-            title: "그룹 초대",
+            title: "그룹원 초대",
             okTitle: "초대",
-            placeholder: "초대할 유저의 7자리 코드를 입력하세요.",
+            placeholder: "초대할 유저의 7자리 유저코드를 입력하세요.",
             okAction: { text in
                 guard let text = text else { return }
                 print("초대할 유저코드: \(text)")
