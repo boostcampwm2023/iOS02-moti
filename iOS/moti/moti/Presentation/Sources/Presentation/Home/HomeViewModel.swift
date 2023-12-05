@@ -207,6 +207,7 @@ private extension HomeViewModel {
         achievements.insert(newAchievement, at: 0)
     }
     
+    /// 삭제 API 액션
     func deleteAchievement(achievementId: Int, categoryId: Int) {
         Task {
             do {

@@ -106,6 +106,12 @@ final class GroupHomeViewModel {
             fetchNextAchievementList()
         case .refreshAchievementList:
             refreshAchievementList()
+        case .deleteAchievementDataSourceItem(let achievementId):
+            deleteOfDataSource(achievementId: achievementId)
+        case .updateAchievement(let updatedAchievement):
+            updateAchievement(updatedAchievement: updatedAchievement)
+        case .postAchievement(let newAchievement):
+            postAchievement(newAchievement: newAchievement)
         case .deleteAchievement(let achievementId, let categoryId):
             deleteAchievement(achievementId: achievementId, categoryId: categoryId)
         case .fetchDetailAchievement(let achievementId):
@@ -179,6 +185,28 @@ private extension GroupHomeViewModel {
         fetchAchievementList(requestValue: requestValue)
     }
     
+    /// 도전 기록의 카테고리를 변경하는 액션
+    func updateAchievement(updatedAchievement: Achievement) {
+        // 홈 화면 데이터 업데이트
+        for index in 0..<achievements.count where achievements[index].id == updatedAchievement.id {
+            achievements[index] = updatedAchievement
+        }
+        
+        // 카테고리가 변경된거면 홈 화면 리스트 갱신
+        guard let currentCategory,
+              let updatedCategory = updatedAchievement.category else { return }
+
+        if currentCategory.id != 0 && currentCategory.id != updatedCategory.id {
+            deleteOfDataSource(achievementId: updatedAchievement.id)
+        }
+    }
+    
+    /// 새로 생성된 도전 기록을 추가하는 액션
+    func postAchievement(newAchievement: Achievement) {
+        achievements.insert(newAchievement, at: 0)
+    }
+    
+    /// 삭제 API 액션
     func deleteAchievement(achievementId: Int, categoryId: Int) {
         Task {
             do {

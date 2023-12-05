@@ -63,7 +63,7 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
         
         present(textFieldAlertVC, animated: true)
     }
-
+    
     // MARK: - Setup
     private func setupAchievementDataSource() {
         layoutView.achievementCollectionView.delegate = self
@@ -113,6 +113,32 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
         viewModel.setupCategoryDataSource(diffableDataSource)
     }
     
+    // MARK: - Methods
+    func deleteAchievementDataSourceItem(achievementId: Int) {
+        viewModel.action(.deleteAchievementDataSourceItem(achievementId: achievementId))
+    }
+    
+    func updateAchievement(updatedAchievement: Achievement) {
+        viewModel.action(.updateAchievement(updatedAchievement: updatedAchievement))
+    }
+    
+    func postedAchievement(newAchievement: Achievement) {
+        viewModel.action(.postAchievement(newAchievement: newAchievement))
+        // 화면이 전환되고 즉시 표시하면 애니메이션이 부자연스러움
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.showCelebrate(with: newAchievement)
+        }
+    }
+    
+    private func showCelebrate(with achievement: Achievement) {
+        let celebrateVC = CelebrateViewController(achievement: achievement)
+        celebrateVC.modalPresentationStyle = .overFullScreen
+        present(celebrateVC, animated: true)
+    }
+}
+
+// MARK: - Setup NavigationBar
+private extension GroupHomeViewController {
     func setupNavigationBar(with group: Group) {
         navigationItem.title = group.name
         
@@ -162,11 +188,11 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
         navigationItem.rightBarButtonItems = [profileItem, moreItem]
     }
     
-    @objc private func avatarImageTapAction() {
+    @objc func avatarImageTapAction() {
         coordinator?.moveToGroupInfoViewController(group: viewModel.group)
     }
     
-    private func selectFirstCategory() {
+    func selectFirstCategory() {
         let firstIndexPath = IndexPath(item: 0, section: 0)
         layoutView.categoryCollectionView.selectItem(at: firstIndexPath, animated: false, scrollPosition: .init())
         collectionView(layoutView.categoryCollectionView.self, didSelectItemAt: firstIndexPath)

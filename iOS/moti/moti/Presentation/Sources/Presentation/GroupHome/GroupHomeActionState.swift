@@ -15,6 +15,9 @@ extension GroupHomeViewModel {
         case fetchNextPage
         case fetchAchievementList(category: CategoryItem)
         case refreshAchievementList
+        case deleteAchievementDataSourceItem(achievementId: Int)
+        case updateAchievement(updatedAchievement: Achievement)
+        case postAchievement(newAchievement: Achievement)
         case deleteAchievement(achievementId: Int, categoryId: Int)
         case fetchDetailAchievement(achievementId: Int)
         case logout

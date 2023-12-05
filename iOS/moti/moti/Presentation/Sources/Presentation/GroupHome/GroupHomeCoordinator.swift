@@ -73,6 +73,6 @@ final class GroupHomeCoordinator: Coordinator {
 // MARK: - EditAchievementCoordinatorDelegate
 extension GroupHomeCoordinator: EditAchievementCoordinatorDelegate {
     func doneButtonDidClicked(achievement: Achievement) {
-//        currentViewController?.updateAchievement(updatedAchievement: achievement)
+        currentViewController?.updateAchievement(updatedAchievement: achievement)
     }
 }
