@@ -47,4 +47,7 @@ public enum SymbolImage {
     
     /// 􀰓. 공지사항 댓글  등록에 사용됨
     public static let sendMessage = UIImage(systemName: "arrow.forward.circle.fill")
+    
+    /// 􀆏. 그룹원 권한 수정 버튼에 사용됨
+    public static let chevronUpDown = UIImage(systemName: "chevron.up.chevron.down")
 }
