@@ -8,7 +8,7 @@
 import UIKit
 import Design
 
-final class GroupDetailAchievementViewController: BaseViewController<GroupDetailAchievementView> {
+final class GroupDetailAchievementViewController: BaseViewController<GroupDetailAchievementView>, HiddenTabBarViewController {
 
     // MARK: - Properties
     private let viewModel: GroupDetailAchievementViewModel
@@ -29,20 +29,6 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         super.viewDidLoad()
         setupNavigationBar()
         layoutView.configure(achievement: viewModel.achievement)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if let tabBarController = tabBarController as? TabBarViewController {
-            tabBarController.hideTabBar()
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if let tabBarController = tabBarController as? TabBarViewController {
-            tabBarController.showTabBar()
-        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {

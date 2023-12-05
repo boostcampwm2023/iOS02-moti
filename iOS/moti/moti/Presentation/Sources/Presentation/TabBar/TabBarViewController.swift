@@ -8,18 +8,13 @@
 import UIKit
 import Design
 
-protocol TabBarViewControllerDelegate: AnyObject {
-    func captureButtonDidClicked()
-}
-
 final class TabBarViewController: UITabBarController {
     
     // MARK: - Views
-    private let captureButton = CaptureButton()
+    let captureButton = CaptureButton()
     private let borderView = UIView()
     
     // MARK: - Properties
-    weak var tabBarDelegate: TabBarViewControllerDelegate?
     private var tabBarHeight: CGFloat {
         return tabBar.frame.height
     }
@@ -30,7 +25,6 @@ final class TabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        addTarget()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -42,15 +36,6 @@ final class TabBarViewController: UITabBarController {
         setViewControllers(viewControllers, animated: false)
     }
     
-    // MARK: - Actions
-    private func addTarget() {
-        captureButton.addTarget(self, action: #selector(captureButtonTouchUpInside), for: .touchUpInside)
-    }
-    
-    @objc private func captureButtonTouchUpInside() {
-        tabBarDelegate?.captureButtonDidClicked()
-    }
-
     // MARK: - Methods
     /// 탭바를 보일 때 호출
     func showTabBar() {
