@@ -21,6 +21,7 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     // MARK: - Properties
     weak var delegate: CaptureViewControllerDelegate?
     weak var coordinator: CaptureCoordinator?
+    private let group: Group?
 
     // Capture Session
     private var isBackCamera = true
@@ -30,6 +31,16 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     
     // Photo Output
     private var output: AVCapturePhotoOutput?
+    
+    // MARK: - Init
+    init(group: Group? = nil) {
+        self.group = group
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Life Cycles
     override func viewDidLoad() {

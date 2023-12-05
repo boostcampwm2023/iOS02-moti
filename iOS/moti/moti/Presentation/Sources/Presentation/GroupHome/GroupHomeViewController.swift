@@ -11,7 +11,7 @@ import Core
 import Combine
 import Domain
 
-final class GroupHomeViewController: BaseViewController<HomeView> {
+final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndicator {
     
     // MARK: - Properties
     weak var coordinator: GroupHomeCoordinator?
@@ -63,7 +63,7 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
         
         present(textFieldAlertVC, animated: true)
     }
-
+    
     // MARK: - Setup
     private func setupAchievementDataSource() {
         layoutView.achievementCollectionView.delegate = self
@@ -113,6 +113,32 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
         viewModel.setupCategoryDataSource(diffableDataSource)
     }
     
+    // MARK: - Methods
+    func deleteAchievementDataSourceItem(achievementId: Int) {
+        viewModel.action(.deleteAchievementDataSourceItem(achievementId: achievementId))
+    }
+    
+    func updateAchievement(updatedAchievement: Achievement) {
+        viewModel.action(.updateAchievement(updatedAchievement: updatedAchievement))
+    }
+    
+    func postedAchievement(newAchievement: Achievement) {
+        viewModel.action(.postAchievement(newAchievement: newAchievement))
+        // 화면이 전환되고 즉시 표시하면 애니메이션이 부자연스러움
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            self.showCelebrate(with: newAchievement)
+        }
+    }
+    
+    private func showCelebrate(with achievement: Achievement) {
+        let celebrateVC = CelebrateViewController(achievement: achievement)
+        celebrateVC.modalPresentationStyle = .overFullScreen
+        present(celebrateVC, animated: true)
+    }
+}
+
+// MARK: - Setup NavigationBar
+private extension GroupHomeViewController {
     func setupNavigationBar(with group: Group) {
         navigationItem.title = group.name
         
@@ -162,11 +188,11 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
         navigationItem.rightBarButtonItems = [profileItem, moreItem]
     }
     
-    @objc private func avatarImageTapAction() {
+    @objc func avatarImageTapAction() {
         coordinator?.moveToGroupInfoViewController(group: viewModel.group)
     }
     
-    private func selectFirstCategory() {
+    func selectFirstCategory() {
         let firstIndexPath = IndexPath(item: 0, section: 0)
         layoutView.categoryCollectionView.selectItem(at: firstIndexPath, animated: false, scrollPosition: .init())
         collectionView(layoutView.categoryCollectionView.self, didSelectItemAt: firstIndexPath)
@@ -277,11 +303,16 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         let config = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
             // 작성자 본인에게만 표시
             let editAction = UIAction(title: "수정", handler: { _ in
-                
+                self?.viewModel.action(.fetchDetailAchievement(achievementId: selectedItem.id))
             })
             // 작성자 본인, 관리자, 그룹장에게 표시
             let deleteAction = UIAction(title: "삭제", attributes: .destructive, handler: { _ in
-                
+                self?.showDestructiveTwoButtonAlert(
+                    title: "정말로 삭제하시겠습니까?",
+                    message: "삭제된 도전 기록은 되돌릴 수 없습니다."
+                ) {
+                    self?.viewModel.action(.deleteAchievement(achievementId: selectedItem.id, categoryId: selectedItem.categoryId))
+                }
             })
             // 작성자가 아닌 유저에게만 표시
             let blockingAchievementAction = UIAction(title: "도전기록 차단", attributes: .destructive, handler: { _ in
@@ -341,6 +372,41 @@ private extension GroupHomeViewController {
             }
             .store(in: &cancellables)
         
+        viewModel.fetchDetailAchievementState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .finish(let achievement):
+                    hideLoadingIndicator()
+                    coordinator?.moveToEditAchievementViewController(achievement: achievement)
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.deleteAchievementState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .success:
+                    hideLoadingIndicator()
+                case .failed:
+                    hideLoadingIndicator()
+                    showErrorAlert(message: "제거에 실패했습니다. 다시 시도해 주세요.")
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
     }
     
     func bindCategory() {

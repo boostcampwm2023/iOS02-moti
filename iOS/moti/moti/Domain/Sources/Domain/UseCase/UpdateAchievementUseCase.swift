@@ -31,11 +31,11 @@ public struct UpdateAchievementRequestBody: RequestValue {
 
 public struct UpdateAchievementUseCase {
     private let repository: AchievementRepositoryProtocol
-    private let categoryStorage: CategoryStorageProtocol
+    private let categoryStorage: CategoryStorageProtocol?
     
     public init(
         repository: AchievementRepositoryProtocol,
-        categoryStorage: CategoryStorageProtocol
+        categoryStorage: CategoryStorageProtocol?
     ) {
         self.repository = repository
         self.categoryStorage = categoryStorage
@@ -54,14 +54,14 @@ public struct UpdateAchievementUseCase {
         let toCategoryId = newData.categoryId
         
         guard let fromCategoryId = oldAchievement.category?.id,
-              let toCategory = categoryStorage.find(categoryId: toCategoryId),
+              let toCategory = categoryStorage?.find(categoryId: toCategoryId),
               let achievementDate = oldAchievement.date else {
             // TODO: 요청 정보가 잘못 됐다는 Error로 변경 예정
             return (false, nil)
         }
         
-        categoryStorage.decrease(categoryId: fromCategoryId)
-        categoryStorage.increase(categoryId: toCategoryId)
+        categoryStorage?.decrease(categoryId: fromCategoryId)
+        categoryStorage?.increase(categoryId: toCategoryId)
         
         let updatedAchievement = Achievement(
             id: oldAchievement.id,

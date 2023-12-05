@@ -33,6 +33,8 @@ final class GroupHomeViewModel {
     // Achievement
     private var achievementDataSource: AchievementDataSource?
     private let fetchAchievementListUseCase: FetchAchievementListUseCase
+    private let deleteAchievementUseCase: DeleteAchievementUseCase
+    private let fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
     private var achievements: [Achievement] = [] {
         didSet {
             achievementDataSource?.update(data: achievements)
@@ -49,18 +51,24 @@ final class GroupHomeViewModel {
     private(set) var categoryListState = PassthroughSubject<CategoryListState, Never>()
     private(set) var addCategoryState = PassthroughSubject<AddCategoryState, Never>()
     private(set) var achievementListState = PassthroughSubject<AchievementListState, Never>()
+    private(set) var deleteAchievementState = PassthroughSubject<DeleteAchievementState, Never>()
+    private(set) var fetchDetailAchievementState = PassthroughSubject<FetchDetailAchievementState, Never>()
 
     // MARK: - Init
     init(
         group: Group,
         fetchAchievementListUseCase: FetchAchievementListUseCase,
         fetchCategoryListUseCase: FetchCategoryListUseCase,
-        addCategoryUseCase: AddCategoryUseCase
+        addCategoryUseCase: AddCategoryUseCase,
+        deleteAchievementUseCase: DeleteAchievementUseCase,
+        fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
     ) {
         self.group = group
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
         self.fetchCategoryListUseCase = fetchCategoryListUseCase
         self.addCategoryUseCase = addCategoryUseCase
+        self.deleteAchievementUseCase = deleteAchievementUseCase
+        self.fetchDetailAchievementUseCase = fetchDetailAchievementUseCase
     }
     
     // MARK: - Methods
@@ -98,6 +106,16 @@ final class GroupHomeViewModel {
             fetchNextAchievementList()
         case .refreshAchievementList:
             refreshAchievementList()
+        case .deleteAchievementDataSourceItem(let achievementId):
+            deleteOfDataSource(achievementId: achievementId)
+        case .updateAchievement(let updatedAchievement):
+            updateAchievement(updatedAchievement: updatedAchievement)
+        case .postAchievement(let newAchievement):
+            postAchievement(newAchievement: newAchievement)
+        case .deleteAchievement(let achievementId, let categoryId):
+            deleteAchievement(achievementId: achievementId, categoryId: categoryId)
+        case .fetchDetailAchievement(let achievementId):
+            fetchDetailAchievement(id: achievementId)
         case .logout:
             NotificationCenter.default.post(name: .logout, object: nil)
             KeychainStorage.shared.remove(key: .accessToken)
@@ -166,6 +184,65 @@ private extension GroupHomeViewModel {
         let requestValue = FetchAchievementListRequestValue(categoryId: currentCategory.id, take: nil, whereIdLessThan: nil)
         fetchAchievementList(requestValue: requestValue)
     }
+    
+    /// 도전 기록의 카테고리를 변경하는 액션
+    func updateAchievement(updatedAchievement: Achievement) {
+        // 홈 화면 데이터 업데이트
+        for index in 0..<achievements.count where achievements[index].id == updatedAchievement.id {
+            achievements[index] = updatedAchievement
+        }
+        
+        // 카테고리가 변경된거면 홈 화면 리스트 갱신
+        guard let currentCategory,
+              let updatedCategory = updatedAchievement.category else { return }
+
+        if currentCategory.id != 0 && currentCategory.id != updatedCategory.id {
+            deleteOfDataSource(achievementId: updatedAchievement.id)
+        }
+    }
+    
+    /// 새로 생성된 도전 기록을 추가하는 액션
+    func postAchievement(newAchievement: Achievement) {
+        achievements.insert(newAchievement, at: 0)
+    }
+    
+    /// 삭제 API 액션
+    func deleteAchievement(achievementId: Int, categoryId: Int) {
+        Task {
+            do {
+                deleteAchievementState.send(.loading)
+                let requestValue = DeleteAchievementRequestValue(id: achievementId)
+                let isSuccess = try await deleteAchievementUseCase.execute(
+                    requestValue: requestValue,
+                    categoryId: categoryId
+                )
+                
+                if isSuccess {
+                    deleteAchievementState.send(.success)
+                    deleteOfDataSource(achievementId: achievementId)
+                } else {
+                    deleteAchievementState.send(.failed)
+                }
+            } catch {
+                Logger.debug("delete achievement error: \(error)")
+                deleteAchievementState.send(.error(message: error.localizedDescription))
+            }
+        }
+    }
+    
+    func fetchDetailAchievement(id achievementId: Int) {
+        Task {
+            do {
+                fetchDetailAchievementState.send(.loading)
+                let achievement = try await fetchDetailAchievementUseCase.execute(
+                    requestValue: FetchDetailAchievementRequestValue(id: achievementId))
+                fetchDetailAchievementState.send(.finish(achievement: achievement))
+            } catch {
+                Logger.debug("detail achievement fetch error: \(error)")
+                fetchDetailAchievementState.send(.error(message: error.localizedDescription))
+            }
+        }
+    }
 }
 
 // MARK: - Methods
@@ -203,5 +280,16 @@ private extension GroupHomeViewModel {
                 }
             }
         }
+    }
+    
+    /// Achievement의 첫 번째 index를 구하는 메서드
+    func firstIndexOf(achievementId: Int) -> Int? {
+        return achievements.firstIndex { $0.id == achievementId }
+    }
+    
+    /// 도전 기록을 데이터소스에서 제거하는 액션
+    func deleteOfDataSource(achievementId: Int) {
+        guard let foundIndex = firstIndexOf(achievementId: achievementId) else { return }
+        achievements.remove(at: foundIndex)
     }
 }

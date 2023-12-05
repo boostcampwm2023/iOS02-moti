@@ -27,12 +27,15 @@ final class GroupHomeCoordinator: Coordinator {
     func start() { }
     
     func start(group: Group) {
+        let groupAchievementRepository = GroupAchievementRepository(groupId: group.id)
         let groupCategoryRepository = GroupCategoryRepository(groupId: group.id)
         let groupHomeVM = GroupHomeViewModel(
             group: group,
-            fetchAchievementListUseCase: .init(repository: GroupAchievementRepository(groupId: group.id)),
+            fetchAchievementListUseCase: .init(repository: groupAchievementRepository),
             fetchCategoryListUseCase: .init(repository: groupCategoryRepository),
-            addCategoryUseCase: .init(repository: groupCategoryRepository)
+            addCategoryUseCase: .init(repository: groupCategoryRepository),
+            deleteAchievementUseCase: .init(repository: groupAchievementRepository, storage: nil),
+            fetchDetailAchievementUseCase: .init(repository: groupAchievementRepository)
         )
         let groupHomeVC = GroupHomeViewController(viewModel: groupHomeVM)
         groupHomeVC.coordinator = self
@@ -56,5 +59,20 @@ final class GroupHomeCoordinator: Coordinator {
         let appInfoCoordinator = AppInfoCoordinator(navigationController, self)
         childCoordinators.append(appInfoCoordinator)
         appInfoCoordinator.start()
+    }
+    
+    func moveToEditAchievementViewController(achievement: Achievement) {
+        let editAchievementCoordinator = EditAchievementCoordinator(navigationController, self)
+        editAchievementCoordinator.delegate = self
+        childCoordinators.append(editAchievementCoordinator)
+        editAchievementCoordinator.start(achievement: achievement)
+    }
+
+}
+
+// MARK: - EditAchievementCoordinatorDelegate
+extension GroupHomeCoordinator: EditAchievementCoordinatorDelegate {
+    func doneButtonDidClicked(achievement: Achievement) {
+        currentViewController?.updateAchievement(updatedAchievement: achievement)
     }
 }
