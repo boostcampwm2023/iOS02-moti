@@ -41,42 +41,6 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
         viewModel.action(.launch)
     }
     
-    private func bind() {
-        viewModel.achievementListState
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] state in
-                guard let self else { return }
-                // state 에 따른 뷰 처리 - 스켈레톤 뷰, fetch 에러 뷰 등
-                Logger.debug(state)
-                switch state {
-                case .loading:
-                    break
-                case .finish:
-                    break
-                case .error(let message):
-                    Logger.error("Fetch Achievement Error: \(message)")
-                }
-            }
-            .store(in: &cancellables)
-        
-        viewModel.categoryListState
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] categoryState in
-                guard let self else { return }
-                switch categoryState {
-                case .loading:
-                    // TODO: 스켈레톤
-                    break
-                case .finish:
-                    // 첫 번째 아이템 선택
-                    self.selectFirstCategory()
-                case .error(let message):
-                    Logger.error("Category State Error: \(message)")
-                }
-            }
-            .store(in: &cancellables)
-    }
-    
     // MARK: - Actions
     private func addTargets() {
         layoutView.categoryAddButton.addTarget(self, action: #selector(showAddGroupCategoryAlert), for: .touchUpInside)
@@ -90,6 +54,7 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
             okAction: { [weak self] text in
                 guard let self, let text else { return }
                 Logger.debug("그룹 카테고리 생성 입력: \(text)")
+                viewModel.action(.addCategory(name: text))
             })
         
         if let textField = textFieldAlertVC.textFields?.first {
@@ -349,6 +314,70 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         return config
 
     }
+}
+
+// MARK: - Binding
+private extension GroupHomeViewController {
+    private func bind() {
+        bindAchievement()
+        bindCategory()
+    }
+    
+    func bindAchievement() {
+        viewModel.achievementListState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                // state 에 따른 뷰 처리 - 스켈레톤 뷰, fetch 에러 뷰 등
+                Logger.debug(state)
+                switch state {
+                case .loading:
+                    break
+                case .finish:
+                    break
+                case .error(let message):
+                    Logger.error("Fetch Achievement Error: \(message)")
+                }
+            }
+            .store(in: &cancellables)
+        
+    }
+    
+    func bindCategory() {
+        viewModel.categoryListState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] categoryState in
+                guard let self else { return }
+                switch categoryState {
+                case .loading:
+                    break
+                case .finish:
+                    // 첫 번째 아이템 선택
+                    self.selectFirstCategory()
+                case .error(let message):
+                    Logger.error("Category State Error: \(message)")
+                }
+            }
+            .store(in: &cancellables)
+
+        viewModel.addCategoryState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    layoutView.categoryAddButton.isEnabled = false
+                case .finish:
+                    layoutView.categoryAddButton.isEnabled = true
+                case .error(let message):
+                    layoutView.categoryAddButton.isEnabled = true
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
+
+    }
+    
 }
 
 // MARK: - UITextFieldDelegate

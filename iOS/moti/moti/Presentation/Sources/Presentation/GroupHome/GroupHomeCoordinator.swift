@@ -29,7 +29,9 @@ final class GroupHomeCoordinator: Coordinator {
     func start(group: Group) {
         let groupHomeVM = GroupHomeViewModel(
             group: group,
-            fetchAchievementListUseCase: .init(repository: GroupAchievementRepository(groupId: group.id))
+            fetchAchievementListUseCase: .init(repository: GroupAchievementRepository(groupId: group.id)),
+            fetchCategoryListUseCase: .init(repository: GroupCategoryRepository(groupId: group.id)),
+            addCategoryUseCase: .init(repository: GroupCategoryRepository(groupId: group.id))
         )
         let groupHomeVC = GroupHomeViewController(viewModel: groupHomeVM)
         groupHomeVC.coordinator = self

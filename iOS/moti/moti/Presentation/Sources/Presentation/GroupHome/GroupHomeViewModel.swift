@@ -21,6 +21,8 @@ final class GroupHomeViewModel {
     
     // Category
     private var categoryDataSource: CategoryDataSource?
+    private let fetchCategoryListUseCase: FetchCategoryListUseCase
+    private let addCategoryUseCase: AddCategoryUseCase
     private var categories: [CategoryItem] = [] {
         didSet {
             categoryDataSource?.update(data: categories)
@@ -45,15 +47,20 @@ final class GroupHomeViewModel {
     
     // State
     private(set) var categoryListState = PassthroughSubject<CategoryListState, Never>()
+    private(set) var addCategoryState = PassthroughSubject<AddCategoryState, Never>()
     private(set) var achievementListState = PassthroughSubject<AchievementListState, Never>()
 
     // MARK: - Init
     init(
         group: Group,
-        fetchAchievementListUseCase: FetchAchievementListUseCase
+        fetchAchievementListUseCase: FetchAchievementListUseCase,
+        fetchCategoryListUseCase: FetchCategoryListUseCase,
+        addCategoryUseCase: AddCategoryUseCase
     ) {
         self.group = group
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
+        self.fetchCategoryListUseCase = fetchCategoryListUseCase
+        self.addCategoryUseCase = addCategoryUseCase
     }
     
     // MARK: - Methods
@@ -83,6 +90,8 @@ final class GroupHomeViewModel {
         switch action {
         case .launch:
             fetchCategories()
+        case .addCategory(let name):
+            addCategory(name: name)
         case .fetchAchievementList(let category):
             fetchCategoryAchievementList(category: category)
         case .fetchNextPage:
@@ -104,14 +113,24 @@ private extension GroupHomeViewModel {
         Task {
             do {
                 categoryListState.send(.loading)
-                categories = [
-                    .init(id: 10, name: "그룹 카테고리1"),
-                    .init(id: 11, name: "그룹 카테고리2"),
-                    .init(id: 12, name: "그룹 카테고리3")
-                ]
+                categories = try await fetchCategoryListUseCase.execute()
                 categoryListState.send(.finish)
             } catch {
                 categoryListState.send(.error(message: error.localizedDescription))
+            }
+        }
+    }
+    
+    func addCategory(name: String) {
+        Task {
+            addCategoryState.send(.loading)
+            let requestValue = AddCategoryRequestValue(name: name)
+            let category = try? await addCategoryUseCase.execute(requestValue: requestValue)
+            if let category {
+                categories.append(category)
+                addCategoryState.send(.finish)
+            } else {
+                addCategoryState.send(.error(message: "카테고리 추가에 실패했습니다."))
             }
         }
     }
