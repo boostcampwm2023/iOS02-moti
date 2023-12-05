@@ -21,7 +21,7 @@ extension GroupHomeViewModel {
         case deleteAchievement(achievementId: Int, categoryId: Int)
         case fetchDetailAchievement(achievementId: Int)
         case logout
-        case blockingAchievement(achievement: Achievement)
+        case blockingAchievement(achievementId: Int)
         case blockingUser(userCode: String)
     }
     
@@ -53,12 +53,6 @@ extension GroupHomeViewModel {
         case loading
         case success
         case failed
-        case error(message: String)
-    }
-    
-    enum BlockingState {
-        case loading
-        case success
         case error(message: String)
     }
 }

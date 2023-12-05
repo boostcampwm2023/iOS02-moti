@@ -33,6 +33,9 @@ enum MotiAPI: EndpointProtocol {
     case updateGroupAchievement(requestValue: UpdateAchievementRequestValue, groupId: Int)
     case postGroupAchievement(requestValue: PostAchievementRequestValue, groupId: Int)
     case fetchGroupMemberList(groupId: Int)
+    // 차단
+    case blockingUser(userCode: String)
+    case blockingAchievement(achievementId: Int, groupId: Int)
 
     private var keychainStorage: KeychainStorageProtocol {
         return KeychainStorage.shared
@@ -79,6 +82,10 @@ extension MotiAPI {
             return "/groups/\(groupId)/achievements"
         case .fetchGroupMemberList(let groupId):
             return "/groups/\(groupId)/users"
+        case .blockingUser(let userCode):
+            return "/users/\(userCode)/reject"
+        case .blockingAchievement(let achievementId, let groupId):
+            return "/groups/\(groupId)/achievements/\(achievementId)/reject"
         }
     }
     
@@ -105,6 +112,8 @@ extension MotiAPI {
         case .updateGroupAchievement: return .put
         case .postGroupAchievement: return .post
         case .fetchGroupMemberList: return .get
+        case .blockingUser: return .post
+        case .blockingAchievement: return .post
         }
     }
     

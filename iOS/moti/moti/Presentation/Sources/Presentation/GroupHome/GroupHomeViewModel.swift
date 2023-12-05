@@ -41,6 +41,10 @@ final class GroupHomeViewModel {
         }
     }
     private let skeletonAchievements: [Achievement] = (-20...(-1)).map { _ in Achievement.makeSkeleton() }
+    
+    // Blocking
+    private let blockingUserUseCase: BlockingUserUseCase
+    private let blockingAchievementUseCase: BlockingAchievementUseCase
 
     // Pagenation
     private var lastRequestNextValue: FetchAchievementListRequestValue?
@@ -53,7 +57,6 @@ final class GroupHomeViewModel {
     private(set) var achievementListState = PassthroughSubject<AchievementListState, Never>()
     private(set) var deleteAchievementState = PassthroughSubject<DeleteAchievementState, Never>()
     private(set) var fetchDetailAchievementState = PassthroughSubject<FetchDetailAchievementState, Never>()
-    private(set) var blockingState = PassthroughSubject<BlockingState, Never>()
 
     // MARK: - Init
     init(
@@ -62,7 +65,9 @@ final class GroupHomeViewModel {
         fetchCategoryListUseCase: FetchCategoryListUseCase,
         addCategoryUseCase: AddCategoryUseCase,
         deleteAchievementUseCase: DeleteAchievementUseCase,
-        fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
+        fetchDetailAchievementUseCase: FetchDetailAchievementUseCase,
+        blockingUserUseCase: BlockingUserUseCase,
+        blockingAchievementUseCase: BlockingAchievementUseCase
     ) {
         self.group = group
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
@@ -70,6 +75,8 @@ final class GroupHomeViewModel {
         self.addCategoryUseCase = addCategoryUseCase
         self.deleteAchievementUseCase = deleteAchievementUseCase
         self.fetchDetailAchievementUseCase = fetchDetailAchievementUseCase
+        self.blockingUserUseCase = blockingUserUseCase
+        self.blockingAchievementUseCase = blockingAchievementUseCase
     }
     
     // MARK: - Methods
@@ -121,8 +128,8 @@ final class GroupHomeViewModel {
             NotificationCenter.default.post(name: .logout, object: nil)
             KeychainStorage.shared.remove(key: .accessToken)
             KeychainStorage.shared.remove(key: .refreshToken)
-        case .blockingAchievement(let achievement):
-            blocking(achievement: achievement)
+        case .blockingAchievement(let achievementId):
+            blocking(achievementId: achievementId)
         case .blockingUser(let userCode):
             blocking(userCode: userCode)
         }
@@ -250,13 +257,19 @@ private extension GroupHomeViewModel {
     }
     
     /// 도전기록을 차단하는 액션
-    func blocking(achievement: Achievement) {
-        achievements = achievements.filter { $0.id != achievement.id }
+    func blocking(achievementId: Int) {
+        achievements = achievements.filter { $0.id != achievementId }
+        Task {
+            blockingAchievementUseCase.execute(achievementId: achievementId)
+        }
     }
     
     /// 유저를 차단하는 액션
     func blocking(userCode: String) {
         achievements = achievements.filter { $0.userCode != userCode }
+        Task {
+            blockingUserUseCase.execute(userCode: userCode)
+        }
     }
 }
 

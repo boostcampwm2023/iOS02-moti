@@ -27,6 +27,7 @@ final class GroupHomeCoordinator: Coordinator {
     func start() { }
     
     func start(group: Group) {
+        let blockingRepository = BlockingRepository(groupId: group.id)
         let groupAchievementRepository = GroupAchievementRepository(groupId: group.id)
         let groupCategoryRepository = GroupCategoryRepository(groupId: group.id)
         let groupHomeVM = GroupHomeViewModel(
@@ -35,7 +36,9 @@ final class GroupHomeCoordinator: Coordinator {
             fetchCategoryListUseCase: .init(repository: groupCategoryRepository),
             addCategoryUseCase: .init(repository: groupCategoryRepository),
             deleteAchievementUseCase: .init(repository: groupAchievementRepository, storage: nil),
-            fetchDetailAchievementUseCase: .init(repository: groupAchievementRepository)
+            fetchDetailAchievementUseCase: .init(repository: groupAchievementRepository),
+            blockingUserUseCase: .init(blockingRepository: blockingRepository),
+            blockingAchievementUseCase: .init(blockingRepository: blockingRepository)
         )
         let groupHomeVC = GroupHomeViewController(viewModel: groupHomeVM)
         groupHomeVC.coordinator = self
