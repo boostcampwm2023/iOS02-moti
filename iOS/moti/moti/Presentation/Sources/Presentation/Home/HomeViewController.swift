@@ -187,6 +187,7 @@ private extension HomeViewController {
             withConfiguration: UIImage.SymbolConfiguration(font: .large)
         )
         let profileButton = UIButton(type: .system)
+        profileButton.addTarget(self, action: #selector(showUserCode), for: .touchUpInside)
         profileButton.setImage(profileImage, for: .normal)
         profileButton.contentMode = .scaleAspectFit
         profileButton.tintColor = .primaryDarkGray
@@ -223,6 +224,12 @@ private extension HomeViewController {
                 self.viewModel.action(.logout)
             }
         )
+    }
+    
+    @objc func showUserCode() {
+        if let userCode = UserDefaults.standard.readString(key: .userCode) {
+            showOneButtonAlert(title: "유저 코드", message: userCode)
+        }
     }
 }
 

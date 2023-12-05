@@ -18,6 +18,7 @@ final class GroupHomeViewModel {
     // MARK: - Properties
     // Group
     private(set) var group: Group
+    private let inviteMemberUseCase: InviteMemberUseCase
     
     // Category
     private var categoryDataSource: CategoryDataSource?
@@ -68,7 +69,8 @@ final class GroupHomeViewModel {
         deleteAchievementUseCase: DeleteAchievementUseCase,
         fetchDetailAchievementUseCase: FetchDetailAchievementUseCase,
         blockingUserUseCase: BlockingUserUseCase,
-        blockingAchievementUseCase: BlockingAchievementUseCase
+        blockingAchievementUseCase: BlockingAchievementUseCase,
+        inviteMemberUseCase: InviteMemberUseCase
     ) {
         self.group = group
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
@@ -78,6 +80,7 @@ final class GroupHomeViewModel {
         self.fetchDetailAchievementUseCase = fetchDetailAchievementUseCase
         self.blockingUserUseCase = blockingUserUseCase
         self.blockingAchievementUseCase = blockingAchievementUseCase
+        self.inviteMemberUseCase = inviteMemberUseCase
     }
     
     // MARK: - Methods
@@ -279,7 +282,7 @@ private extension GroupHomeViewModel {
             do {
                 inviteMemberState.send(.loading)
                 let requestValue = InviteMemberRequestValue(userCode: userCode)
-                let isSuccess = try await inviteMemberUseCase.excute(requestValue: requestValue)
+                let isSuccess = try await inviteMemberUseCase.execute(requestValue: requestValue)
                 if isSuccess {
                     inviteMemberState.send(.success(userCode: userCode))
                 } else {

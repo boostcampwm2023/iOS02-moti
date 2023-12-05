@@ -371,6 +371,7 @@ private extension GroupHomeViewController {
     private func bind() {
         bindAchievement()
         bindCategory()
+        bindGroup()
     }
     
     func bindAchievement() {

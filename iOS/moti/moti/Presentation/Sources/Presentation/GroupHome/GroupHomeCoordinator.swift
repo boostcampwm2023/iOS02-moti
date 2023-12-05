@@ -38,7 +38,8 @@ final class GroupHomeCoordinator: Coordinator {
             deleteAchievementUseCase: .init(repository: groupAchievementRepository, storage: nil),
             fetchDetailAchievementUseCase: .init(repository: groupAchievementRepository),
             blockingUserUseCase: .init(blockingRepository: blockingRepository),
-            blockingAchievementUseCase: .init(blockingRepository: blockingRepository)
+            blockingAchievementUseCase: .init(blockingRepository: blockingRepository), 
+            inviteMemberUseCase: .init(repository: GroupMemberRepository(groupId: group.id))
         )
         let groupHomeVC = GroupHomeViewController(viewModel: groupHomeVM)
         groupHomeVC.coordinator = self

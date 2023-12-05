@@ -24,4 +24,10 @@ public struct GroupMemberRepository: GroupMemberRepositoryProtocol {
         
         return groupMemberListDTO.map { GroupMember(dto: $0) }
     }
+    
+    public func invite(requestValue: InviteMemberRequestValue) async throws -> Bool {
+        let endpoint = MotiAPI.invite(requestValue: requestValue, groupId: groupId)
+        let responseDTO = try await provider.request(with: endpoint, type: InviteMemberDTO.self)
+        return responseDTO.success ?? false
+    }
 }

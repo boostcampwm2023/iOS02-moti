@@ -9,4 +9,5 @@ import Foundation
 
 public protocol GroupMemberRepositoryProtocol {
     func fetchGroupMemberList() async throws -> [GroupMember]
+    func invite(requestValue: InviteMemberRequestValue) async throws -> Bool
 }
