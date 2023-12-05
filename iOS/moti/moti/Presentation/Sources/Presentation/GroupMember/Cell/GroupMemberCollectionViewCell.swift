@@ -67,10 +67,10 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Methods
     func configure(with groupMember: GroupMember) {
-        if let url = groupMember.avatarUrl {
+        if let url = groupMember.user.avatarURL {
             iconImageView.jf.setImage(with: url)
         }
-        userCodeLabel.text = groupMember.userCode
+        userCodeLabel.text = groupMember.user.code
         lastChallengedLabel.text = groupMember.displayLastChallenged
         gradeButton.setTitle(groupMember.grade.description, for: .normal)
     }

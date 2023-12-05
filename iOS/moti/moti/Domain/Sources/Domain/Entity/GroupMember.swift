@@ -8,19 +8,16 @@
 import Foundation
 
 public struct GroupMember: Hashable {
-    public let userCode: String
-    public var avatarUrl: URL?
+    public let user: User
     public var lastChallenged: Date?
     public var grade: GroupGrade
     
     public init(
-        userCode: String,
-        avatarUrl: URL? = nil,
+        user: User,
         lastChallenged: Date? = nil,
         grade: GroupGrade
     ) {
-        self.userCode = userCode
-        self.avatarUrl = avatarUrl
+        self.user = user
         self.lastChallenged = lastChallenged
         self.grade = grade
     }
