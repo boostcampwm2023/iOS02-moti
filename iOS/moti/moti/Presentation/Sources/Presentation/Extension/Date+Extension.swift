@@ -19,4 +19,10 @@ extension Date {
         dateFormatter.dateFormat = "MM월 dd일"
         return dateFormatter.string(from: self)
     }
+    
+    func convertStringyyyy_MM_dd() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        return dateFormatter.string(from: self)
+    }
 }
