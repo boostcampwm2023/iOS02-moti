@@ -28,6 +28,14 @@ public enum GroupGrade: Hashable, CustomStringConvertible {
         case .participant: return "그룹원"
         }
     }
+    
+    public var rawValue: String {
+        switch self {
+        case .leader: return "LEADER"
+        case .manager: return "MANAGER"
+        case .participant: return "PARTICIPANT"
+        }
+    }
 }
 
 public struct Group: Hashable {
