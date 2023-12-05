@@ -16,7 +16,7 @@ protocol CaptureViewControllerDelegate: AnyObject {
     func didCapture(image: UIImage)
 }
 
-final class CaptureViewController: BaseViewController<CaptureView> {
+final class CaptureViewController: BaseViewController<CaptureView>, HiddenTabBarViewController {
     
     // MARK: - Properties
     weak var delegate: CaptureViewControllerDelegate?

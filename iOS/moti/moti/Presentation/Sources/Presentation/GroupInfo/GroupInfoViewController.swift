@@ -9,7 +9,7 @@ import UIKit
 import Design
 import Domain
 
-final class GroupInfoViewController: BaseViewController<GroupInfoView> {
+final class GroupInfoViewController: BaseViewController<GroupInfoView>, HiddenTabBarViewController {
 
     // MARK: - Properties
     weak var coordinator: GroupInfoCoordinator?
@@ -37,20 +37,6 @@ final class GroupInfoViewController: BaseViewController<GroupInfoView> {
         layoutView.configure(group: group)
         layoutView.tableView.delegate = self
         layoutView.tableView.dataSource = dataSource
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if let tabBarController = tabBarController as? TabBarViewController {
-            tabBarController.hideTabBar()
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if let tabBarController = tabBarController as? TabBarViewController {
-            tabBarController.showTabBar()
-        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {

@@ -107,7 +107,6 @@ final class EditAchievementCoordinator: Coordinator {
         )
         
         navigationController.pushViewController(editAchievementVC, animated: false)
-        navigationController.setNavigationBarHidden(false, animated: false)
     }
     
     @objc private func cancelButtonAction() {
@@ -127,8 +126,7 @@ extension EditAchievementCoordinator: EditAchievementViewControllerDelegate {
     
     func doneButtonDidClickedFromCaptureView(newAchievement: Achievement) {
         delegate?.doneButtonDidClicked(achievement: newAchievement)
-        navigationController.setNavigationBarHidden(true, animated: false)
         finish(animated: false)
-        parentCoordinator?.finish(animated: true)
+        parentCoordinator?.finish(animated: false)
     }
 }

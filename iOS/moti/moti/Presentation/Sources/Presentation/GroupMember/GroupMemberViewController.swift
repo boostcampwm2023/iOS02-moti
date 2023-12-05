@@ -38,20 +38,6 @@ final class GroupMemberViewController: BaseViewController<GroupMemberView> {
         viewModel.action(.launch)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if let tabBarController = tabBarController as? TabBarViewController {
-            tabBarController.hideTabBar()
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if let tabBarController = tabBarController as? TabBarViewController {
-            tabBarController.showTabBar()
-        }
-    }
-    
     private func setupGroupMemberDataSource() {
         layoutView.groupMemberCollectionView.delegate = self
         let dataSource = GroupMemberViewModel.GroupMemberDataSource.DataSource(

@@ -21,6 +21,7 @@ import { ImageFixture } from '../../../../test/image/image-fixture';
 import { GroupCategoryTestModule } from '../../../../test/group/category/group-category-test.module';
 import { GroupCategoryFixture } from '../../../../test/group/category/group-category-fixture';
 import { dateFormat } from '../../../common/utils/date-formatter';
+import { UserGroupGrade } from '../../group/domain/user-group-grade';
 
 describe('GroupRepository Test', () => {
   let groupAchievementRepository: GroupAchievementRepository;
@@ -171,7 +172,7 @@ describe('GroupRepository Test', () => {
 
       // when
       const findGroupAchievement =
-        await groupAchievementRepository.findAchievementDetail(
+        await groupAchievementRepository.findAchievementDetailByIdAndUser(
           user.id,
           groupAchievement.id,
         );
@@ -199,7 +200,10 @@ describe('GroupRepository Test', () => {
 
       // when
       const findGroupAchievement =
-        await groupAchievementRepository.findAchievementDetail(user.id, 2);
+        await groupAchievementRepository.findAchievementDetailByIdAndUser(
+          user.id,
+          2,
+        );
 
       // then
       expect(findGroupAchievement).toBeNull();
@@ -225,7 +229,7 @@ describe('GroupRepository Test', () => {
 
       // when
       const findGroupAchievement =
-        await groupAchievementRepository.findAchievementDetail(
+        await groupAchievementRepository.findAchievementDetailByIdAndUser(
           user.id,
           groupAchievements[9].id,
         );
@@ -256,6 +260,135 @@ describe('GroupRepository Test', () => {
       expect(findById.title).toEqual(groupAchievement.title);
       expect(findById.content).toEqual(groupAchievement.content);
       expect(findById.createdAt).toEqual(groupAchievement.createdAt);
+    });
+  });
+
+  describe('findAchievementDetailByIdAndBelongingGroup는 그룹에 따라 사용자가 달성 기록을 조회할 수 있다.', () => {
+    test('작성자는 달성기록을 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroup('GROUP', user);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          user,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            user,
+            group,
+            groupCategory,
+          );
+
+        // when
+        const groupAchievementDetailResponse =
+          await groupAchievementRepository.findAchievementDetailByIdAndBelongingGroup(
+            groupAchievement.id,
+            user.id,
+          );
+
+        // then
+        expect(groupAchievementDetailResponse.id).toEqual(groupAchievement.id);
+        expect(groupAchievementDetailResponse.title).toEqual(
+          groupAchievement.title,
+        );
+        expect(groupAchievementDetailResponse.content).toEqual(
+          groupAchievement.content,
+        );
+        expect(groupAchievementDetailResponse.imageUrl).toEqual(
+          groupAchievement.image.imageUrl,
+        );
+        expect(groupAchievementDetailResponse.createdAt).toEqual(
+          dateFormat(groupAchievement.createdAt),
+        );
+        expect(groupAchievementDetailResponse.category.achieveCount).toEqual(1);
+        expect(groupAchievementDetailResponse.category.name).toEqual(
+          groupCategory.name,
+        );
+        expect(groupAchievementDetailResponse.category.id).toEqual(
+          groupCategory.id,
+        );
+      });
+    });
+
+    test('그룹에 속한 사용자는 달성기록을 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const writer = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroup('GROUP', writer);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          writer,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            writer,
+            group,
+            groupCategory,
+          );
+
+        const reader = await usersFixture.getUser('DEF');
+        await groupFixture.addMember(group, reader, UserGroupGrade.PARTICIPANT);
+
+        // when
+        const groupAchievementDetailResponse =
+          await groupAchievementRepository.findAchievementDetailByIdAndBelongingGroup(
+            groupAchievement.id,
+            reader.id,
+          );
+
+        // then
+        expect(groupAchievementDetailResponse.id).toEqual(groupAchievement.id);
+        expect(groupAchievementDetailResponse.title).toEqual(
+          groupAchievement.title,
+        );
+        expect(groupAchievementDetailResponse.content).toEqual(
+          groupAchievement.content,
+        );
+        expect(groupAchievementDetailResponse.imageUrl).toEqual(
+          groupAchievement.image.imageUrl,
+        );
+        expect(groupAchievementDetailResponse.createdAt).toEqual(
+          dateFormat(groupAchievement.createdAt),
+        );
+        expect(groupAchievementDetailResponse.category.achieveCount).toEqual(1);
+        expect(groupAchievementDetailResponse.category.name).toEqual(
+          groupCategory.name,
+        );
+        expect(groupAchievementDetailResponse.category.id).toEqual(
+          groupCategory.id,
+        );
+      });
+    });
+
+    test('그룹에 속하지 않은 사용자는 달성기록을 조회할 수 없다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const writer = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroup('GROUP', writer);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          writer,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            writer,
+            group,
+            groupCategory,
+          );
+
+        const reader = await usersFixture.getUser('DEF');
+
+        // when
+        const groupAchievementDetailResponse =
+          await groupAchievementRepository.findAchievementDetailByIdAndBelongingGroup(
+            groupAchievement.id,
+            reader.id,
+          );
+
+        // then
+        expect(groupAchievementDetailResponse).toBeNull();
+      });
     });
   });
 });
