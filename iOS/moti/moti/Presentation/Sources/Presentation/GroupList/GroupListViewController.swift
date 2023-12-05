@@ -207,5 +207,21 @@ extension GroupListViewController: LoadingIndicator {
                 }
             }
             .store(in: &cancellables)
+        
+        viewModel.dropGroupState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .finish:
+                    hideLoadingIndicator()
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
     }
 }
