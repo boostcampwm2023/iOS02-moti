@@ -177,13 +177,22 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
             target: self,
             action: nil
         )
+        let inviteInfoAction = UIAction(title: "그룹 초대", handler: { _ in
+            self.inviteMember()
+        })
         let appInfoAction = UIAction(title: "앱 정보", handler: { _ in
             self.moveToAppInfoViewController()
         })
         let logoutAction = UIAction(title: "로그아웃", handler: { _ in
             self.logout()
         })
-        moreItem.menu = UIMenu(children: [appInfoAction, logoutAction])
+        
+        var children: [UIAction] = []
+        if group.grade == .leader || group.grade == .manager {
+            children.append(inviteInfoAction)
+        }
+        children.append(contentsOf: [appInfoAction, logoutAction])
+        moreItem.menu = UIMenu(children: children)
 
         navigationItem.rightBarButtonItems = [profileItem, moreItem]
     }
@@ -196,6 +205,18 @@ final class GroupHomeViewController: BaseViewController<HomeView> {
         let firstIndexPath = IndexPath(item: 0, section: 0)
         layoutView.categoryCollectionView.selectItem(at: firstIndexPath, animated: false, scrollPosition: .init())
         collectionView(layoutView.categoryCollectionView.self, didSelectItemAt: firstIndexPath)
+    }
+    
+    func inviteMember() {
+        showTextFieldAlert(
+            title: "그룹 초대",
+            okTitle: "초대",
+            placeholder: "초대할 유저의 7자리 코드를 입력하세요.",
+            okAction: { text in
+                guard let text = text else { return }
+                print("초대할 유저코드: \(text)")
+            }
+        )
     }
     
     func moveToAppInfoViewController() {
@@ -257,7 +278,12 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         layoutView.updateAchievementHeader(with: category)
     }
     
-    func collectionView(_ collectionView: UICollectionView, willDisplaySupplementaryView view: UICollectionReusableView, forElementKind elementKind: String, at indexPath: IndexPath) {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplaySupplementaryView view: UICollectionReusableView,
+        forElementKind elementKind: String,
+        at indexPath: IndexPath
+    ) {
         guard elementKind == UICollectionView.elementKindSectionHeader,
               let headerView = view as? HeaderView else { return }
         
