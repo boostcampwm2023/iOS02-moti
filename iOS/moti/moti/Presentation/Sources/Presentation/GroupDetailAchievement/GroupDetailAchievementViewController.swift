@@ -60,6 +60,9 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
             action: nil
         )
         
+        let isMyAchievement = viewModel.isMyAchievement
+        let grade = viewModel.group.grade
+        
         // 작성자 본인에게만 표시
         let editAction = UIAction(title: "수정", handler: { _ in
             
@@ -76,10 +79,20 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         let blockingUserAction = UIAction(title: "사용자 차단", attributes: .destructive, handler: { _ in
             
         })
-        moreItem.menu = UIMenu(children: [
-            editAction, deleteAction,
-            blockingAchievementAction, blockingUserAction
-        ])
+        
+        var children: [UIAction] = []
+        if isMyAchievement {
+            children.append(contentsOf: [editAction, deleteAction])
+        } else if grade == .leader || grade == .manager {
+            children.append(contentsOf: [deleteAction])
+        }
+        
+        // 그룹장, 관리자에게도 표시하기 위해 조건문 분리
+        if !isMyAchievement {
+            children.append(contentsOf: [blockingAchievementAction, blockingUserAction])
+        }
+        
+        moreItem.menu = UIMenu(children: children)
         
         navigationItem.rightBarButtonItems = [moreItem]
     }

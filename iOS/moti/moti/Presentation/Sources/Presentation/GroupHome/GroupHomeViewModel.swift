@@ -73,6 +73,11 @@ final class GroupHomeViewModel {
         return categories[index]
     }
     
+    /// 파라미터로 받은 Achievement가 자신의 기록인지 확인하는 메서드
+    func isMyAchievement(achievement: Achievement) -> Bool {
+        return achievement.userCode == UserDefaults.standard.readString(key: .userCode)
+    }
+    
     func action(_ action: GroupHomeViewModelAction) {
         switch action {
         case .launch:

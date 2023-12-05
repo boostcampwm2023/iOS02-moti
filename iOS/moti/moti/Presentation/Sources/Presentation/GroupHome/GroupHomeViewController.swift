@@ -249,6 +249,58 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         cell.cancelDownloadImage()
     }
 
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemsAt indexPaths: [IndexPath],
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        guard collectionView == layoutView.achievementCollectionView,
+              let firstIndexPath = indexPaths.first else { return nil }
+        
+        let selectedItem = viewModel.findAchievement(at: firstIndexPath.row)
+        let isMyAchievement = viewModel.isMyAchievement(achievement: selectedItem)
+        let grade = viewModel.group.grade
+        
+        let config = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
+            // 작성자 본인에게만 표시
+            let editAction = UIAction(title: "수정", handler: { _ in
+                
+            })
+            // 작성자 본인, 관리자, 그룹장에게 표시
+            let deleteAction = UIAction(title: "삭제", attributes: .destructive, handler: { _ in
+                
+            })
+            // 작성자가 아닌 유저에게만 표시
+            let blockingAchievementAction = UIAction(title: "도전기록 차단", attributes: .destructive, handler: { _ in
+                
+            })
+            // 작성자가 아닌 유저에게만 표시
+            let blockingUserAction = UIAction(title: "사용자 차단", attributes: .destructive, handler: { _ in
+                
+            })
+            
+            var children: [UIAction] = []
+            if isMyAchievement {
+                children.append(contentsOf: [editAction, deleteAction])
+            } else if grade == .leader || grade == .manager {
+                children.append(contentsOf: [deleteAction])
+            } 
+            
+            // 그룹장, 관리자에게도 표시하기 위해 조건문 분리
+            if !isMyAchievement {
+                children.append(contentsOf: [blockingAchievementAction, blockingUserAction])
+            }
+            
+            return UIMenu(
+                title: selectedItem.title,
+                options: .displayInline,
+                children: children
+            )
+        }
+
+        return config
+
+    }
 }
 
 // MARK: - UITextFieldDelegate
