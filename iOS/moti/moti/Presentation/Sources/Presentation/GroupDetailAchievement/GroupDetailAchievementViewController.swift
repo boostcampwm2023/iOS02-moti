@@ -12,8 +12,8 @@ import Combine
 import Domain
 
 protocol GroupDetailAchievementViewControllerDelegate: DetailAchievementViewControllerDelegate {
-    func blockingAchievementMenuDidClicked(achievement: Achievement)
-    func blockingUserMenuDidClicked(user: User)
+    func blockingAchievementMenuDidClicked(achievementId: Int)
+    func blockingUserMenuDidClicked(userCode: String)
 }
 
 final class GroupDetailAchievementViewController: BaseViewController<GroupDetailAchievementView>, HiddenTabBarViewController {
@@ -77,11 +77,13 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         })
         // 작성자가 아닌 유저에게만 표시
         let blockingAchievementAction = UIAction(title: "도전기록 차단", attributes: .destructive, handler: { _ in
-            
+            self.viewModel.action(.blockingAchievement)
+            self.coordinator?.finish()
         })
         // 작성자가 아닌 유저에게만 표시
         let blockingUserAction = UIAction(title: "사용자 차단", attributes: .destructive, handler: { _ in
-            
+            self.viewModel.action(.blockingUser)
+            self.coordinator?.finish()
         })
         
         var children: [UIAction] = []
