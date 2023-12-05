@@ -9,6 +9,7 @@ import Foundation
 import Domain
 import Core
 import Combine
+import Data
 
 final class GroupHomeViewModel {
     typealias AchievementDataSource = ListDiffableDataSource<Achievement>
@@ -88,6 +89,10 @@ final class GroupHomeViewModel {
             fetchNextAchievementList()
         case .refreshAchievementList:
             refreshAchievementList()
+        case .logout:
+            NotificationCenter.default.post(name: .logout, object: nil)
+            KeychainStorage.shared.remove(key: .accessToken)
+            KeychainStorage.shared.remove(key: .refreshToken)
         }
     }
 }

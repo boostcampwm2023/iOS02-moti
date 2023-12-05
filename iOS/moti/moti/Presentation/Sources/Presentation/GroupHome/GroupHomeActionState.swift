@@ -14,6 +14,7 @@ extension GroupHomeViewModel {
         case fetchNextPage
         case fetchAchievementList(category: CategoryItem)
         case refreshAchievementList
+        case logout
     }
     
     enum CategoryListState {
