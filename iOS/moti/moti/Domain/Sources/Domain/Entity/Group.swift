@@ -7,19 +7,10 @@
 
 import Foundation
 
-public enum GroupGrade: Hashable, CustomStringConvertible {
-    case leader // 그룹장
-    case manager // 관리자
-    case participant // 참가자
-    
-    public init?(grade: String) {
-        switch grade {
-        case "LEADER": self = .leader
-        case "MANAGER": self = .manager
-        case "PARTICIPANT": self = .participant
-        default: return nil
-        }
-    }
+public enum GroupGrade: String, CustomStringConvertible {
+    case leader = "LEADER"// 그룹장
+    case manager = "MANAGER"// 관리자
+    case participant = "PARTICIPANT"// 참가자
     
     public var description: String {
         switch self {

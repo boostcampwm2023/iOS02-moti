@@ -50,4 +50,7 @@ public enum SymbolImage {
     
     /// 􀆏. 그룹원 권한 수정 버튼에 사용됨
     public static let chevronUpDown = UIImage(systemName: "chevron.up.chevron.down")
+    
+    /// 􀉮. 그룹원 프로필 사진에 사용됨
+    public static let personProfile = UIImage(systemName: "person.crop.circle.fill")
 }

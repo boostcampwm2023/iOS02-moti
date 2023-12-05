@@ -33,7 +33,7 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     // MARK: - Views
     private lazy var iconImageView = {
         let imageView = UIImageView()
-        imageView.image = MotiImage.logoBlue
+        imageView.image = SymbolImage.personProfile
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = iconSize / 2.0

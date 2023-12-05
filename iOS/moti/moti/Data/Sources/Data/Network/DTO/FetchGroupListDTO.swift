@@ -35,7 +35,7 @@ extension Group {
             avatarUrl: dto.avatarUrl,
             continued: dto.continued ?? 0,
             lastChallenged: dto.lastChallenged,
-            grade: GroupGrade(grade: dto.grade ?? "") ?? .participant)
+            grade: GroupGrade(rawValue: dto.grade ?? "") ?? .participant)
     }
     
     init(dto: GroupDTO, grade: GroupGrade) {

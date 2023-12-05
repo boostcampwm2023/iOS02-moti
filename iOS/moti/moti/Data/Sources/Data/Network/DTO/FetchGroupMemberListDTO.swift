@@ -30,7 +30,7 @@ extension GroupMember {
         self.init(
             user: .init(code: dto.userCode, avatarURL: dto.avatarUrl),
             lastChallenged: dto.lastChallenged,
-            grade: GroupGrade(grade: dto.grade ?? "") ?? .participant
+            grade: GroupGrade(rawValue: dto.grade ?? "") ?? .participant
         )
     }
 }

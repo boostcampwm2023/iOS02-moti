@@ -13,9 +13,15 @@ import Combine
 final class GroupMemberViewModel {
     enum GroupMemberViewModelAction {
         case launch
+        case updateGrade(groupMember: GroupMember, newGroupGrade: GroupGrade)
     }
     
     enum GroupMemberListState {
+        case success
+        case failed(message: String)
+    }
+    
+    enum UpdateGradeState {
         case success
         case failed(message: String)
     }
@@ -31,16 +37,20 @@ final class GroupMemberViewModel {
     }
     
     private let fetchGroupMemberListUseCase: FetchGroupMemberListUseCase
+    private let updateGradeUseCase: UpdateGradeUseCase
     
     private(set) var groupMemberListState = PassthroughSubject<GroupMemberListState, Never>()
+    private(set) var updateGradeState = PassthroughSubject<UpdateGradeState, Never>()
     
     private let group: Group
     
     init(
         fetchGroupMemberListUseCase: FetchGroupMemberListUseCase,
+        updateGradeUseCase: UpdateGradeUseCase,
         group: Group
     ) {
         self.fetchGroupMemberListUseCase = fetchGroupMemberListUseCase
+        self.updateGradeUseCase = updateGradeUseCase
         self.group = group
     }
     
@@ -53,10 +63,12 @@ final class GroupMemberViewModel {
         switch action {
         case .launch:
             fetchGroupMemberList()
+        case .updateGrade(let groupMember, let newGroupGrade):
+            updateGrade(groupMember: groupMember, newGroupGrade: newGroupGrade)
         }
     }
     
-    func findIndex(groupMember: GroupMember) -> Int? {
+    private func findIndex(groupMember: GroupMember) -> Int? {
         return groupMembers.firstIndex(of: groupMember)
     }
     
@@ -69,6 +81,24 @@ final class GroupMemberViewModel {
             } catch {
                 Logger.debug("group members fetch error: \(error)")
                 groupMemberListState.send(.failed(message: error.localizedDescription))
+            }
+        }
+    }
+    
+    private func updateGrade(groupMember: GroupMember, newGroupGrade: GroupGrade) {
+        guard let foundIndex = findIndex(groupMember: groupMember) else { return }
+        Task {
+            do {
+                let isSuccess = try await updateGradeUseCase.execute(userCode: groupMember.user.code, requestValue: .init(grade: newGroupGrade.rawValue))
+                if isSuccess {
+                    groupMembers[foundIndex].grade = newGroupGrade
+                    updateGradeState.send(.success)
+                } else {
+                    updateGradeState.send(.failed(message: "\(groupMember.user.code)님의 권한 수정을 실패했습니다."))
+                }
+            } catch {
+                Logger.debug("update grade fail error: \(error)")
+                updateGradeState.send(.failed(message: error.localizedDescription))
             }
         }
     }
