@@ -57,6 +57,7 @@ final class GroupHomeViewModel {
     private(set) var achievementListState = PassthroughSubject<AchievementListState, Never>()
     private(set) var deleteAchievementState = PassthroughSubject<DeleteAchievementState, Never>()
     private(set) var fetchDetailAchievementState = PassthroughSubject<FetchDetailAchievementState, Never>()
+    private(set) var inviteMemberState = PassthroughSubject<InviteMemberState, Never>()
 
     // MARK: - Init
     init(
@@ -134,6 +135,8 @@ final class GroupHomeViewModel {
             blocking(achievementId: achievementId)
         case .blockingUser(let userCode):
             blocking(userCode: userCode)
+        case .invite(let userCode):
+            invite(userCode: userCode)
         }
     }
 }
@@ -268,6 +271,24 @@ private extension GroupHomeViewModel {
     func blocking(userCode: String) {
         deleteOfDataSource(userCode: userCode)
         blockingUserUseCase.execute(userCode: userCode)
+    }
+    
+    /// 그룹에 유저를 초대하는 액션
+    func invite(userCode: String) {
+        Task {
+            do {
+                inviteMemberState.send(.loading)
+                let requestValue = InviteMemberRequestValue(userCode: userCode)
+                let isSuccess = try await inviteMemberUseCase.excute(requestValue: requestValue)
+                if isSuccess {
+                    inviteMemberState.send(.success)
+                } else {
+                    inviteMemberState.send(.failed)
+                }
+            } catch {
+                inviteMemberState.send(.error(message: error.localizedDescription))
+            }
+        }
     }
 }
 

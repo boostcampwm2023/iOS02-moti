@@ -224,6 +224,7 @@ private extension GroupHomeViewController {
             okAction: { text in
                 guard let text = text else { return }
                 print("초대할 유저코드: \(text)")
+                self.viewModel.action(.invite(userCode: text))
             }
         )
     }
@@ -460,6 +461,28 @@ private extension GroupHomeViewController {
             }
             .store(in: &cancellables)
 
+    }
+    
+    func bindGroup() {
+        viewModel.inviteMemberState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .success(let userCode):
+                    hideLoadingIndicator()
+                    showOneButtonAlert(title: "초대 성공", message: "\(userCode)님을 그룹에 초대했습니다.")
+                case .failed:
+                    hideLoadingIndicator()
+                    showErrorAlert(title: "초대 실패", message: "초대를 실패했습니다. 다시 시도해 주세요.")
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
     }
 }
 
