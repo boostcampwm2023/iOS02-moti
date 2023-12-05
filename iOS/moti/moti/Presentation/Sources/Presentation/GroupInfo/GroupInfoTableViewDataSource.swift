@@ -17,6 +17,10 @@ final class GroupInfoTableViewDataSource: NSObject, UITableViewDataSource {
         cellTexts.append(["그룹원 관리"])
     }
     
+    func isDropCell(indexPath: IndexPath) -> Bool {
+        return indexPath.section == 0 && indexPath.row == 1
+    }
+    
     func isGroupMemberCell(indexPath: IndexPath) -> Bool {
         return indexPath.section == 0 && indexPath.row == 0
     }
