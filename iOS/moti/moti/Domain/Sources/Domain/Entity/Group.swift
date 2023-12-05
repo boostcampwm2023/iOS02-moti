@@ -25,7 +25,7 @@ public enum GroupGrade: Hashable, CustomStringConvertible {
         switch self {
         case .leader: return "그룹장"
         case .manager: return "관리자"
-        case .participant: return "참가자"
+        case .participant: return "그룹원"
         }
     }
 }

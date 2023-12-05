@@ -47,8 +47,10 @@ final class GroupInfoViewController: BaseViewController<GroupInfoView>, HiddenTa
 
 extension GroupInfoViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if dataSource.isLeader(indexPath: indexPath) {
-            coordinator?.moveToGroupMemberViewController(group: group)
+        if dataSource.isGroupMemberCell(indexPath: indexPath) {
+            coordinator?.moveToGroupMemberViewController(group: group, manageMode: false)
+        } else if dataSource.isLeaderCell(indexPath: indexPath) {
+            coordinator?.moveToGroupMemberViewController(group: group, manageMode: true)
         }
     }
 }

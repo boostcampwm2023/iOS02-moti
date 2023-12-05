@@ -8,6 +8,7 @@
 import UIKit
 import Combine
 import Core
+import Domain
 
 final class GroupMemberViewController: BaseViewController<GroupMemberView> {
 
@@ -15,10 +16,12 @@ final class GroupMemberViewController: BaseViewController<GroupMemberView> {
     weak var coordinator: GroupMemberCoordinator?
     private let viewModel: GroupMemberViewModel
     private var cancellables: Set<AnyCancellable> = []
+    private let manageMode: Bool
     
     // MARK: - Init
-    init(viewModel: GroupMemberViewModel) {
+    init(viewModel: GroupMemberViewModel, manageMode: Bool) {
         self.viewModel = viewModel
+        self.manageMode = manageMode
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -29,7 +32,7 @@ final class GroupMemberViewController: BaseViewController<GroupMemberView> {
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "그룹원"
+        title = manageMode ? "그룹원 관리" : "그룹원"
         setupGroupMemberDataSource()
         
         bind()
@@ -40,9 +43,15 @@ final class GroupMemberViewController: BaseViewController<GroupMemberView> {
         layoutView.groupMemberCollectionView.delegate = self
         let dataSource = GroupMemberViewModel.GroupMemberDataSource.DataSource(
             collectionView: layoutView.groupMemberCollectionView,
-            cellProvider: { collectionView, indexPath, item in
+            cellProvider: { [weak self] collectionView, indexPath, item in
+                guard let self else { return UICollectionViewCell() }
                 let cell: GroupMemberCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
-                cell.configure(with: item)
+                if self.manageMode {
+                    cell.configureForLeader(with: item)
+                } else {
+                    cell.configureForMember(with: item)
+                }
+                cell.delegate = self
                 return cell
             }
         )
@@ -79,5 +88,14 @@ extension GroupMemberViewController: UICollectionViewDelegate {
         }, completion: { _ in
             cell.transform = .identity
         })
+    }
+}
+
+extension GroupMemberViewController: GroupMemberCollectionViewCellDelegate {
+    func menuDidClicked(groupMember: GroupMember, newGroupGrade: GroupGrade) {
+        showTwoButtonAlert(title: "매니저 권한으로 수정하시겠습니까?", okTitle: "수정") { [weak self] in
+            guard let self else { return }
+            print("뷰모델 함수 호출 예정", self.viewModel.findIndex(groupMember: groupMember))
+        }
     }
 }

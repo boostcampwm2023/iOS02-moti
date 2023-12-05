@@ -25,14 +25,14 @@ final class GroupMemberCoordinator: Coordinator {
     
     func start() { }
     
-    func start(group: Group) {
+    func start(group: Group, manageMode: Bool) {
         let groupMemberVM = GroupMemberViewModel(
             fetchGroupMemberListUseCase: .init(
                 groupMemberRepository: GroupMemberRepository(groupId: group.id)
             ),
             group: group
         )
-        let groupMemberVC = GroupMemberViewController(viewModel: groupMemberVM)
+        let groupMemberVC = GroupMemberViewController(viewModel: groupMemberVM, manageMode: manageMode)
         groupMemberVC.coordinator = self
         navigationController.pushViewController(groupMemberVC, animated: true)
     }
