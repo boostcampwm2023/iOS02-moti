@@ -8,14 +8,14 @@
 import Foundation
 import Domain
 import Core
+import Combine
 
 final class GroupMemberViewModel {
     enum GroupMemberViewModelAction {
         case launch
     }
     
-    enum LaunchState {
-        case initial
+    enum GroupMemberListState {
         case success
         case failed(message: String)
     }
@@ -32,7 +32,7 @@ final class GroupMemberViewModel {
     
     private let fetchGroupMemberListUseCase: FetchGroupMemberListUseCase
     
-    @Published private(set) var launchState: LaunchState = .initial
+    private(set) var groupMemberListState = PassthroughSubject<GroupMemberListState, Never>()
     
     private let group: Group
     
@@ -62,10 +62,10 @@ final class GroupMemberViewModel {
                 let groupMembers = try await fetchGroupMemberListUseCase.execute(
                     requestValue: FetchGroupMemberListRequestValue(groupId: group.id))
                 self.groupMembers = groupMembers
-                launchState = .success
+                groupMemberListState.send(.success)
             } catch {
                 Logger.debug("group members fetch error: \(error)")
-                launchState = .failed(message: error.localizedDescription)
+                groupMemberListState.send(.failed(message: error.localizedDescription))
             }
         }
     }

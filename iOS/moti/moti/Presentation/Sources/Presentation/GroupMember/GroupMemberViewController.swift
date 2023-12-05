@@ -66,13 +66,11 @@ final class GroupMemberViewController: BaseViewController<GroupMemberView> {
     }
     
     private func bind() {
-        viewModel.$launchState
+        viewModel.groupMemberListState
             .receive(on: RunLoop.main)
             .sink { [weak self] state in
                 guard let self else { return }
                 switch state {
-                case .initial:
-                    break
                 case .success:
                     break
                 case .failed(let message):
