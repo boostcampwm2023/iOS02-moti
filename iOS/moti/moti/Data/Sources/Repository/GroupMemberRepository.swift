@@ -25,6 +25,12 @@ public struct GroupMemberRepository: GroupMemberRepositoryProtocol {
         return groupMemberListDTO.map { GroupMember(dto: $0) }
     }
     
+    public func updateGrade(userCode: String, requestValue: UpdateGradeRequestValue) async throws -> Bool {
+        let endpoint = MotiAPI.updateGrade(groupId: groupId, userCode: userCode, requestValue: requestValue)
+        let responseDTO = try await provider.request(with: endpoint, type: UpdateGradeResponseDTO.self)
+        guard let isSuccess = responseDTO.success else { throw NetworkError.decode }
+        
+        return isSuccess
     public func invite(requestValue: InviteMemberRequestValue) async throws -> Bool {
         let endpoint = MotiAPI.invite(requestValue: requestValue, groupId: groupId)
         

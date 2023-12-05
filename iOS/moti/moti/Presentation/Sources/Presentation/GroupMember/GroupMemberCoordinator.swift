@@ -26,10 +26,10 @@ final class GroupMemberCoordinator: Coordinator {
     func start() { }
     
     func start(group: Group, manageMode: Bool) {
+        let groupMemberRepository = GroupMemberRepository(groupId: group.id)
         let groupMemberVM = GroupMemberViewModel(
-            fetchGroupMemberListUseCase: .init(
-                groupMemberRepository: GroupMemberRepository(groupId: group.id)
-            ),
+            fetchGroupMemberListUseCase: .init(groupMemberRepository: groupMemberRepository),
+            updateGradeUseCase: .init(repository: groupMemberRepository),
             group: group
         )
         let groupMemberVC = GroupMemberViewController(viewModel: groupMemberVM, manageMode: manageMode)

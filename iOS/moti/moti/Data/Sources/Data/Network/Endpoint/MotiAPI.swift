@@ -83,6 +83,8 @@ extension MotiAPI {
             return "/groups/\(groupId)/achievements"
         case .fetchGroupMemberList(let groupId):
             return "/groups/\(groupId)/users"
+        case .updateGrade(let groupId, let userCode, _):
+            return "/groups/\(groupId)/users/\(userCode)/auth"
         case .blockingUser(let userCode):
             return "/users/\(userCode)/reject"
         case .blockingAchievement(let achievementId, let groupId):
@@ -115,6 +117,7 @@ extension MotiAPI {
         case .updateGroupAchievement: return .put
         case .postGroupAchievement: return .post
         case .fetchGroupMemberList: return .get
+        case .updateGrade: return .post
         case .blockingUser: return .post
         case .blockingAchievement: return .post
         case .invite: return .post
@@ -151,6 +154,7 @@ extension MotiAPI {
         case .postGroupAchievement(let requestValue, _):
             return requestValue
         case .invite(let requestValue, _):
+        case .updateGrade(_, _, let requestValue):
             return requestValue
         default:
             return nil

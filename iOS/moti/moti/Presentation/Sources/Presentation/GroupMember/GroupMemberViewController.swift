@@ -10,7 +10,7 @@ import Combine
 import Core
 import Domain
 
-final class GroupMemberViewController: BaseViewController<GroupMemberView> {
+final class GroupMemberViewController: BaseViewController<GroupMemberView>, HiddenTabBarViewController {
 
     // MARK: - Properties
     weak var coordinator: GroupMemberCoordinator?
@@ -93,9 +93,9 @@ extension GroupMemberViewController: UICollectionViewDelegate {
 
 extension GroupMemberViewController: GroupMemberCollectionViewCellDelegate {
     func menuDidClicked(groupMember: GroupMember, newGroupGrade: GroupGrade) {
-        showTwoButtonAlert(title: "매니저 권한으로 수정하시겠습니까?", okTitle: "수정") { [weak self] in
+        showTwoButtonAlert(title: "\(newGroupGrade.description) 권한으로 수정하시겠습니까?", okTitle: "수정") { [weak self] in
             guard let self else { return }
-            print("뷰모델 함수 호출 예정", self.viewModel.findIndex(groupMember: groupMember))
+            self.viewModel.action(.updateGrade(groupMember: groupMember, newGroupGrade: newGroupGrade))
         }
     }
 }
