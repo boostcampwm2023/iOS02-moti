@@ -77,6 +77,30 @@ final class TabBarViewController: UITabBarController {
             self.borderView.isHidden = true
         })
     }
+    
+    // 그룹 리스트 화면에서 캡처 버튼을 숨겨야 함
+    /// 캡처버튼을 보일 때 사용
+    func showCaptureButton() {
+        if captureButton.isHidden {
+            captureButton.isHidden = false
+            UIView.animate(withDuration: 0.2, animations: {
+                self.captureButton.alpha = 1
+                self.captureButton.transform = .identity
+            })
+        }
+    }
+    
+    /// 캡처버튼을 숨길 때 사용
+    func hideCaptureButton() {
+        if !captureButton.isHidden {
+            UIView.animate(withDuration: 0.2, animations: {
+                self.captureButton.alpha = 0.1
+                self.captureButton.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+            }, completion: { _ in
+                self.captureButton.isHidden = true
+            })
+        }
+    }
 }
 
 // MARK: - Setup UI

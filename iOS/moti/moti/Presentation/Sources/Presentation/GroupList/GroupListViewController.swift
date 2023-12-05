@@ -36,6 +36,20 @@ final class GroupListViewController: BaseViewController<GroupListView> {
         
         viewModel.action(.launch)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.hideCaptureButton()
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.showCaptureButton()
+        }
+    }
 
     private func setupGroupListDataSource() {
         layoutView.groupListCollectionView.delegate = self
