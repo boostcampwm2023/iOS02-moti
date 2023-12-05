@@ -23,6 +23,7 @@ import { GroupAchievementCreateRequest } from '../dto/group-achievement-create-r
 import { ImageFixture } from '../../../../test/image/image-fixture';
 import { NoSuchGroupUserException } from '../exception/no-such-group-user.exception';
 import { NoUserImageException } from '../../../achievement/exception/no-user-image-exception';
+import { UnauthorizedAchievementException } from '../../../achievement/exception/unauthorized-achievement.exception';
 
 describe('GroupAchievementService Test', () => {
   let groupAchievementService: GroupAchievementService;
@@ -274,6 +275,101 @@ describe('GroupAchievementService Test', () => {
             groupAchievementCreateRequest,
           ),
         ).rejects.toThrow(NoUserImageException);
+      });
+    });
+  });
+
+  describe('getAchievementDetail은 그룹내 특정 달성기록을 조회할 수 있다.', () => {
+    it('작성자는 그룹내 특정 달성기록을 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroup('GROUP', user);
+        const groupCtg = await groupCategoryFixture.createCategory(user, group);
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            user,
+            group,
+            groupCtg,
+          );
+
+        // when
+        const groupAchievementDetail =
+          await groupAchievementService.getAchievementDetail(
+            user,
+            groupAchievement.id,
+          );
+
+        // then
+        expect(groupAchievementDetail.id).toEqual(groupAchievement.id);
+        expect(groupAchievementDetail.title).toEqual(groupAchievement.title);
+        expect(groupAchievementDetail.content).toEqual(
+          groupAchievement.content,
+        );
+      });
+    });
+
+    it('작성자와 같은 그룹 유저는 달성기록을 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const writer = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroup('GROUP', writer);
+        const groupCtg = await groupCategoryFixture.createCategory(
+          writer,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            writer,
+            group,
+            groupCtg,
+          );
+
+        const reader = await usersFixture.getUser('DEF');
+        await groupFixture.addMember(group, reader, UserGroupGrade.PARTICIPANT);
+
+        // when
+        const groupAchievementDetail =
+          await groupAchievementService.getAchievementDetail(
+            reader,
+            groupAchievement.id,
+          );
+
+        // then
+        expect(groupAchievementDetail.id).toEqual(groupAchievement.id);
+        expect(groupAchievementDetail.title).toEqual(groupAchievement.title);
+        expect(groupAchievementDetail.content).toEqual(
+          groupAchievement.content,
+        );
+      });
+    });
+
+    it('작성자와 다른 그룹 유저는 달성기록을 조회할 수 없다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const writer = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroup('GROUP', writer);
+        const groupCtg = await groupCategoryFixture.createCategory(
+          writer,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            writer,
+            group,
+            groupCtg,
+          );
+
+        const reader = await usersFixture.getUser('DEF');
+
+        // when
+        // then
+        await expect(
+          groupAchievementService.getAchievementDetail(
+            reader,
+            groupAchievement.id,
+          ),
+        ).rejects.toThrow(UnauthorizedAchievementException);
       });
     });
   });

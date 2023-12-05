@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
@@ -21,6 +22,7 @@ import { GroupAchievementService } from '../application/group-achievement.servic
 import { ParseIntPipe } from '../../../common/pipe/parse-int.pipe';
 import { RejectGroupAchievementResponse } from '../dto/reject-group-achievement-response.dto';
 import { GroupAchievementCreateRequest } from '../dto/group-achievement-create-request';
+import { AchievementDetailResponse } from '../../../achievement/dto/achievement-detail-response';
 
 @Controller('/api/v1/groups')
 @ApiTags('그룹 달성기록 API')
@@ -75,5 +77,28 @@ export class GroupAchievementController {
         achievementCreate,
       ),
     );
+  }
+
+  @ApiBearerAuth('accessToken')
+  @ApiOperation({
+    summary: '그룹 달성기록 상세정보 API',
+    description: '달성기록 상세정보를 조회한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '그룹 달성기록 상세정보',
+    type: AchievementDetailResponse,
+  })
+  @Get('/:groupId/achievements/:achievementId')
+  @UseGuards(AccessTokenGuard)
+  async getAchievement(
+    @AuthenticatedUser() user: User,
+    @Param('achievementId', ParseIntPipe) id: number,
+  ) {
+    const response = await this.groupAchievementService.getAchievementDetail(
+      user,
+      id,
+    );
+    return ApiData.success(response);
   }
 }
