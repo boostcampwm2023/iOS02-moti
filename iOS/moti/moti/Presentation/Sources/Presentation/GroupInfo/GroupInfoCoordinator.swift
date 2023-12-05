@@ -9,10 +9,15 @@ import UIKit
 import Core
 import Domain
 
+protocol GroupInfoCoordinatorDelegate: AnyObject {
+    func dropCellDidClicked(groupId: Int)
+}
+
 final class GroupInfoCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
+    weak var delegate: GroupInfoCoordinatorDelegate?
     
     init(
         _ navigationController: UINavigationController,
@@ -27,6 +32,7 @@ final class GroupInfoCoordinator: Coordinator {
     func start(group: Group) {
         let groupInfoVC = GroupInfoViewController(group: group)
         groupInfoVC.coordinator = self
+        groupInfoVC.delegate = self
         navigationController.pushViewController(groupInfoVC, animated: true)
     }
     
@@ -34,5 +40,12 @@ final class GroupInfoCoordinator: Coordinator {
         let groupMemberCoordinator = GroupMemberCoordinator(navigationController, self)
         groupMemberCoordinator.start(group: group, manageMode: manageMode)
         childCoordinators.append(groupMemberCoordinator)
+    }
+}
+
+extension GroupInfoCoordinator: GroupInfoViewControllerDelegate {
+    func dropCellDidClicked(groupId: Int) {
+        finish(animated: true)
+        delegate?.dropCellDidClicked(groupId: groupId)
     }
 }

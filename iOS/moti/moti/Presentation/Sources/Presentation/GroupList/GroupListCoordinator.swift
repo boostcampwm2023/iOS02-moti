@@ -14,6 +14,7 @@ final class GroupListCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
+    private var currentViewController: GroupListViewController?
     
     init(
         _ navigationController: UINavigationController,
@@ -30,12 +31,20 @@ final class GroupListCoordinator: Coordinator {
         )
         let groupListVC = GroupListViewController(viewModel: groupVM)
         groupListVC.coordinator = self
+        currentViewController = groupListVC
         navigationController.viewControllers = [groupListVC]
     }
     
     func moveToGroupHomeViewController(group: Group) {
         let groupHomeCoordinator = GroupHomeCoordinator(navigationController, self)
+        groupHomeCoordinator.delegate = self
         groupHomeCoordinator.start(group: group)
         childCoordinators.append(groupHomeCoordinator)
+    }
+}
+
+extension GroupListCoordinator: GroupHomeCoordinatorDelegate {
+    func dropCellDidClicked(groupId: Int) {
+        print(currentViewController, groupId)
     }
 }

@@ -9,10 +9,15 @@ import UIKit
 import Design
 import Domain
 
+protocol GroupInfoViewControllerDelegate: AnyObject {
+    func dropCellDidClicked(groupId: Int)
+}
+
 final class GroupInfoViewController: BaseViewController<GroupInfoView>, HiddenTabBarViewController {
 
     // MARK: - Properties
     weak var coordinator: GroupInfoCoordinator?
+    weak var delegate: GroupInfoViewControllerDelegate?
     private let group: Group
     private let dataSource = GroupInfoTableViewDataSource()
     
@@ -52,6 +57,11 @@ extension GroupInfoViewController: UITableViewDelegate {
             coordinator?.moveToGroupMemberViewController(group: group, manageMode: false)
         } else if dataSource.isLeaderCell(indexPath: indexPath) {
             coordinator?.moveToGroupMemberViewController(group: group, manageMode: true)
+        } else if dataSource.isDropCell(indexPath: indexPath) {
+            showDestructiveTwoButtonAlert(title: "그룹에서 탈퇴하시겠습니까?", okTitle: "탈퇴") { [weak self] in
+                guard let self else { return }
+                delegate?.dropCellDidClicked(groupId: group.id)
+            }
         }
     }
 }
