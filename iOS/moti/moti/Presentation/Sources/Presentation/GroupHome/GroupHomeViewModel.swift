@@ -18,6 +18,7 @@ final class GroupHomeViewModel {
     // MARK: - Properties
     // Group
     private(set) var group: Group
+    private let inviteMemberUseCase: InviteMemberUseCase
     
     // Category
     private var categoryDataSource: CategoryDataSource?
@@ -57,6 +58,7 @@ final class GroupHomeViewModel {
     private(set) var achievementListState = PassthroughSubject<AchievementListState, Never>()
     private(set) var deleteAchievementState = PassthroughSubject<DeleteAchievementState, Never>()
     private(set) var fetchDetailAchievementState = PassthroughSubject<FetchDetailAchievementState, Never>()
+    private(set) var inviteMemberState = PassthroughSubject<InviteMemberState, Never>()
 
     // MARK: - Init
     init(
@@ -67,7 +69,8 @@ final class GroupHomeViewModel {
         deleteAchievementUseCase: DeleteAchievementUseCase,
         fetchDetailAchievementUseCase: FetchDetailAchievementUseCase,
         blockingUserUseCase: BlockingUserUseCase,
-        blockingAchievementUseCase: BlockingAchievementUseCase
+        blockingAchievementUseCase: BlockingAchievementUseCase,
+        inviteMemberUseCase: InviteMemberUseCase
     ) {
         self.group = group
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
@@ -77,6 +80,7 @@ final class GroupHomeViewModel {
         self.fetchDetailAchievementUseCase = fetchDetailAchievementUseCase
         self.blockingUserUseCase = blockingUserUseCase
         self.blockingAchievementUseCase = blockingAchievementUseCase
+        self.inviteMemberUseCase = inviteMemberUseCase
     }
     
     // MARK: - Methods
@@ -134,6 +138,8 @@ final class GroupHomeViewModel {
             blocking(achievementId: achievementId)
         case .blockingUser(let userCode):
             blocking(userCode: userCode)
+        case .invite(let userCode):
+            invite(userCode: userCode)
         }
     }
 }
@@ -268,6 +274,24 @@ private extension GroupHomeViewModel {
     func blocking(userCode: String) {
         deleteOfDataSource(userCode: userCode)
         blockingUserUseCase.execute(userCode: userCode)
+    }
+    
+    /// 그룹에 유저를 초대하는 액션
+    func invite(userCode: String) {
+        Task {
+            do {
+                inviteMemberState.send(.loading)
+                let requestValue = InviteMemberRequestValue(userCode: userCode)
+                let isSuccess = try await inviteMemberUseCase.execute(requestValue: requestValue)
+                if isSuccess {
+                    inviteMemberState.send(.success(userCode: userCode))
+                } else {
+                    inviteMemberState.send(.error(message: "초대 실패했습니다."))
+                }
+            } catch {
+                inviteMemberState.send(.error(message: error.localizedDescription))
+            }
+        }
     }
 }
 

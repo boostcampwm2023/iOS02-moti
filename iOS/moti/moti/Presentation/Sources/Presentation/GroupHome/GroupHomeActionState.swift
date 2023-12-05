@@ -24,6 +24,7 @@ extension GroupHomeViewModel {
         case logout
         case blockingAchievement(achievementId: Int)
         case blockingUser(userCode: String)
+        case invite(userCode: String)
     }
     
     enum CategoryListState {
@@ -54,6 +55,12 @@ extension GroupHomeViewModel {
         case loading
         case success
         case failed
+        case error(message: String)
+    }
+    
+    enum InviteMemberState {
+        case loading
+        case success(userCode: String)
         case error(message: String)
     }
 }

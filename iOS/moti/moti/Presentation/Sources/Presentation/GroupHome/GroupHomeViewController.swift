@@ -141,11 +141,11 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
     }
     
     func blockedAchievement(_ achievementId: Int) {
-        
+        viewModel.action(.deleteAchievementDataSourceItem(achievementId: achievementId))
     }
     
     func blockedUser(_ userCode: String) {
-        
+        viewModel.action(.deleteUserDataSourceItem(userCode: userCode))
     }
     
     private func showCelebrate(with achievement: Achievement) {
@@ -224,6 +224,7 @@ private extension GroupHomeViewController {
             okAction: { text in
                 guard let text = text else { return }
                 print("초대할 유저코드: \(text)")
+                self.viewModel.action(.invite(userCode: text))
             }
         )
     }
@@ -370,6 +371,7 @@ private extension GroupHomeViewController {
     private func bind() {
         bindAchievement()
         bindCategory()
+        bindGroup()
     }
     
     func bindAchievement() {
@@ -460,6 +462,25 @@ private extension GroupHomeViewController {
             }
             .store(in: &cancellables)
 
+    }
+    
+    func bindGroup() {
+        viewModel.inviteMemberState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .success(let userCode):
+                    hideLoadingIndicator()
+                    showOneButtonAlert(title: "초대 성공", message: "\(userCode)님을 그룹에 초대했습니다.")
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(title: "초대 실패", message: message)
+                }
+            }
+            .store(in: &cancellables)
     }
 }
 
