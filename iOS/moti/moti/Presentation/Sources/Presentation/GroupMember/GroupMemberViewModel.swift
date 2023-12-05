@@ -94,7 +94,7 @@ final class GroupMemberViewModel {
                     groupMembers[foundIndex].grade = newGroupGrade
                     updateGradeState.send(.success)
                 } else {
-                    updateGradeState.send(.failed(message: "update grade fail"))
+                    updateGradeState.send(.failed(message: "\(groupMember.user.code)님의 권한 수정을 실패했습니다."))
                 }
             } catch {
                 Logger.debug("update grade fail error: \(error)")
