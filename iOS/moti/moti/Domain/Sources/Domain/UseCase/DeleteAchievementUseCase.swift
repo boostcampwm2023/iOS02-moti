@@ -17,11 +17,12 @@ public struct DeleteAchievementRequestValue: RequestValue {
 
 public struct DeleteAchievementUseCase {
     private let repository: AchievementRepositoryProtocol
-    private let storage: CategoryStorageProtocol
+    // 개인이면 주입, 그룹이면 nil -> TODO: 추후 API 변경되면 제거될 가능성 있음
+    private let storage: CategoryStorageProtocol?
     
     public init(
         repository: AchievementRepositoryProtocol,
-        storage: CategoryStorageProtocol
+        storage: CategoryStorageProtocol?
     ) {
         self.repository = repository
         self.storage = storage
@@ -33,7 +34,7 @@ public struct DeleteAchievementUseCase {
     ) async throws -> Bool {
         let isSuccess = try await repository.deleteAchievement(requestValue: requestValue)
         if isSuccess {
-            storage.decrease(categoryId: categoryId)
+            storage?.decrease(categoryId: categoryId)
         }
         return isSuccess
     }

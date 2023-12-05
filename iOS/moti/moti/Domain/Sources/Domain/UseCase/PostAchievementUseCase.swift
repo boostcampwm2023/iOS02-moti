@@ -23,11 +23,11 @@ public struct PostAchievementRequestValue: RequestValue {
 
 public struct PostAchievementUseCase {
     private let repository: AchievementRepositoryProtocol
-    private let categoryStorage: CategoryStorageProtocol
+    private let categoryStorage: CategoryStorageProtocol?
     
     public init(
         repository: AchievementRepositoryProtocol,
-        categoryStorage: CategoryStorageProtocol
+        categoryStorage: CategoryStorageProtocol?
     ) {
         self.repository = repository
         self.categoryStorage = categoryStorage
@@ -36,7 +36,7 @@ public struct PostAchievementUseCase {
     public func execute(requestValue: PostAchievementRequestValue) async throws -> Achievement {
         let newAchievement = try await repository.postAchievement(requestValue: requestValue)
         if let category = newAchievement.category {
-            categoryStorage.increase(categoryId: category.id)
+            categoryStorage?.increase(categoryId: category.id)
         }
         
         return newAchievement

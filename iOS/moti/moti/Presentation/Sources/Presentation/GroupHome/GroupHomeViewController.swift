@@ -11,7 +11,7 @@ import Core
 import Combine
 import Domain
 
-final class GroupHomeViewController: BaseViewController<HomeView> {
+final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndicator {
     
     // MARK: - Properties
     weak var coordinator: GroupHomeCoordinator?
@@ -277,11 +277,16 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         let config = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
             // 작성자 본인에게만 표시
             let editAction = UIAction(title: "수정", handler: { _ in
-                
+                self?.viewModel.action(.fetchDetailAchievement(achievementId: selectedItem.id))
             })
             // 작성자 본인, 관리자, 그룹장에게 표시
             let deleteAction = UIAction(title: "삭제", attributes: .destructive, handler: { _ in
-                
+                self?.showDestructiveTwoButtonAlert(
+                    title: "정말로 삭제하시겠습니까?",
+                    message: "삭제된 도전 기록은 되돌릴 수 없습니다."
+                ) {
+                    self?.viewModel.action(.deleteAchievement(achievementId: selectedItem.id, categoryId: selectedItem.categoryId))
+                }
             })
             // 작성자가 아닌 유저에게만 표시
             let blockingAchievementAction = UIAction(title: "도전기록 차단", attributes: .destructive, handler: { _ in
@@ -341,6 +346,41 @@ private extension GroupHomeViewController {
             }
             .store(in: &cancellables)
         
+        viewModel.fetchDetailAchievementState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .finish(let achievement):
+                    hideLoadingIndicator()
+                    coordinator?.moveToEditAchievementViewController(achievement: achievement)
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.deleteAchievementState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .success:
+                    hideLoadingIndicator()
+                case .failed:
+                    hideLoadingIndicator()
+                    showErrorAlert(message: "제거에 실패했습니다. 다시 시도해 주세요.")
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
     }
     
     func bindCategory() {

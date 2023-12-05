@@ -33,11 +33,36 @@ final class EditAchievementCoordinator: Coordinator {
     }
     
     func start(achievement: Achievement) {
+        let achievementRepository = AchievementRepository()
         let editAchievementVM = EditAchievementViewModel(
             saveImageUseCase: .init(repository: ImageRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
-            updateAchievementUseCase: .init(repository: AchievementRepository(), categoryStorage: CategoryStorage.shared),
-            postAchievementUseCase: .init(repository: AchievementRepository(), categoryStorage: CategoryStorage.shared)
+            updateAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared),
+            postAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared)
+        )
+        let editAchievementVC = EditAchievementViewController(
+            viewModel: editAchievementVM,
+            achievement: achievement
+        )
+        editAchievementVC.coordinator = self
+        editAchievementVC.delegate = self
+        
+        editAchievementVC.navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: "취소", style: .plain, target: self,
+            action: #selector(cancelButtonAction)
+        )
+        
+        let navVC = UINavigationController(rootViewController: editAchievementVC)
+        navigationController.present(navVC, animated: true)
+    }
+    
+    func start(achievement: Achievement, group: Group) {
+        let groupAchievementRepository = GroupAchievementRepository(groupId: group.id)
+        let editAchievementVM = EditAchievementViewModel(
+            saveImageUseCase: .init(repository: ImageRepository()),
+            fetchCategoryListUseCase: .init(repository: GroupCategoryRepository(groupId: group.id)),
+            updateAchievementUseCase: .init(repository: groupAchievementRepository, categoryStorage: nil),
+            postAchievementUseCase: .init(repository: groupAchievementRepository, categoryStorage: nil)
         )
         let editAchievementVC = EditAchievementViewController(
             viewModel: editAchievementVM,
@@ -56,11 +81,12 @@ final class EditAchievementCoordinator: Coordinator {
     }
     
     func startAfterCapture(image: UIImage) {
+        let achievementRepository = AchievementRepository()
         let editAchievementVM = EditAchievementViewModel(
             saveImageUseCase: .init(repository: ImageRepository()),
             fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
-            updateAchievementUseCase: .init(repository: AchievementRepository(), categoryStorage: CategoryStorage.shared),
-            postAchievementUseCase: .init(repository: AchievementRepository(), categoryStorage: CategoryStorage.shared)
+            updateAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared),
+            postAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared)
         )
         let editAchievementVC = EditAchievementViewController(
             viewModel: editAchievementVM,
