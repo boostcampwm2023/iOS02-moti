@@ -71,7 +71,7 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
             iconImageView.jf.setImage(with: url)
         }
         userCodeLabel.text = groupMember.user.code
-        lastChallengedLabel.text = groupMember.displayLastChallenged
+        lastChallengedLabel.text = groupMember.lastChallenged?.convertStringyyyy_MM_dd() ?? "없음"
         gradeButton.setTitle(groupMember.grade.description, for: .normal)
     }
     

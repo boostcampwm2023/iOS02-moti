@@ -38,20 +38,6 @@ public struct Group: Hashable {
     public var lastChallenged: Date?
     public var grade: GroupGrade
     
-    private let dateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        return dateFormatter
-    }()
-    
-    public var displayLastChallenged: String {
-        if let lastChallenged {
-            return dateFormatter.string(from: lastChallenged)
-        } else {
-            return "없음"
-        }
-    }
-    
     public init(
         id: Int,
         name: String,

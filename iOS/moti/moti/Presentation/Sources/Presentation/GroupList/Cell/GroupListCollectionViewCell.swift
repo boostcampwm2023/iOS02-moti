@@ -84,7 +84,7 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
         }
         titleLabel.text = group.name
         continuedLabel.text = "총 \(group.continued)회 달성"
-        lastChallengedLabel.text = group.displayLastChallenged
+        lastChallengedLabel.text = group.lastChallenged?.convertStringYYYY년_MM월_dd일() ?? "없음"
     }
     
     func showSkeleton() {

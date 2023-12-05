@@ -21,18 +21,4 @@ public struct GroupMember: Hashable {
         self.lastChallenged = lastChallenged
         self.grade = grade
     }
-    
-    private let dateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        return dateFormatter
-    }()
-    
-    public var displayLastChallenged: String {
-        if let lastChallenged {
-            return dateFormatter.string(from: lastChallenged)
-        } else {
-            return "없음"
-        }
-    }
 }
