@@ -32,14 +32,29 @@ final class EditAchievementCoordinator: Coordinator {
         
     }
     
-    func start(achievement: Achievement) {
-        let achievementRepository = AchievementRepository()
-        let editAchievementVM = EditAchievementViewModel(
-            saveImageUseCase: .init(repository: ImageRepository()),
-            fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
-            updateAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared),
-            postAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared)
-        )
+    func start(achievement: Achievement, group: Group? = nil) {
+        // VM 생성
+        let imageRepository = ImageRepository()
+        let editAchievementVM: EditAchievementViewModel
+        if let group = group {
+            let groupAchievementRepository = GroupAchievementRepository(groupId: group.id)
+            editAchievementVM = EditAchievementViewModel(
+                saveImageUseCase: .init(repository: imageRepository),
+                fetchCategoryListUseCase: .init(repository: GroupCategoryRepository(groupId: group.id)),
+                updateAchievementUseCase: .init(repository: groupAchievementRepository, categoryStorage: nil),
+                postAchievementUseCase: .init(repository: groupAchievementRepository, categoryStorage: nil)
+            )
+        } else {
+            let achievementRepository = AchievementRepository()
+            editAchievementVM = EditAchievementViewModel(
+                saveImageUseCase: .init(repository: imageRepository),
+                fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
+                updateAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared),
+                postAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared)
+            )
+        }
+        
+        // VC 생성
         let editAchievementVC = EditAchievementViewController(
             viewModel: editAchievementVM,
             achievement: achievement
@@ -56,38 +71,29 @@ final class EditAchievementCoordinator: Coordinator {
         navigationController.present(navVC, animated: true)
     }
     
-    func start(achievement: Achievement, group: Group) {
-        let groupAchievementRepository = GroupAchievementRepository(groupId: group.id)
-        let editAchievementVM = EditAchievementViewModel(
-            saveImageUseCase: .init(repository: ImageRepository()),
-            fetchCategoryListUseCase: .init(repository: GroupCategoryRepository(groupId: group.id)),
-            updateAchievementUseCase: .init(repository: groupAchievementRepository, categoryStorage: nil),
-            postAchievementUseCase: .init(repository: groupAchievementRepository, categoryStorage: nil)
-        )
-        let editAchievementVC = EditAchievementViewController(
-            viewModel: editAchievementVM,
-            achievement: achievement
-        )
-        editAchievementVC.coordinator = self
-        editAchievementVC.delegate = self
+    func startAfterCapture(image: UIImage, group: Group? = nil) {
+        // VM 생성
+        let imageRepository = ImageRepository()
+        let editAchievementVM: EditAchievementViewModel
+        if let group = group {
+            let groupAchievementRepository = GroupAchievementRepository(groupId: group.id)
+            editAchievementVM = EditAchievementViewModel(
+                saveImageUseCase: .init(repository: imageRepository),
+                fetchCategoryListUseCase: .init(repository: GroupCategoryRepository(groupId: group.id)),
+                updateAchievementUseCase: .init(repository: groupAchievementRepository, categoryStorage: nil),
+                postAchievementUseCase: .init(repository: groupAchievementRepository, categoryStorage: nil)
+            )
+        } else {
+            let achievementRepository = AchievementRepository()
+            editAchievementVM = EditAchievementViewModel(
+                saveImageUseCase: .init(repository: imageRepository),
+                fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
+                updateAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared),
+                postAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared)
+            )
+        }
         
-        editAchievementVC.navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: "취소", style: .plain, target: self,
-            action: #selector(cancelButtonAction)
-        )
-        
-        let navVC = UINavigationController(rootViewController: editAchievementVC)
-        navigationController.present(navVC, animated: true)
-    }
-    
-    func startAfterCapture(image: UIImage) {
-        let achievementRepository = AchievementRepository()
-        let editAchievementVM = EditAchievementViewModel(
-            saveImageUseCase: .init(repository: ImageRepository()),
-            fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
-            updateAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared),
-            postAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared)
-        )
+        // VC 생성
         let editAchievementVC = EditAchievementViewController(
             viewModel: editAchievementVM,
             image: image

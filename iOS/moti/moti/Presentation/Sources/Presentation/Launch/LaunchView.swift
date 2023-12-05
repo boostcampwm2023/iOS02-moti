@@ -45,7 +45,7 @@ final class LaunchView: UIView {
         
         self.progressMessage = progressMessage
         progressLabel.text = progressMessage
-        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             guard let self else { return }
             dotCount += 1
             if dotCount > 3 { dotCount = 0 }
