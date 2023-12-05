@@ -11,8 +11,7 @@ import Jeongfisher
 import Design
 
 protocol GroupMemberCollectionViewCellDelegate: AnyObject {
-    func managerMenuDidClicked(groupMember: GroupMember)
-    func memberMenuDidClicked(groupMember: GroupMember)
+    func menuDidClicked(groupMember: GroupMember, newGroupGrade: GroupGrade)
 }
 
 final class GroupMemberCollectionViewCell: UICollectionViewCell {
@@ -108,11 +107,11 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
         gradeButton.showsMenuAsPrimaryAction = true
         let managerAction = UIAction(title: GroupGrade.manager.description) { [weak self] _ in
             guard let self else { return }
-            self.delegate?.managerMenuDidClicked(groupMember: groupMember)
+            self.delegate?.menuDidClicked(groupMember: groupMember, newGroupGrade: .manager)
         }
         let memberAction = UIAction(title: GroupGrade.participant.description) { [weak self] _ in
             guard let self else { return }
-            self.delegate?.memberMenuDidClicked(groupMember: groupMember)
+            self.delegate?.menuDidClicked(groupMember: groupMember, newGroupGrade: .participant)
         }
         gradeButton.menu = UIMenu(children: [managerAction, memberAction])
     }

@@ -92,16 +92,10 @@ extension GroupMemberViewController: UICollectionViewDelegate {
 }
 
 extension GroupMemberViewController: GroupMemberCollectionViewCellDelegate {
-    func managerMenuDidClicked(groupMember: GroupMember) {
+    func menuDidClicked(groupMember: GroupMember, newGroupGrade: GroupGrade) {
         showTwoButtonAlert(title: "매니저 권한으로 수정하시겠습니까?", okTitle: "수정") { [weak self] in
             guard let self else { return }
             print("뷰모델 함수 호출 예정", self.viewModel.findIndex(groupMember: groupMember))
-        }
-    }
-    
-    func memberMenuDidClicked(groupMember: GroupMember) {
-        showTwoButtonAlert(title: "그룹원 권한으로 수정하시겠습니까?", okTitle: "수정") {
-            print("그룹원!")
         }
     }
 }
