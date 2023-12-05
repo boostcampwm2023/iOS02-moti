@@ -17,6 +17,20 @@ class BaseViewController<LayoutView: UIView>: UIViewController {
         }
         view = layoutView
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        // 탭바를 숨겨야 하는 VC는 일괄 적용
+        (self as? HiddenTabBarViewController)?.hideTabBar()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // 탭바를 보겨야 하는 VC는 일괄 적용
+        (self as? HiddenTabBarViewController)?.showTabBar()
+    }
 }
 
 // MARK: - Alert

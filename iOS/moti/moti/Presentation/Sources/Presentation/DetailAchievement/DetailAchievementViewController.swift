@@ -16,7 +16,7 @@ protocol DetailAchievementViewControllerDelegate: AnyObject {
     func deleteButtonDidClicked(achievementId: Int)
 }
 
-final class DetailAchievementViewController: BaseViewController<DetailAchievementView> {
+final class DetailAchievementViewController: BaseViewController<DetailAchievementView>, HiddenTabBarViewController {
     weak var coordinator: DetailAchievementCoordinator?
     weak var delegate: DetailAchievementViewControllerDelegate?
     
@@ -39,20 +39,6 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
         
         bind()
         viewModel.action(.launch)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if let tabBarController = tabBarController as? TabBarViewController {
-            tabBarController.hideTabBar()
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if let tabBarController = tabBarController as? TabBarViewController {
-            tabBarController.showTabBar()
-        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
