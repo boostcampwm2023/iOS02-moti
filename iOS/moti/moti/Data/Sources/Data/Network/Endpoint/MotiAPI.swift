@@ -33,6 +33,7 @@ enum MotiAPI: EndpointProtocol {
     case updateGroupAchievement(requestValue: UpdateAchievementRequestValue, groupId: Int)
     case postGroupAchievement(requestValue: PostAchievementRequestValue, groupId: Int)
     case fetchGroupMemberList(groupId: Int)
+    case updateGrade(groupId: Int, userCode: String, requestValue: UpdateGradeRequestValue)
 
     private var keychainStorage: KeychainStorageProtocol {
         return KeychainStorage.shared
@@ -79,6 +80,8 @@ extension MotiAPI {
             return "/groups/\(groupId)/achievements"
         case .fetchGroupMemberList(let groupId):
             return "/groups/\(groupId)/users"
+        case .updateGrade(let groupId, let userCode, _):
+            return "/groups/\(groupId)/users/\(userCode)/auth"
         }
     }
     
@@ -105,6 +108,7 @@ extension MotiAPI {
         case .updateGroupAchievement: return .put
         case .postGroupAchievement: return .post
         case .fetchGroupMemberList: return .get
+        case .updateGrade: return .post
         }
     }
     
@@ -136,6 +140,8 @@ extension MotiAPI {
         case .updateGroupAchievement(let requestValue, _):
             return requestValue.body
         case .postGroupAchievement(let requestValue, _):
+            return requestValue
+        case .updateGrade(_, _, let requestValue):
             return requestValue
         default:
             return nil
