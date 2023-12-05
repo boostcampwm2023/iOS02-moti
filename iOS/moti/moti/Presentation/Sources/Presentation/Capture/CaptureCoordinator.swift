@@ -28,9 +28,23 @@ final class CaptureCoordinator: Coordinator {
         self.parentCoordinator = parentCoordinator
     }
     
-    func start() { }
+    func start() { 
+        let captureVC = CaptureViewController()
+        captureVC.delegate = self
+        captureVC.coordinator = self
+        
+        captureVC.navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: "취소", style: .plain, target: self,
+            action: #selector(cancelButtonAction)
+        )
+        
+        captureVC.navigationItem.rightBarButtonItem = nil
+        
+        navigationController.pushViewController(captureVC, animated: true)
+        navigationController.setNavigationBarHidden(false, animated: false)
+    }
     
-    func start(group: Group? = nil) {
+    func start(group: Group) {
         let captureVC = CaptureViewController(group: group)
         captureVC.delegate = self
         captureVC.coordinator = self
