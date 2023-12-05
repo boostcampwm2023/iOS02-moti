@@ -44,8 +44,8 @@ final class GroupHomeCoordinator: Coordinator {
     }
     
     func moveToGroupDetailAchievementViewController(achievement: Achievement, group: Group) {
-        let groupDetailAchievementCoordinator = GroupDetailAchievementCoordinator(navigationController, self)
-        groupDetailAchievementCoordinator.start(achievement: achievement, group: group)
+        let groupDetailAchievementCoordinator = GroupDetailAchievementCoordinator(navigationController, self, group: group)
+        groupDetailAchievementCoordinator.start(achievement: achievement)
         childCoordinators.append(groupDetailAchievementCoordinator)
     }
     
@@ -95,6 +95,14 @@ extension GroupHomeCoordinator: GroupDetailAchievementCoordinatorDelegate {
     
     func achievementDidPosted(newAchievement: Achievement) {
         currentViewController?.postedAchievement(newAchievement: newAchievement)
+    }
+    
+    func blockingAchievementMenuDidClicked(achievement: Achievement) {
+        currentViewController?.blockedAchievement(achievement)
+    }
+    
+    func blockingUserMenuDidClicked(user: User) {
+        currentViewController?.blockedUser(user)
     }
 }
 

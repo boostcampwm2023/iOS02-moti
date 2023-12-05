@@ -140,6 +140,14 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
         }
     }
     
+    func blockedAchievement(_ achievement: Achievement) {
+        
+    }
+    
+    func blockedUser(_ user: User) {
+        
+    }
+    
     private func showCelebrate(with achievement: Achievement) {
         let celebrateVC = CelebrateViewController(achievement: achievement)
         celebrateVC.modalPresentationStyle = .overFullScreen
