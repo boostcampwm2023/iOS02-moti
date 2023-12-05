@@ -37,6 +37,10 @@ final class GroupListViewController: BaseViewController<GroupListView> {
         viewModel.action(.launch)
     }
     
+    func dropGroup(groupId: Int) {
+        viewModel.action(.dropGroup(groupId: groupId))
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let tabBarController = tabBarController as? TabBarViewController {
