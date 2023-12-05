@@ -50,7 +50,7 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     
     private let gradeButton = {
         let button = UIButton()
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.label, for: .normal)
         return button
     }()
     
