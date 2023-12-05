@@ -41,7 +41,6 @@ final class CaptureCoordinator: Coordinator {
         captureVC.navigationItem.rightBarButtonItem = nil
         
         navigationController.pushViewController(captureVC, animated: true)
-        navigationController.setNavigationBarHidden(false, animated: false)
     }
     
     func start(group: Group) {
@@ -57,7 +56,6 @@ final class CaptureCoordinator: Coordinator {
         captureVC.navigationItem.rightBarButtonItem = nil
         
         navigationController.pushViewController(captureVC, animated: true)
-        navigationController.setNavigationBarHidden(false, animated: false)
     }
     
     private func moveEditAchievementViewConrtoller(image: UIImage) {
@@ -68,7 +66,6 @@ final class CaptureCoordinator: Coordinator {
     }
     
     @objc func cancelButtonAction() {
-        navigationController.setNavigationBarHidden(true, animated: false)
         finish()
     }
 }
