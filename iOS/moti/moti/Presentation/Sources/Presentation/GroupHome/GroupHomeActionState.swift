@@ -61,7 +61,6 @@ extension GroupHomeViewModel {
     enum InviteMemberState {
         case loading
         case success(userCode: String)
-        case failed
         case error(message: String)
     }
 }

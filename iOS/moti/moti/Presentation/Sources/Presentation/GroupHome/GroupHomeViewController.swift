@@ -475,12 +475,9 @@ private extension GroupHomeViewController {
                 case .success(let userCode):
                     hideLoadingIndicator()
                     showOneButtonAlert(title: "초대 성공", message: "\(userCode)님을 그룹에 초대했습니다.")
-                case .failed:
-                    hideLoadingIndicator()
-                    showErrorAlert(title: "초대 실패", message: "초대를 실패했습니다. 다시 시도해 주세요.")
                 case .error(let message):
                     hideLoadingIndicator()
-                    showErrorAlert(message: message)
+                    showErrorAlert(title: "초대 실패", message: message)
                 }
             }
             .store(in: &cancellables)

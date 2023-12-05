@@ -286,7 +286,7 @@ private extension GroupHomeViewModel {
                 if isSuccess {
                     inviteMemberState.send(.success(userCode: userCode))
                 } else {
-                    inviteMemberState.send(.failed)
+                    inviteMemberState.send(.error(message: "초대 실패했습니다."))
                 }
             } catch {
                 inviteMemberState.send(.error(message: error.localizedDescription))
