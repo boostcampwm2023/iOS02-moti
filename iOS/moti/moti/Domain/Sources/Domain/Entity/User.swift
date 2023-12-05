@@ -19,7 +19,7 @@ public struct UserToken: Equatable {
     }
 }
 
-public struct User: Equatable, Hashable {
+public struct User: Hashable {
     public let code: String
     public let avatarURL: URL?
     
