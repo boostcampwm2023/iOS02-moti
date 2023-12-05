@@ -141,11 +141,11 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
     }
     
     func blockedAchievement(_ achievementId: Int) {
-        
+        viewModel.action(.deleteAchievementDataSourceItem(achievementId: achievementId))
     }
     
     func blockedUser(_ userCode: String) {
-        
+        viewModel.action(.deleteUserDataSourceItem(userCode: userCode))
     }
     
     private func showCelebrate(with achievement: Achievement) {
