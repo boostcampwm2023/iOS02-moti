@@ -44,8 +44,8 @@ final class GroupHomeCoordinator: Coordinator {
     }
     
     func moveToGroupDetailAchievementViewController(achievement: Achievement, group: Group) {
-        let groupDetailAchievementCoordinator = GroupDetailAchievementCoordinator(navigationController, self)
-        groupDetailAchievementCoordinator.start(achievement: achievement, group: group)
+        let groupDetailAchievementCoordinator = GroupDetailAchievementCoordinator(navigationController, self, group: group)
+        groupDetailAchievementCoordinator.start(achievement: achievement)
         childCoordinators.append(groupDetailAchievementCoordinator)
     }
     
@@ -68,6 +68,12 @@ final class GroupHomeCoordinator: Coordinator {
         editAchievementCoordinator.start(achievement: achievement)
     }
 
+    func moveToCaptureViewController(group: Group) {
+        let captureCoordinator = CaptureCoordinator(navigationController, self, group: group)
+        captureCoordinator.delegate = self
+        captureCoordinator.start()
+        childCoordinators.append(captureCoordinator)
+    }
 }
 
 // MARK: - EditAchievementCoordinatorDelegate
@@ -76,3 +82,29 @@ extension GroupHomeCoordinator: EditAchievementCoordinatorDelegate {
         currentViewController?.updateAchievement(updatedAchievement: achievement)
     }
 }
+
+// MARK: - GroupDetailAchievementCoordinatorDelegate
+extension GroupHomeCoordinator: GroupDetailAchievementCoordinatorDelegate {
+    func deleteButtonDidClicked(achievementId: Int) {
+        currentViewController?.deleteAchievementDataSourceItem(achievementId: achievementId)
+    }
+    
+    func updateAchievement(updatedAchievement: Achievement) {
+        currentViewController?.updateAchievement(updatedAchievement: updatedAchievement)
+    }
+    
+    func achievementDidPosted(newAchievement: Achievement) {
+        currentViewController?.postedAchievement(newAchievement: newAchievement)
+    }
+    
+    func blockingAchievementMenuDidClicked(achievement: Achievement) {
+        currentViewController?.blockedAchievement(achievement)
+    }
+    
+    func blockingUserMenuDidClicked(user: User) {
+        currentViewController?.blockedUser(user)
+    }
+}
+
+// MARK: - CaptureCoordinatorDelegate
+extension GroupHomeCoordinator: CaptureCoordinatorDelegate { }

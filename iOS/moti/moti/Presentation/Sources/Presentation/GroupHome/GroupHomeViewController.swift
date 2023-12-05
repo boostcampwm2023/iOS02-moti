@@ -44,6 +44,16 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
     // MARK: - Actions
     private func addTargets() {
         layoutView.categoryAddButton.addTarget(self, action: #selector(showAddGroupCategoryAlert), for: .touchUpInside)
+        if let tabBarController = navigationController?.tabBarController as? TabBarViewController {
+            tabBarController.captureButton.addTarget(self, action: #selector(captureButtonDidClicked), for: .touchUpInside)
+        }
+    }
+    
+    @objc private func captureButtonDidClicked() {
+        coordinator?.moveToCaptureViewController(group: viewModel.group)
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.hideTabBar()
+        }
     }
     
     @objc private func showAddGroupCategoryAlert() {
@@ -128,6 +138,14 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             self.showCelebrate(with: newAchievement)
         }
+    }
+    
+    func blockedAchievement(_ achievement: Achievement) {
+        
+    }
+    
+    func blockedUser(_ user: User) {
+        
     }
     
     private func showCelebrate(with achievement: Achievement) {
