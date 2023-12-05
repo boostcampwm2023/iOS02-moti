@@ -33,6 +33,7 @@ enum MotiAPI: EndpointProtocol {
     case updateGroupAchievement(requestValue: UpdateAchievementRequestValue, groupId: Int)
     case postGroupAchievement(requestValue: PostAchievementRequestValue, groupId: Int)
     case fetchGroupMemberList(groupId: Int)
+    case updateGrade(groupId: Int, userCode: String, requestValue: UpdateGradeRequestValue)
     case invite(requestValue: InviteMemberRequestValue, groupId: Int)
     // 차단
     case blockingUser(userCode: String)
@@ -154,6 +155,7 @@ extension MotiAPI {
         case .postGroupAchievement(let requestValue, _):
             return requestValue
         case .invite(let requestValue, _):
+            return requestValue
         case .updateGrade(_, _, let requestValue):
             return requestValue
         default:
