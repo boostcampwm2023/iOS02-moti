@@ -334,11 +334,11 @@ extension GroupHomeViewController: UICollectionViewDelegate {
             })
             // 작성자가 아닌 유저에게만 표시
             let blockingAchievementAction = UIAction(title: "도전기록 차단", attributes: .destructive, handler: { _ in
-                
+                self?.viewModel.action(.blockingAchievement(achievement: selectedItem))
             })
             // 작성자가 아닌 유저에게만 표시
             let blockingUserAction = UIAction(title: "사용자 차단", attributes: .destructive, handler: { _ in
-                
+                self?.viewModel.action(.blockingUser(userCode: selectedItem.userCode))
             })
             
             var children: [UIAction] = []
@@ -370,6 +370,7 @@ private extension GroupHomeViewController {
     private func bind() {
         bindAchievement()
         bindCategory()
+        bindBlocking()
     }
     
     func bindAchievement() {
@@ -462,6 +463,23 @@ private extension GroupHomeViewController {
 
     }
     
+    func bindBlocking() {
+        viewModel.blockingState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .success:
+                    hideLoadingIndicator()
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
+    }
 }
 
 // MARK: - UITextFieldDelegate

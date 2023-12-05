@@ -53,6 +53,7 @@ final class GroupHomeViewModel {
     private(set) var achievementListState = PassthroughSubject<AchievementListState, Never>()
     private(set) var deleteAchievementState = PassthroughSubject<DeleteAchievementState, Never>()
     private(set) var fetchDetailAchievementState = PassthroughSubject<FetchDetailAchievementState, Never>()
+    private(set) var blockingState = PassthroughSubject<BlockingState, Never>()
 
     // MARK: - Init
     init(
@@ -120,6 +121,10 @@ final class GroupHomeViewModel {
             NotificationCenter.default.post(name: .logout, object: nil)
             KeychainStorage.shared.remove(key: .accessToken)
             KeychainStorage.shared.remove(key: .refreshToken)
+        case .blockingAchievement(let achievement):
+            blocking(achievement: achievement)
+        case .blockingUser(let userCode):
+            blocking(userCode: userCode)
         }
     }
 }
@@ -242,6 +247,16 @@ private extension GroupHomeViewModel {
                 fetchDetailAchievementState.send(.error(message: error.localizedDescription))
             }
         }
+    }
+    
+    /// 도전기록을 차단하는 액션
+    func blocking(achievement: Achievement) {
+        achievements = achievements.filter { $0.id != achievement.id }
+    }
+    
+    /// 유저를 차단하는 액션
+    func blocking(userCode: String) {
+        achievements = achievements.filter { $0.userCode != userCode }
     }
 }
 
