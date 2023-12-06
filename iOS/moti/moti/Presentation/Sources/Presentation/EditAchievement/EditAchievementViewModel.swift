@@ -14,7 +14,7 @@ final class EditAchievementViewModel {
     enum Action {
         case saveImage(data: Data)
         case fetchCategories
-        case updateAchievement(achievement: Achievement, updateData: UpdateAchievementRequestBody)
+        case updateAchievement(updatedAchievement: Achievement)
         case postAchievement(title: String, content: String, categoryId: Int)
     }
     
@@ -80,8 +80,8 @@ final class EditAchievementViewModel {
             saveImageData(data)
         case .fetchCategories:
             fetchCategories()
-        case .updateAchievement(let achievement, let updateData):
-            updateAchievement(achievement: achievement, updateData: updateData)
+        case .updateAchievement(let updatedAchievement):
+            updateAchievement(updatedAchievement: updatedAchievement)
         case .postAchievement(let title, let content, let categoryId):
             postAchievement(title: title, content: content, categoryId: categoryId)
         }
@@ -136,23 +136,23 @@ final class EditAchievementViewModel {
         
     }
     
-    private func updateAchievement(achievement: Achievement, updateData: UpdateAchievementRequestBody) {
+    private func updateAchievement(updatedAchievement: Achievement) {
         Task {
             do {
                 updateAchievementState = .loading
+                let updatedData = UpdateAchievementRequestBody(
+                    title: updatedAchievement.title,
+                    content: updatedAchievement.body ?? "",
+                    categoryId: updatedAchievement.categoryId
+                )
+                
                 let updateAchievementRequestValue = UpdateAchievementRequestValue(
-                    id: achievement.id,
-                    body: updateData
+                    id: updatedAchievement.id,
+                    body: updatedData
                 )
                 
                 let isSuccess = try await updateAchievementUseCase.execute(requestValue: updateAchievementRequestValue)
                 if isSuccess {
-                    var updatedAchievement = achievement
-                    updatedAchievement.title = updateData.title
-                    updatedAchievement.body = updateData.content
-                    // TODO: 카테고리 대입
-//                    updatedAchievement.category = updateData
-                    
                     updateAchievementState = .finish(updatedAchievement: updatedAchievement)
                 } else {
                     updateAchievementState = .error
