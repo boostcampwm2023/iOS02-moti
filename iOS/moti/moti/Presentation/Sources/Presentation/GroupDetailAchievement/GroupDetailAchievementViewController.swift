@@ -42,11 +42,6 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         
         bind()
         viewModel.action(.launch)
-        
-        let test1Emoji = Emoji(id: .like, isSelected: true, count: 1)
-        let test2Emoji = Emoji(id: .fire, isSelected: false, count: 10)
-        let test3Emoji = Emoji(id: .smile, isSelected: false, count: 0)
-        layoutView.addEmojis([test1Emoji, test2Emoji, test3Emoji], target: self, action: #selector(emojiButtonDidToggled))
     }
     
     override func viewDidDisappear(_ animated: Bool) {

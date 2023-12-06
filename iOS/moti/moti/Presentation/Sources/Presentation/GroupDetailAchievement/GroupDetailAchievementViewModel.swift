@@ -37,6 +37,9 @@ final class GroupDetailAchievementViewModel {
     // Blocking
     private let blockingUserUseCase: BlockingUserUseCase
     private let blockingAchievementUseCase: BlockingAchievementUseCase
+    // Emoji
+    private let fetchEmojisUseCase: FetchEmojisUseCase
+    private let toggleEmojiUseCase: ToggleEmojiUseCase
     
     // MARK: - State
     private(set) var launchState = PassthroughSubject<LaunchState, Never>()
@@ -56,6 +59,8 @@ final class GroupDetailAchievementViewModel {
         deleteAchievementUseCase: DeleteAchievementUseCase,
         blockingUserUseCase: BlockingUserUseCase,
         blockingAchievementUseCase: BlockingAchievementUseCase,
+        fetchEmojisUseCase: FetchEmojisUseCase,
+        toggleEmojiUseCase: ToggleEmojiUseCase,
         achievement: Achievement,
         group: Group
     ) {
@@ -63,6 +68,8 @@ final class GroupDetailAchievementViewModel {
         self.deleteAchievementUseCase = deleteAchievementUseCase
         self.blockingUserUseCase = blockingUserUseCase
         self.blockingAchievementUseCase = blockingAchievementUseCase
+        self.fetchEmojisUseCase = fetchEmojisUseCase
+        self.toggleEmojiUseCase = toggleEmojiUseCase
         self.achievement = achievement
         self.group = group
     }
