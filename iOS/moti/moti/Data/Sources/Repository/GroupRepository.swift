@@ -31,4 +31,12 @@ public struct GroupRepository: GroupRepositoryProtocol {
         // 생성한 사람은 항상 leader
         return Group(dto: groupDTO, grade: .leader)
     }
+    
+    public func dropGroup(groupId: Int) async throws -> Bool {
+        let endpoint = MotiAPI.dropGroup(groupId: groupId)
+        let responseDTO = try await provider.request(with: endpoint, type: DropGroupDTO.self)
+        guard let dropGroupDataDTO = responseDTO.data else { throw NetworkError.decode }
+        
+        return responseDTO.success ?? false
+    }
 }
