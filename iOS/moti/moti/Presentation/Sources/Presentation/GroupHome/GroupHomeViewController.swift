@@ -85,6 +85,7 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
     }
     
     @objc private func refreshAchievementList() {
+        viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.refreshAchievementList)
     }
     
@@ -139,14 +140,17 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
     
     // MARK: - Methods
     func deleteAchievementDataSourceItem(achievementId: Int) {
+        viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.deleteAchievementDataSourceItem(achievementId: achievementId))
     }
     
     func updateAchievement(updatedAchievement: Achievement) {
+        viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.updateAchievement(updatedAchievement: updatedAchievement))
     }
     
     func postedAchievement(newAchievement: Achievement) {
+        viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.postAchievement(newAchievement: newAchievement))
         // 화면이 전환되고 즉시 표시하면 애니메이션이 부자연스러움
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -163,6 +167,7 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
     }
     
     private func showCelebrate(with achievement: Achievement) {
+        viewModel.action(.fetchCurrentCategoryInfo)
         let celebrateVC = CelebrateViewController(achievement: achievement)
         celebrateVC.modalPresentationStyle = .overFullScreen
         present(celebrateVC, animated: true)
@@ -290,8 +295,8 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         
         guard let category = viewModel.findCategory(at: row) else { return }
         Logger.debug("Selected Group Category: \(category.name)")
+        viewModel.action(.fetchCategoryInfo(categoryId: category.id))
         viewModel.action(.fetchAchievementList(category: category))
-        layoutView.updateAchievementHeader(with: category)
     }
     
     func collectionView(
@@ -474,6 +479,22 @@ private extension GroupHomeViewController {
     }
     
     func bindCategory() {
+        viewModel.categoryInfoState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    // TODO: 스켈레톤 표시
+                    break
+                case .success(let category):
+                    layoutView.updateAchievementHeader(with: category)
+                case .failed(let message):
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
+        
         viewModel.categoryListState
             .receive(on: DispatchQueue.main)
             .sink { [weak self] categoryState in

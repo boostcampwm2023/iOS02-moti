@@ -114,7 +114,10 @@ final class GroupHomeViewModel {
         switch action {
         case .launch:
             fetchCategories()
-        case .fetchCategory(let categoryId):
+        case .fetchCurrentCategoryInfo:
+            guard let currentCategory else { return }
+            fetchCategory(categoryId: currentCategory.id)
+        case .fetchCategoryInfo(let categoryId):
             fetchCategory(categoryId: categoryId)
         case .addCategory(let name):
             addCategory(name: name)

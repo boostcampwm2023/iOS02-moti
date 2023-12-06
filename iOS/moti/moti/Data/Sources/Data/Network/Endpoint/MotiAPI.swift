@@ -76,7 +76,7 @@ extension MotiAPI {
         case .fetchGroupAchievementList(_, let groupId):
             return "/groups/\(groupId)/achievements"
         case .fetchGroupCategory(let groupId, let categoryId):
-            return "groups/\(groupId)/categories/\(categoryId)"
+            return "/groups/\(groupId)/categories/\(categoryId)"
         case .fetchGroupCategoryList(let groupId):
             return "/groups/\(groupId)/categories"
         case .addGroupCategory(_, let groupId):

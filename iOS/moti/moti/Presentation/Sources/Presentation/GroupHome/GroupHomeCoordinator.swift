@@ -32,7 +32,8 @@ final class GroupHomeCoordinator: Coordinator {
         let groupCategoryRepository = GroupCategoryRepository(groupId: group.id)
         let groupHomeVM = GroupHomeViewModel(
             group: group,
-            fetchAchievementListUseCase: .init(repository: groupAchievementRepository),
+            fetchAchievementListUseCase: .init(repository: groupAchievementRepository), 
+            fetchCategoryUseCase: .init(repository: groupCategoryRepository),
             fetchCategoryListUseCase: .init(repository: groupCategoryRepository),
             addCategoryUseCase: .init(repository: groupCategoryRepository),
             deleteAchievementUseCase: .init(repository: groupAchievementRepository, storage: nil),
