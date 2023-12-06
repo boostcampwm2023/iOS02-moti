@@ -50,10 +50,15 @@ export class GroupAchievementService {
   }
 
   @Transactional({ readonly: true })
-  async getAchievementDetail(user: User, achievementId: number) {
+  async getAchievementDetail(
+    user: User,
+    groupId: number,
+    achievementId: number,
+  ) {
     const groupAchievementDetailResponse =
       await this.groupAchievementRepository.findAchievementDetailByIdAndBelongingGroup(
         achievementId,
+        groupId,
         user.id,
       );
 
@@ -68,9 +73,9 @@ export class GroupAchievementService {
     groupId: number,
     achieveCreate: GroupAchievementCreateRequest,
   ) {
-    const category = await this.getCategory(user.id, achieveCreate.categoryId);
-    const image = await this.getUserImage(achieveCreate.photoId, user);
     const group = await this.getGroup(groupId, user);
+    const category = await this.getCategory(group.id, achieveCreate.categoryId);
+    const image = await this.getUserImage(achieveCreate.photoId, user);
     const achievement = achieveCreate.toModel(user, group, category, image);
     const saved =
       await this.groupAchievementRepository.saveAchievement(achievement);
@@ -95,6 +100,7 @@ export class GroupAchievementService {
       ),
     );
   }
+
   @Transactional()
   async update(
     userId: number,
@@ -122,11 +128,12 @@ export class GroupAchievementService {
       await this.groupAchievementRepository.saveAchievement(achievement);
     return GroupAchievementUpdateResponse.from(updated);
   }
-  private async getCategory(userId: number, ctgId: number) {
+
+  private async getCategory(groupId: number, ctgId: number) {
     if (ctgId === -1) return null;
 
-    const ctg = await this.groupCategoryRepository.findByIdAndUser(
-      userId,
+    const ctg = await this.groupCategoryRepository.findByIdAndGroup(
+      groupId,
       ctgId,
     );
     if (!ctg) throw new InvalidCategoryException();
