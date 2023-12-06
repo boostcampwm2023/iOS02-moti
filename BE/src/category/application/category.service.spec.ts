@@ -80,7 +80,8 @@ describe('CategoryService', () => {
 
       // then
       expect(retrievedCategories).toBeDefined();
-      expect(retrievedCategories.length).toBe(0);
+      expect(retrievedCategories.length).toBe(1);
+      expect(retrievedCategories[0].categoryId).toEqual(-1);
     });
 
     it('user에 대한 카테고리가 있을 때 카테고리를 반환한다.', async () => {
@@ -100,19 +101,22 @@ describe('CategoryService', () => {
         await categoryService.getCategoriesByUser(user);
 
       // then
-      expect(retrievedCategories.length).toBe(4);
-      expect(retrievedCategories[0].categoryId).toEqual(categories[0].id);
-      expect(retrievedCategories[0].insertedAt).toBeInstanceOf(Date);
-      expect(retrievedCategories[0].achievementCount).toBe(4);
-      expect(retrievedCategories[1].categoryId).toEqual(categories[1].id);
+      expect(retrievedCategories.length).toBe(5);
+      expect(retrievedCategories[0].categoryId).toEqual(-1);
+      expect(retrievedCategories[0].insertedAt).toBeNull();
+      expect(retrievedCategories[0].achievementCount).toBe(0);
+      expect(retrievedCategories[1].categoryId).toEqual(categories[0].id);
       expect(retrievedCategories[1].insertedAt).toBeInstanceOf(Date);
-      expect(retrievedCategories[1].achievementCount).toBe(5);
-      expect(retrievedCategories[2].categoryId).toEqual(categories[2].id);
+      expect(retrievedCategories[1].achievementCount).toBe(4);
+      expect(retrievedCategories[2].categoryId).toEqual(categories[1].id);
       expect(retrievedCategories[2].insertedAt).toBeInstanceOf(Date);
-      expect(retrievedCategories[2].achievementCount).toBe(7);
-      expect(retrievedCategories[3].categoryId).toEqual(categories[3].id);
+      expect(retrievedCategories[2].achievementCount).toBe(5);
+      expect(retrievedCategories[3].categoryId).toEqual(categories[2].id);
       expect(retrievedCategories[3].insertedAt).toBeInstanceOf(Date);
-      expect(retrievedCategories[3].achievementCount).toBe(10);
+      expect(retrievedCategories[3].achievementCount).toBe(7);
+      expect(retrievedCategories[4].categoryId).toEqual(categories[3].id);
+      expect(retrievedCategories[4].insertedAt).toBeInstanceOf(Date);
+      expect(retrievedCategories[4].achievementCount).toBe(10);
     });
   });
 });

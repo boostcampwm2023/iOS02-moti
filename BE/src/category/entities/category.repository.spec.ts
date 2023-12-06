@@ -105,6 +105,7 @@ describe('CategoryRepository', () => {
         4,
         user,
       );
+      const category = await categoryFixture.getCategory(user);
       await achievementFixture.getAchievements(4, user, categories[0]);
       await achievementFixture.getAchievements(5, user, categories[1]);
       await achievementFixture.getAchievements(7, user, categories[2]);
@@ -113,7 +114,7 @@ describe('CategoryRepository', () => {
       const retrievedCategories =
         await categoryRepository.findByUserWithCount(user);
 
-      expect(retrievedCategories.length).toBe(4);
+      expect(retrievedCategories.length).toBe(5);
       expect(retrievedCategories[0].categoryId).toEqual(categories[0].id);
       expect(retrievedCategories[0].insertedAt).toBeInstanceOf(Date);
       expect(retrievedCategories[0].achievementCount).toBe(4);
@@ -126,6 +127,9 @@ describe('CategoryRepository', () => {
       expect(retrievedCategories[3].categoryId).toEqual(categories[3].id);
       expect(retrievedCategories[3].insertedAt).toBeInstanceOf(Date);
       expect(retrievedCategories[3].achievementCount).toBe(10);
+      expect(retrievedCategories[4].categoryId).toEqual(category.id);
+      expect(retrievedCategories[4].insertedAt).toBeNull();
+      expect(retrievedCategories[4].achievementCount).toBe(0);
     });
   });
 
@@ -145,5 +149,22 @@ describe('CategoryRepository', () => {
       expect(findOne.id).toEqual(category.id);
       expect(findOne.name).toEqual('ABC');
     });
+  });
+
+  it('findNotSpecifiedByUserAndId는 사용자의 미분류 카테고리를 조회할 수 있다.', async () => {
+    // given
+    const user = await usersFixture.getUser('ABC');
+    await categoryFixture.getCategory(user, '미분류');
+    await achievementFixture.getAchievements(4, user, null);
+
+    // when
+    const retrievedCategory =
+      await categoryRepository.findNotSpecifiedByUserAndId(user);
+
+    // then
+    expect(retrievedCategory.categoryId).toEqual(-1);
+    expect(retrievedCategory.categoryName).toEqual('미설정');
+    expect(retrievedCategory.insertedAt).toBeInstanceOf(Date);
+    expect(retrievedCategory.achievementCount).toBe(4);
   });
 });

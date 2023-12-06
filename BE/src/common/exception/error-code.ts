@@ -103,6 +103,10 @@ export const ERROR_INFO = {
     statusCode: 400,
     message: '그룹의 리더만 권한 조정이 가능합니다.',
   },
+  UNAUTHORIZED_APPROACH_GROUP_CATEGORY: {
+    statusCode: 403,
+    message: '그룹에 카테고리를 조회할 수 없습니다.',
+  },
   UNAUTHORIZED_ACHIEVEMENT_APPROACH: {
     statusCode: 403,
     message: '달성기록에 접근할 수 없습니다.',
