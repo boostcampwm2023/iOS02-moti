@@ -45,8 +45,12 @@ export class GroupCategoryRepository extends TransactionalRepository<GroupCatego
     return [notSpecified, ...categoryMetaData];
   }
 
-  async findGroupCategory(group: Group, categoryId: number) {
+  async findGroupCategory(
+    group: Group,
+    categoryId: number,
+  ): Promise<CategoryMetaData> {
     if (categoryId === -1) return this.findNotSpecifiedByUserAndId(group);
+    if (categoryId === 0) return this.findTotalCategoryMetadataByGroup(group);
     return this.findByUserWithCount(group, categoryId);
   }
 
@@ -105,6 +109,22 @@ export class GroupCategoryRepository extends TransactionalRepository<GroupCatego
       .addSelect('COUNT(groupAchievement.id)', 'achievementCount')
       .where('groupAchievement.group_category_id is NULL')
       .andWhere('groupAchievement.group_id = :groupId', { groupId: group.id })
+      .getRawOne<ICategoryMetaData>();
+
+    return new CategoryMetaData(category);
+  }
+
+  async findTotalCategoryMetadataByGroup(group: Group) {
+    const groupAchievementRepository: Repository<GroupAchievementEntity> =
+      this.repository.manager.getRepository(GroupAchievementEntity);
+
+    const category = await groupAchievementRepository
+      .createQueryBuilder('groupAchievement')
+      .select('0 as categoryId')
+      .addSelect(`'전체' as categoryName`)
+      .addSelect('MAX(groupAchievement.created_at)', 'insertedAt')
+      .addSelect('COUNT(groupAchievement.id)', 'achievementCount')
+      .where('groupAchievement.group_id = :groupId', { groupId: group.id })
       .getRawOne<ICategoryMetaData>();
 
     return new CategoryMetaData(category);
