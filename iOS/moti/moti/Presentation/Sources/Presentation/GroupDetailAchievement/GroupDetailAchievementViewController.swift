@@ -49,9 +49,28 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         layoutView.cancelDownloadImage()
     }
     
+    // MARK: - Methods
     func update(updatedAchievement: Achievement) {
         viewModel.action(.update(updatedAchievement: updatedAchievement))
         layoutView.update(updatedAchievement: updatedAchievement)
+    }
+    
+    @objc private func editButtonDidClicked() {
+        delegate?.editButtonDidClicked(achievement: viewModel.achievement)
+    }
+    
+    @objc private func removeButtonDidClicked() {
+        showDestructiveTwoButtonAlert(title: "정말로 삭제하시겠습니까?", message: "삭제된 도전 기록은 되돌릴 수 없습니다.") { [weak self] in
+            guard let self else { return }
+            viewModel.action(.delete)
+        }
+    }
+    
+    @objc private func emojiButtonDidToggled(_ sender: EmojiButton) {
+        if let emojiType = EmojiType(emoji: sender.emoji) {
+            viewModel.toggleEmoji(emojiType)
+        }
+        sender.toggle()
     }
     
     // MARK: - Setup
@@ -102,17 +121,6 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         
         navigationItem.rightBarButtonItems = [moreItem]
     }
-
-    @objc private func editButtonDidClicked() {
-        delegate?.editButtonDidClicked(achievement: viewModel.achievement)
-    }
-    
-    @objc private func removeButtonDidClicked() {
-        showDestructiveTwoButtonAlert(title: "정말로 삭제하시겠습니까?", message: "삭제된 도전 기록은 되돌릴 수 없습니다.") { [weak self] in
-            guard let self else { return }
-            viewModel.action(.delete)
-        }
-    }
 }
 
 // MARK: - Binding
@@ -125,6 +133,7 @@ extension GroupDetailAchievementViewController: LoadingIndicator {
                 switch state {
                 case .initial(let title):
                     layoutView.update(title: title)
+                    layoutView.setupDefaultEmojiButton(target: self, action: #selector(emojiButtonDidToggled))
                 case .success(let achievement):
                     layoutView.configure(achievement: achievement)
                 case .failed(let message):
@@ -148,6 +157,19 @@ extension GroupDetailAchievementViewController: LoadingIndicator {
                     hideLoadingIndicator()
                     showErrorAlert(message: message)
                     Logger.error("delete achievement error: \(message)")
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.fetchEmojisState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .success(let emojis):
+                    layoutView.updateEmojis(emojis: emojis)
+                case .failed(let message):
+                    showErrorAlert(message: message)
                 }
             }
             .store(in: &cancellables)

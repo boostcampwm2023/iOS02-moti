@@ -8,7 +8,26 @@
 import UIKit
 
 public final class EmojiButton: BounceButton {
-    private var isSelectedEmoji = false
+    public let emoji: String
+    private var isSelectedEmoji = false {
+        didSet {
+            if isSelectedEmoji {
+                applySelectedStyle()
+            } else {
+                applyDeselectedStyle()
+            }
+        }
+    }
+    private var count = 0 {
+        didSet {
+            if count <= 0 {
+                countLabel.isHidden = true
+            } else {
+                countLabel.isHidden = false
+                countLabel.text = "+\(count)"
+            }
+        }
+    }
     
     // MARK: - Views
     private let stackView = {
@@ -16,7 +35,7 @@ public final class EmojiButton: BounceButton {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.isUserInteractionEnabled = false
         stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
+        stackView.distribution = .equalSpacing
         stackView.alignment = .center
         return stackView
     }()
@@ -32,18 +51,38 @@ public final class EmojiButton: BounceButton {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = false
-        label.font = UIFont.systemFont(ofSize: 18)
+        label.font = UIFont.systemFont(ofSize: 16)
         label.isHidden = true
         return label
     }()
     
     // MARK: - Init
     public override init(frame: CGRect) {
+        self.emoji = ""
         super.init(frame: frame)
         setupUI()
     }
     
+    public init(
+        frame: CGRect = .zero,
+        emoji: String,
+        emojiId: String,
+        count: Int,
+        isSelectedEmoji: Bool
+    ) {
+        self.emoji = emoji
+        super.init(frame: frame)
+        
+        self.count = count
+        self.isSelectedEmoji = isSelectedEmoji
+        self.emojiLabel.text = emoji
+        
+        setupUI()
+        updateUI()
+    }
+    
     public required init?(coder: NSCoder) {
+        self.emoji = ""
         super.init(coder: coder)
         setupUI()
     }
@@ -57,23 +96,28 @@ public final class EmojiButton: BounceButton {
         }
     }
     
-    public func configure(emoji: String, count: Int, isSelectedEmoji: Bool) {
-        emojiLabel.text = emoji
-        if count == 0 {
-            countLabel.isHidden = true
-        } else {
-            countLabel.isHidden = false
-            countLabel.text = "+\(count)"
-        }
-        
+    public func update(count: Int, isSelectedEmoji: Bool) {
+        self.count = count
         self.isSelectedEmoji = isSelectedEmoji
+    }
+    
+    @objc public func toggle() {
+        isSelectedEmoji.toggle()
         if isSelectedEmoji {
-            applyHighlightUI()
-            countLabel.textColor = .white
+            increaseCount()
         } else {
-            applyNormalUI()
-            countLabel.textColor = .black
+            decreaseCount()
         }
+    }
+    
+    private func increaseCount() {
+        // TODO: 숫자가 위로 올라가는 애니메이션
+        count += 1
+    }
+    
+    private func decreaseCount() {
+        // TODO: 숫자가 아래로 내려가는 애니메이션
+        count -= 1
     }
     
     // MARK: - Setup
@@ -88,5 +132,30 @@ public final class EmojiButton: BounceButton {
             stackView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 8),
             stackView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -8)
         ])
+    }
+    
+    private func updateUI() {
+        if isSelectedEmoji {
+            applySelectedStyle()
+        } else {
+            applyDeselectedStyle()
+        }
+
+        if count == 0 {
+            countLabel.isHidden = true
+        } else {
+            countLabel.isHidden = false
+            countLabel.text = "+\(count)"
+        }
+    }
+    
+    private func applySelectedStyle() {
+        applyHighlightUI()
+        countLabel.textColor = .white
+    }
+    
+    private func applyDeselectedStyle() {
+        applyNormalUI()
+        countLabel.textColor = .black
     }
 }

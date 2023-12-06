@@ -48,6 +48,7 @@ final class GroupDetailAchievementCoordinator: Coordinator {
     func start(achievement: Achievement) {
         guard let group else { return }
         
+        let emojiRepository = EmojiRepository(groupId: group.id)
         let blockingRepository = BlockingRepository(groupId: group.id)
         let achievementRepository = GroupAchievementRepository(groupId: group.id)
         let groupDetailAchievementVM = GroupDetailAchievementViewModel(
@@ -55,6 +56,8 @@ final class GroupDetailAchievementCoordinator: Coordinator {
             deleteAchievementUseCase: .init(repository: achievementRepository, storage: nil),
             blockingUserUseCase: .init(blockingRepository: blockingRepository),
             blockingAchievementUseCase: .init(blockingRepository: blockingRepository),
+            fetchEmojisUseCase: .init(repository: emojiRepository),
+            toggleEmojiUseCase: .init(repository: emojiRepository),
             achievement: achievement,
             group: group
         )

@@ -21,63 +21,9 @@ public struct GroupAchievementRepository: GroupAchievementRepositoryProtocol {
     public func fetchAchievementList(
         requestValue: FetchAchievementListRequestValue? = nil
     ) async throws -> AchievementListItem {
-        let sampleJson = """
-        {
-            "success": true,
-            "data": {
-                "category": {
-                    "id": -1,
-                    "name": "미설정",
-                    "continued": 10,
-                    "lastChallenged": "2011-04-10T20:09:31Z"
-                },
-                "data": [
-                    {
-                        "id": 16,
-                        "thumbnailUrl": "https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg",
-                        "title": "test16",
-                        "categoryId": -1,
-                        "userCode": "abcd2df"
-                    },
-                    {
-                        "id": 15,
-                        "thumbnailUrl": "https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg",
-                        "title": "test15",
-                        "categoryId": -1,
-                        "userCode": "abcd2df"
-                    },
-                    {
-                        "id": 14,
-                        "thumbnailUrl": "https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg",
-                        "title": "test14",
-                        "categoryId": -1,
-                        "userCode": "abcd2df"
-                    },
-                    {
-                        "id": 5,
-                        "thumbnailUrl": "https://serverless-thumbnail.kr.object.ncloudstorage.com/./049038f8-6984-46f6-8481-d2fafb507fe7.jpeg",
-                        "title": "test13",
-                        "categoryId": -1,
-                        "userCode": "abcd2df"
-                    }
-                ],
-                "count": 4,
-                "next": {
-                    "take": 30,
-                    "whereIdLessThan": 5,
-                    "categoryId": -1
-                }
-            }
-        }
-        """
-        
         // 실제 API 요청
-//        let endpoint = MotiAPI.fetchGroupAchievementList(requestValue: requestValue, groupId: groupId)
-//        let responseDTO = try await provider.request(with: endpoint, type: AchievementListResponseDTO.self)
-        guard let testData = sampleJson.data(using: .utf8) else { throw NetworkError.decode }
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        let responseDTO = try decoder.decode(AchievementListResponseDTO.self, from: testData)
+        let endpoint = MotiAPI.fetchGroupAchievementList(requestValue: requestValue, groupId: groupId)
+        let responseDTO = try await provider.request(with: endpoint, type: AchievementListResponseDTO.self)
         
         guard let achievementListDataDTO = responseDTO.data else { throw NetworkError.decode }
         guard let achievementListDTO = achievementListDataDTO.data else { throw NetworkError.decode }

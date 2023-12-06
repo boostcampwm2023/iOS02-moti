@@ -11,36 +11,20 @@ import Domain
 import Core
 
 final class GroupDetailAchievementViewModel {
-    enum GroupDetailAchievementViewModelAction {
-        case launch
-        case delete
-        case update(updatedAchievement: Achievement)
-        case blockingAchievement
-        case blockingUser
-    }
-    
-    enum LaunchState {
-        case initial(title: String)
-        case success(achievement: Achievement)
-        case failed(message: String)
-    }
-    
-    enum DeleteState {
-        case loading
-        case success(achievementId: Int)
-        case failed(message: String)
-    }
-
     // MARK: - UseCase
     private let fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
     private let deleteAchievementUseCase: DeleteAchievementUseCase
     // Blocking
     private let blockingUserUseCase: BlockingUserUseCase
     private let blockingAchievementUseCase: BlockingAchievementUseCase
+    // Emoji
+    private let fetchEmojisUseCase: FetchEmojisUseCase
+    private let toggleEmojiUseCase: ToggleEmojiUseCase
     
     // MARK: - State
     private(set) var launchState = PassthroughSubject<LaunchState, Never>()
     private(set) var deleteState = PassthroughSubject<DeleteState, Never>()
+    private(set) var fetchEmojisState = PassthroughSubject<FetchEmojisState, Never>()
     
     // MARK: - Properties
     private(set) var achievement: Achievement
@@ -56,6 +40,8 @@ final class GroupDetailAchievementViewModel {
         deleteAchievementUseCase: DeleteAchievementUseCase,
         blockingUserUseCase: BlockingUserUseCase,
         blockingAchievementUseCase: BlockingAchievementUseCase,
+        fetchEmojisUseCase: FetchEmojisUseCase,
+        toggleEmojiUseCase: ToggleEmojiUseCase,
         achievement: Achievement,
         group: Group
     ) {
@@ -63,6 +49,8 @@ final class GroupDetailAchievementViewModel {
         self.deleteAchievementUseCase = deleteAchievementUseCase
         self.blockingUserUseCase = blockingUserUseCase
         self.blockingAchievementUseCase = blockingAchievementUseCase
+        self.fetchEmojisUseCase = fetchEmojisUseCase
+        self.toggleEmojiUseCase = toggleEmojiUseCase
         self.achievement = achievement
         self.group = group
     }
@@ -71,6 +59,7 @@ final class GroupDetailAchievementViewModel {
         switch action {
         case .launch:
             initTitle()
+            fetchEmojis()
             fetchDetailAchievement()
         case .delete:
             deleteAchievement()
@@ -80,6 +69,10 @@ final class GroupDetailAchievementViewModel {
             blocking(achievementId: achievement.id)
         case .blockingUser:
             blocking(userCode: achievement.userCode)
+        case .fetchEmojis:
+            fetchEmojis()
+        case .toggleEmoji(let emojiId):
+            toggleEmoji(emojiId)
         }
     }
 }
@@ -134,5 +127,26 @@ extension GroupDetailAchievementViewModel {
     /// 유저를 차단하는 액션
     func blocking(userCode: String) {
         blockingUserUseCase.execute(userCode: userCode)
+    }
+    
+    /// 이모지 리스트를 가져오는 액션
+    func fetchEmojis() {
+        Task {
+            do {
+                let emojis = try await fetchEmojisUseCase.execute(achievementId: achievement.id)
+                fetchEmojisState.send(.success(emojis: emojis))
+            } catch {
+                fetchEmojisState.send(.failed(message: "이모지 정보를 가져오지 못했습니다."))
+            }
+        }
+    }
+    
+    /// 이모지를 토글하는 액션
+    func toggleEmoji(_ emojiId: EmojiType) {
+        Task {
+            // 토글 성공 여부와 상관 없이 Label이 변경됩니다.
+            // 지금은 반환값인 isSuccess를 딱히 쓰지 않아 무시함
+            let _ = try? await toggleEmojiUseCase.execute(achievementId: achievement.id, emojiId: emojiId)
+        }
     }
 }
