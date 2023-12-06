@@ -8,9 +8,9 @@
 import Foundation
 
 public enum EmojiType: String, Codable {
-    case like
-    case fire
-    case smile
+    case like = "LIKE"
+    case fire = "FIRE"
+    case smile = "SMILE"
     
     public init?(emoji: String) {
         switch emoji {
