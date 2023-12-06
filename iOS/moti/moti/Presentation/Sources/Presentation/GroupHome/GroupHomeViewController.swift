@@ -17,7 +17,8 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
     weak var coordinator: GroupHomeCoordinator?
     private let viewModel: GroupHomeViewModel
     private var cancellables: Set<AnyCancellable> = []
-    
+    private var isFetchingNextPage = false
+
     // MARK: - Init
     init(viewModel: GroupHomeViewModel) {
         self.viewModel = viewModel
@@ -47,6 +48,7 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
         if let tabBarController = navigationController?.tabBarController as? TabBarViewController {
             tabBarController.captureButton.addTarget(self, action: #selector(captureButtonDidClicked), for: .touchUpInside)
         }
+        layoutView.refreshControl.addTarget(self, action: #selector(refreshAchievementList), for: .valueChanged)
     }
     
     @objc private func captureButtonDidClicked() {
@@ -72,6 +74,10 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
         }
         
         present(textFieldAlertVC, animated: true)
+    }
+    
+    @objc private func refreshAchievementList() {
+        viewModel.action(.refreshAchievementList)
     }
     
     // MARK: - Setup
@@ -356,6 +362,41 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         return config
 
     }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        // 드래그를 시작하면 탭바 숨기기
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.hideTabBar()
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let actualPos = scrollView.panGestureRecognizer.translation(in: scrollView.superview)
+        let pos = scrollView.contentOffset.y
+        let diff = layoutView.achievementCollectionView.contentSize.height - scrollView.frame.size.height
+     
+        // 아래로 드래그 && 마지막까지 스크롤
+        if actualPos.y < 0 && pos > diff && !isFetchingNextPage {
+            Logger.debug("Fetch New Data")
+            isFetchingNextPage = true
+            viewModel.action(.fetchNextPage)
+        }
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        // 감속을 아예 하지 않으면 탭바를 보인다. -> 드래그를 천천히 하는 상황
+        if !decelerate, let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.showTabBar()
+        }
+    }
+    
+    // 스크롤뷰 움직임이 끝날 때 호출
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        // 스크롤뷰 감속이 끝나면 탭바를 보인다.
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.showTabBar()
+        }
+    }
 }
 
 // MARK: - Binding
@@ -377,9 +418,12 @@ private extension GroupHomeViewController {
                 case .loading:
                     break
                 case .finish:
-                    break
+                    isFetchingNextPage = false
+                    layoutView.endRefreshing()
                 case .error(let message):
                     Logger.error("Fetch Achievement Error: \(message)")
+                    isFetchingNextPage = false
+                    layoutView.endRefreshing()
                 }
             }
             .store(in: &cancellables)
