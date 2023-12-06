@@ -58,14 +58,13 @@ extension GroupInfoViewController: UITableViewDelegate {
         } else if dataSource.isLeaderCell(indexPath: indexPath) {
             coordinator?.moveToGroupMemberViewController(group: group, manageMode: true)
         } else if dataSource.isDropCell(indexPath: indexPath) {
-            showDestructiveTwoButtonAlert(title: "그룹에서 탈퇴하시겠습니까?", okTitle: "탈퇴") { [weak self] in
-                guard let self else { return }
-                if group.grade == .leader {
-                    showErrorAlert(title: "그룹의 리더는 탈퇴를 할 수 없습니다.")
-                    return
+            if group.grade == .leader {
+                showErrorAlert(title: "그룹의 리더는 탈퇴를 할 수 없습니다.")
+            } else {
+                showDestructiveTwoButtonAlert(title: "그룹에서 탈퇴하시겠습니까?", okTitle: "탈퇴") { [weak self] in
+                    guard let self else { return }
+                    delegate?.dropCellDidClicked(groupId: group.id)
                 }
-                
-                delegate?.dropCellDidClicked(groupId: group.id)
             }
         }
     }
