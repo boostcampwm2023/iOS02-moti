@@ -229,4 +229,68 @@ describe('GroupCategoryRepository test', () => {
       expect(retrievedCategory.achievementCount).toEqual(4);
     });
   });
+
+  describe('findGroupCategoryByIdAndUser는 그룹 카테고리를 조회할 수 있다.', () => {
+    it('그룹과 카테고리 아이디를 이용해 알맞은 카테고리를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await userFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          user,
+          group,
+          '카테고리',
+        );
+        await groupAchievementFixture.createGroupAchievements(
+          4,
+          user,
+          group,
+          null,
+        );
+
+        // when
+        const retrievedCategory =
+          await groupCategoryRepository.findByIdAndGroupUser(
+            group.id,
+            groupCategory.id,
+          );
+
+        // then
+        expect(retrievedCategory.id).toEqual(groupCategory.id);
+        expect(retrievedCategory.name).toEqual(groupCategory.name);
+      });
+    });
+
+    it('그룹과 카테고리 아이디가 일치하지 않으면 카테고리를 조회할 수 없다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await userFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          user,
+          group,
+          '카테고리',
+        );
+        await groupAchievementFixture.createGroupAchievements(
+          4,
+          user,
+          group,
+          null,
+        );
+
+        const otherGroup = await groupFixture.createGroups(user);
+
+
+        // when
+        const retrievedCategory =
+          await groupCategoryRepository.findByIdAndGroupUser(
+            otherGroup.id,
+            groupCategory.id,
+          );
+
+        // then
+        expect(retrievedCategory).toBeUndefined();
+      });
+    });
+  });
 });
