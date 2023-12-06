@@ -285,6 +285,7 @@ describe('GroupRepository Test', () => {
         const groupAchievementDetailResponse =
           await groupAchievementRepository.findAchievementDetailByIdAndBelongingGroup(
             groupAchievement.id,
+            group.id,
             user.id,
           );
 
@@ -335,6 +336,7 @@ describe('GroupRepository Test', () => {
         const groupAchievementDetailResponse =
           await groupAchievementRepository.findAchievementDetailByIdAndBelongingGroup(
             groupAchievement.id,
+            group.id,
             reader.id,
           );
 
@@ -384,6 +386,7 @@ describe('GroupRepository Test', () => {
         const groupAchievementDetailResponse =
           await groupAchievementRepository.findAchievementDetailByIdAndBelongingGroup(
             groupAchievement.id,
+            group.id,
             reader.id,
           );
 
