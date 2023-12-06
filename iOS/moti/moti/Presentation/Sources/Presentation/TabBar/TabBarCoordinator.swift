@@ -37,7 +37,6 @@ public final class TabBarCoordinator: Coordinator {
         self.navigationController = navigationController
         self.parentCoordinator = parentCoordinator
         tabBarController = TabBarViewController()
-        tabBarController.tabBarDelegate = self
     }
     
     public func start() {
@@ -56,7 +55,6 @@ public final class TabBarCoordinator: Coordinator {
   
     private func moveCaptureViewController() {
         let captureCoordinator = CaptureCoordinator(navigationController, self)
-        captureCoordinator.delegate = self
         captureCoordinator.start()
         childCoordinators.append(captureCoordinator)
     }
@@ -84,21 +82,5 @@ private extension TabBarCoordinator {
         groupListCoordinator.start()
         childCoordinators.append(groupListCoordinator)
         return navVC
-    }
-}
-
-extension TabBarCoordinator: TabBarViewControllerDelegate {
-    func captureButtonDidClicked() {
-        moveCaptureViewController()
-    }
-}
-
-extension TabBarCoordinator: CaptureCoordinatorDelegate {
-    func achievementDidPosted(newAchievement: Achievement) {
-        guard let naviVC = tabBarController.viewControllers?.first as? UINavigationController else { return }
-        
-        guard let homeVC = naviVC.viewControllers.compactMap({ $0 as? HomeViewController}).first else { return }
-        
-        homeVC.achievementDidPosted(newAchievement: newAchievement)
     }
 }

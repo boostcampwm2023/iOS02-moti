@@ -59,6 +59,13 @@ public final class HomeCoordinator: Coordinator {
         childCoordinators.append(appInfoCoordinator)
         appInfoCoordinator.start()
     }
+    
+    func moveToCaptureViewController() {
+        let captureCoordinator = CaptureCoordinator(navigationController, self)
+        captureCoordinator.delegate = self
+        captureCoordinator.start()
+        childCoordinators.append(captureCoordinator)
+    }
 }
 
 extension HomeCoordinator: HomeViewControllerDelegate {
@@ -88,3 +95,6 @@ extension HomeCoordinator: EditAchievementCoordinatorDelegate {
         currentViewController?.updateAchievement(updatedAchievement: achievement)
     }
 }
+
+// MARK: - CaptureCoordinatorDelegate
+extension HomeCoordinator: CaptureCoordinatorDelegate { }

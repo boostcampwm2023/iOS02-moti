@@ -15,6 +15,7 @@ import { NoUserImageException } from '../../../achievement/exception/no-user-ima
 import { GroupRepository } from '../../group/entities/group.repository';
 import { NoSuchGroupUserException } from '../exception/no-such-group-user.exception';
 import { NoSuchAchievementException } from '../../../achievement/exception/no-such-achievement.exception';
+import { UnauthorizedAchievementException } from '../../../achievement/exception/unauthorized-achievement.exception';
 
 @Injectable()
 export class GroupAchievementService {
@@ -40,6 +41,19 @@ export class GroupAchievementService {
       );
 
     return RejectGroupAchievementResponse.from(userBlockedGroupAchievement);
+  }
+
+  @Transactional({ readonly: true })
+  async getAchievementDetail(user: User, achievementId: number) {
+    const groupAchievementDetailResponse =
+      await this.groupAchievementRepository.findAchievementDetailByIdAndBelongingGroup(
+        achievementId,
+        user.id,
+      );
+
+    if (!groupAchievementDetailResponse)
+      throw new UnauthorizedAchievementException();
+    return groupAchievementDetailResponse;
   }
 
   @Transactional()
@@ -87,7 +101,7 @@ export class GroupAchievementService {
 
   private async getAchievementResponse(userId: number, achieveId: number) {
     const achievement =
-      await this.groupAchievementRepository.findAchievementDetail(
+      await this.groupAchievementRepository.findAchievementDetailByIdAndUser(
         userId,
         achieveId,
       );

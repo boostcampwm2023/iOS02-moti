@@ -85,9 +85,11 @@ final class GroupDetailAchievementView: UIView {
         }
         
         bodyTextView.text = achievement.body
+        
+        let continued = achievement.category?.continued ?? 0
         infoView.configure(items: [
-            ("작성자", "@ABCDEFG"),
-            (achievement.category?.name ?? "", "\(achievement.category?.continued ?? 0)회차"),
+            ("작성자", "@\(achievement.userCode)"),
+            (achievement.category?.name ?? "", "\(continued)회차"),
             ("날짜", (achievement.date ?? .now).convertStringYYYY년_MM월_dd일())
         ])
     }

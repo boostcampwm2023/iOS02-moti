@@ -47,6 +47,13 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
         
         viewModel.action(.launch)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.showTabBar()
+        }
+    }
 
     // MARK: - Methods
     func deleteAchievementDataSourceItem(achievementId: Int) {
@@ -66,8 +73,19 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
     }
     
     private func addTargets() {
+        if let tabBarController = navigationController?.tabBarController as? TabBarViewController {
+            tabBarController.captureButton.addTarget(self, action: #selector(captureButtonDidClicked), for: .touchUpInside)
+        }
+        
         layoutView.categoryAddButton.addTarget(self, action: #selector(showCreateCategoryAlert), for: .touchUpInside)
         layoutView.refreshControl.addTarget(self, action: #selector(refreshAchievementList), for: .valueChanged)
+    }
+    
+    @objc private func captureButtonDidClicked() {
+        coordinator?.moveToCaptureViewController()
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.hideTabBar()
+        }
     }
     
     @objc private func showCreateCategoryAlert() {
@@ -169,6 +187,7 @@ private extension HomeViewController {
             withConfiguration: UIImage.SymbolConfiguration(font: .large)
         )
         let profileButton = UIButton(type: .system)
+        profileButton.addTarget(self, action: #selector(showUserCode), for: .touchUpInside)
         profileButton.setImage(profileImage, for: .normal)
         profileButton.contentMode = .scaleAspectFit
         profileButton.tintColor = .primaryDarkGray
@@ -205,6 +224,12 @@ private extension HomeViewController {
                 self.viewModel.action(.logout)
             }
         )
+    }
+    
+    @objc func showUserCode() {
+        if let userCode = UserDefaults.standard.readString(key: .userCode) {
+            showOneButtonAlert(title: "유저 코드", message: userCode)
+        }
     }
 }
 

@@ -36,6 +36,20 @@ final class GroupListViewController: BaseViewController<GroupListView> {
         
         viewModel.action(.launch)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.hideCaptureButton()
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.showCaptureButton()
+        }
+    }
 
     private func setupGroupListDataSource() {
         layoutView.groupListCollectionView.delegate = self
@@ -99,6 +113,7 @@ private extension GroupListViewController {
             withConfiguration: UIImage.SymbolConfiguration(font: .large)
         )
         let profileButton = UIButton(type: .system)
+        profileButton.addTarget(self, action: #selector(showUserCode), for: .touchUpInside)
         profileButton.setImage(profileImage, for: .normal)
         profileButton.contentMode = .scaleAspectFit
         profileButton.tintColor = .primaryDarkGray
@@ -116,6 +131,12 @@ private extension GroupListViewController {
         )
 
         navigationItem.rightBarButtonItems = [profileItem, createGroupItem, editGroupItem]
+    }
+    
+    @objc func showUserCode() {
+        if let userCode = UserDefaults.standard.readString(key: .userCode) {
+            showOneButtonAlert(title: "유저 코드", message: userCode)
+        }
     }
 }
 

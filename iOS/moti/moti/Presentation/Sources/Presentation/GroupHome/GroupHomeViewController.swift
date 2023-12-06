@@ -44,6 +44,16 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
     // MARK: - Actions
     private func addTargets() {
         layoutView.categoryAddButton.addTarget(self, action: #selector(showAddGroupCategoryAlert), for: .touchUpInside)
+        if let tabBarController = navigationController?.tabBarController as? TabBarViewController {
+            tabBarController.captureButton.addTarget(self, action: #selector(captureButtonDidClicked), for: .touchUpInside)
+        }
+    }
+    
+    @objc private func captureButtonDidClicked() {
+        coordinator?.moveToCaptureViewController(group: viewModel.group)
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.hideTabBar()
+        }
     }
     
     @objc private func showAddGroupCategoryAlert() {
@@ -130,6 +140,14 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
         }
     }
     
+    func blockedAchievement(_ achievementId: Int) {
+        viewModel.action(.deleteAchievementDataSourceItem(achievementId: achievementId))
+    }
+    
+    func blockedUser(_ userCode: String) {
+        viewModel.action(.deleteUserDataSourceItem(userCode: userCode))
+    }
+    
     private func showCelebrate(with achievement: Achievement) {
         let celebrateVC = CelebrateViewController(achievement: achievement)
         celebrateVC.modalPresentationStyle = .overFullScreen
@@ -206,6 +224,7 @@ private extension GroupHomeViewController {
             okAction: { text in
                 guard let text = text else { return }
                 print("초대할 유저코드: \(text)")
+                self.viewModel.action(.invite(userCode: text))
             }
         )
     }
@@ -316,11 +335,11 @@ extension GroupHomeViewController: UICollectionViewDelegate {
             })
             // 작성자가 아닌 유저에게만 표시
             let blockingAchievementAction = UIAction(title: "도전기록 차단", attributes: .destructive, handler: { _ in
-                
+                self?.viewModel.action(.blockingAchievement(achievementId: selectedItem.id))
             })
             // 작성자가 아닌 유저에게만 표시
             let blockingUserAction = UIAction(title: "사용자 차단", attributes: .destructive, handler: { _ in
-                
+                self?.viewModel.action(.blockingUser(userCode: selectedItem.userCode))
             })
             
             var children: [UIAction] = []
@@ -352,6 +371,7 @@ private extension GroupHomeViewController {
     private func bind() {
         bindAchievement()
         bindCategory()
+        bindGroup()
     }
     
     func bindAchievement() {
@@ -444,6 +464,24 @@ private extension GroupHomeViewController {
 
     }
     
+    func bindGroup() {
+        viewModel.inviteMemberState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .success(let userCode):
+                    hideLoadingIndicator()
+                    showOneButtonAlert(title: "초대 성공", message: "\(userCode)님을 그룹에 초대했습니다.")
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(title: "초대 실패", message: message)
+                }
+            }
+            .store(in: &cancellables)
+    }
 }
 
 // MARK: - UITextFieldDelegate

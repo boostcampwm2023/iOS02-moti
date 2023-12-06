@@ -107,4 +107,8 @@ export const ERROR_INFO = {
     statusCode: 403,
     message: '그룹에 카테고리를 조회할 수 없습니다.',
   },
+  UNAUTHORIZED_ACHIEVEMENT_APPROACH: {
+    statusCode: 403,
+    message: '달성기록에 접근할 수 없습니다.',
+  },
 } as const;

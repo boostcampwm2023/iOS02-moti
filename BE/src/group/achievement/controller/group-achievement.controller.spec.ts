@@ -24,6 +24,7 @@ import { GroupAchievementService } from '../application/group-achievement.servic
 import { InvalidCategoryException } from '../../../achievement/exception/invalid-category.exception';
 import { NoUserImageException } from '../../../achievement/exception/no-user-image-exception';
 import { GroupAchievementDetailResponse } from '../dto/group-achievement-detail-response';
+import { UnauthorizedAchievementException } from '../../../achievement/exception/unauthorized-achievement.exception';
 
 describe('GroupAchievementController', () => {
   let app: INestApplication;
@@ -327,6 +328,94 @@ describe('GroupAchievementController', () => {
         .expect((res: request.Response) => {
           expect(res.body.success).toBe(false);
           expect(res.body.message).toBe('이미지를 찾을 수 없습니다.');
+        });
+    });
+  });
+
+  describe('getAchievement는 달성기록을 조회할 수 있다.', () => {
+    it('성공 시 200을 반환한다.', async () => {
+      // given
+      const { accessToken, user } =
+        await authFixture.getAuthenticatedUser('ABC');
+
+      const achievementDetail = new GroupAchievementDetailResponse({
+        id: 1004,
+        title: '다이어트 1일차',
+        content: '다이어트 1일차입니다.',
+        imageUrl: 'file://abcd-efgh-ijkl-mnop.jpg',
+        categoryId: 2,
+        categoryName: '다이어트',
+        createdAt: new Date(),
+        achieveCount: 2,
+        userCode: user.userCode,
+      });
+
+      when(
+        mockGroupAchievementService.getAchievementDetail(anything(), 1004),
+      ).thenResolve(achievementDetail);
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get('/api/v1/groups/1/achievements/1004')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(true);
+          expect(res.body.data).toEqual(achievementDetail);
+        });
+    });
+
+    it('조회할 수 없는 달성기록에 대해 403을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupAchievementService.getAchievementDetail(anything(), 1005),
+      ).thenThrow(new UnauthorizedAchievementException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get('/api/v1/groups/1/achievements/1005')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(403)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('달성기록에 접근할 수 없습니다.');
+        });
+    });
+
+    it('잘못된 인증시 401을 반환한다.', async () => {
+      // given
+      const accessToken = 'abcd.abcd.efgh';
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get('/api/v1/groups/1/achievements/1006')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('잘못된 토큰입니다.');
+        });
+    });
+
+    it('만료된 인증정보에 401을 반환한다.', async () => {
+      // given
+      const { accessToken } =
+        await authFixture.getExpiredAccessTokenUser('ABC');
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get('/api/v1/groups/1/achievements/1007')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('만료된 토큰입니다.');
         });
     });
   });

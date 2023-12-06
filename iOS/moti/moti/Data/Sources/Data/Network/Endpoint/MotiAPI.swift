@@ -33,6 +33,11 @@ enum MotiAPI: EndpointProtocol {
     case updateGroupAchievement(requestValue: UpdateAchievementRequestValue, groupId: Int)
     case postGroupAchievement(requestValue: PostAchievementRequestValue, groupId: Int)
     case fetchGroupMemberList(groupId: Int)
+    case updateGrade(groupId: Int, userCode: String, requestValue: UpdateGradeRequestValue)
+    case invite(requestValue: InviteMemberRequestValue, groupId: Int)
+    // 차단
+    case blockingUser(userCode: String)
+    case blockingAchievement(achievementId: Int, groupId: Int)
 
     private var keychainStorage: KeychainStorageProtocol {
         return KeychainStorage.shared
@@ -79,6 +84,14 @@ extension MotiAPI {
             return "/groups/\(groupId)/achievements"
         case .fetchGroupMemberList(let groupId):
             return "/groups/\(groupId)/users"
+        case .updateGrade(let groupId, let userCode, _):
+            return "/groups/\(groupId)/users/\(userCode)/auth"
+        case .blockingUser(let userCode):
+            return "/users/\(userCode)/reject"
+        case .blockingAchievement(let achievementId, let groupId):
+            return "/groups/\(groupId)/achievements/\(achievementId)/reject"
+        case .invite(_, let groupId):
+            return "/groups/\(groupId)/users"
         }
     }
     
@@ -105,6 +118,10 @@ extension MotiAPI {
         case .updateGroupAchievement: return .put
         case .postGroupAchievement: return .post
         case .fetchGroupMemberList: return .get
+        case .updateGrade: return .post
+        case .blockingUser: return .post
+        case .blockingAchievement: return .post
+        case .invite: return .post
         }
     }
     
@@ -136,6 +153,10 @@ extension MotiAPI {
         case .updateGroupAchievement(let requestValue, _):
             return requestValue.body
         case .postGroupAchievement(let requestValue, _):
+            return requestValue
+        case .invite(let requestValue, _):
+            return requestValue
+        case .updateGrade(_, _, let requestValue):
             return requestValue
         default:
             return nil

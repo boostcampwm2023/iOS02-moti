@@ -27,8 +27,45 @@ export class GroupAchievementRepository extends TransactionalRepository<GroupAch
     return groupAchievementEntity?.toModel();
   }
 
-  async findAchievementDetail(userId: number, achievementId: number) {
-    const result = await this.repository
+  async findAchievementDetailByIdAndBelongingGroup(
+    achievementId: number,
+    userId: number,
+  ) {
+    const groupAchievementEntitySelectQueryBuilder =
+      await this.achievementDetailQuery(achievementId);
+    const result = await groupAchievementEntitySelectQueryBuilder
+      .andWhere(
+        'groupAchievement.group_id in (select group_id from user_group where user_id = :userId)',
+        { userId },
+      )
+      .getRawOne<IGroupAchievementDetail>();
+
+    if (result.id) return new GroupAchievementDetailResponse(result);
+    return null;
+  }
+
+  async findAchievementDetailByIdAndUser(
+    userId: number,
+    achievementId: number,
+  ) {
+    const groupAchievementEntitySelectQueryBuilder =
+      await this.achievementDetailQuery(achievementId);
+    const result = await groupAchievementEntitySelectQueryBuilder
+      .andWhere('groupAchievement.user_id = :userId', { userId })
+      .getRawOne<IGroupAchievementDetail>();
+
+    if (result.id) return new GroupAchievementDetailResponse(result);
+    return null;
+  }
+
+  async saveAchievement(achievement: GroupAchievement) {
+    const achievementEntity = GroupAchievementEntity.from(achievement);
+    const saved = await this.repository.save(achievementEntity);
+    return saved.toModel();
+  }
+
+  private async achievementDetailQuery(achievementId: number) {
+    return this.repository
       .createQueryBuilder('groupAchievement')
       .leftJoinAndSelect('groupAchievement.groupCategory', 'gc')
       .select('groupAchievement.id', 'id')
@@ -47,17 +84,6 @@ export class GroupAchievementRepository extends TransactionalRepository<GroupAch
       )
       .leftJoin('image', 'i', 'i.group_achievement_id = groupAchievement.id')
       .leftJoin('groupAchievement.user', 'user')
-      .where('groupAchievement.id = :achievementId', { achievementId })
-      .andWhere('groupAchievement.user_id = :userId', { userId })
-      .getRawOne<IGroupAchievementDetail>();
-
-    if (result.id) return new GroupAchievementDetailResponse(result);
-    return null;
-  }
-
-  async saveAchievement(achievement: GroupAchievement) {
-    const achievementEntity = GroupAchievementEntity.from(achievement);
-    const saved = await this.repository.save(achievementEntity);
-    return saved.toModel();
+      .where('groupAchievement.id = :achievementId', { achievementId });
   }
 }

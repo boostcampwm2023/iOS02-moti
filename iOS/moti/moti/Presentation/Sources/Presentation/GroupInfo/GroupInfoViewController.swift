@@ -9,7 +9,7 @@ import UIKit
 import Design
 import Domain
 
-final class GroupInfoViewController: BaseViewController<GroupInfoView> {
+final class GroupInfoViewController: BaseViewController<GroupInfoView>, HiddenTabBarViewController {
 
     // MARK: - Properties
     weak var coordinator: GroupInfoCoordinator?
@@ -39,20 +39,6 @@ final class GroupInfoViewController: BaseViewController<GroupInfoView> {
         layoutView.tableView.dataSource = dataSource
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if let tabBarController = tabBarController as? TabBarViewController {
-            tabBarController.hideTabBar()
-        }
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        if let tabBarController = tabBarController as? TabBarViewController {
-            tabBarController.showTabBar()
-        }
-    }
-    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         layoutView.cancelDownloadImage()
@@ -61,8 +47,11 @@ final class GroupInfoViewController: BaseViewController<GroupInfoView> {
 
 extension GroupInfoViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if dataSource.isLeader(indexPath: indexPath) {
-            coordinator?.moveToGroupMemberViewController(group: group)
+        tableView.deselectRow(at: indexPath, animated: true)
+        if dataSource.isGroupMemberCell(indexPath: indexPath) {
+            coordinator?.moveToGroupMemberViewController(group: group, manageMode: false)
+        } else if dataSource.isLeaderCell(indexPath: indexPath) {
+            coordinator?.moveToGroupMemberViewController(group: group, manageMode: true)
         }
     }
 }
