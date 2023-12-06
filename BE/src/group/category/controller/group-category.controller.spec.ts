@@ -390,4 +390,133 @@ describe('GroupCategoryController Test', () => {
       });
     });
   });
+
+  describe('단 건의 그룹 카테고리를 조회할 수 있다.', () => {
+    it('그룹에 속한 유저는 그룹 카테고리를 조회할 요청시 카테고리와 200을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      const groupCategory = new GroupCategoryMetadata({
+        categoryId: '1004',
+        categoryName: '카테고리',
+        insertedAt: '2021-08-01T00:00:00Z',
+        achievementCount: '1',
+      });
+
+      when(
+        mockGroupCategoryService.retrieveCategoryMetadataById(
+          anyOfClass(User),
+          1007,
+          1004,
+        ),
+      ).thenResolve(groupCategory);
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get(`/api/v1/groups/1007/categories/1004`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(true);
+          expect(res.body.data.id).toBe(1004);
+          expect(res.body.data.name).toBe('카테고리');
+          expect(res.body.data.continued).toBe(1);
+          expect(res.body.data.lastChallenged).toBe('2021-08-01T00:00:00Z');
+        });
+    });
+
+    it('그룹에 속한 유저는 그룹 미설정 카테고리를 조회할 요청시 카테고리와 200을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      const groupCategory = new GroupCategoryMetadata({
+        categoryId: '-1',
+        categoryName: '미설정',
+        insertedAt: '2021-08-01T00:00:00Z',
+        achievementCount: '1',
+      });
+
+      when(
+        mockGroupCategoryService.retrieveCategoryMetadataById(
+          anyOfClass(User),
+          1007,
+          -1,
+        ),
+      ).thenResolve(groupCategory);
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get(`/api/v1/groups/1007/categories/-1`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(true);
+          expect(res.body.data.id).toBe(-1);
+          expect(res.body.data.name).toBe('미설정');
+          expect(res.body.data.continued).toBe(1);
+          expect(res.body.data.lastChallenged).toBe('2021-08-01T00:00:00Z');
+        });
+    });
+
+    it('그룹에 속하지 않은 유저는 그룹 카테고리를 조회할 요청시 403을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupCategoryService.retrieveCategoryMetadataById(
+          anyOfClass(User),
+          1007,
+          1009,
+        ),
+      ).thenThrow(new UnauthorizedApproachGroupCategoryException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get(`/api/v1/groups/1007/categories/1009`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(403)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe(
+            '그룹에 카테고리를 조회할 수 없습니다.',
+          );
+        });
+    });
+
+    it('잘못된 인증시 401을 반환한다.', async () => {
+      // given
+      const accessToken = 'abcd.abcd.efgh';
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get(`/api/v1/groups/1007/categories/1009`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('잘못된 토큰입니다.');
+        });
+    });
+
+    it('만료된 인증정보에 401을 반환한다.', async () => {
+      // given
+      const { accessToken } =
+        await authFixture.getExpiredAccessTokenUser('ABC');
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get(`/api/v1/groups/1007/categories/1009`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('만료된 토큰입니다.');
+        });
+    });
+  });
 });
