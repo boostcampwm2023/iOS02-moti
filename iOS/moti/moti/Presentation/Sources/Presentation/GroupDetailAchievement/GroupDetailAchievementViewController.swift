@@ -42,6 +42,11 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         
         bind()
         viewModel.action(.launch)
+        
+        let test1Emoji = Emoji(id: .like, isSelected: true, count: 1)
+        let test2Emoji = Emoji(id: .fire, isSelected: false, count: 10)
+        let test3Emoji = Emoji(id: .smile, isSelected: false, count: 0)
+        layoutView.addEmojis([test1Emoji, test2Emoji, test3Emoji], target: self, action: #selector(emojiButtonDidToggled))
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -49,9 +54,25 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         layoutView.cancelDownloadImage()
     }
     
+    // MARK: - Methods
     func update(updatedAchievement: Achievement) {
         viewModel.action(.update(updatedAchievement: updatedAchievement))
         layoutView.update(updatedAchievement: updatedAchievement)
+    }
+    
+    @objc private func editButtonDidClicked() {
+        delegate?.editButtonDidClicked(achievement: viewModel.achievement)
+    }
+    
+    @objc private func removeButtonDidClicked() {
+        showDestructiveTwoButtonAlert(title: "정말로 삭제하시겠습니까?", message: "삭제된 도전 기록은 되돌릴 수 없습니다.") { [weak self] in
+            guard let self else { return }
+            viewModel.action(.delete)
+        }
+    }
+    
+    @objc private func emojiButtonDidToggled(_ sender: EmojiButton) {
+        sender.toggle()
     }
     
     // MARK: - Setup
@@ -101,17 +122,6 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         moreItem.menu = UIMenu(children: children)
         
         navigationItem.rightBarButtonItems = [moreItem]
-    }
-
-    @objc private func editButtonDidClicked() {
-        delegate?.editButtonDidClicked(achievement: viewModel.achievement)
-    }
-    
-    @objc private func removeButtonDidClicked() {
-        showDestructiveTwoButtonAlert(title: "정말로 삭제하시겠습니까?", message: "삭제된 도전 기록은 되돌릴 수 없습니다.") { [weak self] in
-            guard let self else { return }
-            viewModel.action(.delete)
-        }
     }
 }
 

@@ -8,7 +8,27 @@
 import UIKit
 
 public final class EmojiButton: BounceButton {
-    private var isSelectedEmoji = false
+    private var isSelectedEmoji = false {
+        didSet {
+            if isSelectedEmoji {
+                applySelectedStyle()
+                increaseCount()
+            } else {
+                applyDeselectedStyle()
+                decreaseCount()
+            }
+        }
+    }
+    private var count = 0 {
+        didSet {
+            if count == 0 {
+                countLabel.isHidden = true
+            } else {
+                countLabel.isHidden = false
+                countLabel.text = "+\(count)"
+            }
+        }
+    }
     
     // MARK: - Views
     private let stackView = {
@@ -16,7 +36,7 @@ public final class EmojiButton: BounceButton {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.isUserInteractionEnabled = false
         stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
+        stackView.distribution = .equalSpacing
         stackView.alignment = .center
         return stackView
     }()
@@ -32,7 +52,7 @@ public final class EmojiButton: BounceButton {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = false
-        label.font = UIFont.systemFont(ofSize: 18)
+        label.font = UIFont.systemFont(ofSize: 16)
         label.isHidden = true
         return label
     }()
@@ -41,6 +61,22 @@ public final class EmojiButton: BounceButton {
     public override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+    }
+    
+    public init(
+        frame: CGRect = .zero,
+        emoji: String,
+        count: Int,
+        isSelectedEmoji: Bool
+    ) {
+        super.init(frame: frame)
+        
+        self.count = count
+        self.isSelectedEmoji = isSelectedEmoji
+        self.emojiLabel.text = emoji
+        
+        setupUI()
+        updateUI()
     }
     
     public required init?(coder: NSCoder) {
@@ -57,23 +93,16 @@ public final class EmojiButton: BounceButton {
         }
     }
     
-    public func configure(emoji: String, count: Int, isSelectedEmoji: Bool) {
-        emojiLabel.text = emoji
-        if count == 0 {
-            countLabel.isHidden = true
-        } else {
-            countLabel.isHidden = false
-            countLabel.text = "+\(count)"
-        }
-        
-        self.isSelectedEmoji = isSelectedEmoji
-        if isSelectedEmoji {
-            applyHighlightUI()
-            countLabel.textColor = .white
-        } else {
-            applyNormalUI()
-            countLabel.textColor = .black
-        }
+    @objc public func toggle() {
+        isSelectedEmoji.toggle()
+    }
+    
+    private func increaseCount() {
+        count += 1
+    }
+    
+    private func decreaseCount() {
+        count -= 1
     }
     
     // MARK: - Setup
@@ -88,5 +117,30 @@ public final class EmojiButton: BounceButton {
             stackView.leftAnchor.constraint(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 8),
             stackView.rightAnchor.constraint(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -8)
         ])
+    }
+    
+    private func updateUI() {
+        if isSelectedEmoji {
+            applySelectedStyle()
+        } else {
+            applyDeselectedStyle()
+        }
+
+        if count == 0 {
+            countLabel.isHidden = true
+        } else {
+            countLabel.isHidden = false
+            countLabel.text = "+\(count)"
+        }
+    }
+    
+    private func applySelectedStyle() {
+        applyHighlightUI()
+        countLabel.textColor = .white
+    }
+    
+    private func applyDeselectedStyle() {
+        applyNormalUI()
+        countLabel.textColor = .black
     }
 }

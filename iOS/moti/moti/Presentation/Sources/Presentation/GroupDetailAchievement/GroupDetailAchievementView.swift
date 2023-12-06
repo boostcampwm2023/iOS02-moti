@@ -41,7 +41,7 @@ final class GroupDetailAchievementView: UIView {
         return imageView
     }()
     
-    private let emojiButtonStackView: UIStackView = {
+    let emojiButtonStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.spacing = 10
@@ -107,6 +107,20 @@ final class GroupDetailAchievementView: UIView {
     func cancelDownloadImage() {
         imageView.jf.cancelDownloadImage()
     }
+    
+    /// Emoji 리스트 버튼들 추가
+    func addEmojis(_ emojis: [Emoji], target: Any?, action: Selector) {
+        for emoji in emojis {
+            addEmoji(emoji, target: target, action: action)
+        }
+    }
+    
+    /// Emoji 버튼 하나 추가
+    func addEmoji(_ emoji: Emoji, target: Any?, action: Selector) {
+        let emojiButton = EmojiButton(emoji: emoji.id.description, count: emoji.count, isSelectedEmoji: emoji.isSelected)
+        emojiButton.addTarget(target, action: action, for: .touchUpInside)
+        emojiButtonStackView.addArrangedSubview(emojiButton)
+    }
 }
 
 // MARK: - setup
@@ -163,20 +177,6 @@ private extension GroupDetailAchievementView {
             .height(constant: 40)
             .top(equalTo: imageView.bottomAnchor, constant: 20)
             .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
-        
-        // TODO: Emoji Enum으로 정의
-        let likeEmojiButton = EmojiButton()
-        likeEmojiButton.configure(emoji: "👍", count: 1, isSelectedEmoji: true)
-        
-        let fireEmojiButton = EmojiButton()
-        fireEmojiButton.configure(emoji: "🔥", count: 1, isSelectedEmoji: false)
-        
-        let smileEmojiButton = EmojiButton()
-        smileEmojiButton.configure(emoji: "🥰", count: 0, isSelectedEmoji: false)
-        
-        emojiButtonStackView.addArrangedSubview(likeEmojiButton)
-        emojiButtonStackView.addArrangedSubview(fireEmojiButton)
-        emojiButtonStackView.addArrangedSubview(smileEmojiButton)
     }
     
     private func setupBodyTitleLabel() {
