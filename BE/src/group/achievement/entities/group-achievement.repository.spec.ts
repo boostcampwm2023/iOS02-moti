@@ -21,6 +21,7 @@ import { ImageFixture } from '../../../../test/image/image-fixture';
 import { GroupCategoryTestModule } from '../../../../test/group/category/group-category-test.module';
 import { GroupCategoryFixture } from '../../../../test/group/category/group-category-fixture';
 import { dateFormat } from '../../../common/utils/date-formatter';
+import { PaginateGroupAchievementRequest } from '../dto/paginate-group-achievement-request';
 import { UserGroupGrade } from '../../group/domain/user-group-grade';
 
 describe('GroupRepository Test', () => {
@@ -389,6 +390,134 @@ describe('GroupRepository Test', () => {
         // then
         expect(groupAchievementDetailResponse).toBeNull();
       });
+    });
+  });
+
+  test('그룹 달성 기록 리스트를 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('GROUP', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+
+      const groupCategory = await groupCategoryFixture.createCategory(
+        user1,
+        group,
+      );
+      await groupAchievementFixture.createGroupAchievements(
+        15,
+        user1,
+        group,
+        groupCategory,
+      );
+      await groupAchievementFixture.createGroupAchievements(
+        14,
+        user2,
+        group,
+        groupCategory,
+      );
+      const last = await groupAchievementFixture.createGroupAchievement(
+        user1,
+        group,
+        groupCategory,
+      );
+
+      // when
+      const findAll = await groupAchievementRepository.findAll(
+        user1.id,
+        group.id,
+        new PaginateGroupAchievementRequest(groupCategory.id, 30),
+      );
+
+      // then
+      expect(findAll.length).toEqual(30);
+      expect(findAll[0].id).toEqual(last.id);
+      expect(findAll[0].userCode).toEqual(last.user.userCode);
+      expect(findAll[0].title).toEqual(last.title);
+      expect(findAll[0].categoryId).toEqual(last.groupCategory.id);
+      expect(findAll[0].thumbnailUrl).toEqual(last.image.thumbnailUrl);
+    });
+  });
+
+  test('카테고리 ID가 0 인 경우 모든 카테고리에 대한 달성 기록을 조회한다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('GROUP', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+
+      const groupCategory1 = await groupCategoryFixture.createCategory(
+        user1,
+        group,
+      );
+      const groupCategory2 = await groupCategoryFixture.createCategory(
+        user1,
+        group,
+      );
+      await groupAchievementFixture.createGroupAchievements(
+        20,
+        user1,
+        group,
+        groupCategory1,
+      );
+      await groupAchievementFixture.createGroupAchievements(
+        20,
+        user2,
+        group,
+        groupCategory2,
+      );
+
+      // when
+      const findAll = await groupAchievementRepository.findAll(
+        user1.id,
+        group.id,
+        new PaginateGroupAchievementRequest(0, 30),
+      );
+
+      // then
+      expect(findAll.length).toEqual(30);
+    });
+  });
+  test('카테고리 ID가 -1 인 경우 미설정 카테고리에 대한 달성 기록을 조회한다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('GROUP', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+
+      const groupCategory1 = await groupCategoryFixture.createCategory(
+        user1,
+        group,
+      );
+      const groupCategory2 = await groupCategoryFixture.createCategory(
+        user1,
+        group,
+      );
+      await groupAchievementFixture.createGroupAchievements(
+        20,
+        user1,
+        group,
+        null,
+      );
+      await groupAchievementFixture.createGroupAchievements(
+        20,
+        user2,
+        group,
+        groupCategory2,
+      );
+
+      // when
+      const findAll = await groupAchievementRepository.findAll(
+        user1.id,
+        group.id,
+        new PaginateGroupAchievementRequest(-1, 30),
+      );
+
+      // then
+      expect(findAll.length).toEqual(20);
     });
   });
 });

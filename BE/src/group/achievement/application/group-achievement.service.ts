@@ -16,6 +16,9 @@ import { GroupRepository } from '../../group/entities/group.repository';
 import { NoSuchGroupUserException } from '../exception/no-such-group-user.exception';
 import { NoSuchAchievementException } from '../../../achievement/exception/no-such-achievement.exception';
 import { UnauthorizedAchievementException } from '../../../achievement/exception/unauthorized-achievement.exception';
+import { PaginateGroupAchievementRequest } from '../dto/paginate-group-achievement-request';
+import { PaginateGroupAchievementResponse } from '../dto/paginate-group-achievement-response';
+import { GroupAchievementResponse } from '../dto/group-achievement-response';
 
 @Injectable()
 export class GroupAchievementService {
@@ -71,6 +74,24 @@ export class GroupAchievementService {
     return this.getAchievementResponse(user.id, saved.id);
   }
 
+  @Transactional({ readonly: true })
+  async getAchievements(
+    user: User,
+    groupId: number,
+    paginateGroupAchievementRequest: PaginateGroupAchievementRequest,
+  ) {
+    const achievements = await this.groupAchievementRepository.findAll(
+      user.id,
+      groupId,
+      paginateGroupAchievementRequest,
+    );
+    return new PaginateGroupAchievementResponse(
+      paginateGroupAchievementRequest,
+      achievements.map((achievement) =>
+        GroupAchievementResponse.from(achievement),
+      ),
+    );
+  }
   private async getCategory(userId: number, ctgId: number) {
     if (ctgId === -1) return null;
 

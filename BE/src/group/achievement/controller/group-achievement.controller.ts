@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -22,6 +23,8 @@ import { GroupAchievementService } from '../application/group-achievement.servic
 import { ParseIntPipe } from '../../../common/pipe/parse-int.pipe';
 import { RejectGroupAchievementResponse } from '../dto/reject-group-achievement-response.dto';
 import { GroupAchievementCreateRequest } from '../dto/group-achievement-create-request';
+import { PaginateGroupAchievementRequest } from '../dto/paginate-group-achievement-request';
+import { PaginateGroupAchievementResponse } from '../dto/paginate-group-achievement-response';
 import { AchievementDetailResponse } from '../../../achievement/dto/achievement-detail-response';
 
 @Controller('/api/v1/groups')
@@ -100,5 +103,32 @@ export class GroupAchievementController {
       id,
     );
     return ApiData.success(response);
+  }
+
+  @ApiBearerAuth('accessToken')
+  @ApiOperation({
+    summary: '그룹 달성기록 리스트 API',
+    description: '그룹 달성기록 리스트를 조회한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '그룹 달성기록 리스트',
+    type: PaginateGroupAchievementResponse,
+  })
+  @Get(`/:groupId/achievements`)
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  async getAchievements(
+    @AuthenticatedUser() user: User,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Query() paginateGroupAchievementRequest: PaginateGroupAchievementRequest,
+  ) {
+    return ApiData.success(
+      await this.groupAchievementService.getAchievements(
+        user,
+        groupId,
+        paginateGroupAchievementRequest,
+      ),
+    );
   }
 }

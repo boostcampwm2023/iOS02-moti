@@ -24,6 +24,8 @@ import { GroupAchievementService } from '../application/group-achievement.servic
 import { InvalidCategoryException } from '../../../achievement/exception/invalid-category.exception';
 import { NoUserImageException } from '../../../achievement/exception/no-user-image-exception';
 import { GroupAchievementDetailResponse } from '../dto/group-achievement-detail-response';
+import { PaginateGroupAchievementResponse } from '../dto/paginate-group-achievement-response';
+import { PaginateGroupAchievementRequest } from '../dto/paginate-group-achievement-request';
 import { UnauthorizedAchievementException } from '../../../achievement/exception/unauthorized-achievement.exception';
 
 describe('GroupAchievementController', () => {
@@ -328,6 +330,123 @@ describe('GroupAchievementController', () => {
         .expect((res: request.Response) => {
           expect(res.body.success).toBe(false);
           expect(res.body.message).toBe('이미지를 찾을 수 없습니다.');
+        });
+    });
+  });
+
+  describe('내가 속한 그룹의 달성 리스트를 조회 할 수 있다.', () => {
+    it('성공 시 200을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      const paginateGroupAchievementResponse =
+        new PaginateGroupAchievementResponse(
+          new PaginateGroupAchievementRequest(1, 3),
+          [
+            {
+              id: 6,
+              title: 'test6',
+              userCode: 'ABCDEFG',
+              categoryId: 1,
+              thumbnailUrl: 'thumbnail_url6',
+            },
+            {
+              id: 3,
+              title: 'test3',
+              userCode: 'ABCDEFG',
+              categoryId: 1,
+              thumbnailUrl: 'thumbnail_url3',
+            },
+            {
+              id: 2,
+              title: 'test2',
+              userCode: 'ABCDEFG',
+              categoryId: 1,
+              thumbnailUrl: 'thumbnail_url2',
+            },
+          ],
+        );
+
+      when(
+        mockGroupAchievementService.getAchievements(
+          anyOfClass(User),
+          anyNumber(),
+          anyOfClass(PaginateGroupAchievementRequest),
+        ),
+      ).thenResolve(paginateGroupAchievementResponse);
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get('/api/v1/groups/1/achievements')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(true);
+          expect(res.body.data).toEqual({
+            count: 3,
+            data: [
+              {
+                categoryId: 1,
+                id: 6,
+                thumbnailUrl: 'thumbnail_url6',
+                title: 'test6',
+                userCode: 'ABCDEFG',
+              },
+              {
+                categoryId: 1,
+                id: 3,
+                thumbnailUrl: 'thumbnail_url3',
+                title: 'test3',
+                userCode: 'ABCDEFG',
+              },
+              {
+                categoryId: 1,
+                id: 2,
+                thumbnailUrl: 'thumbnail_url2',
+                title: 'test2',
+                userCode: 'ABCDEFG',
+              },
+            ],
+            next: {
+              categoryId: 1,
+              take: 3,
+              whereIdLessThan: 2,
+            },
+          });
+        });
+    });
+
+    it('잘못된 인증시 401을 반환한다.', async () => {
+      // given
+      const accessToken = 'abcd.abcd.efgh';
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get('/api/v1/groups/1/achievements')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('잘못된 토큰입니다.');
+        });
+    });
+
+    it('만료된 인증정보에 401을 반환한다.', async () => {
+      // given
+      const { accessToken } =
+        await authFixture.getExpiredAccessTokenUser('ABC');
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get('/api/v1/groups/1/achievements')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('만료된 토큰입니다.');
         });
     });
   });

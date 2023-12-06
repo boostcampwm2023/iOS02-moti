@@ -32,7 +32,7 @@ export class UserEntity extends BaseTimeEntity {
     () => GroupAchievementEntity,
     (groupAchievement) => groupAchievement.user,
   )
-  groupAchievement: GroupAchievementEntity;
+  groupAchievement: GroupAchievementEntity[];
 
   static from(user: User): UserEntity {
     if (isNullOrUndefined(user)) return user;
