@@ -229,8 +229,8 @@ describe('GroupCategoryRepository test', () => {
       expect(retrievedCategory.achievementCount).toEqual(4);
     });
   });
-  
-    describe('findGroupCategoryByIdAndUser는 그룹 카테고리를 조회할 수 있다.', () => {
+
+  describe('findGroupCategoryByIdAndUser는 그룹 카테고리를 조회할 수 있다.', () => {
     it('그룹과 카테고리 아이디를 이용해 알맞은 카테고리를 조회할 수 있다.', async () => {
       await transactionTest(dataSource, async () => {
         // given
@@ -292,7 +292,7 @@ describe('GroupCategoryRepository test', () => {
       });
     });
   });
-  
+
   describe('findByUserWithCount는 사용자의 그룹 카테고리를 조회할 수 있다.', () => {
     it('사용자의 그룹 카테고리를 조회할 수 있다.', async () => {
       await transactionTest(dataSource, async () => {
@@ -353,6 +353,193 @@ describe('GroupCategoryRepository test', () => {
         expect(retrievedCategory.categoryId).toEqual(groupCategory.id);
         expect(retrievedCategory.categoryName).toEqual('카테고리 테스트');
         expect(retrievedCategory.achievementCount).toEqual(4);
+      });
+    });
+  });
+
+  describe('findTotalCategoryMetadataByGroup는 해당 그룹의 카테고리 전체 정보를 조회할 수 있다.', () => {
+    it('미설정 카테고리로 구성된 전체 카테고리를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await userFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(leader);
+        await groupAchievementFixture.createGroupAchievements(
+          10,
+          leader,
+          group,
+          null,
+        );
+
+        // when
+        const retrievedCategory =
+          await groupCategoryRepository.findTotalCategoryMetadataByGroup(group);
+
+        // then
+        expect(retrievedCategory.categoryId).toEqual(0);
+        expect(retrievedCategory.categoryName).toEqual('전체');
+        expect(retrievedCategory.achievementCount).toEqual(10);
+        expect(retrievedCategory.insertedAt).toBeInstanceOf(Date);
+      });
+    });
+
+    it('달성기록이 비어있는 상태에서 전체 카테고리 정보를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await userFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(leader);
+
+        // when
+        const retrievedCategory =
+          await groupCategoryRepository.findTotalCategoryMetadataByGroup(group);
+
+        // then
+        expect(retrievedCategory.categoryId).toEqual(0);
+        expect(retrievedCategory.categoryName).toEqual('전체');
+        expect(retrievedCategory.achievementCount).toEqual(0);
+        expect(retrievedCategory.insertedAt).toBeNull();
+      });
+    });
+
+    it('달성기록이 존재하는 카테고리가 있을 때 전체 카테고리 정보를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await userFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          user,
+          group,
+          '카테고리 테스트',
+        );
+        await groupAchievementFixture.createGroupAchievements(
+          10,
+          user,
+          group,
+          groupCategory,
+        );
+
+        // when
+        const retrievedCategory =
+          await groupCategoryRepository.findTotalCategoryMetadataByGroup(group);
+
+        // then
+        expect(retrievedCategory.categoryId).toEqual(0);
+        expect(retrievedCategory.categoryName).toEqual('전체');
+        expect(retrievedCategory.achievementCount).toEqual(10);
+        expect(retrievedCategory.insertedAt).toBeInstanceOf(Date);
+      });
+    });
+
+    it('달성기록이 존재하지 않는 카테고리가 있을 때 전체 카테고리 정보를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await userFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        await groupCategoryFixture.createCategory(
+          user,
+          group,
+          '카테고리 테스트',
+        );
+
+        // when
+        const retrievedCategory =
+          await groupCategoryRepository.findTotalCategoryMetadataByGroup(group);
+
+        // then
+        expect(retrievedCategory.categoryId).toEqual(0);
+        expect(retrievedCategory.categoryName).toEqual('전체');
+        expect(retrievedCategory.achievementCount).toEqual(0);
+        expect(retrievedCategory.insertedAt).toBeNull();
+      });
+    });
+
+    it('다수의 카테고리가 조합되어 카테고리 전체 정보를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await userFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory1 = await groupCategoryFixture.createCategory(
+          user,
+          group,
+          '카테고리 테스트',
+        );
+        const groupCategory2 = await groupCategoryFixture.createCategory(
+          user,
+          group,
+          '카테고리 테스트',
+        );
+
+        await groupAchievementFixture.createGroupAchievements(
+          10,
+          user,
+          group,
+          groupCategory1,
+        );
+
+        await groupAchievementFixture.createGroupAchievements(
+          20,
+          user,
+          group,
+          groupCategory2,
+        );
+
+        // when
+        const retrievedCategory =
+          await groupCategoryRepository.findTotalCategoryMetadataByGroup(group);
+
+        // then
+        expect(retrievedCategory.categoryId).toEqual(0);
+        expect(retrievedCategory.categoryName).toEqual('전체');
+        expect(retrievedCategory.achievementCount).toEqual(30);
+        expect(retrievedCategory.insertedAt).toBeInstanceOf(Date);
+      });
+    });
+
+    it('다수의 카테고리와 미설정 카테고리가 조합되어 카테고리 전체 정보를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await userFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory1 = await groupCategoryFixture.createCategory(
+          user,
+          group,
+          '카테고리 테스트',
+        );
+        const groupCategory2 = await groupCategoryFixture.createCategory(
+          user,
+          group,
+          '카테고리 테스트',
+        );
+
+        await groupAchievementFixture.createGroupAchievements(
+          10,
+          user,
+          group,
+          groupCategory1,
+        );
+
+        await groupAchievementFixture.createGroupAchievements(
+          20,
+          user,
+          group,
+          groupCategory2,
+        );
+
+        await groupAchievementFixture.createGroupAchievements(
+          15,
+          user,
+          group,
+          null,
+        );
+
+        // when
+        const retrievedCategory =
+          await groupCategoryRepository.findTotalCategoryMetadataByGroup(group);
+
+        // then
+        expect(retrievedCategory.categoryId).toEqual(0);
+        expect(retrievedCategory.categoryName).toEqual('전체');
+        expect(retrievedCategory.achievementCount).toEqual(45);
+        expect(retrievedCategory.insertedAt).toBeInstanceOf(Date);
       });
     });
   });
