@@ -9,7 +9,7 @@ import UIKit
 import Design
 import Domain
 
-final class CelebrateViewController: UIViewController, HiddenTabBarViewController {
+final class CelebrateViewController: UIViewController {
     
     // MARK: - Properties
     private let achievement: Achievement

@@ -232,7 +232,6 @@ extension GroupListViewController: LoadingIndicator {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
-                print("refetchGroupListState ..:\(state)")
                 switch state {
                 case .loading:
                     showLoadingIndicator()

@@ -52,12 +52,6 @@ public final class TabBarCoordinator: Coordinator {
     private func configureTabBarControllers(with viewControllers: [UIViewController]) {
         tabBarController.setupViewControllers(with: viewControllers)
     }
-  
-    private func moveCaptureViewController() {
-        let captureCoordinator = CaptureCoordinator(navigationController, self)
-        captureCoordinator.start()
-        childCoordinators.append(captureCoordinator)
-    }
 }
 
 // MARK: - Make Child ViewControllers

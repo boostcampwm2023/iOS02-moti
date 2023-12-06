@@ -299,7 +299,6 @@ private extension GroupHomeViewModel {
 private extension GroupHomeViewModel {
     /// 도전 기록을 가져오는 메서드
     func fetchAchievementList(requestValue: FetchAchievementListRequestValue? = nil) {
-        print("pagination: \(requestValue)")
         if requestValue?.whereIdLessThan == nil {
             // 새로운 카테고리 데이터를 가져오기 때문에 빈 배열로 초기화
             achievements = skeletonAchievements

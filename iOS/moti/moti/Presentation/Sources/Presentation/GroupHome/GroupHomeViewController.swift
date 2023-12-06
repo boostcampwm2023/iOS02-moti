@@ -42,6 +42,13 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
         viewModel.action(.launch)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.showTabBar()
+        }
+    }
+    
     // MARK: - Actions
     private func addTargets() {
         layoutView.categoryAddButton.addTarget(self, action: #selector(showAddGroupCategoryAlert), for: .touchUpInside)
@@ -52,8 +59,9 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
     }
     
     @objc private func captureButtonDidClicked() {
-        coordinator?.moveToCaptureViewController(group: viewModel.group)
-        if let tabBarController = tabBarController as? TabBarViewController {
+        if let tabBarController = tabBarController as? TabBarViewController,
+           tabBarController.selectedIndex == 1 {
+            coordinator?.moveToCaptureViewController(group: viewModel.group)
             tabBarController.hideTabBar()
         }
     }
@@ -229,7 +237,7 @@ private extension GroupHomeViewController {
             placeholder: "초대할 유저의 7자리 유저코드를 입력하세요.",
             okAction: { text in
                 guard let text = text else { return }
-                print("초대할 유저코드: \(text)")
+                Logger.debug("초대할 유저코드: \(text)")
                 self.viewModel.action(.invite(userCode: text))
             }
         )
