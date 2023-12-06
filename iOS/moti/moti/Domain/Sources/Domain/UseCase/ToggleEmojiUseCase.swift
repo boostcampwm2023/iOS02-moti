@@ -14,7 +14,7 @@ public struct ToggleEmojiUseCase {
         self.repository = repository
     }
     
-    public func toggleEmoji(achievementId: Int, emojiId: EmojiType) async throws -> Bool {
+    public func execute(achievementId: Int, emojiId: EmojiType) async throws -> Bool {
         return try await repository.toggleEmoji(achievementId: achievementId, emojiId: emojiId)
     }
 }

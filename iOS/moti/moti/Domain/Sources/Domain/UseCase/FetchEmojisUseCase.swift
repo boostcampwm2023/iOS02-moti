@@ -14,7 +14,7 @@ public struct FetchEmojisUseCase {
         self.repository = repository
     }
     
-    public func fetchEmojis(achievementId: Int) async throws -> [Emoji] {
+    public func execute(achievementId: Int) async throws -> [Emoji] {
         return try await repository.fetchEmojis(achievementId: achievementId)
     }
 }
