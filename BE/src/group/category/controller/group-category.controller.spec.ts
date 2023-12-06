@@ -14,6 +14,8 @@ import { User } from '../../../users/domain/user.domain';
 import { GroupCategoryCreate } from '../dto/group-category-create';
 import { GroupCategoryFixture } from '../../../../test/group/category/group-category-fixture';
 import { UnauthorizedGroupCategoryException } from '../exception/unauthorized-group-category.exception';
+import { GroupCategoryMetadata } from '../dto/group-category-metadata';
+import { UnauthorizedApproachGroupCategoryException } from '../exception/unauthorized-approach-group-category.exception';
 
 describe('GroupCategoryController Test', () => {
   let app: INestApplication;
@@ -189,6 +191,203 @@ describe('GroupCategoryController Test', () => {
           expect(res.body.success).toBe(false);
           expect(res.body.data.name).toBe('잘못된 카테고리 이름입니다.');
         });
+    });
+
+    describe('그룹 카테고리를 조회할 수 있다.', () => {
+      it('그룹에 속한 유저는 그룹 카테고리를 조회할 요청시 카테고리와 200을 반환한다.', async () => {
+        // given
+        const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+        const groupCategoryMetadata = [
+          new GroupCategoryMetadata({
+            categoryId: '-1',
+            categoryName: null,
+            insertedAt: '2021-08-01T00:00:00Z',
+            achievementCount: '1',
+          }),
+          new GroupCategoryMetadata({
+            categoryId: '1007',
+            categoryName: '카테고리1007',
+            insertedAt: '2021-08-01T00:00:00Z',
+            achievementCount: '2',
+          }),
+          new GroupCategoryMetadata({
+            categoryId: '1008',
+            categoryName: '카테고리1008',
+            insertedAt: '2021-08-01T00:00:00Z',
+            achievementCount: '3',
+          }),
+        ];
+
+        when(
+          mockGroupCategoryService.retrieveCategoryMetadata(
+            anyOfClass(User),
+            1007,
+          ),
+        ).thenResolve(groupCategoryMetadata);
+
+        // when
+        // then
+        return request(app.getHttpServer())
+          .get(`/api/v1/groups/1007/categories`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .expect(200)
+          .expect((res: request.Response) => {
+            expect(res.body.success).toBe(true);
+            expect(res.body.data.length).toBe(4);
+            expect(res.body.data[0].id).toEqual(0);
+            expect(res.body.data[0].name).toEqual('전체');
+            expect(res.body.data[0].continued).toEqual(6);
+            expect(res.body.data[1].id).toEqual(-1);
+            expect(res.body.data[1].name).toEqual('미설정');
+            expect(res.body.data[1].continued).toEqual(1);
+            expect(res.body.data[2].id).toEqual(1007);
+            expect(res.body.data[2].name).toEqual('카테고리1007');
+            expect(res.body.data[2].continued).toEqual(2);
+            expect(res.body.data[3].id).toEqual(1008);
+            expect(res.body.data[3].name).toEqual('카테고리1008');
+            expect(res.body.data[3].continued).toEqual(3);
+          });
+      });
+
+      it('그룹에 속한 유저는 그룹 카테고리를 조회할 요청시 카테고리와 200을 반환한다.', async () => {
+        // given
+        const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+        const groupCategoryMetadata = [
+          new GroupCategoryMetadata({
+            categoryId: '1007',
+            categoryName: '카테고리1007',
+            insertedAt: '2021-08-01T00:00:00Z',
+            achievementCount: '2',
+          }),
+          new GroupCategoryMetadata({
+            categoryId: '1008',
+            categoryName: '카테고리1008',
+            insertedAt: '2021-08-01T00:00:00Z',
+            achievementCount: '3',
+          }),
+        ];
+
+        when(
+          mockGroupCategoryService.retrieveCategoryMetadata(
+            anyOfClass(User),
+            1008,
+          ),
+        ).thenResolve(groupCategoryMetadata);
+
+        // when
+        // then
+        return request(app.getHttpServer())
+          .get(`/api/v1/groups/1008/categories`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .expect(200)
+          .expect((res: request.Response) => {
+            expect(res.body.success).toBe(true);
+            expect(res.body.data.length).toBe(4);
+            expect(res.body.data[0].id).toEqual(0);
+            expect(res.body.data[0].name).toEqual('전체');
+            expect(res.body.data[0].continued).toEqual(5);
+            expect(res.body.data[1].id).toEqual(-1);
+            expect(res.body.data[1].name).toEqual('미설정');
+            expect(res.body.data[1].continued).toEqual(0);
+            expect(res.body.data[2].id).toEqual(1007);
+            expect(res.body.data[2].name).toEqual('카테고리1007');
+            expect(res.body.data[2].continued).toEqual(2);
+            expect(res.body.data[3].id).toEqual(1008);
+            expect(res.body.data[3].name).toEqual('카테고리1008');
+            expect(res.body.data[3].continued).toEqual(3);
+          });
+      });
+
+      it('그룹에 속하지 않은 유저는 그룹 카테고리를 조회할 요청시 400을 반환한다.', async () => {
+        // given
+        const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+        const groupCategoryMetadata = [];
+
+        when(
+          mockGroupCategoryService.retrieveCategoryMetadata(
+            anyOfClass(User),
+            1009,
+          ),
+        ).thenResolve(groupCategoryMetadata);
+
+        // when
+        // then
+        return request(app.getHttpServer())
+          .get(`/api/v1/groups/1009/categories`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .expect(200)
+          .expect((res: request.Response) => {
+            expect(res.body.success).toBe(true);
+            expect(res.body.data.length).toBe(2);
+            expect(res.body.data[0].id).toEqual(0);
+            expect(res.body.data[0].name).toEqual('전체');
+            expect(res.body.data[0].continued).toEqual(0);
+            expect(res.body.data[1].id).toEqual(-1);
+            expect(res.body.data[1].name).toEqual('미설정');
+            expect(res.body.data[1].continued).toEqual(0);
+          });
+      });
+
+      it('잘못된 인증시 401을 반환한다.', async () => {
+        // given
+        const accessToken = 'abcd.abcd.efgh';
+
+        // when
+        // then
+        return request(app.getHttpServer())
+          .get(`/api/v1/groups/1009/categories`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .expect(401)
+          .expect((res: request.Response) => {
+            expect(res.body.success).toBe(false);
+            expect(res.body.message).toBe('잘못된 토큰입니다.');
+          });
+      });
+
+      it('만료된 인증정보에 401을 반환한다.', async () => {
+        // given
+        const { accessToken } =
+          await authFixture.getExpiredAccessTokenUser('ABC');
+
+        // when
+        // then
+        return request(app.getHttpServer())
+          .get(`/api/v1/groups/1009/categories`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .expect(401)
+          .expect((res: request.Response) => {
+            expect(res.body.success).toBe(false);
+            expect(res.body.message).toBe('만료된 토큰입니다.');
+          });
+      });
+
+      it('그룹에 속하지 않는 사용자의 요청시 403을 반환한다.', async () => {
+        // given
+        const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+        when(
+          mockGroupCategoryService.retrieveCategoryMetadata(
+            anyOfClass(User),
+            1010,
+          ),
+        ).thenThrow(new UnauthorizedApproachGroupCategoryException());
+
+        // when
+        // then
+        return request(app.getHttpServer())
+          .get(`/api/v1/groups/1010/categories`)
+          .set('Authorization', `Bearer ${accessToken}`)
+          .expect(403)
+          .expect((res: request.Response) => {
+            expect(res.body.success).toBe(false);
+            expect(res.body.message).toBe(
+              '그룹에 카테고리를 조회할 수 없습니다.',
+            );
+          });
+      });
     });
   });
 });
