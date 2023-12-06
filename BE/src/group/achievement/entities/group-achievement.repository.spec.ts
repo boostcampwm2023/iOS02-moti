@@ -254,12 +254,46 @@ describe('GroupRepository Test', () => {
       );
 
       // then
-      expect(findById.user.id).toEqual(user.id);
-      expect(findById.user.userCode).toEqual(user.userCode);
       expect(findById.group.id).toEqual(group.id);
       expect(findById.id).toEqual(groupAchievement.id);
       expect(findById.title).toEqual(groupAchievement.title);
       expect(findById.content).toEqual(groupAchievement.content);
+      expect(findById.createdAt).toEqual(groupAchievement.createdAt);
+    });
+  });
+
+  test('유저 id, 그룹 id, 그룹 달성 기록 id로 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const group = await groupFixture.createGroup('GROUP', user);
+      const category = await groupCategoryFixture.createCategory(
+        user,
+        group,
+        'category',
+      );
+      const groupAchievement =
+        await groupAchievementFixture.createGroupAchievement(
+          user,
+          group,
+          category,
+        );
+
+      // when
+      const findById =
+        await groupAchievementRepository.findOneByIdAndUserAndGroup(
+          groupAchievement.id,
+          user.id,
+          group.id,
+        );
+
+      // then
+      expect(findById.id).toEqual(groupAchievement.id);
+      expect(findById.title).toEqual(groupAchievement.title);
+      expect(findById.content).toEqual(groupAchievement.content);
+      expect(findById.groupCategory.id).toEqual(category.id);
+      expect(findById.groupCategory.name).toEqual(category.name);
+      expect(findById.createdAt).toEqual(groupAchievement.createdAt);
       expect(findById.createdAt).toEqual(groupAchievement.createdAt);
     });
   });

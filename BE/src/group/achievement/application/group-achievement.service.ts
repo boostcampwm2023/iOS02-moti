@@ -19,6 +19,9 @@ import { UnauthorizedAchievementException } from '../../../achievement/exception
 import { PaginateGroupAchievementRequest } from '../dto/paginate-group-achievement-request';
 import { PaginateGroupAchievementResponse } from '../dto/paginate-group-achievement-response';
 import { GroupAchievementResponse } from '../dto/group-achievement-response';
+import { GroupAchievementDeleteResponse } from '../dto/group-achievement-delete-response';
+import { GroupAchievementUpdateRequest } from '../dto/group-achievement-update-request';
+import { GroupAchievementUpdateResponse } from '../dto/group-achievement-update-response';
 
 @Injectable()
 export class GroupAchievementService {
@@ -92,6 +95,33 @@ export class GroupAchievementService {
       ),
     );
   }
+  @Transactional()
+  async update(
+    userId: number,
+    groupId: number,
+    achievementId: number,
+    groupAchievementUpdateRequest: GroupAchievementUpdateRequest,
+  ) {
+    const achievement =
+      await this.groupAchievementRepository.findOneByIdAndUserAndGroup(
+        achievementId,
+        userId,
+        groupId,
+      );
+    if (!achievement) throw new NoSuchGroupAchievementException();
+
+    const category = await this.groupCategoryRepository.findByIdAndGroup(
+      groupId,
+      groupAchievementUpdateRequest.categoryId,
+    );
+
+    achievement.update(
+      groupAchievementUpdateRequest.toAchievementUpdate(category),
+    );
+    const updated =
+      await this.groupAchievementRepository.saveAchievement(achievement);
+    return GroupAchievementUpdateResponse.from(updated);
+  }
   private async getCategory(userId: number, ctgId: number) {
     if (ctgId === -1) return null;
 
@@ -128,6 +158,31 @@ export class GroupAchievementService {
       );
     if (!achievement) throw new NoSuchAchievementException();
 
+    return achievement;
+  }
+
+  async delete(userId: number, groupId: number, achievementId: number) {
+    const achievement = await this.getAchievement(
+      achievementId,
+      userId,
+      groupId,
+    );
+    await this.groupAchievementRepository.repository.softDelete(achievement.id);
+    return GroupAchievementDeleteResponse.from(achievement);
+  }
+
+  private async getAchievement(
+    achieveId: number,
+    userId: number,
+    groupId: number,
+  ) {
+    const achievement =
+      await this.groupAchievementRepository.findOneByIdAndUserAndGroup(
+        achieveId,
+        userId,
+        groupId,
+      );
+    if (!achievement) throw new NoSuchGroupAchievementException();
     return achievement;
   }
 }
