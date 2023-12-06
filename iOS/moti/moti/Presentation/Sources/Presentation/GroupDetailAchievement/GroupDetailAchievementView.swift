@@ -134,11 +134,16 @@ final class GroupDetailAchievementView: UIView {
             addEmoji(emoji, target: target, action: action)
         }
     }
-    
-    /// Emoji 버튼 하나 추가
+
     // 나중에 다양한 이모지를 추가할 수 있게되면 유용해보임
+    /// Emoji 버튼 하나 추가
     func addEmoji(_ emoji: Emoji, target: Any?, action: Selector) {
-        let emojiButton = EmojiButton(emoji: emoji.id.description, count: emoji.count, isSelectedEmoji: emoji.isSelected)
+        let emojiButton = EmojiButton(
+            emoji: emoji.id.description,
+            emojiId: emoji.id.rawValue,
+            count: emoji.count,
+            isSelectedEmoji: emoji.isSelected
+        )
         emojiButton.addTarget(target, action: action, for: .touchUpInside)
         emojiButtonStackView.addArrangedSubview(emojiButton)
     }
