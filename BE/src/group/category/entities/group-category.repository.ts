@@ -26,7 +26,7 @@ export class GroupCategoryRepository extends TransactionalRepository<GroupCatego
     });
     return groupCategoryEntity?.toModel();
   }
-  async findByIdAndGroupUser(groupId: number, ctgId: number) {
+  async findByIdAndGroup(groupId: number, ctgId: number) {
     const groupCategoryEntity = await this.repository.findOneBy({
       group: { id: groupId },
       id: ctgId,

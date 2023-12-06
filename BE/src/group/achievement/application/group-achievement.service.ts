@@ -100,7 +100,7 @@ export class GroupAchievementService {
   private async getCategory(groupId: number, ctgId: number) {
     if (ctgId === -1) return null;
 
-    const ctg = await this.groupCategoryRepository.findByIdAndGroupUser(
+    const ctg = await this.groupCategoryRepository.findByIdAndGroup(
       groupId,
       ctgId,
     );

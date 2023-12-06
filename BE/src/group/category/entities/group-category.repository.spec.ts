@@ -250,7 +250,7 @@ describe('GroupCategoryRepository test', () => {
 
         // when
         const retrievedCategory =
-          await groupCategoryRepository.findByIdAndGroupUser(
+          await groupCategoryRepository.findByIdAndGroup(
             group.id,
             groupCategory.id,
           );
@@ -282,7 +282,7 @@ describe('GroupCategoryRepository test', () => {
 
         // when
         const retrievedCategory =
-          await groupCategoryRepository.findByIdAndGroupUser(
+          await groupCategoryRepository.findByIdAndGroup(
             otherGroup.id,
             groupCategory.id,
           );
