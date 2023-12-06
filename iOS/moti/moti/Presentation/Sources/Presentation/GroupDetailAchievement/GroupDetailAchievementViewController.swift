@@ -67,6 +67,9 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
     }
     
     @objc private func emojiButtonDidToggled(_ sender: EmojiButton) {
+        if let emojiType = EmojiType(rawValue: sender.emojiId) {
+            viewModel.toggleEmoji(emojiType)
+        }
         sender.toggle()
     }
     
@@ -130,6 +133,7 @@ extension GroupDetailAchievementViewController: LoadingIndicator {
                 switch state {
                 case .initial(let title):
                     layoutView.update(title: title)
+                    layoutView.setupDefaultEmojiButton(target: self, action: #selector(emojiButtonDidToggled))
                 case .success(let achievement):
                     layoutView.configure(achievement: achievement)
                 case .failed(let message):
@@ -153,6 +157,19 @@ extension GroupDetailAchievementViewController: LoadingIndicator {
                     hideLoadingIndicator()
                     showErrorAlert(message: message)
                     Logger.error("delete achievement error: \(message)")
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.fetchEmojisState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .success(let emojis):
+                    layoutView.updateEmojis(emojis: emojis)
+                case .failed(let message):
+                    showErrorAlert(message: message)
                 }
             }
             .store(in: &cancellables)

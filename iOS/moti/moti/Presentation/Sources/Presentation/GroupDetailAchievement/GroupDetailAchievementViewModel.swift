@@ -59,6 +59,7 @@ final class GroupDetailAchievementViewModel {
         switch action {
         case .launch:
             initTitle()
+            fetchEmojis()
             fetchDetailAchievement()
         case .delete:
             deleteAchievement()

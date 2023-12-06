@@ -8,20 +8,21 @@
 import UIKit
 
 public final class EmojiButton: BounceButton {
+    // Domain 모델을 사용하기 싫어서 따로 변수로 뒀습니다.
+    public let emoji: String
+    public let emojiId: String
     private var isSelectedEmoji = false {
         didSet {
             if isSelectedEmoji {
                 applySelectedStyle()
-                increaseCount()
             } else {
                 applyDeselectedStyle()
-                decreaseCount()
             }
         }
     }
     private var count = 0 {
         didSet {
-            if count == 0 {
+            if count <= 0 {
                 countLabel.isHidden = true
             } else {
                 countLabel.isHidden = false
@@ -59,6 +60,8 @@ public final class EmojiButton: BounceButton {
     
     // MARK: - Init
     public override init(frame: CGRect) {
+        self.emoji = ""
+        self.emojiId = ""
         super.init(frame: frame)
         setupUI()
     }
@@ -66,9 +69,12 @@ public final class EmojiButton: BounceButton {
     public init(
         frame: CGRect = .zero,
         emoji: String,
+        emojiId: String,
         count: Int,
         isSelectedEmoji: Bool
     ) {
+        self.emoji = emoji
+        self.emojiId = emojiId
         super.init(frame: frame)
         
         self.count = count
@@ -80,6 +86,8 @@ public final class EmojiButton: BounceButton {
     }
     
     public required init?(coder: NSCoder) {
+        self.emoji = ""
+        self.emojiId = ""
         super.init(coder: coder)
         setupUI()
     }
@@ -93,15 +101,27 @@ public final class EmojiButton: BounceButton {
         }
     }
     
+    public func update(count: Int, isSelectedEmoji: Bool) {
+        self.count = count
+        self.isSelectedEmoji = isSelectedEmoji
+    }
+    
     @objc public func toggle() {
         isSelectedEmoji.toggle()
+        if isSelectedEmoji {
+            increaseCount()
+        } else {
+            decreaseCount()
+        }
     }
     
     private func increaseCount() {
+        // TODO: 숫자가 위로 올라가는 애니메이션
         count += 1
     }
     
     private func decreaseCount() {
+        // TODO: 숫자가 아래로 내려가는 애니메이션
         count -= 1
     }
     
