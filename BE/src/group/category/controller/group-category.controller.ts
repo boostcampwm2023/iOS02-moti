@@ -66,4 +66,29 @@ export class GroupCategoryController {
       GroupCategoryListElementResponse.build(groupCategory),
     );
   }
+
+  @ApiBearerAuth('accessToken')
+  @ApiOperation({
+    summary: '그룹 카테고리 단 건 조회 API',
+    description: '특정 그룹 카테고리를 조회한다.',
+  })
+  @ApiOkResponse({
+    description: '그룹 카테고리 조회',
+    type: GroupCategoryListElementResponse,
+  })
+  @Get(':categoryId')
+  @UseGuards(AccessTokenGuard)
+  async category(
+    @AuthenticatedUser() user: User,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+  ): Promise<ApiData<GroupCategoryListElementResponse>> {
+    const groupCategory =
+      await this.groupCategoryService.retrieveCategoryMetadataById(
+        user,
+        groupId,
+        categoryId,
+      );
+    return ApiData.success(new GroupCategoryListElementResponse(groupCategory));
+  }
 }
