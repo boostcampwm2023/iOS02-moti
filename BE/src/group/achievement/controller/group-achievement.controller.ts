@@ -32,6 +32,7 @@ import { AchievementUpdateResponse } from '../../../achievement/dto/achievement-
 import { AchievementUpdateRequest } from '../../../achievement/dto/achievement-update-request';
 import { GroupAchievementUpdateRequest } from '../dto/group-achievement-update-request';
 import { GroupAchievementUpdateResponse } from '../dto/group-achievement-update-response';
+import { GroupAchievementDeleteResponse } from '../dto/group-achievement-delete-response';
 
 @Controller('/api/v1/groups')
 @ApiTags('그룹 달성기록 API')
@@ -146,7 +147,7 @@ export class GroupAchievementController {
   @ApiResponse({
     status: 200,
     description: '그룹 달성기록 삭제',
-    type: AchievementDetailResponse,
+    type: GroupAchievementDeleteResponse,
   })
   @Delete('/:groupId/achievements/:achievementId')
   @UseGuards(AccessTokenGuard)
