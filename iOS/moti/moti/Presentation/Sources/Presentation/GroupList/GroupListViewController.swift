@@ -46,6 +46,8 @@ final class GroupListViewController: BaseViewController<GroupListView> {
         if let tabBarController = tabBarController as? TabBarViewController {
             tabBarController.hideCaptureButton()
         }
+        
+        print("그룹 리스트 어피어!!")
     }
     
     override func viewWillDisappear(_ animated: Bool) {

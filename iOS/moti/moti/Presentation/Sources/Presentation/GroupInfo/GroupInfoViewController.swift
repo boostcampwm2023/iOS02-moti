@@ -8,25 +8,24 @@
 import UIKit
 import Design
 import Domain
-
-protocol GroupInfoViewControllerDelegate: AnyObject {
-    func dropCellDidClicked(groupId: Int)
-}
+import Combine
 
 final class GroupInfoViewController: BaseViewController<GroupInfoView>, HiddenTabBarViewController {
 
     // MARK: - Properties
     weak var coordinator: GroupInfoCoordinator?
-    weak var delegate: GroupInfoViewControllerDelegate?
     private let group: Group
     private let dataSource = GroupInfoTableViewDataSource()
+    private let viewModel: GroupInfoViewModel
+    private var cancellables: Set<AnyCancellable> = []
     
     // MARK: - Init
-    init(group: Group) {
+    init(group: Group, viewModel: GroupInfoViewModel) {
         self.group = group
         if group.grade == .leader {
             dataSource.appendLeaderSection()
         }
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -37,6 +36,7 @@ final class GroupInfoViewController: BaseViewController<GroupInfoView>, HiddenTa
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        bind()
         
         title = "그룹 정보"
         layoutView.configure(group: group)
@@ -63,9 +63,33 @@ extension GroupInfoViewController: UITableViewDelegate {
             } else {
                 showDestructiveTwoButtonAlert(title: "그룹에서 탈퇴하시겠습니까?", okTitle: "탈퇴") { [weak self] in
                     guard let self else { return }
-                    delegate?.dropCellDidClicked(groupId: group.id)
+                    viewModel.action(.dropGroup(groupId: group.id))
                 }
             }
         }
+    }
+}
+
+// MARK: - bind
+extension GroupInfoViewController: LoadingIndicator {
+    private func bind() {
+        viewModel.dropGroupState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .finish:
+                    hideLoadingIndicator()
+                    coordinator?.parentCoordinator?.finish(animated: true)
+                    coordinator?.finish(animated: true)
+                    // coordinator.finish를 먼저하면 coordinator가 없어져서 parent에 접근할 수 없음
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
     }
 }
