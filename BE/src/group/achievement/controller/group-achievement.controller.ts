@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -130,5 +131,30 @@ export class GroupAchievementController {
         paginateGroupAchievementRequest,
       ),
     );
+  }
+
+  @ApiBearerAuth('accessToken')
+  @ApiOperation({
+    summary: '그룹 달성기록 삭제 API',
+    description: '달성기록을 삭제한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '그룹 달성기록 삭제',
+    type: AchievementDetailResponse,
+  })
+  @Delete('/:groupId/achievements/:achievementId')
+  @UseGuards(AccessTokenGuard)
+  async delete(
+    @AuthenticatedUser() user: User,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Param('achievementId', ParseIntPipe) achievementId: number,
+  ) {
+    const response = await this.groupAchievementService.delete(
+      user.id,
+      groupId,
+      achievementId,
+    );
+    return ApiData.success(response);
   }
 }

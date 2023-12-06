@@ -19,6 +19,7 @@ import { UnauthorizedAchievementException } from '../../../achievement/exception
 import { PaginateGroupAchievementRequest } from '../dto/paginate-group-achievement-request';
 import { PaginateGroupAchievementResponse } from '../dto/paginate-group-achievement-response';
 import { GroupAchievementResponse } from '../dto/group-achievement-response';
+import { GroupAchievementDeleteResponse } from '../dto/group-achievement-delete-response';
 
 @Injectable()
 export class GroupAchievementService {
@@ -128,6 +129,31 @@ export class GroupAchievementService {
       );
     if (!achievement) throw new NoSuchAchievementException();
 
+    return achievement;
+  }
+
+  async delete(userId: number, groupId: number, achievementId: number) {
+    const achievement = await this.getAchievement(
+      achievementId,
+      userId,
+      groupId,
+    );
+    await this.groupAchievementRepository.repository.softDelete(achievement.id);
+    return GroupAchievementDeleteResponse.from(achievement);
+  }
+
+  private async getAchievement(
+    achieveId: number,
+    userId: number,
+    groupId: number,
+  ) {
+    const achievement =
+      await this.groupAchievementRepository.findOneByIdAndUserAndGroup(
+        achieveId,
+        userId,
+        groupId,
+      );
+    if (!achievement) throw new NoSuchGroupAchievementException();
     return achievement;
   }
 }

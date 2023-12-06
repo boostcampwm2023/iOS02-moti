@@ -27,6 +27,7 @@ import { GroupAchievementDetailResponse } from '../dto/group-achievement-detail-
 import { PaginateGroupAchievementResponse } from '../dto/paginate-group-achievement-response';
 import { PaginateGroupAchievementRequest } from '../dto/paginate-group-achievement-request';
 import { UnauthorizedAchievementException } from '../../../achievement/exception/unauthorized-achievement.exception';
+import { GroupAchievementDeleteResponse } from '../dto/group-achievement-delete-response';
 
 describe('GroupAchievementController', () => {
   let app: INestApplication;
@@ -530,6 +531,94 @@ describe('GroupAchievementController', () => {
       // then
       return request(app.getHttpServer())
         .get('/api/v1/groups/1/achievements/1007')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('만료된 토큰입니다.');
+        });
+    });
+  });
+
+  describe('내가 작성한 달성기록을 삭제할 수 있다.', () => {
+    it('성공 시 200을 반환한다.', async () => {
+      // given
+      const { accessToken, user } =
+        await authFixture.getAuthenticatedUser('ABC');
+
+      const groupAchievementDeleteResponse = new GroupAchievementDeleteResponse(
+        1,
+      );
+
+      when(
+        mockGroupAchievementService.delete(
+          anyNumber(),
+          anyNumber(),
+          anyNumber(),
+        ),
+      ).thenResolve(groupAchievementDeleteResponse);
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete('/api/v1/groups/1/achievements/1')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(true);
+          expect(res.body.data).toEqual({ id: 1 });
+        });
+    });
+
+    it('삭제할 수 없는 달성기록에 대해 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupAchievementService.delete(
+          anyNumber(),
+          anyNumber(),
+          anyNumber(),
+        ),
+      ).thenThrow(new NoSuchGroupAchievementException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete('/api/v1/groups/1/achievements/1')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('존재하지 않는 그룹 달성기록 입니다.');
+        });
+    });
+
+    it('잘못된 인증시 401을 반환한다.', async () => {
+      // given
+      const accessToken = 'abcd.abcd.efgh';
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete('/api/v1/groups/1/achievements/1')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('잘못된 토큰입니다.');
+        });
+    });
+
+    it('만료된 인증정보에 401을 반환한다.', async () => {
+      // given
+      const { accessToken } =
+        await authFixture.getExpiredAccessTokenUser('ABC');
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete('/api/v1/groups/1/achievements/1')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(401)
         .expect((res: request.Response) => {
