@@ -8,9 +8,7 @@
 import UIKit
 
 public final class EmojiButton: BounceButton {
-    // Domain 모델을 사용하기 싫어서 따로 변수로 뒀습니다.
     public let emoji: String
-    public let emojiId: String
     private var isSelectedEmoji = false {
         didSet {
             if isSelectedEmoji {
@@ -61,7 +59,6 @@ public final class EmojiButton: BounceButton {
     // MARK: - Init
     public override init(frame: CGRect) {
         self.emoji = ""
-        self.emojiId = ""
         super.init(frame: frame)
         setupUI()
     }
@@ -74,7 +71,6 @@ public final class EmojiButton: BounceButton {
         isSelectedEmoji: Bool
     ) {
         self.emoji = emoji
-        self.emojiId = emojiId
         super.init(frame: frame)
         
         self.count = count
@@ -87,7 +83,6 @@ public final class EmojiButton: BounceButton {
     
     public required init?(coder: NSCoder) {
         self.emoji = ""
-        self.emojiId = ""
         super.init(coder: coder)
         setupUI()
     }

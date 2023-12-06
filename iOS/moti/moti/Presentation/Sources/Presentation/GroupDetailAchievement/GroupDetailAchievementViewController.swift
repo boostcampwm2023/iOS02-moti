@@ -67,7 +67,7 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
     }
     
     @objc private func emojiButtonDidToggled(_ sender: EmojiButton) {
-        if let emojiType = EmojiType(rawValue: sender.emojiId) {
+        if let emojiType = EmojiType(emoji: sender.emoji) {
             viewModel.toggleEmoji(emojiType)
         }
         sender.toggle()

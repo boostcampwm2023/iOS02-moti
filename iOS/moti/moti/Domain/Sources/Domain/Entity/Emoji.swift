@@ -11,6 +11,19 @@ public enum EmojiType: String, Codable {
     case like
     case fire
     case smile
+    
+    public init?(emoji: String) {
+        switch emoji {
+        case "👍":
+            self = .like
+        case "🔥":
+            self = .fire
+        case "🥰":
+            self = .smile
+        default:
+            return nil
+        }
+    }
 }
 
 extension EmojiType: CustomStringConvertible {
