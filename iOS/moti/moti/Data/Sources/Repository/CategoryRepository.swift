@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  CategoryRepository.swift
 //  
 //
 //  Created by 유정주 on 11/22/23.
@@ -8,13 +8,17 @@
 import Foundation
 import Domain
 
-public struct CategoryListRepository: CategoryListRepositoryProtocol {
+public struct CategoryRepository: CategoryRepositoryProtocol {
     private let provider: ProviderProtocol
     // 싱글턴 객체로 관리하기 위해 외부에서 주입 받지 않음
     private let storage: CategoryStorageProtocol = CategoryStorage.shared
     
     public init(provider: ProviderProtocol = Provider()) {
         self.provider = provider
+    }
+    
+    public func fetchCategory(categoryId: Int) async throws -> CategoryItem {
+        return .init(id: -1, name: "")
     }
     
     public func fetchCategoryList() async throws -> [CategoryItem] {

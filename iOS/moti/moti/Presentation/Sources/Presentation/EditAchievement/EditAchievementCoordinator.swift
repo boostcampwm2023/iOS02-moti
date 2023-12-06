@@ -48,7 +48,7 @@ final class EditAchievementCoordinator: Coordinator {
             let achievementRepository = AchievementRepository()
             editAchievementVM = EditAchievementViewModel(
                 saveImageUseCase: .init(repository: imageRepository),
-                fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
+                fetchCategoryListUseCase: .init(repository: CategoryRepository()),
                 updateAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared),
                 postAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared)
             )
@@ -87,7 +87,7 @@ final class EditAchievementCoordinator: Coordinator {
             let achievementRepository = AchievementRepository()
             editAchievementVM = EditAchievementViewModel(
                 saveImageUseCase: .init(repository: imageRepository),
-                fetchCategoryListUseCase: .init(repository: CategoryListRepository()),
+                fetchCategoryListUseCase: .init(repository: CategoryRepository()),
                 updateAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared),
                 postAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared)
             )

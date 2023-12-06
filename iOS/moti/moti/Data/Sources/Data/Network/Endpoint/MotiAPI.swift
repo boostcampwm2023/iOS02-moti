@@ -26,6 +26,7 @@ enum MotiAPI: EndpointProtocol {
     case fetchGroupList
     case createGroup(requestValue: CreateGroupRequestValue)
     case fetchGroupAchievementList(requestValue: FetchAchievementListRequestValue?, groupId: Int)
+    case fetchGroupCategory(groupId: Int, categoryId: Int)
     case fetchGroupCategoryList(groupId: Int)
     case addGroupCategory(requestValue: AddCategoryRequestValue, groupId: Int)
     case fetchGroupDetailAchievement(requestValue: FetchDetailAchievementRequestValue, groupId: Int)
@@ -74,6 +75,8 @@ extension MotiAPI {
         case .createGroup: return "/groups"
         case .fetchGroupAchievementList(_, let groupId):
             return "/groups/\(groupId)/achievements"
+        case .fetchGroupCategory(let groupId, let categoryId):
+            return "groups/\(groupId)/categories/\(categoryId)"
         case .fetchGroupCategoryList(let groupId):
             return "/groups/\(groupId)/categories"
         case .addGroupCategory(_, let groupId):
@@ -121,6 +124,7 @@ extension MotiAPI {
         case .fetchGroupList: return .get
         case .createGroup: return .post
         case .fetchGroupAchievementList: return .get
+        case .fetchGroupCategory: return .get
         case .fetchGroupCategoryList: return .get
         case .addGroupCategory: return .post
         case .fetchGroupDetailAchievement: return .get
