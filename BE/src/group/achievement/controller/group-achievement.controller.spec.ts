@@ -470,7 +470,7 @@ describe('GroupAchievementController', () => {
       });
 
       when(
-        mockGroupAchievementService.getAchievementDetail(anything(), 1004),
+        mockGroupAchievementService.getAchievementDetail(anything(), 1, 1004),
       ).thenResolve(achievementDetail);
 
       // when
@@ -490,7 +490,7 @@ describe('GroupAchievementController', () => {
       const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
 
       when(
-        mockGroupAchievementService.getAchievementDetail(anything(), 1005),
+        mockGroupAchievementService.getAchievementDetail(anything(), 1, 1005),
       ).thenThrow(new UnauthorizedAchievementException());
 
       // when

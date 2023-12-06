@@ -96,10 +96,12 @@ export class GroupAchievementController {
   @UseGuards(AccessTokenGuard)
   async getAchievement(
     @AuthenticatedUser() user: User,
+    @Param('groupId', ParseIntPipe) groupId: number,
     @Param('achievementId', ParseIntPipe) id: number,
   ) {
     const response = await this.groupAchievementService.getAchievementDetail(
       user,
+      groupId,
       id,
     );
     return ApiData.success(response);
