@@ -72,10 +72,6 @@ final class GroupListViewModel {
     func findGroup(at index: Int) -> Group {
         return groups[index]
     }
-    
-    private func firstIndexOf(groupId: Int) -> Int? {
-        return groups.firstIndex { $0.id == groupId }
-    }
 
     func action(_ action: GroupListViewModelAction) {
         switch action {
@@ -120,14 +116,13 @@ extension GroupListViewModel {
     }
     
     private func dropGroup(groupId: Int) {
-        guard let foundIndex = firstIndexOf(groupId: groupId) else { return }
         Task {
             dropGroupState.send(.loading)
             do {
                 let requestValue = DropGroupRequestValue(groupId: groupId)
                 let isSuccess = try await dropGroupUseCase.execute(requestValue: requestValue)
                 if isSuccess {
-                    groups.remove(at: foundIndex)
+                    deleteOfDataSource(groupId: groupId)
                     dropGroupState.send(.finish)
                 } else {
                     dropGroupState.send(.error(message: "아이디가 \(groupId)인 그룹 탈퇴에 실패했습니다."))
@@ -137,5 +132,9 @@ extension GroupListViewModel {
                 dropGroupState.send(.error(message: error.localizedDescription))
             }
         }
+    }
+    
+    private func deleteOfDataSource(groupId: Int) {
+        groups = groups.filter { $0.id != groupId }
     }
 }
