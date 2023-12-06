@@ -384,4 +384,230 @@ describe('GroupCategoryService test', () => {
       });
     });
   });
+
+  describe('retrieveCategoryMetadataById는 그룹의 카테고리 메타데이터를 조회할 수 있다.', () => {
+    it('그룹장은 그룹의 카테고리 메타데이터를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(leader);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리1',
+        );
+
+        await groupAchievementFixture.createGroupAchievement(
+          leader,
+          group,
+          groupCategory,
+          '업적1',
+        );
+
+        // when
+        const category =
+          await groupCategoryService.retrieveCategoryMetadataById(
+            leader,
+            group.id,
+            groupCategory.id,
+          );
+
+        // then
+        expect(category.categoryName).toEqual('카테고리1');
+        expect(category.categoryId).toEqual(groupCategory.id);
+        expect(category.achievementCount).toEqual(1);
+      });
+    });
+
+    it('그룹장은 그룹의 카테고리에 저장된 도전기록이 없어도 메타데이터를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(leader);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리1',
+        );
+
+        // when
+        const category =
+          await groupCategoryService.retrieveCategoryMetadataById(
+            leader,
+            group.id,
+            groupCategory.id,
+          );
+
+        // then
+        expect(category.categoryName).toEqual('카테고리1');
+        expect(category.categoryId).toEqual(groupCategory.id);
+        expect(category.achievementCount).toEqual(0);
+      });
+    });
+
+    it('그룹 멤버는 그룹의 카테고리 메타데이터를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+        const participants = await usersFixture.getUsers(5);
+
+        const group = await groupFixture.createGroups(leader, participants);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리1',
+        );
+
+        await groupAchievementFixture.createGroupAchievement(
+          leader,
+          group,
+          groupCategory,
+          '업적1',
+        );
+
+        // when
+        const category =
+          await groupCategoryService.retrieveCategoryMetadataById(
+            participants[0],
+            group.id,
+            groupCategory.id,
+          );
+
+        // then
+        expect(category.categoryName).toEqual('카테고리1');
+        expect(category.categoryId).toEqual(groupCategory.id);
+        expect(category.achievementCount).toEqual(1);
+      });
+    });
+
+    it('그룹 관리자는 그룹의 카테고리 메타데이터를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+        const participants = await usersFixture.getUsers(5);
+        const managers = await usersFixture.getUsers(5);
+
+        const group = await groupFixture.createGroups(
+          leader,
+          participants,
+          managers,
+        );
+        const groupCategory = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리1',
+        );
+
+        await groupAchievementFixture.createGroupAchievement(
+          leader,
+          group,
+          groupCategory,
+          '업적1',
+        );
+
+        // when
+        const category =
+          await groupCategoryService.retrieveCategoryMetadataById(
+            managers[4],
+            group.id,
+            groupCategory.id,
+          );
+
+        // then
+        expect(category.categoryName).toEqual('카테고리1');
+        expect(category.categoryId).toEqual(groupCategory.id);
+        expect(category.achievementCount).toEqual(1);
+      });
+    });
+
+    it('그룹 멤버는 그룹의 카테고리 메타데이터를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+        const participants = await usersFixture.getUsers(5);
+
+        const group = await groupFixture.createGroups(leader, participants);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리1',
+        );
+
+        await groupAchievementFixture.createGroupAchievement(
+          leader,
+          group,
+          groupCategory,
+          '업적1',
+        );
+
+        // when
+        const category =
+          await groupCategoryService.retrieveCategoryMetadataById(
+            participants[0],
+            group.id,
+            groupCategory.id,
+          );
+
+        // then
+        expect(category.categoryName).toEqual('카테고리1');
+        expect(category.categoryId).toEqual(groupCategory.id);
+        expect(category.achievementCount).toEqual(1);
+      });
+    });
+
+    it('그룹에 속하지 않은 사용자가 그룹의 카테고리 메타데이터를 조회할 수 없다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+        const participants = await usersFixture.getUsers(5);
+
+        const group = await groupFixture.createGroups(leader, participants);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리1',
+        );
+
+        const other = await usersFixture.getUser('DEF');
+
+        // when
+        // then
+        await expect(
+          groupCategoryService.retrieveCategoryMetadataById(
+            other,
+            group.id,
+            groupCategory.id,
+          ),
+        ).rejects.toThrow(UnauthorizedApproachGroupCategoryException);
+      });
+    });
+
+    it('그룹에 속하지 않은 사용자가 그룹의 카테고리 메타데이터를 조회할 수 없다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+        const participants = await usersFixture.getUsers(5);
+
+        const group = await groupFixture.createGroups(leader, participants);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리1',
+        );
+
+        const other = await usersFixture.getUser('DEF');
+        await groupFixture.createGroups(other);
+
+        // when
+        // then
+        await expect(
+          groupCategoryService.retrieveCategoryMetadataById(
+            other,
+            group.id,
+            groupCategory.id,
+          ),
+        ).rejects.toThrow(UnauthorizedApproachGroupCategoryException);
+      });
+    });
+  });
 });
