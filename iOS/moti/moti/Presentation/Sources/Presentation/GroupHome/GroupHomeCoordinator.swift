@@ -10,16 +10,11 @@ import Core
 import Domain
 import Data
 
-protocol GroupHomeCoordinatorDelegate: AnyObject {
-    func dropCellDidClicked(groupId: Int)
-}
-
 final class GroupHomeCoordinator: Coordinator {
     public let parentCoordinator: Coordinator?
     public var childCoordinators: [Coordinator] = []
     public let navigationController: UINavigationController
     private var currentViewController: GroupHomeViewController?
-    weak var delegate: GroupHomeCoordinatorDelegate?
         
     public init(
         _ navigationController: UINavigationController,
@@ -60,7 +55,6 @@ final class GroupHomeCoordinator: Coordinator {
     
     func moveToGroupInfoViewController(group: Group) {
         let groupInfoCoordinator = GroupInfoCoordinator(navigationController, self)
-        groupInfoCoordinator.delegate = self
         groupInfoCoordinator.start(group: group)
         childCoordinators.append(groupInfoCoordinator)
     }
@@ -118,10 +112,3 @@ extension GroupHomeCoordinator: GroupDetailAchievementCoordinatorDelegate {
 
 // MARK: - CaptureCoordinatorDelegate
 extension GroupHomeCoordinator: CaptureCoordinatorDelegate { }
-
-extension GroupHomeCoordinator: GroupInfoCoordinatorDelegate {
-    func dropCellDidClicked(groupId: Int) {
-        finish(animated: true)
-        delegate?.dropCellDidClicked(groupId: groupId)
-    }
-}

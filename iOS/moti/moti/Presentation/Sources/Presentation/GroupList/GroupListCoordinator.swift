@@ -39,14 +39,7 @@ final class GroupListCoordinator: Coordinator {
     
     func moveToGroupHomeViewController(group: Group) {
         let groupHomeCoordinator = GroupHomeCoordinator(navigationController, self)
-        groupHomeCoordinator.delegate = self
         groupHomeCoordinator.start(group: group)
         childCoordinators.append(groupHomeCoordinator)
-    }
-}
-
-extension GroupListCoordinator: GroupHomeCoordinatorDelegate {
-    func dropCellDidClicked(groupId: Int) {
-        currentViewController?.dropGroup(groupId: groupId)
     }
 }
