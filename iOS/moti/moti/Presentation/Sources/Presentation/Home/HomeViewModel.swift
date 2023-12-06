@@ -18,6 +18,7 @@ final class HomeViewModel {
     // MARK: - Properties
     // Category
     private var categoryDataSource: CategoryDataSource?
+    private let fetchCategoryUseCase: FetchCategoryUseCase
     private let fetchCategoryListUseCase: FetchCategoryListUseCase
     private let addCategoryUseCase: AddCategoryUseCase
     
@@ -26,12 +27,7 @@ final class HomeViewModel {
             categoryDataSource?.update(data: categories)
         }
     }
-    private(set) var currentCategory: CategoryItem? {
-        didSet {
-            guard let currentCategory else { return }
-            categoryState = .updated(category: currentCategory)
-        }
-    }
+    private(set) var currentCategory: CategoryItem?
     
     // Achievement
     private var achievementDataSource: AchievementDataSource?
@@ -53,9 +49,9 @@ final class HomeViewModel {
     private var nextAchievementTask: Task<Void, Never>?
     
     // State
+    private(set) var categoryInfoState = PassthroughSubject<CategoryInfoState, Never>()
     @Published private(set) var categoryListState: CategoryListState = .initial
     @Published private(set) var addCategoryState: AddCategoryState = .none
-    @Published private(set) var categoryState: CategoryState = .initial
     @Published private(set) var achievementListState: AchievementListState = .initial
     private(set) var deleteAchievementState = PassthroughSubject<DeleteAchievementState, Never>()
     private(set) var fetchDetailAchievementState = PassthroughSubject<FetchDetailAchievementState, Never>()
@@ -63,12 +59,14 @@ final class HomeViewModel {
     // MARK: - Init
     init(
         fetchAchievementListUseCase: FetchAchievementListUseCase,
+        fetchCategoryUseCase: FetchCategoryUseCase,
         fetchCategoryListUseCase: FetchCategoryListUseCase,
         addCategoryUseCase: AddCategoryUseCase,
         deleteAchievementUseCase: DeleteAchievementUseCase,
         fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
     ) {
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
+        self.fetchCategoryUseCase = fetchCategoryUseCase
         self.fetchCategoryListUseCase = fetchCategoryListUseCase
         self.addCategoryUseCase = addCategoryUseCase
         self.deleteAchievementUseCase = deleteAchievementUseCase
@@ -98,6 +96,11 @@ final class HomeViewModel {
         switch action {
         case .launch:
             fetchCategories()
+        case .fetchCurrentCategoryInfo:
+            guard let currentCategory else { return }
+            fetchCategory(categoryId: currentCategory.id)
+        case .fetchCategoryInfo(let categoryId):
+            fetchCategory(categoryId: categoryId)
         case .addCategory(let name):
             addCategory(name: name)
         case .fetchNextPage:
@@ -134,6 +137,19 @@ private extension HomeViewModel {
                 categoryListState = .finish
             } catch {
                 categoryListState = .error(message: error.localizedDescription)
+            }
+        }
+    }
+    
+    /// 카테고리 단일 정보를 가져오는 액션
+    func fetchCategory(categoryId: Int) {
+        Task {
+            do {
+                categoryInfoState.send(.loading)
+                let category = try await fetchCategoryUseCase.execute(categoryId: categoryId)
+                categoryInfoState.send(.success(category: category))
+            } catch {
+                categoryInfoState.send(.failed(message: error.localizedDescription))
             }
         }
     }
