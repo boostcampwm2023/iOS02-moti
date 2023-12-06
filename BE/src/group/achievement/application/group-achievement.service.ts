@@ -20,6 +20,8 @@ import { PaginateGroupAchievementRequest } from '../dto/paginate-group-achieveme
 import { PaginateGroupAchievementResponse } from '../dto/paginate-group-achievement-response';
 import { GroupAchievementResponse } from '../dto/group-achievement-response';
 import { GroupAchievementDeleteResponse } from '../dto/group-achievement-delete-response';
+import { GroupAchievementUpdateRequest } from '../dto/group-achievement-update-request';
+import { GroupAchievementUpdateResponse } from '../dto/group-achievement-update-response';
 
 @Injectable()
 export class GroupAchievementService {
@@ -92,6 +94,33 @@ export class GroupAchievementService {
         GroupAchievementResponse.from(achievement),
       ),
     );
+  }
+  @Transactional()
+  async update(
+    userId: number,
+    groupId: number,
+    achievementId: number,
+    groupAchievementUpdateRequest: GroupAchievementUpdateRequest,
+  ) {
+    const achievement =
+      await this.groupAchievementRepository.findOneByIdAndUserAndGroup(
+        achievementId,
+        userId,
+        groupId,
+      );
+    if (!achievement) throw new NoSuchGroupAchievementException();
+
+    const category = await this.groupCategoryRepository.findByIdAndGroup(
+      groupId,
+      groupAchievementUpdateRequest.categoryId,
+    );
+
+    achievement.update(
+      groupAchievementUpdateRequest.toAchievementUpdate(category),
+    );
+    const updated =
+      await this.groupAchievementRepository.saveAchievement(achievement);
+    return GroupAchievementUpdateResponse.from(updated);
   }
   private async getCategory(userId: number, ctgId: number) {
     if (ctgId === -1) return null;

@@ -2,6 +2,7 @@ import { GroupCategory } from '../../category/domain/group.category';
 import { Group } from '../../group/domain/group.domain';
 import { User } from '../../../users/domain/user.domain';
 import { Image } from '../../../image/domain/image.domain';
+import { GroupAchievementUpdate } from '../index';
 
 export class GroupAchievement {
   id: number;
@@ -27,5 +28,10 @@ export class GroupAchievement {
     this.groupCategory = groupCategory;
     this.content = content;
     this.image = image;
+  }
+  update(achievementUpdate: GroupAchievementUpdate) {
+    this.title = achievementUpdate.title;
+    this.content = achievementUpdate.content;
+    this.groupCategory = achievementUpdate.category;
   }
 }

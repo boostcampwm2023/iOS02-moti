@@ -267,8 +267,17 @@ describe('GroupRepository Test', () => {
       // given
       const user = await usersFixture.getUser('ABC');
       const group = await groupFixture.createGroup('GROUP', user);
+      const category = await groupCategoryFixture.createCategory(
+        user,
+        group,
+        'category',
+      );
       const groupAchievement =
-        await groupAchievementFixture.createGroupAchievement(user, group, null);
+        await groupAchievementFixture.createGroupAchievement(
+          user,
+          group,
+          category,
+        );
 
       // when
       const findById =
@@ -282,6 +291,9 @@ describe('GroupRepository Test', () => {
       expect(findById.id).toEqual(groupAchievement.id);
       expect(findById.title).toEqual(groupAchievement.title);
       expect(findById.content).toEqual(groupAchievement.content);
+      expect(findById.groupCategory.id).toEqual(category.id);
+      expect(findById.groupCategory.name).toEqual(category.name);
+      expect(findById.createdAt).toEqual(groupAchievement.createdAt);
       expect(findById.createdAt).toEqual(groupAchievement.createdAt);
     });
   });

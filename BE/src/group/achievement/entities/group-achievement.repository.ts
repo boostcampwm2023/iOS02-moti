@@ -169,6 +169,9 @@ export class GroupAchievementRepository extends TransactionalRepository<GroupAch
   ) {
     const findOne = await this.repository.findOne({
       where: { id: achieveId, group: { id: groupId }, user: { id: userId } },
+      relations: {
+        groupCategory: true,
+      },
     });
     return findOne?.toModel();
   }

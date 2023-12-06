@@ -29,6 +29,7 @@ import { PaginateGroupAchievementRequest } from '../dto/paginate-group-achieveme
 import { UsersService } from '../../../users/application/users.service';
 import { UsersModule } from '../../../users/users.module';
 import { GroupAchievementRepository } from '../entities/group-achievement.repository';
+import { GroupAchievementUpdateRequest } from '../dto/group-achievement-update-request';
 
 describe('GroupAchievementService Test', () => {
   let groupAchievementService: GroupAchievementService;
@@ -622,6 +623,106 @@ describe('GroupAchievementService Test', () => {
           user2.id,
           group1.id,
           groupAchievement.id,
+        ),
+      ).rejects.toThrow(NoSuchGroupAchievementException);
+    });
+  });
+
+  test('내가 작성한 달성기록을 수정할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const group = await groupFixture.createGroup('GROUP', user);
+      const groupCategory = await groupCategoryFixture.createCategory(
+        user,
+        group,
+        'category',
+      );
+      const groupAchievement =
+        await groupAchievementFixture.createGroupAchievement(
+          user,
+          group,
+          null,
+          'title',
+        );
+
+      // when
+      const updated = await groupAchievementService.update(
+        user.id,
+        group.id,
+        groupAchievement.id,
+        new GroupAchievementUpdateRequest(
+          'test title',
+          'test content',
+          groupCategory.id,
+        ),
+      );
+
+      const findOne =
+        await groupAchievementRepository.findOneByIdAndUserAndGroup(
+          groupAchievement.id,
+          user.id,
+          group.id,
+        );
+
+      // then
+      expect(findOne.title).toEqual('test title');
+      expect(findOne.content).toEqual('test content');
+      expect(findOne.groupCategory.id).toEqual(groupCategory.id);
+    });
+  });
+
+  test('남의 달성기록을 수정하려하면 NoSuchGroupAchievementException를 던진다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('GROUP1', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+      const groupAchievement =
+        await groupAchievementFixture.createGroupAchievement(
+          user1,
+          group,
+          null,
+          'title',
+        );
+
+      // when
+      // then
+      await expect(
+        groupAchievementService.update(
+          user2.id,
+          group.id,
+          groupAchievement.id,
+          new GroupAchievementUpdateRequest('test title', 'test content', null),
+        ),
+      ).rejects.toThrow(NoSuchGroupAchievementException);
+    });
+  });
+
+  test('다른 그룹의 달성을 수정하려하면 NoSuchGroupAchievementException를 던진다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group1 = await groupFixture.createGroup('GROUP1', user1);
+      const group2 = await groupFixture.createGroup('GROUP2', user2);
+      const groupAchievement =
+        await groupAchievementFixture.createGroupAchievement(
+          user1,
+          group1,
+          null,
+          'title',
+        );
+
+      // when
+      // then
+      await expect(
+        groupAchievementService.update(
+          user2.id,
+          group1.id,
+          groupAchievement.id,
+          new GroupAchievementUpdateRequest('test title', 'test content', null),
         ),
       ).rejects.toThrow(NoSuchGroupAchievementException);
     });
