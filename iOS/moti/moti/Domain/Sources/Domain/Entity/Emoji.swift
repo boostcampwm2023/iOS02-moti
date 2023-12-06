@@ -7,11 +7,13 @@
 
 import Foundation
 
-public enum EmojiType: String, CustomStringConvertible {
+public enum EmojiType: String, Codable {
     case like
     case fire
     case smile
-    
+}
+
+extension EmojiType: CustomStringConvertible {
     public var description: String {
         switch self {
         case .like:

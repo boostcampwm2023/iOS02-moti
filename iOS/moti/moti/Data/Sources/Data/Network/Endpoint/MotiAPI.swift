@@ -38,6 +38,9 @@ enum MotiAPI: EndpointProtocol {
     // 차단
     case blockingUser(userCode: String)
     case blockingAchievement(achievementId: Int, groupId: Int)
+    // 이모지
+    case fetchEmojis(achievementId: Int, groupId: Int)
+    case toggleEmoji(achievementId: Int, groupId: Int, emojiId: String)
 
     private var keychainStorage: KeychainStorageProtocol {
         return KeychainStorage.shared
@@ -92,6 +95,10 @@ extension MotiAPI {
             return "/groups/\(groupId)/achievements/\(achievementId)/reject"
         case .invite(_, let groupId):
             return "/groups/\(groupId)/users"
+        case .fetchEmojis(let achievementId, let groupId):
+            return "/groups/\(groupId)/achievements/\(achievementId)/emojis"
+        case .toggleEmoji(let achievementId, let groupId, let emojiId):
+            return "/groups/\(groupId)/achievements/\(achievementId)/emojis/\(emojiId)"
         }
     }
     
@@ -122,6 +129,8 @@ extension MotiAPI {
         case .blockingUser: return .post
         case .blockingAchievement: return .post
         case .invite: return .post
+        case .fetchEmojis: return .get
+        case .toggleEmoji: return .post
         }
     }
     
