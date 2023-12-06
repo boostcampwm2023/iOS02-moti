@@ -491,10 +491,7 @@ describe('GroupRepository Test', () => {
       const group = await groupFixture.createGroup('GROUP', user1);
       await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
 
-      const groupCategory1 = await groupCategoryFixture.createCategory(
-        user1,
-        group,
-      );
+      await groupCategoryFixture.createCategory(user1, group);
       const groupCategory2 = await groupCategoryFixture.createCategory(
         user1,
         group,

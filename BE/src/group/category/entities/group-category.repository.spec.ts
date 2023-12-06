@@ -280,7 +280,6 @@ describe('GroupCategoryRepository test', () => {
 
         const otherGroup = await groupFixture.createGroups(user);
 
-
         // when
         const retrievedCategory =
           await groupCategoryRepository.findByIdAndGroupUser(
