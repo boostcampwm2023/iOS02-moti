@@ -33,7 +33,7 @@ public final class HomeCoordinator: Coordinator {
             fetchCategoryUseCase: .init(repository: categoryRepository),
             fetchCategoryListUseCase: .init(repository: categoryRepository),
             addCategoryUseCase: .init(repository: categoryRepository),
-            deleteAchievementUseCase: .init(repository: achievementRepository, storage: CategoryStorage.shared),
+            deleteAchievementUseCase: .init(repository: achievementRepository),
             fetchDetailAchievementUseCase: .init(repository: achievementRepository)
         )
         let homeVC = HomeViewController(viewModel: homeVM)

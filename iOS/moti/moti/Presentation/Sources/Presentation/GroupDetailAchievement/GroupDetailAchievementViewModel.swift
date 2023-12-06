@@ -102,10 +102,8 @@ extension GroupDetailAchievementViewModel {
             do {
                 deleteState.send(.loading)
                 guard let categoryId = achievement.category?.id else { return }
-                let isSuccess = try await deleteAchievementUseCase.execute(
-                    requestValue: DeleteAchievementRequestValue(id: achievement.id),
-                    categoryId: categoryId
-                )
+                let requestValue = DeleteAchievementRequestValue(id: achievement.id)
+                let isSuccess = try await deleteAchievementUseCase.execute(requestValue: requestValue)
                 
                 if isSuccess {
                     deleteState.send(.success(achievementId: achievement.id))

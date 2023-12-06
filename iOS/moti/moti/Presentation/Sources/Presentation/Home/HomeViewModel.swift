@@ -39,7 +39,6 @@ final class HomeViewModel {
     private var achievements: [Achievement] = [] {
         didSet {
             achievementDataSource?.update(data: achievements)
-            syncCurrentCategoryWithStorage()
         }
     }
     
@@ -88,8 +87,7 @@ final class HomeViewModel {
     }
     
     func findCategory(at index: Int) -> CategoryItem? {
-        let categoryId = categories[index].id
-        return CategoryStorage.shared.find(categoryId: categoryId)
+        return categories[index]
     }
     
     func action(_ action: HomeViewModelAction) {
@@ -211,7 +209,6 @@ private extension HomeViewModel {
         // 카테고리가 변경된거면 홈 화면 리스트 갱신
         guard let currentCategory,
               let updatedCategory = updatedAchievement.category else { return }
-        syncCurrentCategoryWithStorage()
         
         if currentCategory.id != 0 && currentCategory.id != updatedCategory.id {
             deleteOfDataSource(achievementId: updatedAchievement.id)
@@ -229,10 +226,7 @@ private extension HomeViewModel {
             do {
                 deleteAchievementState.send(.loading)
                 let requestValue = DeleteAchievementRequestValue(id: achievementId)
-                let isSuccess = try await deleteAchievementUseCase.execute(
-                    requestValue: requestValue,
-                    categoryId: categoryId
-                )
+                let isSuccess = try await deleteAchievementUseCase.execute(requestValue: requestValue)
                 
                 if isSuccess {
                     deleteAchievementState.send(.success)
@@ -299,23 +293,8 @@ private extension HomeViewModel {
         }
     }
     
-    /// Achievement의 첫 번째 index를 구하는 메서드
-    func firstIndexOf(achievementId: Int) -> Int? {
-        return achievements.firstIndex { $0.id == achievementId }
-    }
-    
     /// 도전 기록을 데이터소스에서 제거하는 액션
     func deleteOfDataSource(achievementId: Int) {
-        guard let foundIndex = firstIndexOf(achievementId: achievementId) else { return }
-        achievements.remove(at: foundIndex)
-    }
-    
-    func syncCurrentCategoryWithStorage() {
-        guard let currentCategoryId = currentCategory?.id,
-              let storageData = CategoryStorage.shared.find(categoryId: currentCategoryId),
-              currentCategory != storageData else { return }
-        Logger.debug("Sync Current Category")
-        // didSet은 같은 데이터를 넣어도 호출되므로 데이터가 다를 때만 대입
-        currentCategory = storageData
+        achievements = achievements.filter { $0.id != achievementId }
     }
 }

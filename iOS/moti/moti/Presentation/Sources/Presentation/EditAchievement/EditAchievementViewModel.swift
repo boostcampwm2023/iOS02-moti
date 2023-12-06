@@ -145,11 +145,14 @@ final class EditAchievementViewModel {
                     body: updateData
                 )
                 
-                let (isSuccess, updatedAchievement) = try await updateAchievementUseCase.execute(
-                    oldAchievement: achievement,
-                    requestValue: updateAchievementRequestValue
-                )
-                if isSuccess, let updatedAchievement = updatedAchievement {
+                let isSuccess = try await updateAchievementUseCase.execute(requestValue: updateAchievementRequestValue)
+                if isSuccess {
+                    var updatedAchievement = achievement
+                    updatedAchievement.title = updateData.title
+                    updatedAchievement.body = updateData.content
+                    // TODO: 카테고리 대입
+//                    updatedAchievement.category = updateData
+                    
                     updateAchievementState = .finish(updatedAchievement: updatedAchievement)
                 } else {
                     updateAchievementState = .error

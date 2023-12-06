@@ -41,16 +41,16 @@ final class EditAchievementCoordinator: Coordinator {
             editAchievementVM = EditAchievementViewModel(
                 saveImageUseCase: .init(repository: imageRepository),
                 fetchCategoryListUseCase: .init(repository: GroupCategoryRepository(groupId: group.id)),
-                updateAchievementUseCase: .init(repository: groupAchievementRepository, categoryStorage: nil),
-                postAchievementUseCase: .init(repository: groupAchievementRepository, categoryStorage: nil)
+                updateAchievementUseCase: .init(repository: groupAchievementRepository),
+                postAchievementUseCase: .init(repository: groupAchievementRepository)
             )
         } else {
             let achievementRepository = AchievementRepository()
             editAchievementVM = EditAchievementViewModel(
                 saveImageUseCase: .init(repository: imageRepository),
                 fetchCategoryListUseCase: .init(repository: CategoryRepository()),
-                updateAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared),
-                postAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared)
+                updateAchievementUseCase: .init(repository: achievementRepository),
+                postAchievementUseCase: .init(repository: achievementRepository)
             )
         }
         
@@ -80,16 +80,16 @@ final class EditAchievementCoordinator: Coordinator {
             editAchievementVM = EditAchievementViewModel(
                 saveImageUseCase: .init(repository: imageRepository),
                 fetchCategoryListUseCase: .init(repository: GroupCategoryRepository(groupId: group.id)),
-                updateAchievementUseCase: .init(repository: groupAchievementRepository, categoryStorage: nil),
-                postAchievementUseCase: .init(repository: groupAchievementRepository, categoryStorage: nil)
+                updateAchievementUseCase: .init(repository: groupAchievementRepository),
+                postAchievementUseCase: .init(repository: groupAchievementRepository)
             )
         } else {
             let achievementRepository = AchievementRepository()
             editAchievementVM = EditAchievementViewModel(
                 saveImageUseCase: .init(repository: imageRepository),
                 fetchCategoryListUseCase: .init(repository: CategoryRepository()),
-                updateAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared),
-                postAchievementUseCase: .init(repository: achievementRepository, categoryStorage: CategoryStorage.shared)
+                updateAchievementUseCase: .init(repository: achievementRepository),
+                postAchievementUseCase: .init(repository: achievementRepository)
             )
         }
         

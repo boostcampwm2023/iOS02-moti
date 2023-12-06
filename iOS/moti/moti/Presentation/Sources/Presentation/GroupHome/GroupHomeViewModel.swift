@@ -254,10 +254,7 @@ private extension GroupHomeViewModel {
             do {
                 deleteAchievementState.send(.loading)
                 let requestValue = DeleteAchievementRequestValue(id: achievementId)
-                let isSuccess = try await deleteAchievementUseCase.execute(
-                    requestValue: requestValue,
-                    categoryId: categoryId
-                )
+                let isSuccess = try await deleteAchievementUseCase.execute(requestValue: requestValue)
                 
                 if isSuccess {
                     deleteAchievementState.send(.success)
