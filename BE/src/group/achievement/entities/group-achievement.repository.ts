@@ -34,14 +34,15 @@ export class GroupAchievementRepository extends TransactionalRepository<GroupAch
 
   async findAchievementDetailByIdAndBelongingGroup(
     achievementId: number,
+    groupId: number,
     userId: number,
   ) {
     const groupAchievementEntitySelectQueryBuilder =
       await this.achievementDetailQuery(achievementId);
     const result = await groupAchievementEntitySelectQueryBuilder
       .andWhere(
-        'groupAchievement.group_id in (select group_id from user_group where user_id = :userId)',
-        { userId },
+        'groupAchievement.group_id in (select group_id from user_group where user_id = :userId and group_id = :groupId)',
+        { userId, groupId },
       )
       .getRawOne<IGroupAchievementDetail>();
 
