@@ -11,6 +11,7 @@ import { ParseIntPipe } from '../../../common/pipe/parse-int.pipe';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -49,7 +50,7 @@ export class GroupCategoryController {
     summary: '그룹 카테고리 리스트 API',
     description: '그룹 카테고리 리스트를 조회한다.',
   })
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: '그룹 카테고리 조회',
     type: GroupCategoryListElementResponse,
   })
