@@ -65,11 +65,11 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
     }
     
     func achievementDidPosted(newAchievement: Achievement) {
-        viewModel.action(.postAchievement(newAchievement: newAchievement))
-        // 화면이 전환되고 즉시 표시하면 애니메이션이 부자연스러움
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            self.showCelebrate(with: newAchievement)
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.showTabBar()
         }
+        viewModel.action(.postAchievement(newAchievement: newAchievement))
+        showCelebrate(with: newAchievement)
     }
     
     private func addTargets() {
@@ -82,8 +82,9 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
     }
     
     @objc private func captureButtonDidClicked() {
-        coordinator?.moveToCaptureViewController()
-        if let tabBarController = tabBarController as? TabBarViewController {
+        if let tabBarController = tabBarController as? TabBarViewController,
+           tabBarController.selectedIndex == 0 {
+            coordinator?.moveToCaptureViewController()
             tabBarController.hideTabBar()
         }
     }

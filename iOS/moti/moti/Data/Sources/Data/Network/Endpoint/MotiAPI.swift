@@ -142,6 +142,8 @@ extension MotiAPI {
         switch self {
         case .fetchAchievementList(let requestValue):
             return requestValue
+        case .fetchGroupAchievementList(let requestValue, _):
+            return requestValue
         default:
             return nil
         }

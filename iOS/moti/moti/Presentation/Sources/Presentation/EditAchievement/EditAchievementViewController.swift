@@ -16,7 +16,7 @@ protocol EditAchievementViewControllerDelegate: AnyObject {
     func doneButtonDidClickedFromCaptureView(newAchievement: Achievement)
 }
 
-final class EditAchievementViewController: BaseViewController<EditAchievementView>, HiddenTabBarViewController {
+final class EditAchievementViewController: BaseViewController<EditAchievementView> {
     
     // MARK: - Properties
     weak var coordinator: EditAchievementCoordinator?
