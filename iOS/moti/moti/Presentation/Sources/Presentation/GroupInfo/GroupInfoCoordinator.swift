@@ -8,6 +8,7 @@
 import UIKit
 import Core
 import Domain
+import Data
 
 final class GroupInfoCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
@@ -25,7 +26,10 @@ final class GroupInfoCoordinator: Coordinator {
     func start() { }
     
     func start(group: Group) {
-        let groupInfoVC = GroupInfoViewController(group: group)
+        let groupInfoVC = GroupInfoViewController(
+            group: group,
+            viewModel: .init(dropGroupUseCase: .init(groupRepository: GroupRepository()))
+        )
         groupInfoVC.coordinator = self
         navigationController.pushViewController(groupInfoVC, animated: true)
     }

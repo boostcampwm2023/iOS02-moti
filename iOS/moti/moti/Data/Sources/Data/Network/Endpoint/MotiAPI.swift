@@ -35,6 +35,7 @@ enum MotiAPI: EndpointProtocol {
     case fetchGroupMemberList(groupId: Int)
     case updateGrade(groupId: Int, userCode: String, requestValue: UpdateGradeRequestValue)
     case invite(requestValue: InviteMemberRequestValue, groupId: Int)
+    case dropGroup(groupId: Int)
     // 차단
     case blockingUser(userCode: String)
     case blockingAchievement(achievementId: Int, groupId: Int)
@@ -99,6 +100,8 @@ extension MotiAPI {
             return "/groups/\(groupId)/achievements/\(achievementId)/emojis"
         case .toggleEmoji(let achievementId, let groupId, let emojiId):
             return "/groups/\(groupId)/achievements/\(achievementId)/emojis/\(emojiId)"
+        case .dropGroup(let groupId):
+            return "/groups/\(groupId)/participation"
         }
     }
     
@@ -131,6 +134,7 @@ extension MotiAPI {
         case .invite: return .post
         case .fetchEmojis: return .get
         case .toggleEmoji: return .post
+        case .dropGroup: return .delete
         }
     }
     

@@ -37,11 +37,17 @@ final class GroupListViewController: BaseViewController<GroupListView> {
         viewModel.action(.launch)
     }
     
+    func dropGroup(groupId: Int) {
+        viewModel.action(.dropGroup(groupId: groupId))
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let tabBarController = tabBarController as? TabBarViewController {
             tabBarController.hideCaptureButton()
         }
+        
+        viewModel.action(.refetch)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -171,11 +177,13 @@ extension GroupListViewController: UITextFieldDelegate {
 // MARK: - Bind
 extension GroupListViewController: LoadingIndicator {
     func bind() {
-        viewModel.groupListState
+        viewModel.$groupListState
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
                 switch state {
+                case .none:
+                    break
                 case .loading:
                     // TODO: 스켈레톤
                     showLoadingIndicator()
@@ -197,6 +205,45 @@ extension GroupListViewController: LoadingIndicator {
                     showLoadingIndicator()
                 case .finish:
                     hideLoadingIndicator()
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.dropGroupState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .finish:
+                    hideLoadingIndicator()
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.refetchGroupListState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                print("refetchGroupListState ..:\(state)")
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .finishSame:
+                    hideLoadingIndicator()
+                case .finishDecreased:
+                    hideLoadingIndicator()
+                    showOneButtonAlert(title: "그룹에서 탈퇴되었습니다.")
+                case .finishIncreased:
+                    hideLoadingIndicator()
+                    showOneButtonAlert(title: "새로운 그룹에 초대되었습니다!")
                 case .error(let message):
                     hideLoadingIndicator()
                     showErrorAlert(message: message)

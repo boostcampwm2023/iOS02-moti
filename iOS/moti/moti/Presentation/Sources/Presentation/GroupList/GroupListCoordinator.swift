@@ -14,6 +14,7 @@ final class GroupListCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
+    private var currentViewController: GroupListViewController?
     
     init(
         _ navigationController: UINavigationController,
@@ -24,12 +25,15 @@ final class GroupListCoordinator: Coordinator {
     }
     
     func start() {
+        let groupRepository = GroupRepository()
         let groupVM = GroupListViewModel(
-            fetchGroupListUseCase: .init(groupRepository: GroupRepository()),
-            createGroupUseCase: .init(groupRepository: GroupRepository())
+            fetchGroupListUseCase: .init(groupRepository: groupRepository),
+            createGroupUseCase: .init(groupRepository: groupRepository), 
+            dropGroupUseCase: .init(groupRepository: groupRepository)
         )
         let groupListVC = GroupListViewController(viewModel: groupVM)
         groupListVC.coordinator = self
+        currentViewController = groupListVC
         navigationController.viewControllers = [groupListVC]
     }
     

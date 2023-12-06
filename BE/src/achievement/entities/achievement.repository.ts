@@ -73,22 +73,6 @@ export class AchievementRepository extends TransactionalRepository<AchievementEn
     return null;
   }
 
-  async findByCategoryWithCount(user: User) {
-    const categories = await this.repository
-      .createQueryBuilder('achievement')
-      .select('COALESCE(category.id, -1) as categoryId')
-      .addSelect('category.name', 'categoryName')
-      .addSelect('MAX(achievement.created_at)', 'insertedAt')
-      .addSelect('COUNT(*)', 'achievementCount')
-      .leftJoin('achievement.category', 'category')
-      .where('achievement.user_id = :user', { user: user.id })
-      .orderBy('category.id', 'ASC')
-      .groupBy('category.id')
-      .getRawMany<ICategoryMetaData>();
-
-    return categories.map((category) => new CategoryMetaData(category));
-  }
-
   async findByIdAndUser(userId: number, id: number): Promise<Achievement> {
     const achievementEntity = await this.repository.findOneBy({
       user: { id: userId },

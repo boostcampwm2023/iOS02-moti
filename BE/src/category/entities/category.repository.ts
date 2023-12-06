@@ -5,6 +5,8 @@ import { TransactionalRepository } from '../../config/transaction-manager/transa
 import { User } from '../../users/domain/user.domain';
 import { ICategoryMetaData } from '../index';
 import { CategoryMetaData } from '../dto/category-metadata';
+import { AchievementEntity } from '../../achievement/entities/achievement.entity';
+import { Repository } from 'typeorm';
 
 @CustomRepository(CategoryEntity)
 export class CategoryRepository extends TransactionalRepository<CategoryEntity> {
@@ -19,13 +21,20 @@ export class CategoryRepository extends TransactionalRepository<CategoryEntity> 
     return category?.toModel();
   }
 
+  async findCategoriesByUser(user: User): Promise<CategoryMetaData[]> {
+    const notSpecifiedCategoryMetaData =
+      await this.findNotSpecifiedByUserAndId(user);
+    const categoryMetaData = await this.findByUserWithCount(user);
+    return [notSpecifiedCategoryMetaData, ...categoryMetaData];
+  }
+
   async findByUserWithCount(user: User): Promise<CategoryMetaData[]> {
     const categories = await this.repository
       .createQueryBuilder('category')
       .select('category.id as categoryId')
       .addSelect('category.name', 'categoryName')
       .addSelect('MAX(achievement.created_at)', 'insertedAt')
-      .addSelect('COUNT(*)', 'achievementCount')
+      .addSelect('COUNT(achievement.id)', 'achievementCount')
       .leftJoin('category.achievements', 'achievement')
       .where('category.user_id = :user', { user: user.id })
       .orderBy('category.id', 'ASC')
@@ -33,6 +42,23 @@ export class CategoryRepository extends TransactionalRepository<CategoryEntity> 
       .getRawMany<ICategoryMetaData>();
 
     return categories.map((category) => new CategoryMetaData(category));
+  }
+
+  async findNotSpecifiedByUserAndId(user: User): Promise<CategoryMetaData> {
+    const achievementRepository: Repository<AchievementEntity> =
+      this.repository.manager.getRepository(AchievementEntity);
+
+    const category = await achievementRepository
+      .createQueryBuilder('achievement')
+      .select('-1 as categoryId')
+      .addSelect(`'미설정' as categoryName`)
+      .addSelect('MAX(achievement.created_at)', 'insertedAt')
+      .addSelect('COUNT(*)', 'achievementCount')
+      .where('achievement.category_id is NULL')
+      .andWhere('achievement.user_id = :user', { user: user.id })
+      .getRawOne<ICategoryMetaData>();
+
+    return new CategoryMetaData(category);
   }
 
   async findByIdAndUser(userId: number, id: number): Promise<Category> {

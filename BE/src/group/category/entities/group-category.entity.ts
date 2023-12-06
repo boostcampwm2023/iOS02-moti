@@ -3,6 +3,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserEntity } from '../../../users/entities/user.entity';
@@ -10,6 +11,7 @@ import { BaseTimeEntity } from '../../../common/entities/base.entity';
 import { GroupEntity } from '../../group/entities/group.entity';
 import { GroupCategory } from '../domain/group.category';
 import { isNullOrUndefined } from '../../../common/utils/is-null-or-undefined';
+import { GroupAchievementEntity } from '../../achievement/entities/group-achievement.entity';
 
 @Entity('group_category')
 export class GroupCategoryEntity extends BaseTimeEntity {
@@ -26,6 +28,12 @@ export class GroupCategoryEntity extends BaseTimeEntity {
 
   @Column({ name: 'name' })
   name: string;
+
+  @OneToMany(
+    () => GroupAchievementEntity,
+    (achievements) => achievements.groupCategory,
+  )
+  achievements: GroupAchievementEntity[];
 
   toModel(): GroupCategory {
     const group = new GroupCategory(
