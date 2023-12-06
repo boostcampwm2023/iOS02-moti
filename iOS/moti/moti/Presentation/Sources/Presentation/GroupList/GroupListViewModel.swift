@@ -15,9 +15,11 @@ final class GroupListViewModel {
         case launch
         case createGroup(groupName: String)
         case dropGroup(groupId: Int)
+        case refetch
     }
     
     enum GroupListState {
+        case none
         case loading
         case finish
         case error(message: String)
@@ -34,6 +36,14 @@ final class GroupListViewModel {
         case finish
         case error(message: String)
     }
+    
+    enum RefetchGroupListState {
+        case loading
+        case finishSame
+        case finishDecreased
+        case finishIncreased
+        case error(message: String)
+    }
 
     typealias GroupDataSource = ListDiffableDataSource<Group>
     
@@ -48,9 +58,10 @@ final class GroupListViewModel {
         }
     }
     
-    private(set) var groupListState = PassthroughSubject<GroupListState, Never>()
+    @Published private(set) var groupListState: GroupListState = .none
     private(set) var createGroupState = PassthroughSubject<CreateGroupState, Never>()
     private(set) var dropGroupState = PassthroughSubject<DropGroupState, Never>()
+    private(set) var refetchGroupListState = PassthroughSubject<RefetchGroupListState, Never>()
     
     // MARK: - Init
     init(
@@ -81,6 +92,8 @@ final class GroupListViewModel {
             createGroup(name: groupName)
         case .dropGroup(let groupId):
             dropGroup(groupId: groupId)
+        case .refetch:
+            refetchGroupList()
         }
     }
 }
@@ -89,13 +102,42 @@ final class GroupListViewModel {
 extension GroupListViewModel {
     private func fetchGroupList() {
         Task {
-            groupListState.send(.loading)
+            groupListState = .loading
             do {
                 groups = try await fetchGroupListUseCase.execute()
-                groupListState.send(.finish)
+                groupListState = .finish
             } catch {
                 Logger.error("\(#function) error: \(error.localizedDescription)")
-                groupListState.send(.error(message: error.localizedDescription))
+                groupListState = .error(message: error.localizedDescription)
+            }
+        }
+    }
+    
+    private func refetchGroupList() {
+        switch groupListState {
+        case .finish:  // 이미 한 번 그룹 리스트를 읽어온 상태
+            break
+        default:
+            return
+        }
+        
+        Task {
+            refetchGroupListState.send(.loading)
+            do {
+                let newGroups = try await fetchGroupListUseCase.execute()
+                
+                // TODO: 길이로 동작을 정의 - 탈퇴와 추방이 같아져 버린다
+                if groups.count == newGroups.count {
+                    refetchGroupListState.send(.finishSame)
+                } else if groups.count < newGroups.count {
+                    refetchGroupListState.send(.finishIncreased)
+                } else {
+                    refetchGroupListState.send(.finishDecreased)
+                }
+                groups = newGroups
+            } catch {
+                Logger.error("\(#function) error: \(error.localizedDescription)")
+                refetchGroupListState.send(.error(message: error.localizedDescription))
             }
         }
     }
