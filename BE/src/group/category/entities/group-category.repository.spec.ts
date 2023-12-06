@@ -221,7 +221,7 @@ describe('GroupCategoryRepository test', () => {
 
       // when
       const retrievedCategory =
-        await groupCategoryRepository.findNotSpecifiedByUserAndId(user, group);
+        await groupCategoryRepository.findNotSpecifiedByUserAndId(group);
 
       // then
       expect(retrievedCategory.categoryId).toEqual(-1);
@@ -229,8 +229,8 @@ describe('GroupCategoryRepository test', () => {
       expect(retrievedCategory.achievementCount).toEqual(4);
     });
   });
-
-  describe('findGroupCategoryByIdAndUser는 그룹 카테고리를 조회할 수 있다.', () => {
+  
+    describe('findGroupCategoryByIdAndUser는 그룹 카테고리를 조회할 수 있다.', () => {
     it('그룹과 카테고리 아이디를 이용해 알맞은 카테고리를 조회할 수 있다.', async () => {
       await transactionTest(dataSource, async () => {
         // given
@@ -289,6 +289,70 @@ describe('GroupCategoryRepository test', () => {
 
         // then
         expect(retrievedCategory).toBeUndefined();
+      });
+    });
+  });
+  
+  describe('findByUserWithCount는 사용자의 그룹 카테고리를 조회할 수 있다.', () => {
+    it('사용자의 그룹 카테고리를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await userFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          user,
+          group,
+          '카테고리 테스트',
+        );
+        await groupAchievementFixture.createGroupAchievements(
+          4,
+          user,
+          group,
+          groupCategory,
+        );
+
+        // when
+        const retrievedCategory =
+          await groupCategoryRepository.findByUserWithCount(
+            group,
+            groupCategory.id,
+          );
+
+        // then
+        expect(retrievedCategory.categoryId).toEqual(groupCategory.id);
+        expect(retrievedCategory.categoryName).toEqual('카테고리 테스트');
+        expect(retrievedCategory.achievementCount).toEqual(4);
+      });
+    });
+
+    it('사용자의 그룹 카테고리를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await userFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          user,
+          group,
+          '카테고리 테스트',
+        );
+        await groupAchievementFixture.createGroupAchievements(
+          4,
+          user,
+          group,
+          groupCategory,
+        );
+
+        // when
+        const retrievedCategory =
+          await groupCategoryRepository.findByUserWithCount(
+            group,
+            groupCategory.id,
+          );
+
+        // then
+        expect(retrievedCategory.categoryId).toEqual(groupCategory.id);
+        expect(retrievedCategory.categoryName).toEqual('카테고리 테스트');
+        expect(retrievedCategory.achievementCount).toEqual(4);
       });
     });
   });

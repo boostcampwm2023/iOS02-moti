@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -26,6 +28,11 @@ import { GroupAchievementCreateRequest } from '../dto/group-achievement-create-r
 import { PaginateGroupAchievementRequest } from '../dto/paginate-group-achievement-request';
 import { PaginateGroupAchievementResponse } from '../dto/paginate-group-achievement-response';
 import { AchievementDetailResponse } from '../../../achievement/dto/achievement-detail-response';
+import { AchievementUpdateResponse } from '../../../achievement/dto/achievement-update-response';
+import { AchievementUpdateRequest } from '../../../achievement/dto/achievement-update-request';
+import { GroupAchievementUpdateRequest } from '../dto/group-achievement-update-request';
+import { GroupAchievementUpdateResponse } from '../dto/group-achievement-update-response';
+import { GroupAchievementDeleteResponse } from '../dto/group-achievement-delete-response';
 
 @Controller('/api/v1/groups')
 @ApiTags('그룹 달성기록 API')
@@ -132,5 +139,57 @@ export class GroupAchievementController {
         paginateGroupAchievementRequest,
       ),
     );
+  }
+
+  @ApiBearerAuth('accessToken')
+  @ApiOperation({
+    summary: '그룹 달성기록 삭제 API',
+    description: '달성기록을 삭제한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '그룹 달성기록 삭제',
+    type: GroupAchievementDeleteResponse,
+  })
+  @Delete('/:groupId/achievements/:achievementId')
+  @UseGuards(AccessTokenGuard)
+  async delete(
+    @AuthenticatedUser() user: User,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Param('achievementId', ParseIntPipe) achievementId: number,
+  ) {
+    const response = await this.groupAchievementService.delete(
+      user.id,
+      groupId,
+      achievementId,
+    );
+    return ApiData.success(response);
+  }
+
+  @ApiBearerAuth('accessToken')
+  @ApiOperation({
+    summary: '그룹 달성기록 수정 API',
+    description: '그룹 달성기록을 수정한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '그룹 달성기록 수정',
+    type: GroupAchievementUpdateResponse,
+  })
+  @Put('/:groupId/achievements/:achievementId')
+  @UseGuards(AccessTokenGuard)
+  async update(
+    @AuthenticatedUser() user: User,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Param('achievementId', ParseIntPipe) achievementId: number,
+    @Body() groupAchievementUpdateRequest: GroupAchievementUpdateRequest,
+  ) {
+    const response = await this.groupAchievementService.update(
+      user.id,
+      groupId,
+      achievementId,
+      groupAchievementUpdateRequest,
+    );
+    return ApiData.success(response);
   }
 }

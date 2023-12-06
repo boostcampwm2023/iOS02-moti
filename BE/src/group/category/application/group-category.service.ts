@@ -32,6 +32,16 @@ export class GroupCategoryService {
     return this.groupCategoryRepository.findGroupCategoriesByUser(user, group);
   }
 
+  @Transactional({ readonly: true })
+  async retrieveCategoryMetadataById(
+    user: User,
+    groupId: number,
+    categoryId: number,
+  ) {
+    const group = await this.getGroup(user, groupId);
+    return this.groupCategoryRepository.findGroupCategory(group, categoryId);
+  }
+
   private async getGroupByLeader(user: User, groupId: number) {
     const group = await this.groupRepository.findGroupByIdAndLeaderUser(
       user,

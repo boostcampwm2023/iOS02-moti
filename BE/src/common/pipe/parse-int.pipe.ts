@@ -13,6 +13,6 @@ export class ParseIntPipe implements PipeTransform {
     return parseInt(value);
   }
   private isIntNumeric(str: string) {
-    return /^\d+$/.test(str);
+    return /^-?\d+$/.test(str);
   }
 }

@@ -162,4 +162,18 @@ export class GroupAchievementRepository extends TransactionalRepository<GroupAch
       GroupAchievementResponse.from(groupAchievementListDetail),
     );
   }
+
+  async findOneByIdAndUserAndGroup(
+    achieveId: number,
+    userId: number,
+    groupId: number,
+  ) {
+    const findOne = await this.repository.findOne({
+      where: { id: achieveId, group: { id: groupId }, user: { id: userId } },
+      relations: {
+        groupCategory: true,
+      },
+    });
+    return findOne?.toModel();
+  }
 }

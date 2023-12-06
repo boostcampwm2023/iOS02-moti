@@ -38,14 +38,19 @@ export class GroupCategoryRepository extends TransactionalRepository<GroupCatego
     user: User,
     group: Group,
   ): Promise<GroupCategoryMetadata[]> {
-    const categoryMetaData = await this.findByUserWithCount(user, group);
+    const categoryMetaData = await this.findAllByUserWithCount(user, group);
     if (categoryMetaData.length === 0) return categoryMetaData;
 
-    const notSpecified = await this.findNotSpecifiedByUserAndId(user, group);
+    const notSpecified = await this.findNotSpecifiedByUserAndId(group);
     return [notSpecified, ...categoryMetaData];
   }
 
-  async findByUserWithCount(
+  async findGroupCategory(group: Group, categoryId: number) {
+    if (categoryId === -1) return this.findNotSpecifiedByUserAndId(group);
+    return this.findByUserWithCount(group, categoryId);
+  }
+
+  async findAllByUserWithCount(
     user: User,
     group: Group,
   ): Promise<GroupCategoryMetadata[]> {
@@ -67,8 +72,26 @@ export class GroupCategoryRepository extends TransactionalRepository<GroupCatego
     return categories.map((category) => new CategoryMetaData(category));
   }
 
+  async findByUserWithCount(
+    group: Group,
+    categoryId: number,
+  ): Promise<GroupCategoryMetadata> {
+    const category = await this.repository
+      .createQueryBuilder('groupCategory')
+      .select('groupCategory.id as categoryId')
+      .addSelect('groupCategory.name', 'categoryName')
+      .addSelect('MAX(achievement.created_at)', 'insertedAt')
+      .addSelect('COUNT(achievement.id)', 'achievementCount')
+      .leftJoin('groupCategory.achievements', 'achievement')
+      .where('groupCategory.group_id = :groupId', { groupId: group.id })
+      .andWhere('groupCategory.id = :categoryId', { categoryId })
+      .groupBy('groupCategory.id')
+      .getRawOne<ICategoryMetaData>();
+
+    return category ? new CategoryMetaData(category) : null;
+  }
+
   async findNotSpecifiedByUserAndId(
-    user: User,
     group: Group,
   ): Promise<GroupCategoryMetadata> {
     const groupAchievementRepository: Repository<GroupAchievementEntity> =
@@ -82,10 +105,6 @@ export class GroupCategoryRepository extends TransactionalRepository<GroupCatego
       .addSelect('COUNT(groupAchievement.id)', 'achievementCount')
       .where('groupAchievement.group_category_id is NULL')
       .andWhere('groupAchievement.group_id = :groupId', { groupId: group.id })
-      .andWhere(
-        'groupAchievement.group_id in (select group_id from user_group where user_id = :userId)',
-        { userId: user.id },
-      )
       .getRawOne<ICategoryMetaData>();
 
     return new CategoryMetaData(category);
