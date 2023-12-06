@@ -7,14 +7,6 @@
 
 import Foundation
 
-public struct DropGroupRequestValue: RequestValue {
-    public let groupId: Int
-    
-    public init(groupId: Int) {
-        self.groupId = groupId
-    }
-}
-
 public struct DropGroupUseCase {
     private let groupRepository: GroupRepositoryProtocol
     
@@ -22,7 +14,7 @@ public struct DropGroupUseCase {
         self.groupRepository = groupRepository
     }
     
-    public func execute(requestValue: DropGroupRequestValue) async throws -> Bool {
-        return try await groupRepository.dropGroup(requestValue: requestValue)
+    public func execute(groupId: Int) async throws -> Bool {
+        return try await groupRepository.dropGroup(groupId: groupId)
     }
 }

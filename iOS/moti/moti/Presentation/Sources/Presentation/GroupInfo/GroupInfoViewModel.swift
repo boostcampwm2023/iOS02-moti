@@ -44,8 +44,7 @@ final class GroupInfoViewModel {
         Task {
             dropGroupState.send(.loading)
             do {
-                let requestValue = DropGroupRequestValue(groupId: groupId)
-                let isSuccess = try await dropGroupUseCase.execute(requestValue: requestValue)
+                let isSuccess = try await dropGroupUseCase.execute(groupId: groupId)
                 if isSuccess {
                     dropGroupState.send(.finish)
                 } else {

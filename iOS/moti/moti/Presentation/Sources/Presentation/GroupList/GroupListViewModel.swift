@@ -161,8 +161,7 @@ extension GroupListViewModel {
         Task {
             dropGroupState.send(.loading)
             do {
-                let requestValue = DropGroupRequestValue(groupId: groupId)
-                let isSuccess = try await dropGroupUseCase.execute(requestValue: requestValue)
+                let isSuccess = try await dropGroupUseCase.execute(groupId: groupId)
                 if isSuccess {
                     deleteOfDataSource(groupId: groupId)
                     dropGroupState.send(.finish)
