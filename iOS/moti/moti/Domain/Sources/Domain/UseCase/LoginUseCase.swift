@@ -44,5 +44,8 @@ public struct LoginUseCase {
         }
         
         UserDefaults.standard.saveString(key: .myUserCode, string: userToken.user.code)
+        if let avatarURL = userToken.user.avatarURL {
+            UserDefaults.standard.saveString(key: .myAvatarUrlString, string: avatarURL.absoluteString)
+        }
     }
 }
