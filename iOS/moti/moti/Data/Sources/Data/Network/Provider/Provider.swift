@@ -43,8 +43,20 @@ public struct Provider: ProviderProtocol {
             Logger.network("[요청 데이터]\n\(jsonString)")
         }
         #endif
+
+        #if DEBUG
+        let startTime = Date()
+        #endif
         
         let (data, response) = try await session.data(for: urlRequest)
+        
+        #if DEBUG
+        let endTime = Date()
+        let responseSecond = round(endTime.timeIntervalSince(startTime) * 100) / 100
+        let responseMS = round(endTime.timeIntervalSince(startTime) * 1000 * 100) / 100
+        Logger.network("[Time(\(endpoint.path))] \(responseSecond)s / \(responseMS)ms")
+        #endif
+
         return try parsingResponse(data: data, response: response, type: type)
     }
     
@@ -56,8 +68,20 @@ public struct Provider: ProviderProtocol {
         #if DEBUG
         Logger.network("[Multipart Form Data Request(\(endpoint.method.rawValue)) \(urlRequest.url!.absoluteString)]")
         #endif
-        
+
+        #if DEBUG
+        let startTime = Date()
+        #endif
+
         let (data, response) = try await session.upload(for: urlRequest, from: bodyData)
+        
+        #if DEBUG
+        let endTime = Date()
+        let responseSecond = round(endTime.timeIntervalSince(startTime) * 100) / 100
+        let responseMS = round(endTime.timeIntervalSince(startTime) * 1000 * 100) / 100
+        Logger.network("[Time(\(endpoint.path))] \(responseSecond)s / \(responseMS)ms")
+        #endif
+        
         return try parsingResponse(data: data, response: response, type: type)
     }
     
