@@ -488,12 +488,11 @@ describe('GroupAchievementEmojiService Test', () => {
           leader,
           group,
         );
-        const groupAchievement =
-          await groupAchievementFixture.createGroupAchievement(
-            leader,
-            group,
-            groupCategory,
-          );
+        await groupAchievementFixture.createGroupAchievement(
+          leader,
+          group,
+          groupCategory,
+        );
 
         const otherUser = await usersFixture.getUser('otherUser');
         const otherGroup = await groupFixture.createGroups(otherUser);
@@ -531,12 +530,12 @@ describe('GroupAchievementEmojiService Test', () => {
           leader,
           group,
         );
-        const groupAchievement =
-          await groupAchievementFixture.createGroupAchievement(
-            leader,
-            group,
-            groupCategory,
-          );
+
+        await groupAchievementFixture.createGroupAchievement(
+          leader,
+          group,
+          groupCategory,
+        );
 
         const otherUser = await usersFixture.getUser('otherUser');
         const otherGroup = await groupFixture.createGroups(otherUser);

@@ -1,7 +1,6 @@
 import { Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { GroupAchievementEmojiService } from '../application/group-achievement-emoji.service';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
-import { GroupCategoryListElementResponse } from '../../category/dto/group-category-list-element.response';
 import { AccessTokenGuard } from '../../../auth/guard/access-token.guard';
 import { AuthenticatedUser } from '../../../auth/decorator/athenticated-user.decorator';
 import { User } from '../../../users/domain/user.domain';
