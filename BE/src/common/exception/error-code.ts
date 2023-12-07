@@ -111,4 +111,8 @@ export const ERROR_INFO = {
     statusCode: 403,
     message: '달성기록에 접근할 수 없습니다.',
   },
+  REFRESH_TOKEN_NOT_FOUND: {
+    statusCode: 401,
+    message: '유효하지 않은 리프레시 토큰 입니다.',
+  },
 } as const;
