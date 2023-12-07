@@ -36,7 +36,7 @@ extension JKImageCacheWrapper where Base: UIImageView {
         var mutableSelf = self
         mutableSelf.downloadUrl = url.absoluteString
 
-        Task {
+        Task(priority: .background) {
             // placeholder 타이머
             var timer: Timer?
             if placeHolder != nil {
@@ -47,42 +47,31 @@ extension JKImageCacheWrapper where Base: UIImageView {
 
             let key = url.absoluteString + "-" + imageType.key
 
-            let imageData = await JKImageCache.shared.fetchImageData(from: url, imageType: imageType)
-            let downsampledImage = await imageData?
-                .downsampling(to: base.frame.size, scale: downsamplingScale)
-            
+            guard let imageData = await JKImageCache.shared.fetchImageData(from: url, imageType: imageType) else {
+                print("JK 이미지 fetch 실패")
+                updateImage(nil)
+                return
+            }
+            guard let downsampledImage = await imageData
+                .downsampling(to: base.frame.size, scale: downsamplingScale) else {
+                print("JK 다운샘플링 실패")
+                updateImage(imageData.convertToImage())
+                return
+            }
+
             // 썸네일 이미지만 메모리 캐시에 저장
             if imageType == .thumbnail,
-               let downsampledData = downsampledImage?.jpegData(compressionQuality: 1.0) {
+               let downsampledData = downsampledImage.jpegData(compressionQuality: 1.0) {
                 let cacheItem = JKImageCache.ImageCacheItem(data: downsampledData, size: .Byte(downsampledData.count))
                 try? JKImageCache.shared.memoryCache.saveCache(key: key, data: cacheItem)
             }
     
             // 원본 이미지를 디스크 캐시에 저장
-            if let imageData {
-                let cacheItem = JKImageCache.ImageCacheItem(data: imageData, size: .Byte(imageData.count))
-                try? JKImageCache.shared.diskCache.saveCache(key: key, data: cacheItem)
-            }
+            let cacheItem = JKImageCache.ImageCacheItem(data: imageData, size: .Byte(imageData.count))
+            try? JKImageCache.shared.diskCache.saveCache(key: key, data: cacheItem)
             
             updateImage(downsampledImage)
         }
-    }
-    
-    /// URL을 이용해 원본 이미지 설정
-    /// - Parameters:
-    ///   - url: 이미지 URL
-    ///   - placeHolder: 다운로드 지연 시 보여줄 placeHolder 이미지
-    ///   - waitPlaceHolderTime: placeHolder 대기 시간
-    ///   - options: 적용할 JFOption들
-    public func setOriginalImage(
-        with url: URL,
-        placeHolder: UIImage? = nil,
-        waitPlaceHolderTime: TimeInterval = 1.0,
-        options: Set<JFOption> = [.showOriginalImage])
-    {
-        setImage(with: url,
-                 placeHolder: placeHolder,
-                 waitPlaceHolderTime: waitPlaceHolderTime)
     }
     
     /// main thread에서 UIImageView 이미지 업데이트
