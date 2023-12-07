@@ -27,7 +27,7 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = iconSize / 2.0
-        imageView.backgroundColor = .primaryGray
+        imageView.tintColor = .primaryDarkGray
         return imageView
     }()
     
@@ -76,7 +76,7 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
             iconImageView.jk.setImage(with: url)
         }
         userCodeLabel.text = "@" + groupMember.user.code
-        lastChallengedLabel.text = groupMember.lastChallenged?.convertStringyyyy_MM_dd() ?? "없음"
+        lastChallengedLabel.text = groupMember.lastChallenged?.relativeDateString() ?? "없음"
         gradeButton.setTitle(groupMember.grade.description, for: .normal)
     }
     
