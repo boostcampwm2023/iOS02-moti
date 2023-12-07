@@ -24,9 +24,28 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     private let viewModel: EditAchievementViewModel
     private var cancellables: Set<AnyCancellable> = []
     
-    private var bottomSheet: TextViewBottomSheet
-    
     private var achievement: Achievement?
+    
+    // MARK: - Views
+    private var bottomSheet: TextViewBottomSheet
+    private lazy var doneButton = {
+        let barButton = UIBarButtonItem(
+            title: "완료",
+            style: .done,
+            target: self,
+            action: #selector(doneButtonDidClicked)
+        )
+        return barButton
+    }()
+    private lazy var uploadButton = {
+        let barButton = UIBarButtonItem(
+            title: "업로드",
+            style: .done,
+            target: self,
+            action: #selector(uploadButtonDidClicked)
+        )
+        return barButton
+    }()
     
     // MARK: - Init
     init(
@@ -62,20 +81,15 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupNavigationBar()
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            title: "완료",
-            style: .done,
-            target: self,
-            action: #selector(doneButtonDidClicked)
-        )
-        
-        viewModel.action(.fetchCategories)
         addTarget()
         bind()
         
         layoutView.categoryPickerView.delegate = self
         layoutView.categoryPickerView.dataSource = self
+        
+        viewModel.action(.fetchCategories)
     }
     
     override func viewIsAppearing(_ animated: Bool) {
@@ -95,49 +109,6 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     private func addTarget() {
         layoutView.categoryButton.addTarget(self, action: #selector(showPicker), for: .touchUpInside)
         layoutView.selectDoneButton.addTarget(self, action: #selector(donePicker), for: .touchUpInside)
-    }
-    
-    @objc func doneButtonDidClicked() {
-        // 카테고리
-        guard let category = findSelectedCategory() else {
-            hideBottomSheet()
-            showErrorAlert(message: "카테고리를 선택하세요.", okAction: {
-                self.showBottomSheet()
-            })
-            return
-        }
-        
-        // 제목
-        let title: String
-        if let text = layoutView.titleTextField.text, !text.isEmpty {
-            title = text
-        } else {
-            guard let placeholder = layoutView.titleTextField.placeholder else { return }
-            title = placeholder
-        }
-        
-        // 본문
-        let body = bottomSheet.text
-        
-        if let achievement = achievement { // 상세 화면에서 넘어옴 => 수정 API
-            var updatedAchievement = achievement
-            updatedAchievement.title = title
-            updatedAchievement.body = body
-            updatedAchievement.category = category
-            
-            viewModel.action(.updateAchievement(updatedAchievement: updatedAchievement))
-        } else { // 촬영 화면에서 넘어옴 => 생성 API
-            viewModel.action(.postAchievement(
-                title: title,
-                content: body,
-                categoryId: category.id)
-            )
-        }
-    }
-    
-    private func findSelectedCategory() -> CategoryItem? {
-        let selectedRow = layoutView.categoryPickerView.selectedRow(inComponent: 0)
-        return viewModel.findCategory(at: selectedRow)
     }
 }
 
@@ -203,6 +174,77 @@ extension EditAchievementViewController: UIPickerViewDataSource {
     }
 }
 
+// MARK: - Navigationbar
+private extension EditAchievementViewController {
+    func setupNavigationBar() {
+        navigationItem.rightBarButtonItems = [doneButton]
+        doneButton.isEnabled = false
+        doneButton.title = "로딩 중"
+    }
+    
+    func showDoneButton() {
+        navigationItem.rightBarButtonItems = [doneButton]
+        uploadButton.isEnabled = false
+        doneButton.isEnabled = true
+    }
+    
+    func showUploadButton() {
+        navigationItem.rightBarButtonItems = [doneButton, uploadButton]
+        uploadButton.isEnabled = true
+        doneButton.title = "실패"
+        doneButton.isEnabled = false
+    }
+    
+    @objc func uploadButtonDidClicked() {
+        navigationItem.rightBarButtonItems = [doneButton]
+        doneButton.isEnabled = false
+        viewModel.action(.retrySaveImage)
+    }
+    
+    @objc func doneButtonDidClicked() {
+        // 카테고리
+        guard let category = findSelectedCategory() else {
+            hideBottomSheet()
+            showErrorAlert(message: "카테고리를 선택하세요.", okAction: {
+                self.showBottomSheet()
+            })
+            return
+        }
+        
+        // 제목
+        let title: String
+        if let text = layoutView.titleTextField.text, !text.isEmpty {
+            title = text
+        } else {
+            guard let placeholder = layoutView.titleTextField.placeholder else { return }
+            title = placeholder
+        }
+        
+        // 본문
+        let body = bottomSheet.text
+        
+        if let achievement = achievement { // 상세 화면에서 넘어옴 => 수정 API
+            var updatedAchievement = achievement
+            updatedAchievement.title = title
+            updatedAchievement.body = body
+            updatedAchievement.category = category
+            
+            viewModel.action(.updateAchievement(updatedAchievement: updatedAchievement))
+        } else { // 촬영 화면에서 넘어옴 => 생성 API
+            viewModel.action(.postAchievement(
+                title: title,
+                content: body,
+                categoryId: category.id)
+            )
+        }
+    }
+    
+    private func findSelectedCategory() -> CategoryItem? {
+        let selectedRow = layoutView.categoryPickerView.selectedRow(inComponent: 0)
+        return viewModel.findCategory(at: selectedRow)
+    }
+}
+
 // MARK: - Binding
 private extension EditAchievementViewController {
     func bind() {
@@ -232,25 +274,38 @@ private extension EditAchievementViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
-                
+                print("Save Image: \(state)")
                 switch state {
-                case .none:
-                    break
-                case .loading:
-                    // 완료 버튼 비활성화
-                    if let doneButton = navigationItem.rightBarButtonItem {
-                        doneButton.isEnabled = false
-                        navigationItem.rightBarButtonItem?.title = "로딩 중"
-                    }
+                case .none, .loading:
+                    doneButton.isEnabled = false
+                    doneButton.title = "로딩 중"
                 case .finish:
                     // 완료 버튼 활성화
-                    if let doneButton = navigationItem.rightBarButtonItem {
-                        doneButton.isEnabled = true
-                        navigationItem.rightBarButtonItem?.title = "완료"
-                    }
+                    doneButton.isEnabled = true
+                    doneButton.title = "완료"
                 case .error:
-                    // TODO: Alert 띄우고, 다시 업로드 진행하기
-                    Logger.error("Upload Error")
+                    Logger.error("사진 업로드 에러")
+                    doneButton.isEnabled = false
+                    doneButton.title = "실패"
+                    
+                    hideBottomSheet()
+                    // Bottom Sheet이 띄워져 있으면 Alert이 안 나옴
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                        self.showTwoButtonAlert(
+                            title: "사진 업로드 실패",
+                            message: "네트워크가 불안정하여 사진 업로드를 실패했습니다. 다시 시도해 주세요.",
+                            okTitle: "다시 시도",
+                            okAction: {
+                                // OK 버튼 누르면 재시도 하는 시나리오
+                                self.showBottomSheet()
+                                self.uploadButtonDidClicked()
+                            }, cancelAction: {
+                                // 사용자가 직접 업로드 버튼을 누르는 시나리오
+                                self.showBottomSheet()
+                                self.showUploadButton()
+                            }
+                        )
+                    }
                 }
             }
             .store(in: &cancellables)
