@@ -22,7 +22,7 @@ final class CaptureView: UIView {
     let captureButton = CaptureButton()
 
     // Video Preview
-    private let preview = {
+    let preview = {
         let view = UIView()
         view.backgroundColor = .primaryGray
         return view
