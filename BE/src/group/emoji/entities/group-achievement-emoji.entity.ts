@@ -9,6 +9,7 @@ import { GroupAchievementEntity } from '../../achievement/entities/group-achieve
 import { UserEntity } from '../../../users/entities/user.entity';
 import { Emoji } from '../domain/emoji';
 import { GroupAchievementEmoji } from '../domain/group-achievement-emoji.domain';
+import { isNullOrUndefined } from '../../../common/utils/is-null-or-undefined';
 
 @Entity({ name: 'group_achievement_emoji' })
 export class GroupAchievementEmojiEntity {
@@ -32,6 +33,8 @@ export class GroupAchievementEmojiEntity {
   static from(
     groupAchievementEmoji: GroupAchievementEmoji,
   ): GroupAchievementEmojiEntity {
+    if (isNullOrUndefined(groupAchievementEmoji)) return groupAchievementEmoji;
+
     const entity = new GroupAchievementEmojiEntity();
     entity.id = groupAchievementEmoji.id;
     entity.groupAchievement = GroupAchievementEntity.from(
@@ -43,10 +46,12 @@ export class GroupAchievementEmojiEntity {
   }
 
   toModel() {
-    const entity = new GroupAchievementEmoji();
+    const entity = new GroupAchievementEmoji(
+      this.groupAchievement?.toModel(),
+      this.user?.toModel(),
+      this.emoji,
+    );
     entity.id = this.id;
-    entity.groupAchievement = this.groupAchievement?.toModel();
-    entity.user = this.user?.toModel();
     entity.emoji = this.emoji;
     return entity;
   }

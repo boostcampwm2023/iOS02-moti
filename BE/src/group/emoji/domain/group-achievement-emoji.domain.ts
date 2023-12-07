@@ -7,4 +7,10 @@ export class GroupAchievementEmoji {
   groupAchievement: GroupAchievement;
   user: User;
   emoji: Emoji;
+
+  constructor(groupAchievement: GroupAchievement, user: User, emoji: Emoji) {
+    this.groupAchievement = groupAchievement;
+    this.user = user;
+    this.emoji = emoji;
+  }
 }
