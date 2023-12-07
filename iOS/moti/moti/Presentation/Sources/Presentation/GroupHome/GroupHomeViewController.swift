@@ -182,7 +182,7 @@ private extension GroupHomeViewController {
         avatarImageView.clipsToBounds = true
         avatarImageView.layer.cornerRadius = avatarItemSize / 2
         if let groupProfileImageURL = group.avatarUrl {
-            avatarImageView.jk.setImage(with: groupProfileImageURL)
+            avatarImageView.jk.setImage(with: groupProfileImageURL, downsamplingScale: 1.5)
         } else {
             avatarImageView.backgroundColor = .primaryGray
         }

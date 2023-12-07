@@ -194,7 +194,7 @@ private extension HomeViewController {
         avatarImageView.layer.cornerRadius = avatarItemSize / 2
         if let myAvatarURLString = UserDefaults.standard.readString(key: .myAvatarUrlString),
            let myAvatarURL = URL(string: myAvatarURLString) {
-            avatarImageView.jk.setImage(with: myAvatarURL)
+            avatarImageView.jk.setImage(with: myAvatarURL, downsamplingScale: 1.5)
         } else {
             avatarImageView.backgroundColor = .primaryGray
         }

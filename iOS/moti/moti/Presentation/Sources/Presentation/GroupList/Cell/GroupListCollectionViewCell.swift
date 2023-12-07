@@ -80,7 +80,7 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
     // MARK: - Methods
     func configure(with group: Group) {
         if let url = group.avatarUrl {
-            iconImageView.jk.setImage(with: url)
+            iconImageView.jk.setImage(with: url, downsamplingScale: 1.5)
         }
         titleLabel.text = group.name
         continuedLabel.text = "총 \(group.continued)회 달성"
