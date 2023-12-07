@@ -92,86 +92,6 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
         view.endEditing(true)
     }
     
-    private func bind() {
-        viewModel.$categoryState
-            .receive(on: RunLoop.main)
-            .sink { [weak self] state in
-                guard let self else { return }
-                switch state {
-                case .none, .loading: break
-                case .finish:
-                    layoutView.categoryPickerView.reloadAllComponents()
-                    
-                    if let achievement = achievement,
-                       let category = achievement.category,
-                       let index = viewModel.findCategoryIndex(category) {
-                        layoutView.selectCategory(row: index, inComponent: 0)
-                    } else if let firstCategory = viewModel.firstCategory {
-                        layoutView.update(category: firstCategory.name)
-                    }
-                }
-            }
-            .store(in: &cancellables)
-        
-        viewModel.$saveImageState
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] state in
-                guard let self else { return }
-                
-                switch state {
-                case .none:
-                    break
-                case .loading:
-                    // 완료 버튼 비활성화
-                    if let doneButton = navigationItem.rightBarButtonItem {
-                        doneButton.isEnabled = false
-                        navigationItem.rightBarButtonItem?.title = "로딩 중"
-                    }
-                case .finish:
-                    // 완료 버튼 활성화
-                    if let doneButton = navigationItem.rightBarButtonItem {
-                        doneButton.isEnabled = true
-                        navigationItem.rightBarButtonItem?.title = "완료"
-                    }
-                case .error:
-                    // TODO: Alert 띄우고, 다시 업로드 진행하기
-                    Logger.error("Upload Error")
-                }
-            }
-            .store(in: &cancellables)
-        
-        viewModel.$updateAchievementState
-            .receive(on: RunLoop.main)
-            .sink { [weak self] state in
-                guard let self else { return }
-                switch state {
-                case .none, .loading: break
-                case .finish(let updatedAchievement):
-                    hideBottomSheet()
-                    delegate?.doneButtonDidClickedFromDetailView(updatedAchievement: updatedAchievement)
-                case .error:
-                    Logger.error("Achievement Update Error")
-                }
-            }
-            .store(in: &cancellables)
-        
-        viewModel.$postAchievementState
-            .receive(on: RunLoop.main)
-            .sink { [weak self] state in
-                guard let self else { return }
-                switch state {
-                case .none, .loading: break
-                case .finish(let newAchievement):
-                    hideBottomSheet()
-                    delegate?.doneButtonDidClickedFromCaptureView(newAchievement: newAchievement)
-                case .error:
-                    Logger.error("Achievement Post Error")
-                }
-            }
-            .store(in: &cancellables)
-
-    }
-    
     private func addTarget() {
         layoutView.categoryButton.addTarget(self, action: #selector(showPicker), for: .touchUpInside)
         layoutView.selectDoneButton.addTarget(self, action: #selector(donePicker), for: .touchUpInside)
@@ -281,4 +201,95 @@ extension EditAchievementViewController: UIPickerViewDataSource {
         guard let category = viewModel.findCategory(at: row) else { return nil }
         return category.name
     }
+}
+
+// MARK: - Binding
+private extension EditAchievementViewController {
+    func bind() {
+        bindAchievement()
+        
+        viewModel.$categoryState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .none, .loading: break
+                case .finish:
+                    layoutView.categoryPickerView.reloadAllComponents()
+                    
+                    if let achievement = achievement,
+                       let category = achievement.category,
+                       let index = viewModel.findCategoryIndex(category) {
+                        layoutView.selectCategory(row: index, inComponent: 0)
+                    } else if let firstCategory = viewModel.firstCategory {
+                        layoutView.update(category: firstCategory.name)
+                    }
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$saveImageState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                
+                switch state {
+                case .none:
+                    break
+                case .loading:
+                    // 완료 버튼 비활성화
+                    if let doneButton = navigationItem.rightBarButtonItem {
+                        doneButton.isEnabled = false
+                        navigationItem.rightBarButtonItem?.title = "로딩 중"
+                    }
+                case .finish:
+                    // 완료 버튼 활성화
+                    if let doneButton = navigationItem.rightBarButtonItem {
+                        doneButton.isEnabled = true
+                        navigationItem.rightBarButtonItem?.title = "완료"
+                    }
+                case .error:
+                    // TODO: Alert 띄우고, 다시 업로드 진행하기
+                    Logger.error("Upload Error")
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    func bindAchievement() {
+        viewModel.$updateAchievementState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .none: break
+                case .loading:
+                    hideBottomSheet()
+                case .finish(let updatedAchievement):
+                    delegate?.doneButtonDidClickedFromDetailView(updatedAchievement: updatedAchievement)
+                case .error:
+                    showBottomSheet()
+                    Logger.error("Achievement Update Error")
+                }
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$postAchievementState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .none: break
+                case .loading:
+                    hideBottomSheet()
+                case .finish(let newAchievement):
+                    delegate?.doneButtonDidClickedFromCaptureView(newAchievement: newAchievement)
+                case .error:
+                    showBottomSheet()
+                    Logger.error("Achievement Post Error")
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
 }
