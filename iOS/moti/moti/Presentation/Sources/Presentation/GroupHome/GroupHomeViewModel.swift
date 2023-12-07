@@ -22,6 +22,7 @@ final class GroupHomeViewModel {
     
     // Category
     private var categoryDataSource: CategoryDataSource?
+    private let fetchCategoryUseCase: FetchCategoryUseCase
     private let fetchCategoryListUseCase: FetchCategoryListUseCase
     private let addCategoryUseCase: AddCategoryUseCase
     private var categories: [CategoryItem] = [] {
@@ -53,6 +54,7 @@ final class GroupHomeViewModel {
     private var nextAchievementTask: Task<Void, Never>?
     
     // State
+    private(set) var categoryInfoState = PassthroughSubject<CategoryInfoState, Never>()
     private(set) var categoryListState = PassthroughSubject<CategoryListState, Never>()
     private(set) var addCategoryState = PassthroughSubject<AddCategoryState, Never>()
     private(set) var achievementListState = PassthroughSubject<AchievementListState, Never>()
@@ -64,6 +66,7 @@ final class GroupHomeViewModel {
     init(
         group: Group,
         fetchAchievementListUseCase: FetchAchievementListUseCase,
+        fetchCategoryUseCase: FetchCategoryUseCase,
         fetchCategoryListUseCase: FetchCategoryListUseCase,
         addCategoryUseCase: AddCategoryUseCase,
         deleteAchievementUseCase: DeleteAchievementUseCase,
@@ -74,6 +77,7 @@ final class GroupHomeViewModel {
     ) {
         self.group = group
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
+        self.fetchCategoryUseCase = fetchCategoryUseCase
         self.fetchCategoryListUseCase = fetchCategoryListUseCase
         self.addCategoryUseCase = addCategoryUseCase
         self.deleteAchievementUseCase = deleteAchievementUseCase
@@ -110,6 +114,11 @@ final class GroupHomeViewModel {
         switch action {
         case .launch:
             fetchCategories()
+        case .fetchCurrentCategoryInfo:
+            guard let currentCategory else { return }
+            fetchCategory(categoryId: currentCategory.id)
+        case .fetchCategoryInfo(let categoryId):
+            fetchCategory(categoryId: categoryId)
         case .addCategory(let name):
             addCategory(name: name)
         case .fetchAchievementList(let category):
@@ -152,9 +161,25 @@ private extension GroupHomeViewModel {
             do {
                 categoryListState.send(.loading)
                 categories = try await fetchCategoryListUseCase.execute()
+                if let firstCategory = categories.first {
+                    categoryInfoState.send(.success(category: firstCategory))
+                }
                 categoryListState.send(.finish)
             } catch {
                 categoryListState.send(.error(message: error.localizedDescription))
+            }
+        }
+    }
+    
+    /// 카테고리 단일 정보를 가져오는 액션
+    func fetchCategory(categoryId: Int) {
+        Task {
+            do {
+                categoryInfoState.send(.loading)
+                let category = try await fetchCategoryUseCase.execute(categoryId: categoryId)
+                categoryInfoState.send(.success(category: category))
+            } catch {
+                categoryInfoState.send(.failed(message: error.localizedDescription))
             }
         }
     }
@@ -231,11 +256,7 @@ private extension GroupHomeViewModel {
         Task {
             do {
                 deleteAchievementState.send(.loading)
-                let requestValue = DeleteAchievementRequestValue(id: achievementId)
-                let isSuccess = try await deleteAchievementUseCase.execute(
-                    requestValue: requestValue,
-                    categoryId: categoryId
-                )
+                let isSuccess = try await deleteAchievementUseCase.execute(achievementId: achievementId)
                 
                 if isSuccess {
                     deleteAchievementState.send(.success)

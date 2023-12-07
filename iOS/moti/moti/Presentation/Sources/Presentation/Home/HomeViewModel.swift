@@ -18,6 +18,7 @@ final class HomeViewModel {
     // MARK: - Properties
     // Category
     private var categoryDataSource: CategoryDataSource?
+    private let fetchCategoryUseCase: FetchCategoryUseCase
     private let fetchCategoryListUseCase: FetchCategoryListUseCase
     private let addCategoryUseCase: AddCategoryUseCase
     
@@ -26,12 +27,7 @@ final class HomeViewModel {
             categoryDataSource?.update(data: categories)
         }
     }
-    private(set) var currentCategory: CategoryItem? {
-        didSet {
-            guard let currentCategory else { return }
-            categoryState = .updated(category: currentCategory)
-        }
-    }
+    private(set) var currentCategory: CategoryItem?
     
     // Achievement
     private var achievementDataSource: AchievementDataSource?
@@ -43,7 +39,6 @@ final class HomeViewModel {
     private var achievements: [Achievement] = [] {
         didSet {
             achievementDataSource?.update(data: achievements)
-            syncCurrentCategoryWithStorage()
         }
     }
     
@@ -53,9 +48,9 @@ final class HomeViewModel {
     private var nextAchievementTask: Task<Void, Never>?
     
     // State
+    private(set) var categoryInfoState = PassthroughSubject<CategoryInfoState, Never>()
     @Published private(set) var categoryListState: CategoryListState = .initial
     @Published private(set) var addCategoryState: AddCategoryState = .none
-    @Published private(set) var categoryState: CategoryState = .initial
     @Published private(set) var achievementListState: AchievementListState = .initial
     private(set) var deleteAchievementState = PassthroughSubject<DeleteAchievementState, Never>()
     private(set) var fetchDetailAchievementState = PassthroughSubject<FetchDetailAchievementState, Never>()
@@ -63,12 +58,14 @@ final class HomeViewModel {
     // MARK: - Init
     init(
         fetchAchievementListUseCase: FetchAchievementListUseCase,
+        fetchCategoryUseCase: FetchCategoryUseCase,
         fetchCategoryListUseCase: FetchCategoryListUseCase,
         addCategoryUseCase: AddCategoryUseCase,
         deleteAchievementUseCase: DeleteAchievementUseCase,
         fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
     ) {
         self.fetchAchievementListUseCase = fetchAchievementListUseCase
+        self.fetchCategoryUseCase = fetchCategoryUseCase
         self.fetchCategoryListUseCase = fetchCategoryListUseCase
         self.addCategoryUseCase = addCategoryUseCase
         self.deleteAchievementUseCase = deleteAchievementUseCase
@@ -90,14 +87,18 @@ final class HomeViewModel {
     }
     
     func findCategory(at index: Int) -> CategoryItem? {
-        let categoryId = categories[index].id
-        return CategoryStorage.shared.find(categoryId: categoryId)
+        return categories[index]
     }
     
     func action(_ action: HomeViewModelAction) {
         switch action {
         case .launch:
             fetchCategories()
+        case .fetchCurrentCategoryInfo:
+            guard let currentCategory else { return }
+            fetchCategory(categoryId: currentCategory.id)
+        case .fetchCategoryInfo(let categoryId):
+            fetchCategory(categoryId: categoryId)
         case .addCategory(let name):
             addCategory(name: name)
         case .fetchNextPage:
@@ -131,9 +132,25 @@ private extension HomeViewModel {
         Task {
             do {
                 categories = try await fetchCategoryListUseCase.execute()
+                if let firstCategory = categories.first {
+                    categoryInfoState.send(.success(category: firstCategory))
+                }
                 categoryListState = .finish
             } catch {
                 categoryListState = .error(message: error.localizedDescription)
+            }
+        }
+    }
+    
+    /// 카테고리 단일 정보를 가져오는 액션
+    func fetchCategory(categoryId: Int) {
+        Task {
+            do {
+                categoryInfoState.send(.loading)
+                let category = try await fetchCategoryUseCase.execute(categoryId: categoryId)
+                categoryInfoState.send(.success(category: category))
+            } catch {
+                categoryInfoState.send(.failed(message: error.localizedDescription))
             }
         }
     }
@@ -195,7 +212,6 @@ private extension HomeViewModel {
         // 카테고리가 변경된거면 홈 화면 리스트 갱신
         guard let currentCategory,
               let updatedCategory = updatedAchievement.category else { return }
-        syncCurrentCategoryWithStorage()
         
         if currentCategory.id != 0 && currentCategory.id != updatedCategory.id {
             deleteOfDataSource(achievementId: updatedAchievement.id)
@@ -212,11 +228,7 @@ private extension HomeViewModel {
         Task {
             do {
                 deleteAchievementState.send(.loading)
-                let requestValue = DeleteAchievementRequestValue(id: achievementId)
-                let isSuccess = try await deleteAchievementUseCase.execute(
-                    requestValue: requestValue,
-                    categoryId: categoryId
-                )
+                let isSuccess = try await deleteAchievementUseCase.execute(achievementId: achievementId)
                 
                 if isSuccess {
                     deleteAchievementState.send(.success)
@@ -283,23 +295,8 @@ private extension HomeViewModel {
         }
     }
     
-    /// Achievement의 첫 번째 index를 구하는 메서드
-    func firstIndexOf(achievementId: Int) -> Int? {
-        return achievements.firstIndex { $0.id == achievementId }
-    }
-    
     /// 도전 기록을 데이터소스에서 제거하는 액션
     func deleteOfDataSource(achievementId: Int) {
-        guard let foundIndex = firstIndexOf(achievementId: achievementId) else { return }
-        achievements.remove(at: foundIndex)
-    }
-    
-    func syncCurrentCategoryWithStorage() {
-        guard let currentCategoryId = currentCategory?.id,
-              let storageData = CategoryStorage.shared.find(categoryId: currentCategoryId),
-              currentCategory != storageData else { return }
-        Logger.debug("Sync Current Category")
-        // didSet은 같은 데이터를 넣어도 호출되므로 데이터가 다를 때만 대입
-        currentCategory = storageData
+        achievements = achievements.filter { $0.id != achievementId }
     }
 }

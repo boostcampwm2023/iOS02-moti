@@ -196,18 +196,20 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
             title = placeholder
         }
         
+        // 본문
+        let body = bottomSheet.text
+        
         if let achievement = achievement { // 상세 화면에서 넘어옴 => 수정 API
-            let updatedData = UpdateAchievementRequestBody(
-                title: title,
-                content: bottomSheet.text,
-                categoryId: category.id
-            )
-            viewModel.action(.updateAchievement(achievement: achievement, updateData: updatedData))
-        } else { // 촬영 화면에서 넘어옴 => 생성 API
+            var updatedAchievement = achievement
+            updatedAchievement.title = title
+            updatedAchievement.body = body
+            updatedAchievement.category = category
             
+            viewModel.action(.updateAchievement(updatedAchievement: updatedAchievement))
+        } else { // 촬영 화면에서 넘어옴 => 생성 API
             viewModel.action(.postAchievement(
                 title: title,
-                content: bottomSheet.text,
+                content: body,
                 categoryId: category.id)
             )
         }

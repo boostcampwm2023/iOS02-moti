@@ -57,10 +57,12 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
 
     // MARK: - Methods
     func deleteAchievementDataSourceItem(achievementId: Int) {
+        viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.deleteAchievementDataSourceItem(achievementId: achievementId))
     }
     
     func updateAchievement(updatedAchievement: Achievement) {
+        viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.updateAchievement(updatedAchievement: updatedAchievement))
     }
     
@@ -68,6 +70,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
         if let tabBarController = tabBarController as? TabBarViewController {
             tabBarController.showTabBar()
         }
+        viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.postAchievement(newAchievement: newAchievement))
         showCelebrate(with: newAchievement)
     }
@@ -107,6 +110,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
     }
     
     @objc private func refreshAchievementList() {
+        viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.refreshAchievementList)
     }
     
@@ -262,8 +266,8 @@ extension HomeViewController: UICollectionViewDelegate {
         
         guard let category = viewModel.findCategory(at: row) else { return }
         Logger.debug("Selected Category: \(category.name)")
+        viewModel.action(.fetchCategoryInfo(categoryId: category.id))
         viewModel.action(.fetchAchievementList(category: category))
-        layoutView.updateAchievementHeader(with: category)
     }
     
     func collectionView(
@@ -440,18 +444,22 @@ private extension HomeViewController {
             }
             .store(in: &cancellables)
         
-        viewModel.$categoryState
+        viewModel.categoryInfoState
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
                 switch state {
-                case .initial: break
-                case .updated(let updatedCategory):
-                    layoutView.updateAchievementHeader(with: updatedCategory)
+                case .loading:
+                    // TODO: 스켈레톤 표시
+                    break
+                case .success(let category):
+                    layoutView.updateAchievementHeader(with: category)
+                case .failed(let message):
+                    showErrorAlert(message: message)
                 }
             }
             .store(in: &cancellables)
-        
+
         viewModel.$addCategoryState
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in

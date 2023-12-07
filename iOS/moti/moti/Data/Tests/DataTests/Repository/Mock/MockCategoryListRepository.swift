@@ -9,7 +9,7 @@ import Foundation
 @testable import Domain
 @testable import Data
 
-struct MockCategoryListRepository: CategoryListRepositoryProtocol {
+struct MockCategoryListRepository: CategoryRepositoryProtocol {
     private let fetchCategoryListJson = """
     {
         "success": true,
