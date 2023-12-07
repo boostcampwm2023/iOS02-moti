@@ -20,4 +20,8 @@ export class User {
   assignUserCode(userCode: string) {
     this.userCode = userCode;
   }
+
+  assignAvatar(avatarUrl: string) {
+    this.avatarUrl = avatarUrl;
+  }
 }

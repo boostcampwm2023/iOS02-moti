@@ -20,6 +20,7 @@ import { Cache } from 'cache-manager';
 import { RefreshTokenNotFoundException } from '../exception/refresh-token-not-found.exception';
 import { AuthTestModule } from '../../../test/auth/auth-test.module';
 import { anyString, instance, mock, when } from 'ts-mockito';
+import { AvatarHolder } from './avatar.holder';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -41,6 +42,7 @@ describe('AuthService', () => {
       ],
       providers: [
         AuthService,
+        AvatarHolder,
         OauthHandler,
         OauthRequester,
         JwtUtils,
@@ -76,6 +78,8 @@ describe('AuthService', () => {
       response.user.userCode,
     );
     expect(response.user).toBeDefined();
+    expect(response.user.userCode).toBeDefined();
+    expect(response.user.avatarUrl).toBeDefined();
     expect(response.accessToken).toBeDefined();
     expect(response.refreshToken).toBeDefined();
     expect(response.refreshToken).toBeDefined();
