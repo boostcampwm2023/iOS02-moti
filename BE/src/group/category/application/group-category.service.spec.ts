@@ -609,5 +609,93 @@ describe('GroupCategoryService test', () => {
         ).rejects.toThrow(UnauthorizedApproachGroupCategoryException);
       });
     });
+
+    it('요청한 그룹에 속한 카테고리가 아닐 때 UnauthorizedApproachGroupCategoryException를 발생시킨다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+
+        const group = await groupFixture.createGroups(leader);
+
+        await groupCategoryFixture.createCategory(leader, group, '카테고리1');
+        await groupCategoryFixture.createCategory(leader, group, '카테고리2');
+        await groupCategoryFixture.createCategory(leader, group, '카테고리3');
+
+        const otherUser = await usersFixture.getUser('DEF');
+        const otherGroup = await groupFixture.createGroups(otherUser);
+
+        await groupCategoryFixture.createCategory(
+          otherUser,
+          otherGroup,
+          '카테고리4',
+        );
+        // when
+        // then
+
+        await expect(
+          groupCategoryService.retrieveCategoryMetadataById(
+            leader,
+            group.id,
+            otherGroup.id,
+          ),
+        ).rejects.toThrow(UnauthorizedApproachGroupCategoryException);
+      });
+    });
+
+    it('요청자가 해당 그룹에 속해있다면 전체 카테고리를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+
+        const group = await groupFixture.createGroups(leader);
+
+        const groupCategory1 = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리1',
+        );
+        const groupCategory2 = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리2',
+        );
+        await groupCategoryFixture.createCategory(leader, group, '카테고리3');
+
+        await groupAchievementFixture.createGroupAchievements(
+          10,
+          leader,
+          group,
+          groupCategory1,
+        );
+
+        await groupAchievementFixture.createGroupAchievements(
+          20,
+          leader,
+          group,
+          groupCategory2,
+        );
+
+        await groupAchievementFixture.createGroupAchievements(
+          15,
+          leader,
+          group,
+          null,
+        );
+
+        // when
+        const category =
+          await groupCategoryService.retrieveCategoryMetadataById(
+            leader,
+            group.id,
+            0,
+          );
+
+        // then
+        expect(category.categoryName).toEqual('전체');
+        expect(category.categoryId).toEqual(0);
+        expect(category.achievementCount).toEqual(45);
+        expect(category.insertedAt).toBeDefined();
+      });
+    });
   });
 });

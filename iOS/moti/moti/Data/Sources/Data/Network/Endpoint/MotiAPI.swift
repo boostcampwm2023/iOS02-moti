@@ -16,20 +16,22 @@ enum MotiAPI: EndpointProtocol {
     case saveImage(requestValue: SaveImageRequestValue)
     // 개인
     case fetchAchievementList(requestValue: FetchAchievementListRequestValue?)
+    case fetchCategory(categoryId: Int)
     case fetchCategoryList
     case addCategory(requestValue: AddCategoryRequestValue)
     case fetchDetailAchievement(requestValue: FetchDetailAchievementRequestValue)
-    case deleteAchievement(requestValue: DeleteAchievementRequestValue)
+    case deleteAchievement(achievementId: Int)
     case updateAchievement(requestValue: UpdateAchievementRequestValue)
     case postAchievement(requestValue: PostAchievementRequestValue)
     // 그룹
     case fetchGroupList
     case createGroup(requestValue: CreateGroupRequestValue)
     case fetchGroupAchievementList(requestValue: FetchAchievementListRequestValue?, groupId: Int)
+    case fetchGroupCategory(groupId: Int, categoryId: Int)
     case fetchGroupCategoryList(groupId: Int)
     case addGroupCategory(requestValue: AddCategoryRequestValue, groupId: Int)
     case fetchGroupDetailAchievement(requestValue: FetchDetailAchievementRequestValue, groupId: Int)
-    case deleteGroupAchievement(requestValue: DeleteAchievementRequestValue, groupId: Int)
+    case deleteGroupAchievement(achievementId: Int, groupId: Int)
     case updateGroupAchievement(requestValue: UpdateAchievementRequestValue, groupId: Int)
     case postGroupAchievement(requestValue: PostAchievementRequestValue, groupId: Int)
     case fetchGroupMemberList(groupId: Int)
@@ -63,25 +65,28 @@ extension MotiAPI {
         case .login: return "/auth/login"
         case .autoLogin: return "/auth/refresh"
         case .fetchAchievementList: return "/achievements"
+        case .fetchCategory(let categoryId): return "/categories/\(categoryId)"
         case .fetchCategoryList: return "/categories"
         case .addCategory: return "/categories"
         case .fetchDetailAchievement(let requestValue): return "/achievements/\(requestValue.id)"
         case .saveImage: return "/images"
-        case .deleteAchievement(let requestValue): return "/achievements/\(requestValue.id)"
+        case .deleteAchievement(let achievementId): return "/achievements/\(achievementId)"
         case .updateAchievement(let requestValue): return "/achievements/\(requestValue.id)"
         case .postAchievement: return "/achievements"
         case .fetchGroupList: return "/groups"
         case .createGroup: return "/groups"
         case .fetchGroupAchievementList(_, let groupId):
             return "/groups/\(groupId)/achievements"
+        case .fetchGroupCategory(let groupId, let categoryId):
+            return "/groups/\(groupId)/categories/\(categoryId)"
         case .fetchGroupCategoryList(let groupId):
             return "/groups/\(groupId)/categories"
         case .addGroupCategory(_, let groupId):
             return "/groups/\(groupId)/categories"
         case .fetchGroupDetailAchievement(let requestValue, let groupId):
             return "/groups/\(groupId)/achievements/\(requestValue.id)"
-        case .deleteGroupAchievement(let requestValue, let groupId):
-            return "/groups/\(groupId)/achievements/\(requestValue.id)"
+        case .deleteGroupAchievement(let achievementId, let groupId):
+            return "/groups/\(groupId)/achievements/\(achievementId)"
         case .updateGroupAchievement(let requestValue, let groupId):
             return "/groups/\(groupId)/achievements/\(requestValue.id)"
         case .postGroupAchievement(_, let groupId):
@@ -111,6 +116,7 @@ extension MotiAPI {
         case .login: return .post
         case .autoLogin: return .post
         case .fetchAchievementList: return .get
+        case .fetchCategory: return .get
         case .fetchCategoryList: return .get
         case .addCategory: return .post
         case .fetchDetailAchievement: return .get
@@ -121,6 +127,7 @@ extension MotiAPI {
         case .fetchGroupList: return .get
         case .createGroup: return .post
         case .fetchGroupAchievementList: return .get
+        case .fetchGroupCategory: return .get
         case .fetchGroupCategoryList: return .get
         case .addGroupCategory: return .post
         case .fetchGroupDetailAchievement: return .get

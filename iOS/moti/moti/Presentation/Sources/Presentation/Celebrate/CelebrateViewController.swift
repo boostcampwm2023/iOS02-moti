@@ -81,7 +81,7 @@ final class CelebrateViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        UIView.animate(withDuration: 0.15, delay: 0, options: [.curveEaseOut], animations: {
+        UIView.animate(withDuration: 0.1, delay: 0, animations: {
             self.titleLabel.transform = .identity
         })
     }

@@ -39,7 +39,12 @@ export class GroupCategoryService {
     categoryId: number,
   ) {
     const group = await this.getGroup(user, groupId);
-    return this.groupCategoryRepository.findGroupCategory(group, categoryId);
+    const categoryMetaData =
+      await this.groupCategoryRepository.findGroupCategory(group, categoryId);
+    if (!categoryMetaData)
+      throw new UnauthorizedApproachGroupCategoryException();
+
+    return categoryMetaData;
   }
 
   private async getGroupByLeader(user: User, groupId: number) {

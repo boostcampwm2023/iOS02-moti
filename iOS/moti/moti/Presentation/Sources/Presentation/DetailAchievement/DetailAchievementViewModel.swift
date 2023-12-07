@@ -82,10 +82,7 @@ final class DetailAchievementViewModel {
         Task {
             do {
                 guard let categoryId = achievement.category?.id else { return }
-                let isSuccess = try await deleteAchievementUseCase.execute(
-                    requestValue: DeleteAchievementRequestValue(id: achievement.id),
-                    categoryId: categoryId
-                )
+                let isSuccess = try await deleteAchievementUseCase.execute(achievementId: achievement.id)
                 
                 if isSuccess {
                     deleteState = .success(achievementId: achievement.id)

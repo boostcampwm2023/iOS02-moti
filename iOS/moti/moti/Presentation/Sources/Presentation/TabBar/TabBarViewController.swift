@@ -65,6 +65,7 @@ final class TabBarViewController: UITabBarController {
         UIView.animate(withDuration: 0.3, animations: {
             self.moveDownTabBar()
         }, completion: { _ in
+            if self.isShowing { return }
             self.tabBar.isHidden = true
             self.captureButton.isHidden = true
             self.borderView.isHidden = true
