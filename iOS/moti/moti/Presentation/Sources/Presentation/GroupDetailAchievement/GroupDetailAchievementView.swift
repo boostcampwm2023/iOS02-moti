@@ -223,8 +223,8 @@ private extension GroupDetailAchievementView {
         scrollView.addSubview(bodyTextView)
         bodyTextView.atl
             .top(equalTo: bodyTitleLabel.bottomAnchor, constant: 10)
-            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
-            .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -20)
+            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15)
+            .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -15)
         
         // TODO: 더보기 동적 높이
         bodyTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
