@@ -111,6 +111,10 @@ export const ERROR_INFO = {
     statusCode: 403,
     message: '달성기록에 접근할 수 없습니다.',
   },
+  INVALID_EMOJI: {
+    statusCode: 400,
+    message: '알맞지 않은 이모지입니다.',
+  },
   NOT_FOUND_CATEGORY: {
     statusCode: 404,
     message: '카테고리를 찾을 수 없습니다.',

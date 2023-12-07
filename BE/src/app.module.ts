@@ -17,6 +17,7 @@ import { ImageModule } from './image/image.module';
 import { GroupModule } from './group/group/group.module';
 import { GroupCategoryModule } from './group/category/group-category.module';
 import { GroupAchievementModule } from './group/achievement/group-achievement.module';
+import { GroupAchievementEmojiModule } from './group/emoji/group-achievement-emoji.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { GroupAchievementModule } from './group/achievement/group-achievement.mo
     GroupModule,
     GroupCategoryModule,
     GroupAchievementModule,
+    GroupAchievementEmojiModule,
   ],
   controllers: [AppController],
   providers: [AppService],
