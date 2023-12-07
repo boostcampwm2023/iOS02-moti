@@ -24,7 +24,6 @@ import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
 import { CategoryResponse } from '../dto/category.response';
 import { CategoryListElementResponse } from '../dto/category-list-element.response';
 import { ParseIntPipe } from '../../common/pipe/parse-int.pipe';
-import { GroupCategoryListElementResponse } from '../../group/category/dto/group-category-list-element.response';
 
 @Controller('/api/v1/categories')
 @ApiTags('카테고리 API')
@@ -90,6 +89,6 @@ export class CategoryController {
     @AuthenticatedUser() user: User,
   ): Promise<ApiData<CategoryListElementResponse>> {
     const category = await this.categoryService.getCategory(user, categoryId);
-    return ApiData.success(new GroupCategoryListElementResponse(category));
+    return ApiData.success(new CategoryListElementResponse(category));
   }
 }

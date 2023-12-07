@@ -51,7 +51,7 @@ describe('CategoryController Test', () => {
     });
   });
 
-  describe('그룹 카테고리를 생성할 수 있다.', () => {
+  describe('카테고리를 생성할 수 있다.', () => {
     it('사용자가 카테고리 생성 요청시 카테고리와 201을 반환한다.', async () => {
       // given
       const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
@@ -145,7 +145,7 @@ describe('CategoryController Test', () => {
   });
 
   describe('카테고리를 조회할 수 있다.', () => {
-    it('그룹에 속한 유저는 그룹 카테고리를 조회할 요청시 카테고리와 200을 반환한다.', async () => {
+    it('사용자 본인에 대한 카테고리를 조회할 요청시 카테고리와 200을 반환한다.', async () => {
       // given
       const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
 
@@ -198,7 +198,7 @@ describe('CategoryController Test', () => {
         });
     });
 
-    it('그룹에 속하지 않은 유저는 그룹 카테고리를 조회할 요청시 400을 반환한다.', async () => {
+    it('사용자 본인이 아닌 카테고리를 조회할 요청시 400을 반환한다.', async () => {
       // given
       const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
 
