@@ -11,7 +11,8 @@ public enum UserDefaultsKey: String {
     case requiredVersion
     case latestVersion
     case privacyPolicy
-    case userCode
+    case myUserCode
+    case myAvatarUrlString
 }
 
 public extension UserDefaults {

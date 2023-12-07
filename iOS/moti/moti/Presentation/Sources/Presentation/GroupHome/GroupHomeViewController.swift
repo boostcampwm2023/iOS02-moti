@@ -101,7 +101,7 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
                     cell.showSkeleton()
                 } else {
                     cell.hideSkeleton()
-                    cell.configure(imageURL: item.imageURL)
+                    cell.configure(imageURL: item.imageURL, avatarURL: item.user?.avatarURL)
                 }
                 
                 return cell
@@ -182,7 +182,7 @@ private extension GroupHomeViewController {
         avatarImageView.clipsToBounds = true
         avatarImageView.layer.cornerRadius = avatarItemSize / 2
         if let groupProfileImageURL = group.avatarUrl {
-            avatarImageView.jk.setImage(with: groupProfileImageURL)
+            avatarImageView.jk.setImage(with: groupProfileImageURL, downsamplingScale: 1.5)
         } else {
             avatarImageView.backgroundColor = .primaryGray
         }

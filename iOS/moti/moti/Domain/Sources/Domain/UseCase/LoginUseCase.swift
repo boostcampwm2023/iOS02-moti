@@ -43,6 +43,9 @@ public struct LoginUseCase {
             keychainStorage.write(key: .refreshToken, data: refreshToken)
         }
         
-        UserDefaults.standard.saveString(key: .userCode, string: userToken.user.code)
+        UserDefaults.standard.saveString(key: .myUserCode, string: userToken.user.code)
+        if let avatarURL = userToken.user.avatarURL {
+            UserDefaults.standard.saveString(key: .myAvatarUrlString, string: avatarURL.absoluteString)
+        }
     }
 }
