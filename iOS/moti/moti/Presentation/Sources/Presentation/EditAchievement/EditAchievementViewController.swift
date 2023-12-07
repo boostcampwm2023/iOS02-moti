@@ -129,8 +129,8 @@ private extension EditAchievementViewController {
         present(bottomSheet, animated: true)
     }
 
-    func hideBottomSheet() {
-        bottomSheet.dismiss(animated: true)
+    func hideBottomSheet(completion: (() -> Void)? = nil) {
+        bottomSheet.dismiss(animated: true, completion: completion)
     }
 }
 
@@ -288,9 +288,8 @@ private extension EditAchievementViewController {
                     doneButton.isEnabled = false
                     doneButton.title = "실패"
                     
-                    hideBottomSheet()
                     // Bottom Sheet이 띄워져 있으면 Alert이 안 나옴
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                    hideBottomSheet(completion: {
                         self.showTwoButtonAlert(
                             title: "사진 업로드 실패",
                             message: "네트워크가 불안정하여 사진 업로드를 실패했습니다. 다시 시도해 주세요.",
@@ -305,7 +304,7 @@ private extension EditAchievementViewController {
                                 self.showUploadButton()
                             }
                         )
-                    }
+                    })
                 }
             }
             .store(in: &cancellables)
