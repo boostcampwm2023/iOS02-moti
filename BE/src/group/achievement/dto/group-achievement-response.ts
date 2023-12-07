@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IGroupAchievementListDetail } from '../index';
+import { IGroupAchievementListDetail, UserInfo } from '../index';
 
 export class GroupAchievementResponse {
   @ApiProperty({ description: 'id' })
@@ -10,20 +10,20 @@ export class GroupAchievementResponse {
   title: string;
   @ApiProperty({ description: 'categoryId' })
   categoryId: number;
-  @ApiProperty({ description: 'userCode' })
-  userCode: string;
-
+  @ApiProperty({ description: 'user', type: UserInfo })
+  user: UserInfo;
   constructor(
     id: number,
     thumbnailUrl: string,
     title: string,
     userCode: string,
+    avatarUrl: string,
     categoryId: number | null,
   ) {
     this.id = id;
     this.thumbnailUrl = thumbnailUrl;
     this.title = title;
-    this.userCode = userCode;
+    this.user = new UserInfo(userCode, avatarUrl);
     this.categoryId = categoryId ? categoryId : -1;
   }
 
@@ -33,6 +33,7 @@ export class GroupAchievementResponse {
       groupAchievementListDetail.thumbnailUrl,
       groupAchievementListDetail.title,
       groupAchievementListDetail.userCode,
+      groupAchievementListDetail.avatarUrl,
       groupAchievementListDetail.categoryId,
     );
   }

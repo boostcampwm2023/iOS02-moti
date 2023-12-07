@@ -95,9 +95,7 @@ export class GroupAchievementService {
     );
     return new PaginateGroupAchievementResponse(
       paginateGroupAchievementRequest,
-      achievements.map((achievement) =>
-        GroupAchievementResponse.from(achievement),
-      ),
+      achievements,
     );
   }
 

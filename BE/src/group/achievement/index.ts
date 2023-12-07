@@ -11,6 +11,7 @@ export interface IGroupAchievementListDetail {
   title: string;
   thumbnailUrl: string;
   userCode: string;
+  avatarUrl: string;
   categoryId: number;
 }
 
@@ -21,4 +22,13 @@ export interface GroupAchievementUpdate {
   content?: string;
   imageUrl?: string;
   thumbnailUrl?: string;
+}
+
+export class UserInfo {
+  userCode: string;
+  avatarUrl: string;
+  constructor(userCode: string, avatarUrl: string) {
+    this.userCode = userCode;
+    this.avatarUrl = avatarUrl;
+  }
 }

@@ -349,21 +349,30 @@ describe('GroupAchievementController', () => {
             {
               id: 6,
               title: 'test6',
-              userCode: 'ABCDEFG',
+              user: {
+                userCode: 'ABCDEF3',
+                avatarUrl: 'avatarUrl1',
+              },
               categoryId: 1,
               thumbnailUrl: 'thumbnail_url6',
             },
             {
               id: 3,
               title: 'test3',
-              userCode: 'ABCDEFG',
+              user: {
+                userCode: 'ABCDEF2',
+                avatarUrl: 'avatarUrl2',
+              },
               categoryId: 1,
               thumbnailUrl: 'thumbnail_url3',
             },
             {
               id: 2,
               title: 'test2',
-              userCode: 'ABCDEFG',
+              user: {
+                userCode: 'ABCDEF1',
+                avatarUrl: 'avatarUrl3',
+              },
               categoryId: 1,
               thumbnailUrl: 'thumbnail_url2',
             },
@@ -394,21 +403,30 @@ describe('GroupAchievementController', () => {
                 id: 6,
                 thumbnailUrl: 'thumbnail_url6',
                 title: 'test6',
-                userCode: 'ABCDEFG',
+                user: {
+                  avatarUrl: 'avatarUrl1',
+                  userCode: 'ABCDEF3',
+                },
               },
               {
                 categoryId: 1,
                 id: 3,
                 thumbnailUrl: 'thumbnail_url3',
                 title: 'test3',
-                userCode: 'ABCDEFG',
+                user: {
+                  avatarUrl: 'avatarUrl2',
+                  userCode: 'ABCDEF2',
+                },
               },
               {
                 categoryId: 1,
                 id: 2,
                 thumbnailUrl: 'thumbnail_url2',
                 title: 'test2',
-                userCode: 'ABCDEFG',
+                user: {
+                  avatarUrl: 'avatarUrl3',
+                  userCode: 'ABCDEF1',
+                },
               },
             ],
             next: {
