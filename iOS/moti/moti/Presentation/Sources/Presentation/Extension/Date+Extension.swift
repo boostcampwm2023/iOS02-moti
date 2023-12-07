@@ -25,4 +25,14 @@ extension Date {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return dateFormatter.string(from: self)
     }
+    
+    func relativeDateString(relativeTo: Date = Date()) -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateTimeStyle = .numeric
+        
+        let relativeDateString = formatter.localizedString(for: self, relativeTo: relativeTo)
+        
+        return relativeDateString
+    }
 }

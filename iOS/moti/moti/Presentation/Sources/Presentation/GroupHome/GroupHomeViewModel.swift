@@ -177,6 +177,7 @@ private extension GroupHomeViewModel {
             do {
                 categoryInfoState.send(.loading)
                 let category = try await fetchCategoryUseCase.execute(categoryId: categoryId)
+                currentCategory = category
                 categoryInfoState.send(.success(category: category))
             } catch {
                 categoryInfoState.send(.failed(message: error.localizedDescription))

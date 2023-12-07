@@ -16,7 +16,7 @@ protocol HomeViewControllerDelegate: AnyObject {
     func editMenuDidClicked(achievement: Achievement)
 }
 
-final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
+final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, VibrationViewController {
 
     // MARK: - Properties
     weak var coordinator: HomeCoordinator?
@@ -254,6 +254,8 @@ extension HomeViewController: UICollectionViewDelegate {
     }
     
     private func categoryCellDidSelected(cell: CategoryCollectionViewCell, row: Int) {
+        vibration(.selection)
+        
         // 눌렸을 때 Bounce 적용
         // Highlight에만 적용하면 Select에서는 적용이 안 되서 별도로 적용함
         UIView.animate(withDuration: 0.08, animations: {
@@ -433,7 +435,6 @@ private extension HomeViewController {
                 guard let self else { return }
                 switch categoryState {
                 case .initial:
-                    // TODO: 스켈레톤
                     break
                 case .finish:
                     // 첫 번째 아이템 선택
@@ -450,11 +451,11 @@ private extension HomeViewController {
                 guard let self else { return }
                 switch state {
                 case .loading:
-                    // TODO: 스켈레톤 표시
                     break
                 case .success(let category):
                     layoutView.updateAchievementHeader(with: category)
                 case .failed(let message):
+                    Logger.error("카테고리 단일 조회 에러: \(message)")
                     showErrorAlert(message: message)
                 }
             }

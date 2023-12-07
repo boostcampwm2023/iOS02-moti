@@ -75,7 +75,7 @@ final class EditAchievementView: UIView {
     
     func configure(achievement: Achievement) {
         if let url = achievement.imageURL {
-            resultImageView.jf.setImage(with: url)
+            resultImageView.jk.setImage(with: url, imageType: .original)
         }
         
         titleTextField.text = achievement.title

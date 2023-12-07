@@ -4,38 +4,28 @@
 import PackageDescription
 
 let package = Package(
-    name: "Presentation",
+    name: "JKImageCache",
     platforms: [.iOS(.v15)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "Presentation",
-            targets: ["Presentation"])
+            name: "JKImageCache",
+            targets: ["JKImageCache"]),
     ],
     dependencies: [
-        .package(path: "../Design"),
-        .package(path: "../Core"),
-        .package(path: "../Domain"),
-        .package(path: "../Data"),
-        .package(path: "../JKImageCache"),
         .package(url: "https://github.com/jeongju9216/Jeongfisher.git", from: "2.5.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "Presentation",
+            name: "JKImageCache",
             dependencies: [
-                .product(name: "Design", package: "Design"),
-                .product(name: "Core", package: "Core"),
-                .product(name: "Domain", package: "Domain"),
-                .product(name: "Data", package: "Data"),
-                .product(name: "JKImageCache", package: "JKImageCache"),
                 "Jeongfisher"
             ],
             path: "Sources"),
         .testTarget(
-            name: "PresentationTests",
-            dependencies: ["Presentation"])
+            name: "JKImageCacheTests",
+            dependencies: ["JKImageCache"]),
     ]
 )

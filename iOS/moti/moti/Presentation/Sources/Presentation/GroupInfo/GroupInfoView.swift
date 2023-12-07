@@ -43,6 +43,8 @@ final class GroupInfoView: UIView {
     private(set) var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(GroupInfoTableViewCell.self, forCellReuseIdentifier: GroupInfoTableViewCell.identifier)
+        tableView.backgroundColor = .motiBackground
+        tableView.alwaysBounceVertical = false
         return tableView
     }()
     
@@ -60,7 +62,7 @@ final class GroupInfoView: UIView {
     func configure(group: Group) {
         groupNameLabel.text = group.name
         if let url = group.avatarUrl {
-            imageView.jf.setImage(with: url)
+            imageView.jk.setImage(with: url, imageType: .original)
         }
         
         if group.grade != .leader {
@@ -69,7 +71,7 @@ final class GroupInfoView: UIView {
     }
     
     func cancelDownloadImage() {
-        imageView.jf.cancelDownloadImage()
+        imageView.jk.cancelDownloadImage()
     }
     
 }

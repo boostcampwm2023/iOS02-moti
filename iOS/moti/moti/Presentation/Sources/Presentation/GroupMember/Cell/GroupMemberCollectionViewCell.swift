@@ -20,16 +20,6 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     private let iconSize: CGFloat = 60
     weak var delegate: GroupMemberCollectionViewCellDelegate?
     
-    override var isHighlighted: Bool {
-        didSet {
-            if isHighlighted {
-                bounceAnimation()
-            } else {
-                normalAnimation()
-            }
-        }
-    }
-    
     // MARK: - Views
     private lazy var iconImageView = {
         let imageView = UIImageView()
@@ -37,7 +27,7 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = iconSize / 2.0
-        imageView.backgroundColor = .primaryGray
+        imageView.tintColor = .primaryDarkGray
         return imageView
     }()
     
@@ -83,10 +73,10 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     // MARK: - Methods
     func configureForMember(with groupMember: GroupMember) {
         if let url = groupMember.user.avatarURL {
-            iconImageView.jf.setImage(with: url)
+            iconImageView.jk.setImage(with: url)
         }
         userCodeLabel.text = "@" + groupMember.user.code
-        lastChallengedLabel.text = groupMember.lastChallenged?.convertStringyyyy_MM_dd() ?? "없음"
+        lastChallengedLabel.text = groupMember.lastChallenged?.relativeDateString() ?? "없음"
         gradeButton.setTitle(groupMember.grade.description, for: .normal)
     }
     
@@ -99,7 +89,10 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     
     private func setupGradeButtonForLeader(groupMember: GroupMember) {
         gradeButton.configuration = .plain()
-        gradeButton.setImage(SymbolImage.chevronUpDown, for: .normal)
+        
+        let config = UIImage.SymbolConfiguration(font: .small)
+        let image = UIImage(systemName: "chevron.up.chevron.down", withConfiguration: config)
+        gradeButton.setImage(image, for: .normal)
         gradeButton.tintColor = .label
         gradeButton.configuration?.imagePlacement = .trailing
         gradeButton.configuration?.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: -5)
@@ -125,7 +118,7 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     }
     
     func cancelDownloadImage() {
-        iconImageView.jf.cancelDownloadImage()
+        iconImageView.jk.cancelDownloadImage()
     }
 }
 

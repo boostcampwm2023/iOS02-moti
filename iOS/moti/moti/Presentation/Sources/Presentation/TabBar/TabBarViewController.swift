@@ -8,7 +8,7 @@
 import UIKit
 import Design
 
-final class TabBarViewController: UITabBarController {
+final class TabBarViewController: UITabBarController, VibrationViewController {
     
     // MARK: - Views
     let captureButton = CaptureButton()
@@ -25,6 +25,8 @@ final class TabBarViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        
+        captureButton.addTarget(self, action: #selector(captureButtonDidClicked), for: .touchUpInside)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -37,6 +39,10 @@ final class TabBarViewController: UITabBarController {
     }
     
     // MARK: - Methods
+    @objc private func captureButtonDidClicked() {
+        vibration(.soft)
+    }
+    
     /// 탭바를 보일 때 호출
     func showTabBar() {
         guard !isShowing else { return }

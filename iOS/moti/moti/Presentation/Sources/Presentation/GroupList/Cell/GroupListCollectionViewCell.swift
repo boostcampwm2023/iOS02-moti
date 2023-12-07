@@ -80,11 +80,11 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
     // MARK: - Methods
     func configure(with group: Group) {
         if let url = group.avatarUrl {
-            iconImageView.jf.setImage(with: url)
+            iconImageView.jk.setImage(with: url)
         }
         titleLabel.text = group.name
         continuedLabel.text = "총 \(group.continued)회 달성"
-        lastChallengedLabel.text = group.lastChallenged?.convertStringYYYY년_MM월_dd일() ?? "없음"
+        lastChallengedLabel.text = group.lastChallenged?.relativeDateString() ?? "없음"
     }
     
     func showSkeleton() {
@@ -96,7 +96,7 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
     }
     
     func cancelDownloadImage() {
-        iconImageView.jf.cancelDownloadImage()
+        iconImageView.jk.cancelDownloadImage()
     }
 }
 

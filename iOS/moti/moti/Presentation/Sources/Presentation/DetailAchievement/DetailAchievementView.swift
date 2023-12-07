@@ -9,6 +9,7 @@ import UIKit
 import Design
 import Domain
 import Data
+import JKImageCache
 
 final class DetailAchievementView: UIView {
     
@@ -53,6 +54,7 @@ final class DetailAchievementView: UIView {
     private let bodyTextView: UITextView = {
         let textView = UITextView()
         textView.font = .medium
+        textView.backgroundColor = .motiBackground
         return textView
     }()
     
@@ -73,10 +75,14 @@ final class DetailAchievementView: UIView {
         titleLabel.text = achievement.title
         categoryLabel.text = achievement.category?.name
         if let url = achievement.imageURL {
-            imageView.jf.setImage(with: url)
+            imageView.jk.setImage(with: url, imageType: .original)
         }
         
-        bodyTextView.text = achievement.body
+        if let body = achievement.body, !body.isEmpty {
+            bodyTextView.text = body
+        } else {
+            bodyTextView.text = "없음"
+        }
         infoView.configure(items: [
             (achievement.category?.name ?? "", "\(achievement.category?.continued ?? 0)회차"),
             ("날짜", (achievement.date ?? .now).convertStringYYYY년_MM월_dd일())
@@ -94,7 +100,7 @@ final class DetailAchievementView: UIView {
     }
     
     func cancelDownloadImage() {
-        imageView.jf.cancelDownloadImage()
+        imageView.jk.cancelDownloadImage()
     }
 }
 
@@ -157,8 +163,8 @@ private extension DetailAchievementView {
         scrollView.addSubview(bodyTextView)
         bodyTextView.atl
             .top(equalTo: bodyTitleLabel.bottomAnchor, constant: 10)
-            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
-            .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -20)
+            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15)
+            .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -15)
         
         // TODO: 더보기 동적 높이
         bodyTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true

@@ -148,6 +148,7 @@ private extension HomeViewModel {
             do {
                 categoryInfoState.send(.loading)
                 let category = try await fetchCategoryUseCase.execute(categoryId: categoryId)
+                currentCategory = category
                 categoryInfoState.send(.success(category: category))
             } catch {
                 categoryInfoState.send(.failed(message: error.localizedDescription))
@@ -270,7 +271,7 @@ private extension HomeViewModel {
         }
         
         nextAchievementTask?.cancel()
-        nextAchievementTask = Task {
+        nextAchievementTask = Task(priority: .background) {
             do {
                 achievementListState = .loading
                 let achievementListItem = try await fetchAchievementListUseCase.execute(requestValue: requestValue)

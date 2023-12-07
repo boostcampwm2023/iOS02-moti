@@ -61,6 +61,7 @@ final class GroupDetailAchievementView: UIView {
     private let bodyTextView: UITextView = {
         let textView = UITextView()
         textView.font = .medium
+        textView.backgroundColor = .motiBackground
         return textView
     }()
     
@@ -81,10 +82,14 @@ final class GroupDetailAchievementView: UIView {
         titleLabel.text = achievement.title
         categoryLabel.text = achievement.category?.name
         if let url = achievement.imageURL {
-            imageView.jf.setImage(with: url)
+            imageView.jk.setImage(with: url, imageType: .original)
         }
         
-        bodyTextView.text = achievement.body
+        if let body = achievement.body, !body.isEmpty {
+            bodyTextView.text = body
+        } else {
+            bodyTextView.text = "없음"
+        }
         
         let continued = achievement.category?.continued ?? 0
         infoView.configure(items: [
@@ -105,7 +110,7 @@ final class GroupDetailAchievementView: UIView {
     }
     
     func cancelDownloadImage() {
-        imageView.jf.cancelDownloadImage()
+        imageView.jk.cancelDownloadImage()
     }
     
     /// 기본 이모지 설정
@@ -218,8 +223,8 @@ private extension GroupDetailAchievementView {
         scrollView.addSubview(bodyTextView)
         bodyTextView.atl
             .top(equalTo: bodyTitleLabel.bottomAnchor, constant: 10)
-            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
-            .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -20)
+            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15)
+            .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -15)
         
         // TODO: 더보기 동적 높이
         bodyTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
