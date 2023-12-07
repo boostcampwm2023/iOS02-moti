@@ -26,6 +26,7 @@
 		208B25FC2AFBC1FC00B017BE /* Data */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Data; sourceTree = "<group>"; };
 		20CC16852AFB72FE001E7ECE /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		9B5213892AFB63F100A8ED7E /* moti.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = moti.entitlements; sourceTree = "<group>"; };
+		9B7EBFEA2B21BBD4005ABA63 /* JKImageCache */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = JKImageCache; sourceTree = "<group>"; };
 		9BBD72512B01FE9C00148175 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
 		9BBD72572B0201FC00148175 /* Core */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Core; sourceTree = "<group>"; };
 		9BDADD452AFCB72800D08D9C /* Design */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Design; sourceTree = "<group>"; };
@@ -87,6 +88,7 @@
 		9BDD6D4C2AFB303200B65102 /* moti */ = {
 			isa = PBXGroup;
 			children = (
+				9B7EBFEA2B21BBD4005ABA63 /* JKImageCache */,
 				9B5213892AFB63F100A8ED7E /* moti.entitlements */,
 				9BBD72572B0201FC00148175 /* Core */,
 				208B25FB2AFBC1C100B017BE /* Application */,
