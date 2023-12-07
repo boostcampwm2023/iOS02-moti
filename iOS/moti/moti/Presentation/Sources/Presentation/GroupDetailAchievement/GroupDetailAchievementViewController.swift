@@ -43,10 +43,16 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         
         bind()
         viewModel.action(.launch)
-        
-        timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
-            guard let self else { return }
-            viewModel.action(.fetchEmojis)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        // 화면에 보이면 이모지 polling
+        if timer == nil {
+            timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+                guard let self else { return }
+                viewModel.action(.fetchEmojis)
+            }
         }
     }
     
@@ -54,6 +60,7 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         super.viewDidDisappear(animated)
         layoutView.cancelDownloadImage()
         timer?.invalidate()
+        timer = nil
     }
     
     // MARK: - Methods
