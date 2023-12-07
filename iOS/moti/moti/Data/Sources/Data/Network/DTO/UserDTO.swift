@@ -16,7 +16,7 @@ struct UserTokenDTO: Codable {
 
 struct UserDTO: Codable {
     let userCode: String?
-    let avatarURL: URL?
+    let avatarUrl: URL?
 }
 
 extension UserToken {
@@ -30,6 +30,6 @@ extension UserToken {
 
 extension User {
     init(dto: UserDTO) {
-        self.init(code: dto.userCode ?? "", avatarURL: dto.avatarURL)
+        self.init(code: dto.userCode ?? "", avatarURL: dto.avatarUrl)
     }
 }
