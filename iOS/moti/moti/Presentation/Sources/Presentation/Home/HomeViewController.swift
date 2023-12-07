@@ -455,6 +455,7 @@ private extension HomeViewController {
                 case .success(let category):
                     layoutView.updateAchievementHeader(with: category)
                 case .failed(let message):
+                    Logger.error("카테고리 단일 조회 에러: \(message)")
                     showErrorAlert(message: message)
                 }
             }
