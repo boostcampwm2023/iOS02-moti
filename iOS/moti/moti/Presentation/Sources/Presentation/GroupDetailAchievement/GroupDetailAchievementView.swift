@@ -81,7 +81,7 @@ final class GroupDetailAchievementView: UIView {
         titleLabel.text = achievement.title
         categoryLabel.text = achievement.category?.name
         if let url = achievement.imageURL {
-            imageView.jf.setImage(with: url)
+            imageView.jk.setImage(with: url, imageType: .original)
         }
         
         bodyTextView.text = achievement.body
@@ -105,7 +105,7 @@ final class GroupDetailAchievementView: UIView {
     }
     
     func cancelDownloadImage() {
-        imageView.jf.cancelDownloadImage()
+        imageView.jk.cancelDownloadImage()
     }
     
     /// 기본 이모지 설정

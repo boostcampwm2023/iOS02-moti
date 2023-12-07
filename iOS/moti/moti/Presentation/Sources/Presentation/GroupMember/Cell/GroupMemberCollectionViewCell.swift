@@ -83,7 +83,7 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     // MARK: - Methods
     func configureForMember(with groupMember: GroupMember) {
         if let url = groupMember.user.avatarURL {
-            iconImageView.jf.setImage(with: url)
+            iconImageView.jk.setImage(with: url)
         }
         userCodeLabel.text = "@" + groupMember.user.code
         lastChallengedLabel.text = groupMember.lastChallenged?.convertStringyyyy_MM_dd() ?? "없음"
@@ -125,7 +125,7 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     }
     
     func cancelDownloadImage() {
-        iconImageView.jf.cancelDownloadImage()
+        iconImageView.jk.cancelDownloadImage()
     }
 }
 

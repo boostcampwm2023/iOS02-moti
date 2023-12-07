@@ -9,6 +9,7 @@ import UIKit
 import Design
 import Domain
 import Data
+import JKImageCache
 
 final class DetailAchievementView: UIView {
     
@@ -73,7 +74,7 @@ final class DetailAchievementView: UIView {
         titleLabel.text = achievement.title
         categoryLabel.text = achievement.category?.name
         if let url = achievement.imageURL {
-            imageView.jf.setImage(with: url)
+            imageView.jk.setImage(with: url, imageType: .original)
         }
         
         bodyTextView.text = achievement.body
@@ -94,7 +95,7 @@ final class DetailAchievementView: UIView {
     }
     
     func cancelDownloadImage() {
-        imageView.jf.cancelDownloadImage()
+        imageView.jk.cancelDownloadImage()
     }
 }
 

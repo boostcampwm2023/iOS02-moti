@@ -21,11 +21,6 @@ extension JKImageCacheWrapper where Base: UIImageView {
     }
     
     /// URL을 이용해 Downsampling 이미지 설정
-    /// - Parameters:
-    ///   - url: 이미지 URL
-    ///   - placeHolder: 다운로드 지연 시 보여줄 placeHolder 이미지
-    ///   - waitPlaceHolderTime: placeHolder 대기 시간
-    ///   - options: 적용할 JFOption들
     public func setImage(
         with url: URL,
         imageType: JKImageType = .thumbnail,
@@ -45,31 +40,22 @@ extension JKImageCacheWrapper where Base: UIImageView {
             }
             defer { timer?.invalidate() }
 
-            let key = url.absoluteString + "-" + imageType.key
-
-            guard let imageData = await JKImageCache.shared.fetchImageData(from: url, imageType: imageType) else {
-                print("JK 이미지 fetch 실패")
+            guard let imageData = await JKImageCache.shared.fetchImageData(
+                from: url,
+                imageType: imageType,
+                imageViewSize: base.frame.size,
+                downsamplingScale: downsamplingScale
+            ) else {
                 updateImage(nil)
                 return
             }
+            
             guard let downsampledImage = await imageData
                 .downsampling(to: base.frame.size, scale: downsamplingScale) else {
-                print("JK 다운샘플링 실패")
                 updateImage(imageData.convertToImage())
                 return
             }
 
-            // 썸네일 이미지만 메모리 캐시에 저장
-            if imageType == .thumbnail,
-               let downsampledData = downsampledImage.jpegData(compressionQuality: 1.0) {
-                let cacheItem = JKImageCache.ImageCacheItem(data: downsampledData, size: .Byte(downsampledData.count))
-                try? JKImageCache.shared.memoryCache.saveCache(key: key, data: cacheItem)
-            }
-    
-            // 원본 이미지를 디스크 캐시에 저장
-            let cacheItem = JKImageCache.ImageCacheItem(data: imageData, size: .Byte(imageData.count))
-            try? JKImageCache.shared.diskCache.saveCache(key: key, data: cacheItem)
-            
             updateImage(downsampledImage)
         }
     }
