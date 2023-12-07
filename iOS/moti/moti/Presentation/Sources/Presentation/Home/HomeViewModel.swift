@@ -132,6 +132,9 @@ private extension HomeViewModel {
         Task {
             do {
                 categories = try await fetchCategoryListUseCase.execute()
+                if let firstCategory = categories.first {
+                    categoryInfoState.send(.success(category: firstCategory))
+                }
                 categoryListState = .finish
             } catch {
                 categoryListState = .error(message: error.localizedDescription)
