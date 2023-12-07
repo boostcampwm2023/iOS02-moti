@@ -101,7 +101,7 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
                     cell.showSkeleton()
                 } else {
                     cell.hideSkeleton()
-                    cell.configure(imageURL: item.imageURL)
+                    cell.configure(imageURL: item.imageURL, iconImageURL: self.viewModel.group.avatarUrl)
                 }
                 
                 return cell

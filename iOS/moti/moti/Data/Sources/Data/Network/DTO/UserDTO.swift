@@ -17,11 +17,6 @@ struct UserTokenDTO: Codable {
 struct UserDTO: Codable {
     let userCode: String?
     let avatarURL: URL?
-    
-    enum CodingKeys: String, CodingKey {
-        case userCode = "userCode"
-        case avatarURL = "avatar_url"
-    }
 }
 
 extension UserToken {

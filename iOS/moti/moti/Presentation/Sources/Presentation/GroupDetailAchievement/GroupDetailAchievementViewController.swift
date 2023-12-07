@@ -24,6 +24,7 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
 
     private let viewModel: GroupDetailAchievementViewModel
     private var cancellables: Set<AnyCancellable> = []
+    private var timer: Timer?
     
     // MARK: - Init
     init(viewModel: GroupDetailAchievementViewModel) {
@@ -42,11 +43,17 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         
         bind()
         viewModel.action(.launch)
+        
+        timer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
+            guard let self else { return }
+            viewModel.action(.fetchEmojis)
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         layoutView.cancelDownloadImage()
+        timer?.invalidate()
     }
     
     // MARK: - Methods
@@ -97,12 +104,12 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         // 작성자가 아닌 유저에게만 표시
         let blockingAchievementAction = UIAction(title: "도전기록 차단", attributes: .destructive, handler: { _ in
             self.viewModel.action(.blockingAchievement)
-            self.coordinator?.finish()
+            self.delegate?.blockingAchievementMenuDidClicked(achievementId: self.viewModel.achievement.id)
         })
         // 작성자가 아닌 유저에게만 표시
         let blockingUserAction = UIAction(title: "사용자 차단", attributes: .destructive, handler: { _ in
             self.viewModel.action(.blockingUser)
-            self.coordinator?.finish()
+            self.delegate?.blockingUserMenuDidClicked(userCode: self.viewModel.achievement.userCode)
         })
         
         var children: [UIAction] = []

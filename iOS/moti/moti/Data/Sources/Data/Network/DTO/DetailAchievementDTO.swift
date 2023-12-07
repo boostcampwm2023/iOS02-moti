@@ -44,7 +44,7 @@ extension Achievement {
             imageURL: dto.imageUrl,
             body: dto.content,
             date: dto.createdAt ?? .now,
-            userCode: dto.userCode
+            user: User(code: dto.userCode ?? "", avatarURL: nil)
         )
     }
 }

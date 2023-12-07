@@ -26,6 +26,7 @@ public struct Achievement: Hashable {
     public let imageURL: URL?
     public var body: String?
     public let date: Date?
+    public let user: User?
     public let userCode: String
     
     public init(
@@ -35,7 +36,7 @@ public struct Achievement: Hashable {
         imageURL: URL?,
         body: String?,
         date: Date,
-        userCode: String? = nil
+        user: User? = nil
     ) {
         self.id = id
         self.category = category
@@ -44,10 +45,14 @@ public struct Achievement: Hashable {
         self.imageURL = imageURL
         self.body = body
         self.date = date
-        if let userCode = userCode {
-            self.userCode = userCode
+        if let user = user {
+            self.user = user
+            self.userCode = user.code
         } else {
-            self.userCode = UserDefaults.standard.readString(key: .userCode) ?? ""
+            let myUserId = UserDefaults.standard.readString(key: .userCode) ?? ""
+            let myAvatarUrlString = UserDefaults.standard.readString(key: .avatarUrlString) ?? ""
+            self.user = User(code: myUserId, avatarURL: URL(string: myAvatarUrlString))
+            self.userCode = myUserId
         }
     }
     
@@ -56,7 +61,7 @@ public struct Achievement: Hashable {
         title: String,
         imageURL: URL?,
         categoryId: Int,
-        userCode: String? = nil
+        user: User? = nil
     ) {
         self.id = id
         self.category = nil
@@ -65,16 +70,20 @@ public struct Achievement: Hashable {
         self.imageURL = imageURL
         self.body = nil
         self.date = nil
-        if let userCode = userCode {
-            self.userCode = userCode
+        if let user = user {
+            self.user = user
+            self.userCode = user.code
         } else {
-            self.userCode = UserDefaults.standard.readString(key: .userCode) ?? ""
+            let myUserId = UserDefaults.standard.readString(key: .userCode) ?? ""
+            let myAvatarUrlString = UserDefaults.standard.readString(key: .avatarUrlString) ?? ""
+            self.user = User(code: myUserId, avatarURL: URL(string: myAvatarUrlString))
+            self.userCode = myUserId
         }
     }
 }
 
 public extension Achievement {
     static func makeSkeleton() -> Achievement {
-        return .init(id: -(UUID().hashValue), title: "", imageURL: nil, categoryId: 0, userCode: "")
+        return .init(id: -(UUID().hashValue), title: "", imageURL: nil, categoryId: 0, user: nil)
     }
 }

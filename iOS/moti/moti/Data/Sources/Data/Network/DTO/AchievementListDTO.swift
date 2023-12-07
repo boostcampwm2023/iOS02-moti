@@ -32,7 +32,7 @@ struct AchievementSimpleDTO: Codable {
     let thumbnailUrl: URL?
     let title: String
     let categoryId: Int
-    let userCode: String?
+    let user: UserDTO?
 }
 
 extension Achievement {
@@ -42,7 +42,7 @@ extension Achievement {
             title: dto.title,
             imageURL: dto.thumbnailUrl,
             categoryId: dto.categoryId,
-            userCode: dto.userCode
+            user: dto.user != nil ? User(dto: dto.user!) : User()
         )
     }
 }
