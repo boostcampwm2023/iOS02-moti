@@ -46,7 +46,6 @@ final class AchievementCollectionViewCell: UICollectionViewCell {
         if let imageURL {
             imageView
                 .jk.setImage(with: imageURL, placeHolder: MotiImage.skeleton)
-//                .jf.setImage(with: imageURL, placeHolder: MotiImage.skeleton)
         } else {
             imageView.image = MotiImage.skeleton
             imageView.backgroundColor = .primaryDarkGray

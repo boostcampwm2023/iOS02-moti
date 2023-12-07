@@ -11,7 +11,7 @@ import Core
 import Combine
 import Domain
 
-final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndicator {
+final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndicator, VibrationViewController {
     
     // MARK: - Properties
     weak var coordinator: GroupHomeCoordinator?
@@ -279,6 +279,8 @@ extension GroupHomeViewController: UICollectionViewDelegate {
     }
     
     private func categoryCellDidSelected(cell: CategoryCollectionViewCell, row: Int) {
+        vibration(.selection)
+        
         // 눌렸을 때 Bounce 적용
         // Highlight에만 적용하면 Select에서는 적용이 안 되서 별도로 적용함
         UIView.animate(withDuration: 0.08, animations: {

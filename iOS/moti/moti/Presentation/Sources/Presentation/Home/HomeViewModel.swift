@@ -144,15 +144,11 @@ private extension HomeViewModel {
     
     /// 카테고리 단일 정보를 가져오는 액션
     func fetchCategory(categoryId: Int) {
-        guard currentCategory?.id != categoryId else {
-            Logger.debug("현재 카테고리입니다.")
-            return
-        }
-        
         Task {
             do {
                 categoryInfoState.send(.loading)
                 let category = try await fetchCategoryUseCase.execute(categoryId: categoryId)
+                currentCategory = category
                 categoryInfoState.send(.success(category: category))
             } catch {
                 categoryInfoState.send(.failed(message: error.localizedDescription))

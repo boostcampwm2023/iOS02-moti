@@ -9,7 +9,7 @@ import UIKit
 import Design
 import Domain
 
-final class CelebrateViewController: UIViewController {
+final class CelebrateViewController: UIViewController, VibrationViewController {
     
     // MARK: - Properties
     private let achievement: Achievement
@@ -42,7 +42,7 @@ final class CelebrateViewController: UIViewController {
         label.numberOfLines = 0
         label.textAlignment = .center
         label.textColor = .white
-        label.transform = CGAffineTransform(scaleX: 0.1, y: 0.1)
+        label.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
         return label
     }()
     private lazy var guideLabel = {
@@ -81,6 +81,7 @@ final class CelebrateViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        vibration(.heavy)
         UIView.animate(withDuration: 0.1, delay: 0, animations: {
             self.titleLabel.transform = .identity
         })

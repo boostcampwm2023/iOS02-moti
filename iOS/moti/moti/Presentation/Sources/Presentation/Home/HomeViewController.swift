@@ -16,7 +16,7 @@ protocol HomeViewControllerDelegate: AnyObject {
     func editMenuDidClicked(achievement: Achievement)
 }
 
-final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator {
+final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, VibrationViewController {
 
     // MARK: - Properties
     weak var coordinator: HomeCoordinator?
@@ -254,6 +254,8 @@ extension HomeViewController: UICollectionViewDelegate {
     }
     
     private func categoryCellDidSelected(cell: CategoryCollectionViewCell, row: Int) {
+        vibration(.selection)
+        
         // 눌렸을 때 Bounce 적용
         // Highlight에만 적용하면 Select에서는 적용이 안 되서 별도로 적용함
         UIView.animate(withDuration: 0.08, animations: {
