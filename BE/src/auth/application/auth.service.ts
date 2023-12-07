@@ -14,6 +14,7 @@ import { RefreshAuthResponseDto } from '../dto/refresh-auth-response.dto';
 import { RefreshTokenNotFoundException } from '../exception/refresh-token-not-found.exception';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
+import { AvatarHolder } from './avatar.holder';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +24,7 @@ export class AuthService {
     private readonly oauthHandler: OauthHandler,
     private readonly userCodeGenerator: UserCodeGenerator,
     private readonly jwtUtils: JwtUtils,
+    private readonly avatarHolder: AvatarHolder,
   ) {}
 
   @Transactional()
@@ -56,6 +58,7 @@ export class AuthService {
     const newUser = User.from(userIdentifier);
     const userCode = await this.userCodeGenerator.generate();
     newUser.assignUserCode(userCode);
+    newUser.assignAvatar(this.avatarHolder.getUrl());
     return await this.usersRepository.saveUser(newUser);
   }
 

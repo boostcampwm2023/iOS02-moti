@@ -66,6 +66,7 @@ jobs:
           FILESTORE_IMAGE_PREFIX: ${{ secrets.FILESTORE_IMAGE_PREFIX }}
           FILESTORE_THUMBNAIL_PREFIX: ${{ secrets.FILESTORE_THUMBNAIL_PREFIX }}
           GROUP_AVATAR_URLS: ${{ secrets.GROUP_AVATAR_URLS }}
+          USER_AVATAR_URLS: ${{ secrets.USER_AVATAR_URLS }}
           EOF
 
       - name: Install dependencies

@@ -470,7 +470,8 @@ describe('GroupRepository Test', () => {
       // then
       expect(findAll.length).toEqual(30);
       expect(findAll[0].id).toEqual(last.id);
-      expect(findAll[0].userCode).toEqual(last.user.userCode);
+      expect(findAll[0].user.userCode).toEqual(last.user.userCode);
+      expect(findAll[0].user.avatarUrl).toEqual(last.user.avatarUrl);
       expect(findAll[0].title).toEqual(last.title);
       expect(findAll[0].categoryId).toEqual(last.groupCategory.id);
       expect(findAll[0].thumbnailUrl).toEqual(last.image.thumbnailUrl);

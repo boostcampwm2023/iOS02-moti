@@ -50,8 +50,9 @@ export const configServiceModuleOptions = {
     }),
 
     GROUP_AVATAR_URLS: Joi.string().required(),
+    USER_AVATAR_URLS: Joi.string().required(),
 
-    REDIS_HOST: Joi.number().when('NODE_ENV', {
+    REDIS_HOST: Joi.string().when('NODE_ENV', {
       is: 'production',
       then: Joi.required(),
       otherwise: Joi.optional(),

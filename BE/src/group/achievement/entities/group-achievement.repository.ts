@@ -125,7 +125,7 @@ export class GroupAchievementRepository extends TransactionalRepository<GroupAch
         'user',
         'group_achievement.user_id = user.id',
       )
-      .addSelect(['user.user_code as userCode'])
+      .addSelect(['user.user_code as userCode', 'user.avatar_url as avatarUrl'])
 
       .leftJoin('group_achievement.groupCategory', 'category')
       .addSelect('category.id as categoryId')
