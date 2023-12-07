@@ -37,7 +37,6 @@ public struct UpdateAchievementUseCase {
     }
     
     /// 도전 기록 정보를 업데이트 합니다
-    /// 카테고리 변경에 따라 CategoryStorage의 카운팅도 진행됩니다.
     public func execute(requestValue: UpdateAchievementRequestValue) async throws -> Bool {
         return try await repository.updateAchievement(requestValue: requestValue)
     }

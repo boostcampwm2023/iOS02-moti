@@ -13,7 +13,7 @@ public protocol AchievementRepositoryProtocol {
     ) async throws -> AchievementListItem
     
     func deleteAchievement(
-        requestValue: DeleteAchievementRequestValue
+        achievementId: Int
     ) async throws -> Bool
     
     func fetchDetailAchievement(

@@ -20,7 +20,7 @@ enum MotiAPI: EndpointProtocol {
     case fetchCategoryList
     case addCategory(requestValue: AddCategoryRequestValue)
     case fetchDetailAchievement(requestValue: FetchDetailAchievementRequestValue)
-    case deleteAchievement(requestValue: DeleteAchievementRequestValue)
+    case deleteAchievement(achievementId: Int)
     case updateAchievement(requestValue: UpdateAchievementRequestValue)
     case postAchievement(requestValue: PostAchievementRequestValue)
     // 그룹
@@ -31,7 +31,7 @@ enum MotiAPI: EndpointProtocol {
     case fetchGroupCategoryList(groupId: Int)
     case addGroupCategory(requestValue: AddCategoryRequestValue, groupId: Int)
     case fetchGroupDetailAchievement(requestValue: FetchDetailAchievementRequestValue, groupId: Int)
-    case deleteGroupAchievement(requestValue: DeleteAchievementRequestValue, groupId: Int)
+    case deleteGroupAchievement(achievementId: Int, groupId: Int)
     case updateGroupAchievement(requestValue: UpdateAchievementRequestValue, groupId: Int)
     case postGroupAchievement(requestValue: PostAchievementRequestValue, groupId: Int)
     case fetchGroupMemberList(groupId: Int)
@@ -70,7 +70,7 @@ extension MotiAPI {
         case .addCategory: return "/categories"
         case .fetchDetailAchievement(let requestValue): return "/achievements/\(requestValue.id)"
         case .saveImage: return "/images"
-        case .deleteAchievement(let requestValue): return "/achievements/\(requestValue.id)"
+        case .deleteAchievement(let achievementId): return "/achievements/\(achievementId)"
         case .updateAchievement(let requestValue): return "/achievements/\(requestValue.id)"
         case .postAchievement: return "/achievements"
         case .fetchGroupList: return "/groups"
@@ -85,8 +85,8 @@ extension MotiAPI {
             return "/groups/\(groupId)/categories"
         case .fetchGroupDetailAchievement(let requestValue, let groupId):
             return "/groups/\(groupId)/achievements/\(requestValue.id)"
-        case .deleteGroupAchievement(let requestValue, let groupId):
-            return "/groups/\(groupId)/achievements/\(requestValue.id)"
+        case .deleteGroupAchievement(let achievementId, let groupId):
+            return "/groups/\(groupId)/achievements/\(achievementId)"
         case .updateGroupAchievement(let requestValue, let groupId):
             return "/groups/\(groupId)/achievements/\(requestValue.id)"
         case .postGroupAchievement(_, let groupId):

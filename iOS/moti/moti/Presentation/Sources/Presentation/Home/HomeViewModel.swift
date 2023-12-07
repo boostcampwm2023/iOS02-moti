@@ -228,8 +228,7 @@ private extension HomeViewModel {
         Task {
             do {
                 deleteAchievementState.send(.loading)
-                let requestValue = DeleteAchievementRequestValue(id: achievementId)
-                let isSuccess = try await deleteAchievementUseCase.execute(requestValue: requestValue)
+                let isSuccess = try await deleteAchievementUseCase.execute(achievementId: achievementId)
                 
                 if isSuccess {
                     deleteAchievementState.send(.success)

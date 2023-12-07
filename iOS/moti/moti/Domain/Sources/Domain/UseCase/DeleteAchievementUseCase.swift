@@ -7,14 +7,6 @@
 
 import Foundation
 
-public struct DeleteAchievementRequestValue: RequestValue {
-    public let id: Int
-    
-    public init(id: Int) {
-        self.id = id
-    }
-}
-
 public struct DeleteAchievementUseCase {
     private let repository: AchievementRepositoryProtocol
     
@@ -22,7 +14,7 @@ public struct DeleteAchievementUseCase {
         self.repository = repository
     }
     
-    public func execute(requestValue: DeleteAchievementRequestValue) async throws -> Bool {
-        return try await repository.deleteAchievement(requestValue: requestValue)
+    public func execute(achievementId: Int) async throws -> Bool {
+        return try await repository.deleteAchievement(achievementId: achievementId)
     }
 }
