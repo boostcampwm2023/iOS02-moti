@@ -11,12 +11,16 @@ import { UserRepository } from '../users/entities/user.repository';
 import { UserCodeGenerator } from './application/user-code-generator';
 import { UsersModule } from '../users/users.module';
 import { AccessTokenGuard } from './guard/access-token.guard';
+import { CacheModule } from '@nestjs/cache-manager';
+import { redisModuleOptions } from '../config/redis';
+import type { RedisClientOptions } from 'redis';
 
 @Global()
 @Module({
   imports: [
     HttpModule,
     JwtModule.register({}),
+    CacheModule.registerAsync<RedisClientOptions>(redisModuleOptions),
     CustomTypeOrmModule.forCustomRepository([UserRepository]),
     forwardRef(() => UsersModule),
   ],
