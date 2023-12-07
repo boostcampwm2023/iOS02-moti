@@ -50,5 +50,11 @@ export const configServiceModuleOptions = {
     }),
 
     GROUP_AVATAR_URLS: Joi.string().required(),
+
+    CACHE_TTL: Joi.number().when('NODE_ENV', {
+      is: 'production',
+      then: Joi.required(),
+      otherwise: Joi.optional(),
+    }),
   }),
 };
