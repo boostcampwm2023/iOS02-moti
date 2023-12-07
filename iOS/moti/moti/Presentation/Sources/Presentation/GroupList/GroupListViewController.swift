@@ -9,6 +9,7 @@ import UIKit
 import Core
 import Design
 import Combine
+import JKImageCache
 
 final class GroupListViewController: BaseViewController<GroupListView> {
 
@@ -114,17 +115,25 @@ private extension GroupListViewController {
             .width(constant: 60)
         navigationItem.leftBarButtonItem = leftItem
 
-        // 오른쪽 프로필 버튼
-        let profileImage = UIImage(
-            systemName: "person.crop.circle.fill",
-            withConfiguration: UIImage.SymbolConfiguration(font: .large)
-        )
-        let profileButton = UIButton(type: .system)
-        profileButton.addTarget(self, action: #selector(showUserCode), for: .touchUpInside)
-        profileButton.setImage(profileImage, for: .normal)
-        profileButton.contentMode = .scaleAspectFit
-        profileButton.tintColor = .primaryDarkGray
-        let profileItem = UIBarButtonItem(customView: profileButton)
+        // 프로필 버튼
+        let avatarItemSize: CGFloat = 34
+        let avatarImageView = UIImageView()
+        avatarImageView.contentMode = .scaleAspectFit
+        avatarImageView.clipsToBounds = true
+        avatarImageView.layer.cornerRadius = avatarItemSize / 2
+        if let myAvatarURLString = UserDefaults.standard.readString(key: .myAvatarUrlString),
+           let myAvatarURL = URL(string: myAvatarURLString) {
+            avatarImageView.jk.setImage(with: myAvatarURL)
+        } else {
+            avatarImageView.backgroundColor = .primaryGray
+        }
+        let avatarImageTapGesture = UITapGestureRecognizer(target: self, action: #selector(showUserCode))
+        avatarImageView.isUserInteractionEnabled = true
+        avatarImageView.addGestureRecognizer(avatarImageTapGesture)
+        
+        let profileItem = UIBarButtonItem(customView: avatarImageView)
+        profileItem.customView?.atl
+            .size(width: avatarItemSize, height: avatarItemSize)
         
         let createGroupItem = UIBarButtonItem(
             title: "생성", style: .plain, target: self,
@@ -135,7 +144,7 @@ private extension GroupListViewController {
     }
     
     @objc func showUserCode() {
-        if let userCode = UserDefaults.standard.readString(key: .userCode) {
+        if let userCode = UserDefaults.standard.readString(key: .myUserCode) {
             showOneButtonAlert(title: "유저 코드", message: userCode)
         }
     }

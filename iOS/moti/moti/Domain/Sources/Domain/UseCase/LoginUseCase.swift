@@ -43,6 +43,6 @@ public struct LoginUseCase {
             keychainStorage.write(key: .refreshToken, data: refreshToken)
         }
         
-        UserDefaults.standard.saveString(key: .userCode, string: userToken.user.code)
+        UserDefaults.standard.saveString(key: .myUserCode, string: userToken.user.code)
     }
 }

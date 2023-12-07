@@ -59,7 +59,7 @@ final class AchievementCollectionViewCell: UICollectionViewCell {
         imageView.image = nil
     }
     
-    func configure(imageURL: URL?, iconImageURL: URL? = nil) {
+    func configure(imageURL: URL?, avatarURL: URL? = nil) {
         if let imageURL {
             imageView.jk.setImage(with: imageURL, placeHolder: MotiImage.skeleton, downsamplingScale: 1.5)
         } else {
@@ -67,9 +67,9 @@ final class AchievementCollectionViewCell: UICollectionViewCell {
             imageView.backgroundColor = .primaryDarkGray
         }
         
-        if let iconImageURL {
+        if let avatarURL {
             iconImageView.isHidden = false
-            iconImageView.jk.setImage(with: iconImageURL, placeHolder: MotiImage.skeleton, downsamplingScale: 1.5)
+            iconImageView.jk.setImage(with: avatarURL, placeHolder: MotiImage.skeleton, downsamplingScale: 1.5)
         }
     }
     

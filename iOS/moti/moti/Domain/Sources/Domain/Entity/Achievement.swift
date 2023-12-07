@@ -49,8 +49,8 @@ public struct Achievement: Hashable {
             self.user = user
             self.userCode = user.code
         } else {
-            let myUserId = UserDefaults.standard.readString(key: .userCode) ?? ""
-            let myAvatarUrlString = UserDefaults.standard.readString(key: .avatarUrlString) ?? ""
+            let myUserId = UserDefaults.standard.readString(key: .myUserCode) ?? ""
+            let myAvatarUrlString = UserDefaults.standard.readString(key: .myAvatarUrlString) ?? ""
             self.user = User(code: myUserId, avatarURL: URL(string: myAvatarUrlString))
             self.userCode = myUserId
         }
@@ -74,8 +74,8 @@ public struct Achievement: Hashable {
             self.user = user
             self.userCode = user.code
         } else {
-            let myUserId = UserDefaults.standard.readString(key: .userCode) ?? ""
-            let myAvatarUrlString = UserDefaults.standard.readString(key: .avatarUrlString) ?? ""
+            let myUserId = UserDefaults.standard.readString(key: .myUserCode) ?? ""
+            let myAvatarUrlString = UserDefaults.standard.readString(key: .myAvatarUrlString) ?? ""
             self.user = User(code: myUserId, avatarURL: URL(string: myAvatarUrlString))
             self.userCode = myUserId
         }
