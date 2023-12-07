@@ -55,6 +55,27 @@ export class GroupAchievementEmojiService {
     }
   }
 
+  @Transactional({ readonly: true })
+  async getGroupAchievementEmojiCount(user: User, groupAchievementId: number) {
+    return [
+      await this.groupAchievementEmojiRepository.findGroupAchievementEmojiMetaData(
+        user,
+        groupAchievementId,
+        Emoji.LIKE,
+      ),
+      await this.groupAchievementEmojiRepository.findGroupAchievementEmojiMetaData(
+        user,
+        groupAchievementId,
+        Emoji.FIRE,
+      ),
+      await this.groupAchievementEmojiRepository.findGroupAchievementEmojiMetaData(
+        user,
+        groupAchievementId,
+        Emoji.SMILE,
+      ),
+    ];
+  }
+
   private async getGroupAchievement(groupId: number, achievementId: number) {
     const grouopAchievement =
       await this.groupAchievementRepository.findOneByIdAndGroupId(
