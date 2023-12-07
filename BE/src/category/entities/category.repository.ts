@@ -5,6 +5,8 @@ import { TransactionalRepository } from '../../config/transaction-manager/transa
 import { User } from '../../users/domain/user.domain';
 import { ICategoryMetaData } from '../index';
 import { CategoryMetaData } from '../dto/category-metadata';
+import { AchievementEntity } from '../../achievement/entities/achievement.entity';
+import { Repository } from 'typeorm';
 
 @CustomRepository(CategoryEntity)
 export class CategoryRepository extends TransactionalRepository<CategoryEntity> {
@@ -19,10 +21,26 @@ export class CategoryRepository extends TransactionalRepository<CategoryEntity> 
     return category?.toModel();
   }
 
-  async findByUserWithCount(user: User): Promise<CategoryMetaData[]> {
+  async findCategoriesByUser(user: User): Promise<CategoryMetaData[]> {
+    const notSpecifiedCategoryMetaData =
+      await this.findNotSpecifiedByUserAndId(user);
+    const categoryMetaData = await this.findAllByUserWithCount(user);
+    return [notSpecifiedCategoryMetaData, ...categoryMetaData];
+  }
+
+  async findCategory(
+    user: User,
+    categoryId: number,
+  ): Promise<CategoryMetaData> {
+    if (categoryId === -1) return this.findNotSpecifiedByUserAndId(user);
+    if (categoryId === 0) return this.findTotalCategoryMetadata(user);
+    return this.findByUserWithCount(user, categoryId);
+  }
+
+  async findAllByUserWithCount(user: User): Promise<CategoryMetaData[]> {
     const categories = await this.repository
       .createQueryBuilder('category')
-      .select('category.id', 'categoryId')
+      .select('category.id as categoryId')
       .addSelect('category.name', 'categoryName')
       .addSelect('MAX(achievement.created_at)', 'insertedAt')
       .addSelect('COUNT(achievement.id)', 'achievementCount')
@@ -33,5 +51,67 @@ export class CategoryRepository extends TransactionalRepository<CategoryEntity> 
       .getRawMany<ICategoryMetaData>();
 
     return categories.map((category) => new CategoryMetaData(category));
+  }
+
+  async findByUserWithCount(
+    user: User,
+    categoryId: number,
+  ): Promise<CategoryMetaData> {
+    const category = await this.repository
+      .createQueryBuilder('category')
+      .select('category.id as categoryId')
+      .addSelect('category.name', 'categoryName')
+      .addSelect('MAX(achievement.created_at)', 'insertedAt')
+      .addSelect('COUNT(achievement.id)', 'achievementCount')
+      .leftJoin('category.achievements', 'achievement')
+      .where('category.user_id = :user', { user: user.id })
+      .andWhere('category.id = :categoryId', { categoryId: categoryId })
+      .orderBy('category.id', 'ASC')
+      .groupBy('category.id')
+      .getRawOne<ICategoryMetaData>();
+
+    if (!category) return null;
+    return new CategoryMetaData(category);
+  }
+
+  async findTotalCategoryMetadata(user: User): Promise<CategoryMetaData> {
+    const achievementRepository: Repository<AchievementEntity> =
+      this.repository.manager.getRepository(AchievementEntity);
+
+    const category = await achievementRepository
+      .createQueryBuilder('achievement')
+      .select('0 as categoryId')
+      .addSelect(`'전체' as categoryName`)
+      .addSelect('MAX(achievement.created_at)', 'insertedAt')
+      .addSelect('COUNT(*)', 'achievementCount')
+      .where('achievement.user_id = :user', { user: user.id })
+      .getRawOne<ICategoryMetaData>();
+
+    return new CategoryMetaData(category);
+  }
+
+  async findNotSpecifiedByUserAndId(user: User): Promise<CategoryMetaData> {
+    const achievementRepository: Repository<AchievementEntity> =
+      this.repository.manager.getRepository(AchievementEntity);
+
+    const category = await achievementRepository
+      .createQueryBuilder('achievement')
+      .select('-1 as categoryId')
+      .addSelect(`'미설정' as categoryName`)
+      .addSelect('MAX(achievement.created_at)', 'insertedAt')
+      .addSelect('COUNT(*)', 'achievementCount')
+      .where('achievement.category_id is NULL')
+      .andWhere('achievement.user_id = :user', { user: user.id })
+      .getRawOne<ICategoryMetaData>();
+
+    return new CategoryMetaData(category);
+  }
+
+  async findByIdAndUser(userId: number, id: number): Promise<Category> {
+    const categoryEntity = await this.repository.findOneBy({
+      user: { id: userId },
+      id: id,
+    });
+    return categoryEntity?.toModel();
   }
 }

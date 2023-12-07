@@ -11,7 +11,7 @@ import Combine
 import Domain
 
 protocol LoginViewControllerDelegate: AnyObject {
-    func didLogin(token: UserToken)
+    func didLogin()
 }
 
 final class LoginViewController: BaseViewController<LoginView> {
@@ -23,9 +23,18 @@ final class LoginViewController: BaseViewController<LoginView> {
     private let viewModel: LoginViewModel
     private var cancellables: Set<AnyCancellable> = []
     
+    private let alertMessage: String?
+    
     // MARK: - Init
     init(viewModel: LoginViewModel) {
         self.viewModel = viewModel
+        self.alertMessage = nil
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    init(viewModel: LoginViewModel, alertMessage: String) {
+        self.viewModel = viewModel
+        self.alertMessage = alertMessage
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -48,17 +57,27 @@ final class LoginViewController: BaseViewController<LoginView> {
         // view.window가 필요하므로 viewDidAppear에서 setup
         // viewDidLayoutSubviews부터 window가 생기지만, 한 번만 호출하기 위해 viewDidAppear에서 호출
         setupAppleLoginRequester()
+        
+        if let alertMessage = alertMessage {
+            showOneButtonAlert(message: alertMessage)
+        }
     }
     
     private func bind() {
-        viewModel.$userToken
-            .compactMap { $0 }
-            .receive(on: RunLoop.main)
-            .sink { [weak self] userToken in
+        viewModel.$loginState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
                 guard let self else { return }
-
-                delegate?.didLogin(token: userToken)
-                coordinator?.finish()
+                switch state {
+                case .none, .loading: break
+                case .success:
+                    delegate?.didLogin()
+                    coordinator?.finish()
+                case .failed:
+                    showOneButtonAlert(title: "로그인 실패", message: "다시 시도해 주세요.")
+                case .error(let message):
+                    showErrorAlert(message: message)
+                }
             }
             .store(in: &cancellables)
     }
@@ -84,9 +103,10 @@ final class LoginViewController: BaseViewController<LoginView> {
 extension LoginViewController: AppleLoginRequesterDelegate {
     func success(token: String) {
         Logger.debug("애플에서 전달된 token: \(token)")
-        viewModel.requestLogin(identityToken: token)
+        viewModel.action(.login(identityToken: token))
     }
     
     func failed(error: Error) {
+        showOneButtonAlert(title: "로그인 실패", message: "다시 시도해 주세요.")
     }
 }

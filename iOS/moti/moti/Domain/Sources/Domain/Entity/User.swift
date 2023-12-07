@@ -9,17 +9,17 @@ import Foundation
 
 public struct UserToken: Equatable {
     public let accessToken: String
-    public let refreshToken: String
+    public let refreshToken: String?
     public let user: User
     
-    public init(accessToken: String, refreshToken: String, user: User) {
+    public init(accessToken: String, refreshToken: String?, user: User) {
         self.accessToken = accessToken
         self.refreshToken = refreshToken
         self.user = user
     }
 }
 
-public struct User: Equatable {
+public struct User: Hashable {
     public let code: String
     public let avatarURL: URL?
     

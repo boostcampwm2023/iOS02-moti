@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { OauthHandler } from './oauth-handler';
 import { UserRepository } from '../../users/entities/user.repository';
 import { User } from '../../users/domain/user.domain';
@@ -11,14 +11,20 @@ import { AppleLoginResponse } from '../dto/apple-login-response.dto';
 import { UserDto } from '../../users/dto/user.dto';
 import { RefreshAuthRequestDto } from '../dto/refresh-auth-request.dto';
 import { RefreshAuthResponseDto } from '../dto/refresh-auth-response.dto';
+import { RefreshTokenNotFoundException } from '../exception/refresh-token-not-found.exception';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { AvatarHolder } from './avatar.holder';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @Inject(CACHE_MANAGER) private refreshTokenStore: Cache,
     private readonly usersRepository: UserRepository,
     private readonly oauthHandler: OauthHandler,
     private readonly userCodeGenerator: UserCodeGenerator,
     private readonly jwtUtils: JwtUtils,
+    private readonly avatarHolder: AvatarHolder,
   ) {}
 
   @Transactional()
@@ -40,6 +46,7 @@ export class AuthService {
     };
     const accessToken = this.jwtUtils.createToken(claim, now);
     const refreshToken = this.jwtUtils.createRefreshToken(claim, now);
+    await this.refreshTokenStore.set(user.userCode, refreshToken);
     return new AppleLoginResponse(
       UserDto.from(user),
       accessToken,
@@ -51,15 +58,18 @@ export class AuthService {
     const newUser = User.from(userIdentifier);
     const userCode = await this.userCodeGenerator.generate();
     newUser.assignUserCode(userCode);
+    newUser.assignAvatar(this.avatarHolder.getUrl());
     return await this.usersRepository.saveUser(newUser);
   }
 
   async refresh(user: User, refreshAuthRequestDto: RefreshAuthRequestDto) {
-    // Todo redis를 통해 refreshToken 조회해서 유효확인 로직 추가 필요
     const refreshToken = refreshAuthRequestDto.refreshToken;
+    const token = await this.refreshTokenStore.get(user.userCode);
+    if (!token) {
+      throw new RefreshTokenNotFoundException();
+    }
     this.jwtUtils.validateRefreshToken(refreshToken);
-    const payloads = this.jwtUtils.parsePayloads(refreshToken);
-    const claim: JwtClaim = { userCode: payloads.userCode };
+    const claim: JwtClaim = { userCode: user.userCode };
     const accessToken = this.jwtUtils.createToken(claim, new Date());
     return new RefreshAuthResponseDto(UserDto.from(user), accessToken);
   }

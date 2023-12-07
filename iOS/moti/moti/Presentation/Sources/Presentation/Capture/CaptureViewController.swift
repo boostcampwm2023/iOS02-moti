@@ -10,16 +10,19 @@ import Core
 import AVFoundation
 import Design
 import PhotosUI
+import Domain
+import Jeongfisher
 
 protocol CaptureViewControllerDelegate: AnyObject {
     func didCapture(image: UIImage)
 }
 
-final class CaptureViewController: BaseViewController<CaptureView> {
+final class CaptureViewController: BaseViewController<CaptureView>, VibrationViewController {
     
     // MARK: - Properties
     weak var delegate: CaptureViewControllerDelegate?
     weak var coordinator: CaptureCoordinator?
+    private let group: Group?
 
     // Capture Session
     private var isBackCamera = true
@@ -30,27 +33,32 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     // Photo Output
     private var output: AVCapturePhotoOutput?
     
+    // MARK: - Init
+    init(group: Group? = nil) {
+        self.group = group
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         addTargets()
+        checkCameraPermissions()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        startSession()
         layoutView.captureButton.isEnabled = true
-        checkCameraPermissions()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        DispatchQueue.global().async {
-            guard let session = self.session else { return }
-            if session.isRunning {
-                Logger.debug("Session Stop Running")
-                session.stopRunning()
-            }
-        }
+        stopSession()
     }
     
     // MARK: - Methods
@@ -62,7 +70,18 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     
     private func capturedPicture(image: UIImage) {
         guard let croppedImage = image.cropToSquare() else { return }
-        delegate?.didCapture(image: croppedImage)
+        
+        // 앨범에서 선택도 가능하기 때문에 해당 위치에서 다운샘플링 진행
+        let size = layoutView.preview.frame.size
+        guard let data = croppedImage.jpegData(compressionQuality: 1.0),
+              let downsampledImage = data.downsampling(to: size, scale: 3) else { return }
+        
+        #if DEBUG
+        Logger.debug("프리뷰 사이즈: \(size)")
+        Logger.debug("다운샘플링 이미지 사이즈: \(downsampledImage.size)")
+        #endif
+        
+        delegate?.didCapture(image: downsampledImage)
     }
 }
 
@@ -124,21 +143,13 @@ extension CaptureViewController {
         session.commitConfiguration()
         self.session = session
         
-        layoutView.updatePreviewLayer(session: session)
         if isBackCamera {
             layoutView.changeToBackCamera()
         } else {
             layoutView.changeToFrontCamera()
         }
         
-        DispatchQueue.global(qos: .userInteractive).async {
-            if !session.isRunning {
-                Logger.debug("Session Start Running")
-                session.startRunning()
-            } else {
-                Logger.debug("Session Already Running")
-            }
-        }
+        startSession()
     }
     
     // 후면 카메라 설정
@@ -160,14 +171,44 @@ extension CaptureViewController {
             Logger.error("전면 카메라를 추가할 수 없음")
         }
     }
+    
+    private func startSession() {
+        guard let session = session else { return }
+        
+        layoutView.updatePreviewLayer(session: session)
+        layoutView.captureButton.isEnabled = true
+        DispatchQueue.global().async {
+            if !session.isRunning {
+                Logger.debug("Session Start Running")
+                session.startRunning()
+            }
+        }
+    }
+    
+    private func stopSession() {
+        guard let session = session else { return }
+        
+        layoutView.captureButton.isEnabled = false
+        DispatchQueue.global().async {
+            if session.isRunning {
+                Logger.debug("Session Stop Running")
+                session.stopRunning()
+            }
+        }
+    }
 
     @objc private func didClickedShutterButton() {
+        vibration(.soft)
         layoutView.captureButton.isEnabled = false
         // 사진 찍기!
         #if targetEnvironment(simulator)
         // Simulator
         Logger.debug("시뮬레이터에선 카메라를 테스트할 수 없습니다. 실기기를 연결해 주세요.")
-        capturedPicture(image: MotiImage.sample1)
+        let randomImage = [
+            MotiImage.sample1, MotiImage.sample2, MotiImage.sample3,
+            MotiImage.sample4, MotiImage.sample5, MotiImage.sample6, MotiImage.sample7
+        ].randomElement()!
+        capturedPicture(image: randomImage)
         #else
         // - speed: 약간의 노이즈 감소만이 적용
         // - balanced: speed보다 약간 더 느리지만 더 나은 품질을 얻음
@@ -178,7 +219,7 @@ extension CaptureViewController {
         // 만약 사진과 비디오가 동일하게 보여야 하면 speed를 사용
     
         // Actual Device
-        let setting = AVCapturePhotoSettings()
+        let setting = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
         setting.photoQualityPrioritization = .balanced
         
         // 전면 카메라일 때 좌우반전 output 설정

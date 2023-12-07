@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "smiling-face-with-hearts_1f970.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "smiling-face-with-hearts_1f970 1.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "smiling-face-with-hearts_1f970 2.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

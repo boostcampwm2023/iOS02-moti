@@ -16,9 +16,9 @@ public struct AddCategoryRequestValue: RequestValue {
 }
 
 public struct AddCategoryUseCase {
-    private let repository: CategoryListRepositoryProtocol
+    private let repository: CategoryRepositoryProtocol
     
-    public init(repository: CategoryListRepositoryProtocol) {
+    public init(repository: CategoryRepositoryProtocol) {
         self.repository = repository
     }
     

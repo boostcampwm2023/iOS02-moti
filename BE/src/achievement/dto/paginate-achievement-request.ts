@@ -4,22 +4,22 @@ import { ApiProperty } from '@nestjs/swagger';
 export class PaginateAchievementRequest {
   @IsNumber()
   @IsOptional()
-  @ApiProperty({ description: 'next cursor id' })
+  @ApiProperty({ description: 'next cursor id', required: false })
   whereIdLessThan?: number;
 
   @IsNumber()
   @IsOptional()
-  @ApiProperty({ description: 'take' })
+  @ApiProperty({ description: 'take', required: false })
   take: number;
 
   @IsNumber()
   @IsOptional()
-  @ApiProperty({ description: 'categoryId' })
+  @ApiProperty({ description: 'categoryId', required: false })
   categoryId: number;
 
   constructor(
     categoryId?: number,
-    take: number = 12,
+    take: number = 30,
     whereIdLessThan?: number,
   ) {
     this.categoryId = categoryId;

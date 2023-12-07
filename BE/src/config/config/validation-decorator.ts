@@ -5,6 +5,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
+import { UserGroupGrade } from '../../group/group/domain/user-group-grade';
 
 export const IsNotEmptyString = (validationOptions?: ValidationOptions) => {
   return function (object: object, propertyKey: string) {
@@ -16,7 +17,9 @@ export const IsNotEmptyString = (validationOptions?: ValidationOptions) => {
       options: validationOptions,
       validator: {
         validate(value: any) {
-          return value !== undefined && typeof value === 'string';
+          return (
+            value !== undefined && typeof value === 'string' && value !== ''
+          );
         },
       },
     });
@@ -34,6 +37,23 @@ export const IsNullOrString = (validationOptions?: ValidationOptions) => {
       validator: {
         validate(value: any) {
           return value === undefined || typeof value === 'string';
+        },
+      },
+    });
+  };
+};
+
+export const IsNotUserGroupGrade = (validationOptions?: ValidationOptions) => {
+  return function (object: object, propertyKey: string) {
+    registerDecorator({
+      name: 'IsNotUserGroupGrade',
+      target: object.constructor,
+      propertyName: propertyKey,
+      constraints: [],
+      options: validationOptions,
+      validator: {
+        validate(value: any) {
+          return Object.keys(UserGroupGrade).includes(value);
         },
       },
     });

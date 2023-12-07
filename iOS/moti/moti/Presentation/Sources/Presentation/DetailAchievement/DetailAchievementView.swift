@@ -8,31 +8,57 @@
 import UIKit
 import Design
 import Domain
+import Data
+import JKImageCache
 
 final class DetailAchievementView: UIView {
     
     // MARK: - Views
-    private let titleLabel = {
-        let label = UILabel()
-        label.text = "달성 기록 제목"
-        label.font = .largeBold
-        return label
+    let scrollView: UIScrollView = {
+      let scrollView = UIScrollView()
+      return scrollView
     }()
     
     private let categoryLabel = {
         let label = UILabel()
-        label.text = "카테고리 이름"
+        label.numberOfLines = 1
         label.font = .medium
+        return label
+    }()
+    
+    private let titleLabel = {
+        let label = UILabel()
+        label.numberOfLines = 1
+        label.font = .largeBold
         return label
     }()
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
-        imageView.backgroundColor = .gray
+        imageView.backgroundColor = .primaryDarkGray
+        imageView.image = MotiImage.skeleton
         imageView.clipsToBounds = true
         return imageView
     }()
+    
+    private let bodyTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "내용"
+        label.numberOfLines = 1
+        label.textColor = .gray
+        label.font = .medium
+        return label
+    }()
+    
+    private let bodyTextView: UITextView = {
+        let textView = UITextView()
+        textView.font = .medium
+        textView.backgroundColor = .motiBackground
+        return textView
+    }()
+    
+    private let infoView = DetailInfoListView()
 
     // MARK: - Init
     override init(frame: CGRect) {
@@ -49,45 +75,119 @@ final class DetailAchievementView: UIView {
         titleLabel.text = achievement.title
         categoryLabel.text = achievement.category?.name
         if let url = achievement.imageURL {
-            imageView.jf.setImage(with: url)
+            imageView.jk.setImage(with: url, imageType: .original)
         }
+        
+        if let body = achievement.body, !body.isEmpty {
+            bodyTextView.text = body
+        } else {
+            bodyTextView.text = "없음"
+        }
+        infoView.configure(items: [
+            (achievement.category?.name ?? "", "\(achievement.category?.continued ?? 0)회차"),
+            ("날짜", (achievement.date ?? .now).convertStringYYYY년_MM월_dd일())
+        ])
     }
     
     func update(title: String) {
         titleLabel.text = title
     }
     
+    func update(updatedAchievement: Achievement) {
+        categoryLabel.text = updatedAchievement.category?.name
+        titleLabel.text = updatedAchievement.title
+        bodyTextView.text = updatedAchievement.body
+    }
+    
     func cancelDownloadImage() {
-        imageView.jf.cancelDownloadImage()
+        imageView.jk.cancelDownloadImage()
     }
 }
 
+// MARK: - setup
 private extension DetailAchievementView {
     private func setupUI() {
-        setupImageView()
-        setupTitleLabel()
+        setupScrollView()
+        
         setupCategoryLabel()
+        setupTitleLabel()
+        setupImageView()
+        
+        setupBodyTitleLabel()
+        setupBodyTextView()
+        setupInfoView()
+    }
+    
+    private func setupScrollView() {
+        addSubview(scrollView)
+        scrollView.atl
+            .top(equalTo: safeAreaLayoutGuide.topAnchor)
+            .bottom(equalTo: bottomAnchor)
+            .left(equalTo: safeAreaLayoutGuide.leftAnchor)
+            .right(equalTo: safeAreaLayoutGuide.rightAnchor)
     }
     
     private func setupCategoryLabel() {
-        addSubview(categoryLabel)
+        scrollView.addSubview(categoryLabel)
         categoryLabel.atl
-            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
-            .bottom(equalTo: titleLabel.topAnchor, constant: -5)
+            .top(equalTo: scrollView.topAnchor, constant: 10)
+            .left(equalTo: scrollView.leftAnchor, constant: 20)
     }
 
     private func setupTitleLabel() {
-        addSubview(titleLabel)
+        scrollView.addSubview(titleLabel)
         titleLabel.atl
-            .horizontal(equalTo: safeAreaLayoutGuide, constant: 20)
-            .bottom(equalTo: imageView.topAnchor, constant: -10)
+            .top(equalTo: categoryLabel.bottomAnchor, constant: 7)
+            .left(equalTo: categoryLabel.leftAnchor)
     }
     
     private func setupImageView() {
-        addSubview(imageView)
+        scrollView.addSubview(imageView)
         imageView.atl
-            .horizontal(equalTo: safeAreaLayoutGuide)
+            .top(equalTo: titleLabel.bottomAnchor, constant: 10)
+            .left(equalTo: safeAreaLayoutGuide.leftAnchor)
+            .right(equalTo: safeAreaLayoutGuide.rightAnchor)
             .height(equalTo: imageView.widthAnchor)
-            .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
     }
+    
+    private func setupBodyTitleLabel() {
+        scrollView.addSubview(bodyTitleLabel)
+        bodyTitleLabel.atl
+            .top(equalTo: imageView.bottomAnchor, constant: 70)
+            .left(equalTo: titleLabel.leftAnchor)
+        
+        addDividerToBottom(view: bodyTitleLabel)
+    }
+    
+    private func setupBodyTextView() {
+        scrollView.addSubview(bodyTextView)
+        bodyTextView.atl
+            .top(equalTo: bodyTitleLabel.bottomAnchor, constant: 10)
+            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 15)
+            .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -15)
+        
+        // TODO: 더보기 동적 높이
+        bodyTextView.heightAnchor.constraint(greaterThanOrEqualToConstant: 50).isActive = true
+        bodyTextView.isScrollEnabled = false
+    }
+    
+    private func setupInfoView() {
+        scrollView.addSubview(infoView)
+        infoView.atl
+            .top(equalTo: bodyTextView.bottomAnchor, constant: 10)
+            .bottom(equalTo: scrollView.bottomAnchor, constant: -30)
+            .horizontal(equalTo: scrollView.safeAreaLayoutGuide)
+    }
+    
+    private func addDividerToBottom(view: UIView) {
+        let divider = UIView()
+        divider.backgroundColor = .systemGray5
+        scrollView.addSubview(divider)
+        divider.atl
+            .horizontal(equalTo: safeAreaLayoutGuide)
+            .top(equalTo: view.bottomAnchor, constant: 9)
+            .height(constant: 1)
+        
+    }
+    
 }

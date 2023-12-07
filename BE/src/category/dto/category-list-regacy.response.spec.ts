@@ -52,7 +52,7 @@ describe('CategoryListLegacyResponse', () => {
       const categoryMetaData: CategoryMetaData[] = [];
       categoryMetaData.push(
         new CategoryMetaData({
-          categoryId: 1,
+          categoryId: '1',
           categoryName: '카테고리1',
           insertedAt: new Date('2021-01-01T00:00:00.000Z').toISOString(),
           achievementCount: '1',
@@ -60,7 +60,7 @@ describe('CategoryListLegacyResponse', () => {
       );
       categoryMetaData.push(
         new CategoryMetaData({
-          categoryId: 2,
+          categoryId: '2',
           categoryName: '카테고리2',
           insertedAt: new Date('2021-01-02T00:00:00.000Z').toISOString(),
           achievementCount: '2',

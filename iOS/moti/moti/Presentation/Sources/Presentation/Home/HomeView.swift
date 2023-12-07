@@ -8,12 +8,13 @@
 import UIKit
 import Design
 import Domain
+import Core
 
 final class HomeView: UIView {
     
     // MARK: - Views
     // 카테고리 추가 버튼
-    let catergoryAddButton: BounceButton = {
+    let categoryAddButton: BounceButton = {
         let button = BounceButton()
         button.setTitle("+", for: .normal)
         return button
@@ -39,9 +40,22 @@ final class HomeView: UIView {
     private(set) lazy var achievementCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeAchievementCollectionView())
         collectionView.backgroundColor = .motiBackground
+        collectionView.refreshControl = refreshControl
         collectionView.register(with: AchievementCollectionViewCell.self)
         collectionView.register(with: HeaderView.self, elementKind: UICollectionView.elementKindSectionHeader)
         return collectionView
+    }()
+    
+    // 당겨서 새로고침 로딩뷰
+    let refreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.attributedTitle = NSAttributedString(
+            string: "로딩 중...",
+            attributes: [
+                NSAttributedString.Key.font: UIFont.medium
+            ]
+        )
+        return refreshControl
     }()
     
     // MARK: - Init
@@ -63,6 +77,14 @@ final class HomeView: UIView {
         
         header.configure(category: category)
     }
+    
+    func endRefreshing() {
+        if refreshControl.isRefreshing {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.refreshControl.endRefreshing()
+            }
+        }
+    }
 }
 
 // MARK: - SetUp
@@ -74,8 +96,8 @@ private extension HomeView {
     }
     
     private func setupCategoryAddButton() {
-        addSubview(catergoryAddButton)
-        catergoryAddButton.atl
+        addSubview(categoryAddButton)
+        categoryAddButton.atl
             .size(width: 37, height: 37)
             .top(equalTo: self.safeAreaLayoutGuide.topAnchor, constant: 10)
             .left(equalTo: self.safeAreaLayoutGuide.leftAnchor, constant: 10)
@@ -83,9 +105,9 @@ private extension HomeView {
         addSubview(separatorView)
         separatorView.atl
             .width(constant: 1)
-            .height(equalTo: catergoryAddButton.heightAnchor)
-            .centerY(equalTo: catergoryAddButton.centerYAnchor)
-            .left(equalTo: catergoryAddButton.rightAnchor, constant: 5)
+            .height(equalTo: categoryAddButton.heightAnchor)
+            .centerY(equalTo: categoryAddButton.centerYAnchor)
+            .left(equalTo: categoryAddButton.rightAnchor, constant: 5)
     }
     
     private func setupCategoryCollectionView() {

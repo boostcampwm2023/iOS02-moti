@@ -24,8 +24,8 @@ export class AchievementDetailResponse {
     this.imageUrl = achievementDetail.imageUrl;
     this.createdAt = dateFormat(new Date(achievementDetail.createdAt));
     this.category = new CategoryInfo(
-      achievementDetail.categoryId,
-      achievementDetail.categoryName,
+      achievementDetail.categoryId || -1,
+      achievementDetail.categoryName || '미설정',
       Number(achievementDetail.achieveCount),
     );
   }

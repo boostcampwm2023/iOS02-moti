@@ -18,6 +18,7 @@ struct AchievementListResponseDataDTO: Codable {
     let data: [AchievementSimpleDTO]?
     let count: Int?
     let next: AchievementListResponseNextDTO?
+    let category: CategoryDTO?
 }
 
 struct AchievementListResponseNextDTO: Codable {
@@ -27,17 +28,21 @@ struct AchievementListResponseNextDTO: Codable {
 }
 
 struct AchievementSimpleDTO: Codable {
-    let id: Int?
+    let id: Int
     let thumbnailUrl: URL?
-    let title: String?
+    let title: String
+    let categoryId: Int
+    let user: UserDTO?
 }
 
 extension Achievement {
     init(dto: AchievementSimpleDTO) {
         self.init(
-            id: dto.id ?? -1,
-            title: dto.title ?? "",
-            imageURL: dto.thumbnailUrl
+            id: dto.id,
+            title: dto.title,
+            imageURL: dto.thumbnailUrl,
+            categoryId: dto.categoryId,
+            user: dto.user != nil ? User(dto: dto.user!) : User()
         )
     }
 }

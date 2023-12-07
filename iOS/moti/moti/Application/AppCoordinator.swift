@@ -27,6 +27,14 @@ final class AppCoordinator: Coordinator {
         moveLaunchViewController()
     }
     
+    func startWhenExpiredAccessToken() {
+        moveLoginViewControllerWhenExpiredAccessToken()
+    }
+    
+    func startWhenLogout() {
+        moveLoginViewController()
+    }
+    
     private func moveLaunchViewController() {
         let launchCoordinator = LaunchCoodinator(navigationController, self)
         launchCoordinator.delegate = self
@@ -37,6 +45,13 @@ final class AppCoordinator: Coordinator {
         let loginCoordinator = LoginCoordinator(navigationController, self)
         loginCoordinator.delegate = self
         start(coordinator: loginCoordinator)
+    }
+    
+    private func moveLoginViewControllerWhenExpiredAccessToken() {
+        let loginCoordinator = LoginCoordinator(navigationController, self)
+        loginCoordinator.delegate = self
+        loginCoordinator.startWithAlert(message: "토큰이 만료되었습니다.\n다시 로그인 해주세요.")
+        childCoordinators.append(loginCoordinator)
     }
     
     private func moveHomeViewController() {
@@ -61,7 +76,7 @@ extension AppCoordinator: LaunchCoodinatorDelegate {
 }
 
 extension AppCoordinator: LoginCoordinatorDelegate {
-    func finishLogin(token: UserToken) {
+    func finishLogin() {
         Logger.info("Success Login. 홈 화면으로 이동")
         moveHomeViewController()
     }

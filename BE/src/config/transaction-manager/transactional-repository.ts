@@ -6,6 +6,10 @@ export class TransactionalRepository<
   Entity extends ObjectLiteral,
 > extends Repository<Entity> {
   get repository(): Repository<Entity> {
-    return retrieveQueryRunner()?.manager.getRepository(this.target) || this;
+    return this.getRepository() || this;
+  }
+
+  private getRepository() {
+    return retrieveQueryRunner()?.manager?.getRepository(this.target);
   }
 }

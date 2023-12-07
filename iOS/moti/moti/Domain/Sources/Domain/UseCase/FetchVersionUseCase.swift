@@ -15,6 +15,14 @@ public struct FetchVersionUseCase {
     }
     
     public func execute() async throws -> Version {
-        return try await repository.fetchVersion()
+        let version = try await repository.fetchVersion()
+        saveVersion(version)
+        return version
+    }
+    
+    private func saveVersion(_ version: Version) {
+        UserDefaults.standard.saveString(key: .requiredVersion, string: version.required)
+        UserDefaults.standard.saveString(key: .latestVersion, string: version.latest)
+        UserDefaults.standard.saveString(key: .privacyPolicy, string: version.privacyPolicy)
     }
 }

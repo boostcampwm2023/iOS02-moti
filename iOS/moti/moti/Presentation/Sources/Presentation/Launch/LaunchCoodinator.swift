@@ -8,6 +8,7 @@
 import UIKit
 import Core
 import Data
+import Domain
 
 public protocol LaunchCoodinatorDelegate: AnyObject {
     func successAutoLogin(_ coordinator: LaunchCoodinator)
@@ -29,9 +30,13 @@ public final class LaunchCoodinator: Coordinator {
     }
     
     public func start() {
+        let autoLoginUseCase = AutoLoginUseCase(
+            repository: LoginRepository(),
+            keychainStorage: KeychainStorage.shared
+        )
         let launchVM = LaunchViewModel(
             fetchVersionUseCase: .init(repository: VersionRepository()),
-            autoLoginUseCase: .init(repository: LoginRepository())
+            autoLoginUseCase: autoLoginUseCase
         )
         let launchVC = LaunchViewController(viewModel: launchVM)
         launchVC.coordinator = self

@@ -17,6 +17,7 @@ let package = Package(
         .package(path: "../Core"),
         .package(path: "../Domain"),
         .package(path: "../Data"),
+        .package(path: "../JKImageCache"),
         .package(url: "https://github.com/jeongju9216/Jeongfisher.git", from: "2.5.0")
     ],
     targets: [
@@ -29,6 +30,7 @@ let package = Package(
                 .product(name: "Core", package: "Core"),
                 .product(name: "Domain", package: "Domain"),
                 .product(name: "Data", package: "Data"),
+                .product(name: "JKImageCache", package: "JKImageCache"),
                 "Jeongfisher"
             ],
             path: "Sources"),

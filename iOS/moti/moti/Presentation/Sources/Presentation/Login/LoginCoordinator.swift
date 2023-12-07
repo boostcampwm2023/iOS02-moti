@@ -11,7 +11,7 @@ import Data
 import Domain
 
 public protocol LoginCoordinatorDelegate: AnyObject {
-    func finishLogin(token: UserToken)
+    func finishLogin()
 }
 
 public final class LoginCoordinator: Coordinator {
@@ -30,9 +30,19 @@ public final class LoginCoordinator: Coordinator {
     }
     
     public func start() {
-        let loginUseCase = LoginUseCase(repository: LoginRepository())
+        let loginUseCase = LoginUseCase(repository: LoginRepository(), keychainStorage: KeychainStorage.shared)
         let loginVM = LoginViewModel(loginUseCase: loginUseCase)
         let loginVC = LoginViewController(viewModel: loginVM)
+        loginVC.coordinator = self
+        loginVC.delegate = self
+        
+        navigationController.viewControllers = [loginVC]
+    }
+    
+    public func startWithAlert(message: String) {
+        let loginUseCase = LoginUseCase(repository: LoginRepository(), keychainStorage: KeychainStorage.shared)
+        let loginVM = LoginViewModel(loginUseCase: loginUseCase)
+        let loginVC = LoginViewController(viewModel: loginVM, alertMessage: message)
         loginVC.coordinator = self
         loginVC.delegate = self
         
@@ -41,7 +51,7 @@ public final class LoginCoordinator: Coordinator {
 }
 
 extension LoginCoordinator: LoginViewControllerDelegate {
-    func didLogin(token: UserToken) {
-        delegate?.finishLogin(token: token)
+    func didLogin() {
+        delegate?.finishLogin()
     }
 }

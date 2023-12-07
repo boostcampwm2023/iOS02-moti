@@ -48,14 +48,7 @@ final class LaunchViewModel {
         case .launch:
             fetchVersion()
         case .autoLogin:
-            if let refreshToken = fetchRefreshToken() {
-                Logger.debug("refreshToken으로 자동 로그인 시도")
-                requestAutoLogin(using: refreshToken)
-            } else {
-                Logger.debug("자동 로그인 실패")
-                resetToken()
-                autoLoginState = .failed(message: "최초 로그인")
-            }
+            requestAutoLogin()
         }
     }
     
@@ -75,35 +68,11 @@ final class LaunchViewModel {
         }
     }
     
-    private func fetchRefreshToken() -> String? {
-        // Keychain 저장소로 변경
-        return UserDefaults.standard.string(forKey: "refreshToken")
-    }
-    
-    private func requestAutoLogin(using refreshToken: String) {
+    private func requestAutoLogin() {
         Task {
-            do {
-                autoLoginState = .loading
-                
-                let requestValue = AutoLoginRequestValue(refreshToken: refreshToken)
-                let token = try await autoLoginUseCase.excute(requestValue: requestValue)
-                saveAccessToken(token.accessToken)
-                
-                autoLoginState = .success
-            } catch {
-                Logger.error(error)
-                autoLoginState = .failed(message: error.localizedDescription)
-            }
+            autoLoginState = .loading
+            let isSuccess = await autoLoginUseCase.excute()
+            autoLoginState = isSuccess ? .success : .failed(message: "최초 로그인")
         }
-    }
-    
-    // TODO: UserDefaultsStorage로 변경해서 UseCase로 사용하기
-    private func saveAccessToken(_ accessToken: String) {
-        UserDefaults.standard.setValue(accessToken, forKey: "accessToken")
-    }
-    
-    private func resetToken() {
-        UserDefaults.standard.removeObject(forKey: "refreshToken")
-        UserDefaults.standard.removeObject(forKey: "accessToken")
     }
 }

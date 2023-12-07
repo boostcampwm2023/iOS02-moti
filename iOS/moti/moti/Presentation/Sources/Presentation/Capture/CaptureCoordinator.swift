@@ -9,11 +9,18 @@ import UIKit
 import Core
 import Domain
 
+protocol CaptureCoordinatorDelegate: AnyObject {
+    func achievementDidPosted(newAchievement: Achievement)
+}
+
 final class CaptureCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
     private var currentNavigationController: UINavigationController?
+    weak var delegate: CaptureCoordinatorDelegate?
+    
+    private let group: Group?
     
     init(
         _ navigationController: UINavigationController,
@@ -21,10 +28,22 @@ final class CaptureCoordinator: Coordinator {
     ) {
         self.navigationController = navigationController
         self.parentCoordinator = parentCoordinator
+        self.group = nil
     }
     
-    func start() {
-        let captureVC = CaptureViewController()
+    // 프로토콜 요구사항 때문에 따로 정의
+    init(
+        _ navigationController: UINavigationController,
+        _ parentCoordinator: Coordinator?,
+        group: Group
+    ) {
+        self.navigationController = navigationController
+        self.parentCoordinator = parentCoordinator
+        self.group = group
+    }
+    
+    func start() { 
+        let captureVC = CaptureViewController(group: group)
         captureVC.delegate = self
         captureVC.coordinator = self
         
@@ -36,17 +55,16 @@ final class CaptureCoordinator: Coordinator {
         captureVC.navigationItem.rightBarButtonItem = nil
         
         navigationController.pushViewController(captureVC, animated: true)
-        navigationController.setNavigationBarHidden(false, animated: false)
     }
     
     private func moveEditAchievementViewConrtoller(image: UIImage) {
         let editAchievementCoordinator = EditAchievementCoordinator(navigationController, self)
-        editAchievementCoordinator.startAfterCapture(image: image)
+        editAchievementCoordinator.delegate = self
+        editAchievementCoordinator.startAfterCapture(image: image, group: group)
         childCoordinators.append(editAchievementCoordinator)
     }
     
     @objc func cancelButtonAction() {
-        navigationController.setNavigationBarHidden(true, animated: false)
         finish()
     }
 }
@@ -54,5 +72,11 @@ final class CaptureCoordinator: Coordinator {
 extension CaptureCoordinator: CaptureViewControllerDelegate {
     func didCapture(image: UIImage) {
         moveEditAchievementViewConrtoller(image: image)
+    }
+}
+
+extension CaptureCoordinator: EditAchievementCoordinatorDelegate {
+    func doneButtonDidClicked(achievement: Achievement) {
+        delegate?.achievementDidPosted(newAchievement: achievement)
     }
 }

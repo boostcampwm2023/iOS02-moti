@@ -7,9 +7,11 @@
 
 import Foundation
 import Core
+import Domain
 
 public protocol ProviderProtocol {
     func request<R: ResponseDTO, E: EndpointProtocol>(with endpoint: E, type: R.Type) async throws -> R
+    func requestMutipartFormData<R: ResponseDTO, E: Requestable>(with endpoint: E, type: R.Type, bodyData: Data) async throws -> R
 }
 
 public struct Provider: ProviderProtocol {
@@ -41,15 +43,58 @@ public struct Provider: ProviderProtocol {
             Logger.network("[요청 데이터]\n\(jsonString)")
         }
         #endif
+
+        #if DEBUG
+        let startTime = Date()
+        #endif
         
         let (data, response) = try await session.data(for: urlRequest)
-        guard let response = response as? HTTPURLResponse else { throw NetworkError.response }
-        
-        let statusCode = response.statusCode
-        let body = try decoder.decode(type, from: data)
         
         #if DEBUG
+        let endTime = Date()
+        let responseSecond = round(endTime.timeIntervalSince(startTime) * 100) / 100
+        let responseMS = round(endTime.timeIntervalSince(startTime) * 1000 * 100) / 100
+        Logger.network("[Time(\(endpoint.path))] \(responseSecond)s / \(responseMS)ms")
+        #endif
+
+        return try parsingResponse(data: data, response: response, type: type)
+    }
+    
+    public func requestMutipartFormData<R: ResponseDTO, E: Requestable>(with endpoint: E, type: R.Type, bodyData: Data) async throws -> R {
+        guard let urlRequest = try? endpoint.makeURLRequest() else {
+            throw NetworkError.url
+        }
+
+        #if DEBUG
+        Logger.network("[Multipart Form Data Request(\(endpoint.method.rawValue)) \(urlRequest.url!.absoluteString)]")
+        #endif
+
+        #if DEBUG
+        let startTime = Date()
+        #endif
+
+        let (data, response) = try await session.upload(for: urlRequest, from: bodyData)
+        
+        #if DEBUG
+        let endTime = Date()
+        let responseSecond = round(endTime.timeIntervalSince(startTime) * 100) / 100
+        let responseMS = round(endTime.timeIntervalSince(startTime) * 1000 * 100) / 100
+        Logger.network("[Time(\(endpoint.path))] \(responseSecond)s / \(responseMS)ms")
+        #endif
+        
+        return try parsingResponse(data: data, response: response, type: type)
+    }
+    
+    private func parsingResponse<R: ResponseDTO>(data: Data, response: URLResponse, type: R.Type) throws -> R {
+        guard let response = response as? HTTPURLResponse else { throw NetworkError.response }
+
+        let statusCode = response.statusCode
+        #if DEBUG
         Logger.network("[Response(\(statusCode))]")
+        #endif
+
+        let body = try decoder.decode(type, from: data)
+        #if DEBUG
         if let encodingData = try? encoder.encode(body),
            let jsonString = String(data: encodingData, encoding: .utf8) {
             Logger.network("[응답 데이터]\n\(jsonString)")
@@ -59,6 +104,9 @@ public struct Provider: ProviderProtocol {
         switch statusCode {
         case 200..<300:
             return body
+        case 401:
+            NotificationCenter.default.post(name: .accessTokenDidExpired, object: nil)
+            throw NetworkError.statusCode(code: response.statusCode, message: "유효하지 않은 토큰입니다.")
         default:
             throw NetworkError.statusCode(code: response.statusCode, message: body.message ?? "nil")
         }

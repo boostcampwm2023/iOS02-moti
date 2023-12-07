@@ -15,6 +15,10 @@ export const ERROR_INFO = {
     statusCode: 401,
     message: '잘못된 토큰입니다.',
   },
+  REFRESH_TOKEN_NOT_FOUND: {
+    statusCode: 401,
+    message: '유효하지 않은 리프레시 토큰 입니다.',
+  },
   POLICY_NOT_FOUND: {
     statusCode: 500,
     message: '운영정책을 조회할 수 없습니다.',
@@ -38,5 +42,85 @@ export const ERROR_INFO = {
   NO_SUCH_ACHIEVEMENT: {
     statusCode: 404,
     message: '존재하지 않는 달성기록 입니다.',
+  },
+  FAIL_FILE_TASK: {
+    statusCode: 500,
+    message: '파일 요청 작업에 실패했습니다.',
+  },
+  IMAGE_ALREADY_EXISTS_THUMBNAIL: {
+    statusCode: 400,
+    message: '이미 썸네일이 생성된 이미지 입니다.',
+  },
+  RESTRICT_ACEESS_TO_ADMIN: {
+    statusCode: 403,
+    message: '제한된 요청입니다.',
+  },
+  INVALID_CATEGORY: {
+    statusCode: 400,
+    message: '유효하지 않은 카테고리입니다.',
+  },
+  IMAGE_NOT_FOUND: {
+    statusCode: 400,
+    message: '존재하지 않는 이미지 입니다.',
+  },
+  NO_USER_IMAGE: {
+    statusCode: 400,
+    message: '이미지를 찾을 수 없습니다.',
+  },
+  UNAUTHORIZED_GROUP_CATEGORY: {
+    statusCode: 400,
+    message: '그룹에 카테고리를 만들 수 없습니다.',
+  },
+  NO_SUCH_USER_GROUP: {
+    statusCode: 400,
+    message: '그룹의 멤버가 아닙니다.',
+  },
+  LEADER_NOT_ALLOWED_TO_LEAVE: {
+    statusCode: 400,
+    message: '그룹의 리더는 탈퇴를 할 수 없습니다.',
+  },
+  NO_SUCH_GROUP_ACHIEVEMENT: {
+    statusCode: 400,
+    message: '존재하지 않는 그룹 달성기록 입니다.',
+  },
+  INVALID_REJECT_REQUEST: {
+    statusCode: 400,
+    message: '유효하지 않은 차단 요청입니다.',
+  },
+  INVITE_PERMISSION_DENIED: {
+    statusCode: 400,
+    message: '그룹원 초대 권한이 없습니다.',
+  },
+  DUPLICATED_INVITE: {
+    statusCode: 400,
+    message: '이미 초대된 그룹원 입니다.',
+  },
+  NO_SUCH_GROUP_USER: {
+    statusCode: 400,
+    message: '유저가 속한 그룹이 아닙니다.',
+  },
+  NO_SUCH_USER: {
+    statusCode: 400,
+    message: '존재하지 않는 유저입니다.',
+  },
+  ONLY_LEADER_ALLOWED_ASSIGN_GRADE: {
+    statusCode: 400,
+    message: '그룹의 리더만 권한 조정이 가능합니다.',
+  },
+  UNAUTHORIZED_APPROACH_GROUP_CATEGORY: {
+    statusCode: 403,
+    message: '그룹에 카테고리를 조회할 수 없습니다.',
+  },
+  UNAUTHORIZED_ACHIEVEMENT_APPROACH: {
+    statusCode: 403,
+    message: '달성기록에 접근할 수 없습니다.',
+  },
+  INVALID_EMOJI: {
+    statusCode: 400,
+    message: '알맞지 않은 이모지입니다.',
+  },
+  NOT_FOUND_CATEGORY: {
+    statusCode: 404,
+    message: '카테고리를 찾을 수 없습니다.',
   },
 } as const;

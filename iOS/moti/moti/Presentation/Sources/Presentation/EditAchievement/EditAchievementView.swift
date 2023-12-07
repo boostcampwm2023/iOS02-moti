@@ -20,10 +20,10 @@ final class EditAchievementView: UIView {
         return imageView
     }()
     
-    private let titleTextField = {
+    let titleTextField = {
         let textField = UITextField()
         textField.font = .largeBold
-        textField.placeholder = "도전 성공"
+        textField.placeholder = "\(Date().convertStringMM월_dd일()) 도전"
         textField.returnKeyType = .done
         return textField
     }()
@@ -75,7 +75,7 @@ final class EditAchievementView: UIView {
     
     func configure(achievement: Achievement) {
         if let url = achievement.imageURL {
-            resultImageView.jf.setImage(with: url)
+            resultImageView.jk.setImage(with: url, imageType: .original)
         }
         
         titleTextField.text = achievement.title

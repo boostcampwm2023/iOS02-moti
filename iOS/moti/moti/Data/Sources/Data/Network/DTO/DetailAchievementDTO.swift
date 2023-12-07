@@ -21,6 +21,7 @@ struct DetailAchievementDTO: Codable {
     let imageUrl: URL?
     let createdAt: Date?
     let category: CategorySimpleDTO?
+    let userCode: String?
 }
 
 struct CategorySimpleDTO: Codable {
@@ -42,7 +43,8 @@ extension Achievement {
             title: dto.title ?? "",
             imageURL: dto.imageUrl,
             body: dto.content,
-            date: dto.createdAt ?? .now
+            date: dto.createdAt ?? .now,
+            user: User(code: dto.userCode ?? "", avatarURL: nil)
         )
     }
 }

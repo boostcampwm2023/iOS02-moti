@@ -10,6 +10,16 @@ export const swaggerConfig = (app: INestApplication) => {
     .setDescription(configService.get<string>('SWAGGER_DESCRIPTION'))
     .setVersion(configService.get<string>('SWAGGER_VERSION'))
     .addTag(configService.get<string>('SWAGGER_TAG'))
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        name: 'accessToken',
+        description: 'motimate access token (jwt)',
+        in: 'header',
+      },
+      'accessToken',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

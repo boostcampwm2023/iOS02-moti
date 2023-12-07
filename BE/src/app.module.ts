@@ -12,6 +12,12 @@ import { UsersModule } from './users/users.module';
 import { AdminModule } from './admin/admin.module';
 import { CategoryModule } from './category/category.module';
 import { AchievementModule } from './achievement/achievement.module';
+import { UuidHolderModule } from './common/application/uuid-holder/uuid.module';
+import { ImageModule } from './image/image.module';
+import { GroupModule } from './group/group/group.module';
+import { GroupCategoryModule } from './group/category/group-category.module';
+import { GroupAchievementModule } from './group/achievement/group-achievement.module';
+import { GroupAchievementEmojiModule } from './group/emoji/group-achievement-emoji.module';
 
 @Module({
   imports: [
@@ -24,6 +30,12 @@ import { AchievementModule } from './achievement/achievement.module';
     AdminModule,
     CategoryModule,
     AchievementModule,
+    UuidHolderModule,
+    ImageModule,
+    GroupModule,
+    GroupCategoryModule,
+    GroupAchievementModule,
+    GroupAchievementEmojiModule,
   ],
   controllers: [AppController],
   providers: [AppService],
