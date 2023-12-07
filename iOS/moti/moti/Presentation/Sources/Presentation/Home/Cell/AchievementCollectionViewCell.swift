@@ -8,6 +8,7 @@
 import UIKit
 import Design
 import Jeongfisher
+import JKImageCache
 
 final class AchievementCollectionViewCell: UICollectionViewCell {
     private let imageView = {
@@ -43,7 +44,9 @@ final class AchievementCollectionViewCell: UICollectionViewCell {
     
     func configure(imageURL: URL?) {
         if let imageURL {
-            imageView.jf.setImage(with: imageURL, placeHolder: MotiImage.skeleton)
+            imageView
+                .jk.setImage(with: imageURL, placeHolder: MotiImage.skeleton)
+//                .jf.setImage(with: imageURL, placeHolder: MotiImage.skeleton)
         } else {
             imageView.image = MotiImage.skeleton
             imageView.backgroundColor = .primaryDarkGray
@@ -60,6 +63,6 @@ final class AchievementCollectionViewCell: UICollectionViewCell {
     }
 
     func cancelDownloadImage() {
-        imageView.jf.cancelDownloadImage()
+        imageView.jk.cancelDownloadImage()
     }
 }
