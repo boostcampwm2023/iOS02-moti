@@ -435,7 +435,6 @@ private extension HomeViewController {
                 guard let self else { return }
                 switch categoryState {
                 case .initial:
-                    // TODO: 스켈레톤
                     break
                 case .finish:
                     // 첫 번째 아이템 선택
@@ -452,7 +451,6 @@ private extension HomeViewController {
                 guard let self else { return }
                 switch state {
                 case .loading:
-                    // TODO: 스켈레톤 표시
                     break
                 case .success(let category):
                     layoutView.updateAchievementHeader(with: category)
