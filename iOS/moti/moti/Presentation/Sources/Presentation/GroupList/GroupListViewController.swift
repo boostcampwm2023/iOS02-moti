@@ -44,6 +44,7 @@ final class GroupListViewController: BaseViewController<GroupListView> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.showTabBar()
             tabBarController.hideCaptureButton()
         }
         
