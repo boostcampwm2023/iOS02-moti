@@ -8,7 +8,7 @@
 import Foundation
 import Domain
 
-public struct GroupCategoryRepository: CategoryListRepositoryProtocol {
+public struct GroupCategoryRepository: CategoryRepositoryProtocol {
     private let provider: ProviderProtocol
     private let groupId: Int
     
@@ -17,7 +17,15 @@ public struct GroupCategoryRepository: CategoryListRepositoryProtocol {
         self.groupId = groupId
     }
     
-    public func fetchCategoryList() async throws -> [CategoryItem] {        
+    public func fetchCategory(categoryId: Int) async throws -> CategoryItem {
+        let endpoint = MotiAPI.fetchGroupCategory(groupId: groupId, categoryId: categoryId)
+        let responseDTO = try await provider.request(with: endpoint, type: CategoryResponseDataDTO.self)
+        
+        guard let categoryDTO = responseDTO.data else { throw NetworkError.decode }
+        return CategoryItem(dto: categoryDTO)
+    }
+    
+    public func fetchCategoryList() async throws -> [CategoryItem] {
         // 실제 네트워크 통신
         let endpoint = MotiAPI.fetchGroupCategoryList(groupId: groupId)
         let responseDTO = try await provider.request(with: endpoint, type: CategoryListResponseDTO.self)

@@ -26,12 +26,15 @@ public final class HomeCoordinator: Coordinator {
     }
     
     public func start() {
+        let achievementRepository = AchievementRepository()
+        let categoryRepository = CategoryRepository()
         let homeVM = HomeViewModel(
-            fetchAchievementListUseCase: .init(repository: AchievementRepository()),
-            fetchCategoryListUseCase: .init(repository: CategoryListRepository()), 
-            addCategoryUseCase: .init(repository: CategoryListRepository()),
-            deleteAchievementUseCase: .init(repository: AchievementRepository(), storage: CategoryStorage.shared),
-            fetchDetailAchievementUseCase: .init(repository: AchievementRepository())
+            fetchAchievementListUseCase: .init(repository: achievementRepository),
+            fetchCategoryUseCase: .init(repository: categoryRepository),
+            fetchCategoryListUseCase: .init(repository: categoryRepository),
+            addCategoryUseCase: .init(repository: categoryRepository),
+            deleteAchievementUseCase: .init(repository: achievementRepository),
+            fetchDetailAchievementUseCase: .init(repository: achievementRepository)
         )
         let homeVC = HomeViewController(viewModel: homeVM)
         homeVC.coordinator = self

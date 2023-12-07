@@ -11,6 +11,8 @@ import Domain
 extension HomeViewModel {
     enum HomeViewModelAction {
         case launch
+        case fetchCurrentCategoryInfo
+        case fetchCategoryInfo(categoryId: Int)
         case addCategory(name: String)
         case fetchNextPage
         case fetchAchievementList(category: CategoryItem)
@@ -29,9 +31,10 @@ extension HomeViewModel {
         case error(message: String)
     }
     
-    enum CategoryState {
-        case initial
-        case updated(category: CategoryItem)
+    enum CategoryInfoState {
+        case loading
+        case success(category: CategoryItem)
+        case failed(message: String)
     }
     
     enum AddCategoryState {

@@ -15,6 +15,10 @@ export const ERROR_INFO = {
     statusCode: 401,
     message: '잘못된 토큰입니다.',
   },
+  REFRESH_TOKEN_NOT_FOUND: {
+    statusCode: 401,
+    message: '유효하지 않은 리프레시 토큰 입니다.',
+  },
   POLICY_NOT_FOUND: {
     statusCode: 500,
     message: '운영정책을 조회할 수 없습니다.',
@@ -111,8 +115,8 @@ export const ERROR_INFO = {
     statusCode: 403,
     message: '달성기록에 접근할 수 없습니다.',
   },
-  REFRESH_TOKEN_NOT_FOUND: {
-    statusCode: 401,
-    message: '유효하지 않은 리프레시 토큰 입니다.',
+  NOT_FOUND_CATEGORY: {
+    statusCode: 404,
+    message: '카테고리를 찾을 수 없습니다.',
   },
 } as const;

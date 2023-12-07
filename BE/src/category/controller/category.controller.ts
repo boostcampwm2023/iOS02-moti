@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -22,6 +23,7 @@ import { User } from '../../users/domain/user.domain';
 import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
 import { CategoryResponse } from '../dto/category.response';
 import { CategoryListElementResponse } from '../dto/category-list-element.response';
+import { ParseIntPipe } from '../../common/pipe/parse-int.pipe';
 
 @Controller('/api/v1/categories')
 @ApiTags('카테고리 API')
@@ -68,5 +70,25 @@ export class CategoryController {
   ): Promise<ApiData<CategoryListElementResponse[]>> {
     const categories = await this.categoryService.getCategoriesByUser(user);
     return ApiData.success(CategoryListElementResponse.build(categories));
+  }
+
+  @ApiBearerAuth('accessToken')
+  @ApiOperation({
+    summary: '카테고리 조회 API',
+    description: '사용자 본인에 대한 단 건의 카테고리를 조회합니다.',
+  })
+  @ApiResponse({
+    description: '카테고리 조회',
+    type: CategoryListElementResponse,
+  })
+  @Get('/:categoryId')
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  async getCategory(
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+    @AuthenticatedUser() user: User,
+  ): Promise<ApiData<CategoryListElementResponse>> {
+    const category = await this.categoryService.getCategory(user, categoryId);
+    return ApiData.success(new CategoryListElementResponse(category));
   }
 }

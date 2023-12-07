@@ -13,8 +13,9 @@ final class EditAchievementViewModel {
     
     enum Action {
         case saveImage(data: Data)
+        case retrySaveImage
         case fetchCategories
-        case updateAchievement(achievement: Achievement, updateData: UpdateAchievementRequestBody)
+        case updateAchievement(updatedAchievement: Achievement)
         case postAchievement(title: String, content: String, categoryId: Int)
     }
     
@@ -56,6 +57,7 @@ final class EditAchievementViewModel {
     
     /// 이미지 선저장으로 받아 놓은 사진 ID: post할 때 이 ID를 포함하여 post한다.
     private var photoId: Int?
+    private var uploadImageData: Data? = nil
     
     @Published private(set) var categoryState: CategoryState = .none
     @Published private(set) var saveImageState: SaveImageState = .none
@@ -78,10 +80,13 @@ final class EditAchievementViewModel {
         switch action {
         case .saveImage(let data):
             saveImageData(data)
+        case .retrySaveImage:
+            guard let uploadImageData else { return }
+            saveImageData(uploadImageData)
         case .fetchCategories:
             fetchCategories()
-        case .updateAchievement(let achievement, let updateData):
-            updateAchievement(achievement: achievement, updateData: updateData)
+        case .updateAchievement(let updatedAchievement):
+            updateAchievement(updatedAchievement: updatedAchievement)
         case .postAchievement(let title, let content, let categoryId):
             postAchievement(title: title, content: content, categoryId: categoryId)
         }
@@ -115,6 +120,7 @@ final class EditAchievementViewModel {
     
     private func saveImageData(_ data: Data) {
         Logger.debug("Save Image: \(data.count / 1000)KB / \(Double(data.count) / 1000.0 / 1000.0)MB")
+        uploadImageData = data
         
         Task {
             do {
@@ -128,6 +134,8 @@ final class EditAchievementViewModel {
                 let (isSuccess, photoId) = try await saveImageUseCase.execute(requestValue: requestValue)
                 Logger.debug("Upload: \(isSuccess) / id: \(photoId)")
                 self.photoId = photoId
+                uploadImageData = nil // 더이상 필요 없어서 nil 할당
+                
                 saveImageState = .finish
             } catch {
                 saveImageState = .error
@@ -136,20 +144,23 @@ final class EditAchievementViewModel {
         
     }
     
-    private func updateAchievement(achievement: Achievement, updateData: UpdateAchievementRequestBody) {
+    private func updateAchievement(updatedAchievement: Achievement) {
         Task {
             do {
                 updateAchievementState = .loading
-                let updateAchievementRequestValue = UpdateAchievementRequestValue(
-                    id: achievement.id,
-                    body: updateData
+                let updatedData = UpdateAchievementRequestBody(
+                    title: updatedAchievement.title,
+                    content: updatedAchievement.body ?? "",
+                    categoryId: updatedAchievement.categoryId
                 )
                 
-                let (isSuccess, updatedAchievement) = try await updateAchievementUseCase.execute(
-                    oldAchievement: achievement,
-                    requestValue: updateAchievementRequestValue
+                let updateAchievementRequestValue = UpdateAchievementRequestValue(
+                    id: updatedAchievement.id,
+                    body: updatedData
                 )
-                if isSuccess, let updatedAchievement = updatedAchievement {
+                
+                let isSuccess = try await updateAchievementUseCase.execute(requestValue: updateAchievementRequestValue)
+                if isSuccess {
                     updateAchievementState = .finish(updatedAchievement: updatedAchievement)
                 } else {
                     updateAchievementState = .error

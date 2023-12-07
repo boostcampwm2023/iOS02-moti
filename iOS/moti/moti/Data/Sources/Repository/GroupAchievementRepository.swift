@@ -42,8 +42,8 @@ public struct GroupAchievementRepository: GroupAchievementRepositoryProtocol {
         }
     }
     
-    public func deleteAchievement(requestValue: DeleteAchievementRequestValue) async throws -> Bool {
-        let endpoint = MotiAPI.deleteGroupAchievement(requestValue: requestValue, groupId: groupId)
+    public func deleteAchievement(achievementId: Int) async throws -> Bool {
+        let endpoint = MotiAPI.deleteGroupAchievement(achievementId: achievementId, groupId: groupId)
         let responseDTO = try await provider.request(with: endpoint, type: DeleteAchievementResponseDTO.self)
         
         guard let isSuccess = responseDTO.success else { throw NetworkError.decode }

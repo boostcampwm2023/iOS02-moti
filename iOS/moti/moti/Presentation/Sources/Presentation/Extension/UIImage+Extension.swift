@@ -31,8 +31,8 @@ extension UIImage {
         return UIImage(cgImage: croppedCGImage)
     }
     
-    /// 이미지의 방향을 up으로 고정하는 메서드
     // https://gist.github.com/schickling/b5d86cb070130f80bb40?permalink_comment_id=3500925#gistcomment-3500925
+    /// 이미지의 방향을 up으로 고정하는 메서드
     func fixedOrientation() -> UIImage? {
         guard imageOrientation != .up else { return self }
         

@@ -11,6 +11,7 @@ import AVFoundation
 import Design
 import PhotosUI
 import Domain
+import Jeongfisher
 
 protocol CaptureViewControllerDelegate: AnyObject {
     func didCapture(image: UIImage)
@@ -69,7 +70,18 @@ final class CaptureViewController: BaseViewController<CaptureView> {
     
     private func capturedPicture(image: UIImage) {
         guard let croppedImage = image.cropToSquare() else { return }
-        delegate?.didCapture(image: croppedImage)
+        
+        // 앨범에서 선택도 가능하기 때문에 해당 위치에서 다운샘플링 진행
+        let size = layoutView.preview.frame.size
+        guard let data = croppedImage.jpegData(compressionQuality: 1.0),
+              let downsampledImage = data.downsampling(to: size, scale: 3) else { return }
+        
+        #if DEBUG
+        Logger.debug("프리뷰 사이즈: \(size)")
+        Logger.debug("다운샘플링 이미지 사이즈: \(downsampledImage.size)")
+        #endif
+        
+        delegate?.didCapture(image: downsampledImage)
     }
 }
 

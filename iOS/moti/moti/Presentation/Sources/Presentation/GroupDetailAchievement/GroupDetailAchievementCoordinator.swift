@@ -53,7 +53,7 @@ final class GroupDetailAchievementCoordinator: Coordinator {
         let achievementRepository = GroupAchievementRepository(groupId: group.id)
         let groupDetailAchievementVM = GroupDetailAchievementViewModel(
             fetchDetailAchievementUseCase: .init(repository: achievementRepository),
-            deleteAchievementUseCase: .init(repository: achievementRepository, storage: nil),
+            deleteAchievementUseCase: .init(repository: achievementRepository),
             blockingUserUseCase: .init(blockingRepository: blockingRepository),
             blockingAchievementUseCase: .init(blockingRepository: blockingRepository),
             fetchEmojisUseCase: .init(repository: emojiRepository),
