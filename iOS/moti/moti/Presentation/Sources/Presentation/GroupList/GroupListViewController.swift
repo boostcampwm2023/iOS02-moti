@@ -124,19 +124,13 @@ private extension GroupListViewController {
         profileButton.contentMode = .scaleAspectFit
         profileButton.tintColor = .primaryDarkGray
         let profileItem = UIBarButtonItem(customView: profileButton)
-
-        // 오른쪽 더보기 버튼
-        let editGroupItem = UIBarButtonItem(
-            title: "편집", style: .plain, target: self,
-            action: nil
-        )
         
         let createGroupItem = UIBarButtonItem(
             title: "생성", style: .plain, target: self,
             action: #selector(showCreateGroupTextFieldAlert)
         )
 
-        navigationItem.rightBarButtonItems = [profileItem, createGroupItem, editGroupItem]
+        navigationItem.rightBarButtonItems = [profileItem, createGroupItem]
     }
     
     @objc func showUserCode() {
