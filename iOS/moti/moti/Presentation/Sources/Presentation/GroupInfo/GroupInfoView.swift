@@ -43,6 +43,8 @@ final class GroupInfoView: UIView {
     private(set) var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(GroupInfoTableViewCell.self, forCellReuseIdentifier: GroupInfoTableViewCell.identifier)
+        tableView.backgroundColor = .motiBackground
+        tableView.alwaysBounceVertical = false
         return tableView
     }()
     

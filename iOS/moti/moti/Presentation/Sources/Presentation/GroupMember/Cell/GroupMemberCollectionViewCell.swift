@@ -20,16 +20,6 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     private let iconSize: CGFloat = 60
     weak var delegate: GroupMemberCollectionViewCellDelegate?
     
-    override var isHighlighted: Bool {
-        didSet {
-            if isHighlighted {
-                bounceAnimation()
-            } else {
-                normalAnimation()
-            }
-        }
-    }
-    
     // MARK: - Views
     private lazy var iconImageView = {
         let imageView = UIImageView()
@@ -99,7 +89,10 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     
     private func setupGradeButtonForLeader(groupMember: GroupMember) {
         gradeButton.configuration = .plain()
-        gradeButton.setImage(SymbolImage.chevronUpDown, for: .normal)
+        
+        let config = UIImage.SymbolConfiguration(font: .small)
+        let image = UIImage(systemName: "chevron.up.chevron.down", withConfiguration: config)
+        gradeButton.setImage(image, for: .normal)
         gradeButton.tintColor = .label
         gradeButton.configuration?.imagePlacement = .trailing
         gradeButton.configuration?.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: -5)
