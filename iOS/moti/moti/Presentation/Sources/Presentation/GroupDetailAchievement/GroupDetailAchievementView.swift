@@ -206,7 +206,7 @@ private extension GroupDetailAchievementView {
         if let bounds = window?.windowScene?.screen.bounds {
             NSLayoutConstraint.deactivate(imageView.constraints)
             
-            let minSize = min(600, bounds.width, bounds.height)
+            let minSize = min(400, bounds.width, bounds.height)
             imageView.atl
                 .size(width: minSize, height: minSize)
                 .top(equalTo: titleLabel.bottomAnchor, constant: 10)

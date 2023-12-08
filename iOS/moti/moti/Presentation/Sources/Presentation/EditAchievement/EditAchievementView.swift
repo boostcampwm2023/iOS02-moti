@@ -140,7 +140,7 @@ extension EditAchievementView {
         if let bounds = window?.windowScene?.screen.bounds {
             NSLayoutConstraint.deactivate(resultImageView.constraints)
             
-            let minSize = min(600, bounds.width, bounds.height)
+            let minSize = min(400, bounds.width, bounds.height)
             resultImageView.atl
                 .size(width: minSize, height: minSize)
                 .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
