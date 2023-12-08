@@ -64,6 +64,11 @@ final class EditAchievementView: UIView {
         setupUI()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateImageViewConstraint()
+    }
+    
     func configure(image: UIImage?, category: String? = nil) {
         resultImageView.image = image
         
@@ -129,15 +134,16 @@ extension EditAchievementView {
     
     private func setupResultImageView() {
         addSubview(resultImageView)
-        if UIDevice.current.userInterfaceIdiom == .pad {
+    }
+    
+    private func updateImageViewConstraint() {
+        if let bounds = window?.windowScene?.screen.bounds {
+            NSLayoutConstraint.deactivate(resultImageView.constraints)
+            
+            let minSize = min(600, bounds.width, bounds.height)
             resultImageView.atl
-                .size(width: 600, height: 600)
+                .size(width: minSize, height: minSize)
                 .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
-                .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
-        } else {
-            resultImageView.atl
-                .horizontal(equalTo: safeAreaLayoutGuide)
-                .height(equalTo: resultImageView.widthAnchor)
                 .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
         }
     }

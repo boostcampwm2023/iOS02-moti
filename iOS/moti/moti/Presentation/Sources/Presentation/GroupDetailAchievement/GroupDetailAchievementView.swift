@@ -78,6 +78,11 @@ final class GroupDetailAchievementView: UIView {
         setupUI()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateImageViewConstraint()
+    }
+    
     func configure(achievement: Achievement) {
         titleLabel.text = achievement.title
         categoryLabel.text = achievement.category?.name
@@ -195,18 +200,17 @@ private extension GroupDetailAchievementView {
     
     private func setupImageView() {
         scrollView.addSubview(imageView)
-        
-        if UIDevice.current.userInterfaceIdiom == .pad {
+    }
+    
+    private func updateImageViewConstraint() {
+        if let bounds = window?.windowScene?.screen.bounds {
+            NSLayoutConstraint.deactivate(imageView.constraints)
+            
+            let minSize = min(600, bounds.width, bounds.height)
             imageView.atl
-                .size(width: 600, height: 600)
+                .size(width: minSize, height: minSize)
+                .top(equalTo: titleLabel.bottomAnchor, constant: 10)
                 .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
-                .top(equalTo: titleLabel.bottomAnchor, constant: 10)
-        } else {
-            imageView.atl
-                .top(equalTo: titleLabel.bottomAnchor, constant: 10)
-                .left(equalTo: safeAreaLayoutGuide.leftAnchor)
-                .right(equalTo: safeAreaLayoutGuide.rightAnchor)
-                .height(equalTo: imageView.widthAnchor)
         }
     }
     
