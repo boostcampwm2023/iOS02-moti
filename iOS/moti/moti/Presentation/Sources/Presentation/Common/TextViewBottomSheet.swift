@@ -33,7 +33,7 @@ final class TextViewBottomSheet: UIViewController {
     // MARK: - Init
     init(text: String? = nil) {
         super.init(nibName: nil, bundle: nil)
-        if let text {
+        if let text, !text.isEmpty {
             showText(text)
         } else {
             showPlaceholder()
