@@ -21,7 +21,5 @@
 			</array>
 		</dict>
 	</dict>
-	<key>NSCameraUsageDescription</key>
-	<string>도전 기록 촬영을 위한 카메라 권한이 필요합니다.</string>
 </dict>
 </plist>
