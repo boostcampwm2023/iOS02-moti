@@ -241,7 +241,9 @@ private extension HomeViewController {
     
     @objc func showUserCode() {
         if let userCode = UserDefaults.standard.readString(key: .myUserCode) {
-            showOneButtonAlert(title: "유저 코드", message: userCode)
+            showTwoButtonAlert(title: "유저 코드", message: userCode, okTitle: "확인", cancelTitle: "클립보드 복사", cancelAction: {
+                UIPasteboard.general.string = userCode
+            })
         }
     }
 }
