@@ -65,10 +65,40 @@ final class CaptureView: UIView {
     
     func changeToBackCamera() {
         cameraSwitchingButton.setImage(SymbolImage.iphone, for: .normal)
+        UIView.transition(
+            with: cameraSwitchingButton,
+            duration: 0.2,
+            options: .transitionFlipFromLeft,
+            animations: nil,
+            completion: nil
+        )
+        
+        UIView.transition(
+            with: preview,
+            duration: 0.2,
+            options: .transitionFlipFromLeft,
+            animations: nil,
+            completion: nil
+        )
     }
     
     func changeToFrontCamera() {
         cameraSwitchingButton.setImage(SymbolImage.iphoneCamera, for: .normal)
+        UIView.transition(
+            with: cameraSwitchingButton,
+            duration: 0.2,
+            options: .transitionFlipFromRight,
+            animations: nil,
+            completion: nil
+        )
+        
+        UIView.transition(
+            with: preview,
+            duration: 0.2,
+            options: .transitionFlipFromRight,
+            animations: nil, 
+            completion: nil
+        )
     }
 }
 
