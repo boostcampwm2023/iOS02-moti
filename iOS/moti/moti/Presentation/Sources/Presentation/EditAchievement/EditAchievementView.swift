@@ -129,10 +129,17 @@ extension EditAchievementView {
     
     private func setupResultImageView() {
         addSubview(resultImageView)
-        resultImageView.atl
-            .horizontal(equalTo: safeAreaLayoutGuide)
-            .height(equalTo: resultImageView.widthAnchor)
-            .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            resultImageView.atl
+                .size(width: 800, height: 800)
+                .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
+                .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
+        } else {
+            resultImageView.atl
+                .horizontal(equalTo: safeAreaLayoutGuide)
+                .height(equalTo: resultImageView.widthAnchor)
+                .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
+        }
     }
         
     private func setupCategoryPickerView() {

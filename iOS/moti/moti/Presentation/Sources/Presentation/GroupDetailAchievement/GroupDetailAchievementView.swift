@@ -195,11 +195,19 @@ private extension GroupDetailAchievementView {
     
     private func setupImageView() {
         scrollView.addSubview(imageView)
-        imageView.atl
-            .top(equalTo: titleLabel.bottomAnchor, constant: 10)
-            .left(equalTo: safeAreaLayoutGuide.leftAnchor)
-            .right(equalTo: safeAreaLayoutGuide.rightAnchor)
-            .height(equalTo: imageView.widthAnchor)
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            imageView.atl
+                .size(width: 600, height: 600)
+                .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
+                .top(equalTo: titleLabel.bottomAnchor, constant: 10)
+        } else {
+            imageView.atl
+                .top(equalTo: titleLabel.bottomAnchor, constant: 10)
+                .left(equalTo: safeAreaLayoutGuide.leftAnchor)
+                .right(equalTo: safeAreaLayoutGuide.rightAnchor)
+                .height(equalTo: imageView.widthAnchor)
+        }
     }
     
     private func setupEmojiButtons() {
