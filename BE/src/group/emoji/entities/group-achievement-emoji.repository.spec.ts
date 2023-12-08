@@ -303,4 +303,369 @@ describe('GroupAchievementEmojiRepository Test', () => {
       });
     });
   });
+
+  describe('findGroupAchievementEmojiMetaData는 그룹 달성기록에 이모지의 메타데이터를 조회할 수 있다.', () => {
+    it('findGroupAchievementEmojiMetaData를 실행하면 그룹 달성기록에 이모지의 메타데이터를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          user,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            user,
+            group,
+            groupCategory,
+          );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmojis(
+          10,
+          groupAchievement,
+          Emoji.FIRE,
+        );
+
+        // when
+        const groupAchievementEmojiListElement =
+          await groupAchievementEmojiRepository.findGroupAchievementEmojiMetaData(
+            user,
+            groupAchievement.id,
+            Emoji.FIRE,
+          );
+
+        // then
+        expect(groupAchievementEmojiListElement).toBeDefined();
+        expect(groupAchievementEmojiListElement?.count).toEqual(10);
+        expect(groupAchievementEmojiListElement?.isSelected).toEqual(false);
+        expect(groupAchievementEmojiListElement?.id).toEqual(Emoji.FIRE);
+      });
+    });
+
+    it('findGroupAchievementEmojiMetaData를 실행하면 그룹 달성기록에 이모지의 메타데이터를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          user,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            user,
+            group,
+            groupCategory,
+          );
+
+        // when
+        const groupAchievementEmojiListElement =
+          await groupAchievementEmojiRepository.findGroupAchievementEmojiMetaData(
+            user,
+            groupAchievement.id,
+            Emoji.FIRE,
+          );
+
+        // then
+        expect(groupAchievementEmojiListElement).toBeDefined();
+        expect(groupAchievementEmojiListElement.count).toEqual(0);
+        expect(groupAchievementEmojiListElement.isSelected).toEqual(false);
+        expect(groupAchievementEmojiListElement.id).toEqual(Emoji.FIRE);
+      });
+    });
+
+    it('findGroupAchievementEmojiMetaData를 실행하면 그룹 달성기록에 이모지의 메타데이터를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          user,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            user,
+            group,
+            groupCategory,
+          );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmoji(
+          user,
+          groupAchievement,
+          Emoji.FIRE,
+        );
+
+        // when
+        const groupAchievementEmojiListElement =
+          await groupAchievementEmojiRepository.findGroupAchievementEmojiMetaData(
+            user,
+            groupAchievement.id,
+            Emoji.FIRE,
+          );
+
+        // then
+        expect(groupAchievementEmojiListElement).toBeDefined();
+        expect(groupAchievementEmojiListElement.count).toBe(1);
+        expect(groupAchievementEmojiListElement.id).toBe(Emoji.FIRE);
+        expect(groupAchievementEmojiListElement.isSelected).toBe(true);
+      });
+    });
+
+    it('findGroupAchievementEmojiMetaData를 실행하면 그룹 달성기록에 이모지의 메타데이터를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          user,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            user,
+            group,
+            groupCategory,
+          );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmojis(
+          10,
+          groupAchievement,
+          Emoji.FIRE,
+        );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmoji(
+          user,
+          groupAchievement,
+          Emoji.FIRE,
+        );
+
+        // when
+        const groupAchievementEmojiListElement =
+          await groupAchievementEmojiRepository.findGroupAchievementEmojiMetaData(
+            user,
+            groupAchievement.id,
+            Emoji.FIRE,
+          );
+
+        // then
+        expect(groupAchievementEmojiListElement).toBeDefined();
+        expect(groupAchievementEmojiListElement?.count).toEqual(11);
+        expect(groupAchievementEmojiListElement?.isSelected).toEqual(true);
+        expect(groupAchievementEmojiListElement?.id).toEqual(Emoji.FIRE);
+      });
+    });
+  });
+
+  describe('findAllGroupAchievementEmojiMetaData는 그룹 달성기록에 이모지의 메타데이터를 조회할 수 있다.', () => {
+    it('findAllGroupAchievementEmojiMetaData를 실행하면 그룹 달성기록에 이모지의 메타데이터들을 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          user,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            user,
+            group,
+            groupCategory,
+          );
+
+        // when
+        const groupAchievementEmojiListElement =
+          await groupAchievementEmojiRepository.findAllGroupAchievementEmojiMetaData(
+            user,
+            groupAchievement.id,
+          );
+
+        // then
+        expect(groupAchievementEmojiListElement).toBeDefined();
+        expect(groupAchievementEmojiListElement.LIKE.count).toEqual(0);
+        expect(groupAchievementEmojiListElement.LIKE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElement.LIKE.id).toEqual(Emoji.LIKE);
+        expect(groupAchievementEmojiListElement.SMILE.count).toEqual(0);
+        expect(groupAchievementEmojiListElement.SMILE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElement.SMILE.id).toEqual(Emoji.SMILE);
+        expect(groupAchievementEmojiListElement.FIRE.count).toEqual(0);
+        expect(groupAchievementEmojiListElement.FIRE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElement.FIRE.id).toEqual(Emoji.FIRE);
+      });
+    });
+
+    it('findAllGroupAchievementEmojiMetaData를 실행하면 그룹 달성기록에 이모지의 메타데이터를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          user,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            user,
+            group,
+            groupCategory,
+          );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmojis(
+          10,
+          groupAchievement,
+          Emoji.FIRE,
+        );
+
+        // when
+        const groupAchievementEmojiListElement =
+          await groupAchievementEmojiRepository.findAllGroupAchievementEmojiMetaData(
+            user,
+            groupAchievement.id,
+          );
+
+        // then
+        expect(groupAchievementEmojiListElement).toBeDefined();
+        expect(groupAchievementEmojiListElement.LIKE.count).toEqual(0);
+        expect(groupAchievementEmojiListElement.LIKE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElement.LIKE.id).toEqual(Emoji.LIKE);
+        expect(groupAchievementEmojiListElement.SMILE.count).toEqual(0);
+        expect(groupAchievementEmojiListElement.SMILE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElement.SMILE.id).toEqual(Emoji.SMILE);
+        expect(groupAchievementEmojiListElement.FIRE.count).toEqual(10);
+        expect(groupAchievementEmojiListElement.FIRE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElement.FIRE.id).toEqual(Emoji.FIRE);
+      });
+    });
+
+    it('findAllGroupAchievementEmojiMetaData를 실행하면 그룹 달성기록에 이모지의 메타데이터를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          user,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            user,
+            group,
+            groupCategory,
+          );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmojis(
+          10,
+          groupAchievement,
+          Emoji.LIKE,
+        );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmojis(
+          100,
+          groupAchievement,
+          Emoji.SMILE,
+        );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmojis(
+          250,
+          groupAchievement,
+          Emoji.FIRE,
+        );
+
+        // when
+        const groupAchievementEmojiListElement =
+          await groupAchievementEmojiRepository.findAllGroupAchievementEmojiMetaData(
+            user,
+            groupAchievement.id,
+          );
+
+        // then
+        expect(groupAchievementEmojiListElement).toBeDefined();
+        expect(groupAchievementEmojiListElement.LIKE.count).toEqual(10);
+        expect(groupAchievementEmojiListElement.LIKE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElement.LIKE.id).toEqual(Emoji.LIKE);
+        expect(groupAchievementEmojiListElement.SMILE.count).toEqual(100);
+        expect(groupAchievementEmojiListElement.SMILE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElement.SMILE.id).toEqual(Emoji.SMILE);
+        expect(groupAchievementEmojiListElement.FIRE.count).toEqual(250);
+        expect(groupAchievementEmojiListElement.FIRE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElement.FIRE.id).toEqual(Emoji.FIRE);
+      });
+    });
+
+    it('findAllGroupAchievementEmojiMetaData를 실행하면 그룹 달성기록에 이모지의 메타데이터를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser('ABC');
+        const group = await groupFixture.createGroups(user);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          user,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            user,
+            group,
+            groupCategory,
+          );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmojis(
+          10,
+          groupAchievement,
+          Emoji.LIKE,
+        );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmoji(
+          user,
+          groupAchievement,
+          Emoji.LIKE,
+        );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmojis(
+          15,
+          groupAchievement,
+          Emoji.SMILE,
+        );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmoji(
+          user,
+          groupAchievement,
+          Emoji.SMILE,
+        );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmojis(
+          25,
+          groupAchievement,
+          Emoji.FIRE,
+        );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmoji(
+          user,
+          groupAchievement,
+          Emoji.FIRE,
+        );
+
+        console.log(user);
+        // when
+        const groupAchievementEmojiListElement =
+          await groupAchievementEmojiRepository.findAllGroupAchievementEmojiMetaData(
+            user,
+            groupAchievement.id,
+          );
+
+        // then
+        expect(groupAchievementEmojiListElement).toBeDefined();
+        expect(groupAchievementEmojiListElement.SMILE.count).toEqual(16);
+        expect(groupAchievementEmojiListElement.SMILE.isSelected).toBe(true);
+        expect(groupAchievementEmojiListElement.SMILE.id).toEqual(Emoji.SMILE);
+        expect(groupAchievementEmojiListElement.FIRE.count).toEqual(26);
+        expect(groupAchievementEmojiListElement.FIRE.isSelected).toBe(true);
+        expect(groupAchievementEmojiListElement.FIRE.id).toEqual(Emoji.FIRE);
+        expect(groupAchievementEmojiListElement.LIKE.count).toEqual(11);
+        expect(groupAchievementEmojiListElement.LIKE.isSelected).toBe(true);
+        expect(groupAchievementEmojiListElement.LIKE.id).toEqual(Emoji.LIKE);
+      });
+    });
+  });
 });
