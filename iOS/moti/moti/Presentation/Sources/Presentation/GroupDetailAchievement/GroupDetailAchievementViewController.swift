@@ -16,7 +16,7 @@ protocol GroupDetailAchievementViewControllerDelegate: DetailAchievementViewCont
     func blockingUserMenuDidClicked(userCode: String)
 }
 
-final class GroupDetailAchievementViewController: BaseViewController<GroupDetailAchievementView>, HiddenTabBarViewController {
+final class GroupDetailAchievementViewController: BaseViewController<GroupDetailAchievementView>, HiddenTabBarViewController, VibrationViewController {
 
     // MARK: - Properties
     weak var coordinator: GroupDetailAchievementCoordinator?
@@ -85,6 +85,7 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
             viewModel.toggleEmoji(emojiType)
         }
         sender.toggle()
+        vibration(.selection)
     }
     
     // MARK: - Setup
