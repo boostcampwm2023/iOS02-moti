@@ -148,14 +148,14 @@ private extension CaptureView {
     }
     
     private func updatePreviewConstraint() {
-        if let bounds = window?.windowScene?.screen.bounds {
+        if let bounds = window?.windowScene?.screen.bounds, let window {
             NSLayoutConstraint.deactivate(preview.constraints)
             
             let minSize = min(400, bounds.width, bounds.height)
             preview.atl
                 .size(width: minSize, height: minSize)
                 .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
-                .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
+                .centerY(equalTo: window.centerYAnchor, constant: -20)
         }
     }
 }
