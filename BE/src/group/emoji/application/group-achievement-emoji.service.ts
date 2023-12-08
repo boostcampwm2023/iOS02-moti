@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { GroupAchievementEmojiRepository } from '../entities/group-achievement-emoji.repository';
-import { Transactional } from '../../../config/transaction-manager';
-import { User } from '../../../users/domain/user.domain';
-import { Emoji } from '../domain/emoji';
-import { GroupAchievementRepository } from '../../achievement/entities/group-achievement.repository';
-import { UnauthorizedAchievementException } from '../../../achievement/exception/unauthorized-achievement.exception';
-import { GroupAchievementEmoji } from '../domain/group-achievement-emoji.domain';
-import { UserGroupRepository } from '../../group/entities/user-group.repository';
-import { NoSuchGroupUserException } from '../../achievement/exception/no-such-group-user.exception';
-import { GroupAchievementEmojiResponse } from '../dto/group-achievement-emoji-response';
+import { Injectable } from "@nestjs/common";
+import { GroupAchievementEmojiRepository } from "../entities/group-achievement-emoji.repository";
+import { Transactional } from "../../../config/transaction-manager";
+import { User } from "../../../users/domain/user.domain";
+import { Emoji } from "../domain/emoji";
+import { GroupAchievementRepository } from "../../achievement/entities/group-achievement.repository";
+import { UnauthorizedAchievementException } from "../../../achievement/exception/unauthorized-achievement.exception";
+import { GroupAchievementEmoji } from "../domain/group-achievement-emoji.domain";
+import { UserGroupRepository } from "../../group/entities/user-group.repository";
+import { NoSuchGroupUserException } from "../../achievement/exception/no-such-group-user.exception";
+import { GroupAchievementEmojiResponse } from "../dto/group-achievement-emoji-response";
+import { CompositeGroupAchievementEmoji } from "../dto/composite-group-achievement-emoji";
 
 @Injectable()
 export class GroupAchievementEmojiService {
@@ -56,24 +57,17 @@ export class GroupAchievementEmojiService {
   }
 
   @Transactional({ readonly: true })
-  async getGroupAchievementEmojiCount(user: User, groupAchievementId: number) {
-    return [
-      await this.groupAchievementEmojiRepository.findGroupAchievementEmojiMetaData(
-        user,
-        groupAchievementId,
-        Emoji.LIKE,
-      ),
-      await this.groupAchievementEmojiRepository.findGroupAchievementEmojiMetaData(
-        user,
-        groupAchievementId,
-        Emoji.FIRE,
-      ),
-      await this.groupAchievementEmojiRepository.findGroupAchievementEmojiMetaData(
-        user,
-        groupAchievementId,
-        Emoji.SMILE,
-      ),
-    ];
+  async getGroupAchievementEmojiCount(
+    user: User,
+    groupId: number,
+    groupAchievementId: number,
+  ): Promise<CompositeGroupAchievementEmoji> {
+    await this.validateUserGroup(user, groupId);
+    await this.validateGroupAchievement(groupId, groupAchievementId);
+    return await this.groupAchievementEmojiRepository.findAllGroupAchievementEmojiMetaData(
+      user,
+      groupAchievementId,
+    );
   }
 
   private async getGroupAchievement(groupId: number, achievementId: number) {
@@ -84,6 +78,13 @@ export class GroupAchievementEmojiService {
       );
     if (!grouopAchievement) throw new UnauthorizedAchievementException();
     return grouopAchievement;
+  }
+
+  private async validateGroupAchievement(
+    groupId: number,
+    achievementId: number,
+  ) {
+    await this.getGroupAchievement(groupId, achievementId);
   }
 
   private async validateUserGroup(user: User, groupId: number) {
