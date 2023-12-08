@@ -86,12 +86,16 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
 }
 
 // MARK: - Camera
-extension CaptureViewController {
-    private func checkCameraPermissions() {
+private extension CaptureViewController {
+    func checkCameraPermissions() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined: // 첫 권한 요청
             AVCaptureDevice.requestAccess(for: .video) { [weak self] isAllowed in
-                guard isAllowed else { return } // 사용자가 권한 거부
+                // 사용자가 권한 거부
+                guard isAllowed else {
+                    self?.moveToSetting()
+                    return
+                }
                 
                 DispatchQueue.main.async { // 사용자가 권한 허용
                     self?.setupCamera()
@@ -99,8 +103,10 @@ extension CaptureViewController {
             }
         case .restricted: // 제한
             Logger.debug("권한 제한")
+            moveToSetting()
         case .denied: // 이미 권한 거부 되어 있는 상태
             Logger.debug("권한 거부")
+            moveToSetting()
         case .authorized: // 이미 권한 허용되어 있는 상태
             Logger.debug("권한 허용")
             setupCamera()
@@ -108,8 +114,19 @@ extension CaptureViewController {
             break
         }
     }
+    
+    func moveToSetting() {
+        let message = "도전 기록 촬영을 위한 카메라 권한이 필요합니다.\n설정에서 권한을 허용해 주세요."
+        showTwoButtonAlert(title: "카메라 권한 없음", message: message, okTitle: "설정으로 이동", okAction: {
+            guard let settingURL = URL(string: UIApplication.openSettingsURLString) else { return }
+            
+            if UIApplication.shared.canOpenURL(settingURL) {
+                UIApplication.shared.open(settingURL)
+            }
+        })
+    }
 
-    private func setupCamera() {
+    func setupCamera() {
         setupBackCamera()
         setupFrontCamera()
         
@@ -153,7 +170,7 @@ extension CaptureViewController {
     }
     
     // 후면 카메라 설정
-    private func setupBackCamera() {
+    func setupBackCamera() {
         if let backCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
            let backCameraInput = try? AVCaptureDeviceInput(device: backCamera) {
             self.backCameraInput = backCameraInput
@@ -163,7 +180,7 @@ extension CaptureViewController {
     }
     
     // 전면 카메라 설정
-    private func setupFrontCamera() {
+    func setupFrontCamera() {
         if let frontCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
            let frontCameraInput = try? AVCaptureDeviceInput(device: frontCamera) {
             self.frontCameraInput = frontCameraInput
@@ -172,7 +189,7 @@ extension CaptureViewController {
         }
     }
     
-    private func startSession() {
+    func startSession() {
         guard let session = session else { return }
         
         layoutView.updatePreviewLayer(session: session)
@@ -185,7 +202,7 @@ extension CaptureViewController {
         }
     }
     
-    private func stopSession() {
+    func stopSession() {
         guard let session = session else { return }
         
         layoutView.captureButton.isEnabled = false
@@ -197,7 +214,7 @@ extension CaptureViewController {
         }
     }
 
-    @objc private func didClickedShutterButton() {
+    @objc func didClickedShutterButton() {
         vibration(.soft)
         layoutView.captureButton.isEnabled = false
         // 사진 찍기!

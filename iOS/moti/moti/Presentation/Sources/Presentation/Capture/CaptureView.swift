@@ -55,6 +55,7 @@ final class CaptureView: UIView {
         super.layoutSubviews()
         
         // 프리뷰 레이어 조정
+        updatePreviewConstraint()
         previewLayer.frame = preview.bounds
     }
     
@@ -65,10 +66,40 @@ final class CaptureView: UIView {
     
     func changeToBackCamera() {
         cameraSwitchingButton.setImage(SymbolImage.iphone, for: .normal)
+        UIView.transition(
+            with: cameraSwitchingButton,
+            duration: 0.2,
+            options: .transitionFlipFromLeft,
+            animations: nil,
+            completion: nil
+        )
+        
+        UIView.transition(
+            with: preview,
+            duration: 0.2,
+            options: .transitionFlipFromLeft,
+            animations: nil,
+            completion: nil
+        )
     }
     
     func changeToFrontCamera() {
         cameraSwitchingButton.setImage(SymbolImage.iphoneCamera, for: .normal)
+        UIView.transition(
+            with: cameraSwitchingButton,
+            duration: 0.2,
+            options: .transitionFlipFromRight,
+            animations: nil,
+            completion: nil
+        )
+        
+        UIView.transition(
+            with: preview,
+            duration: 0.2,
+            options: .transitionFlipFromRight,
+            animations: nil, 
+            completion: nil
+        )
     }
 }
 
@@ -109,14 +140,22 @@ private extension CaptureView {
     func setupPreview() {
         // 카메라 Preview
         addSubview(preview)
-        preview.atl
-            .height(equalTo: preview.widthAnchor)
-            .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
-            .horizontal(equalTo: safeAreaLayoutGuide)
         
         // PreviewLayer를 Preview 에 넣기
         previewLayer.backgroundColor = UIColor.primaryGray.cgColor
         previewLayer.videoGravity = .resizeAspectFill
         preview.layer.addSublayer(previewLayer)
+    }
+    
+    private func updatePreviewConstraint() {
+        if let bounds = window?.windowScene?.screen.bounds {
+            NSLayoutConstraint.deactivate(preview.constraints)
+            
+            let minSize = min(400, bounds.width, bounds.height)
+            preview.atl
+                .size(width: minSize, height: minSize)
+                .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
+                .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
+        }
     }
 }

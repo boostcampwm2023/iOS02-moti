@@ -29,6 +29,9 @@ public enum MotiImage {
     /// Cell 스켈레톤 이미지
     public static let skeleton = UIImage(resource: .skeleton)
     
+    /// Cell 작은 스켈레톤 이미지
+    public static let smallSkeleton = UIImage(resource: .smallSkeleton)
+    
     /// 앱 아이콘 이미지 1024x1024
     public static let appIcon = UIImage(resource: .appIcon)
 }

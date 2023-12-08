@@ -34,8 +34,6 @@ final class GroupMemberViewController: BaseViewController<GroupMemberView>, Hidd
         super.viewDidLoad()
         title = manageMode ? "그룹원 관리" : "그룹원"
         setupGroupMemberDataSource()
-        
-        bind()
         viewModel.action(.launch)
     }
     
@@ -59,21 +57,6 @@ final class GroupMemberViewController: BaseViewController<GroupMemberView>, Hidd
         let diffableDataSource = GroupMemberViewModel.GroupMemberDataSource(dataSource: dataSource)
         viewModel.setupDataSource(diffableDataSource)
     }
-    
-    private func bind() {
-        viewModel.groupMemberListState
-            .receive(on: RunLoop.main)
-            .sink { [weak self] state in
-                guard let self else { return }
-                switch state {
-                case .success:
-                    break
-                case .failed(let message):
-                    Logger.error("Fetch Group Member Error: \(message)")
-                }
-            }
-            .store(in: &cancellables)
-    }
 }
 
 extension GroupMemberViewController: UICollectionViewDelegate {
@@ -82,9 +65,8 @@ extension GroupMemberViewController: UICollectionViewDelegate {
 
 extension GroupMemberViewController: GroupMemberCollectionViewCellDelegate {
     func menuDidClicked(groupMember: GroupMember, newGroupGrade: GroupGrade) {
-        showTwoButtonAlert(title: "\(newGroupGrade.description) 권한으로 수정하시겠습니까?", okTitle: "수정") { [weak self] in
-            guard let self else { return }
+        showTwoButtonAlert(title: "\(newGroupGrade.description) 권한으로 수정하시겠습니까?", okTitle: "수정", okAction: {
             self.viewModel.action(.updateGrade(groupMember: groupMember, newGroupGrade: newGroupGrade))
-        }
+        })
     }
 }

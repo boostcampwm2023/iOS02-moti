@@ -7,7 +7,7 @@
 
 import UIKit
 
-public final class EmojiButton: BounceButton {
+public final class EmojiButton: BounceButton, CAAnimationDelegate {
     public let emoji: String
     private var isSelectedEmoji = false {
         didSet {
@@ -43,7 +43,7 @@ public final class EmojiButton: BounceButton {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = false
-        label.font = UIFont.systemFont(ofSize: 18) // 디자인시스템에 넣기..? 좀 고민 중
+        label.font = UIFont.systemFont(ofSize: 18)
         return label
     }()
     
@@ -111,13 +111,32 @@ public final class EmojiButton: BounceButton {
     }
     
     private func increaseCount() {
-        // TODO: 숫자가 위로 올라가는 애니메이션
+        // 숫자가 1 이상일 때만 애니메이션
+        // 0일 때는 countLabel이 나타나는 효과가 존재함
+        if count > 0 {
+            pushAnimation(subtype: .fromTop)
+        }
         count += 1
     }
     
     private func decreaseCount() {
-        // TODO: 숫자가 아래로 내려가는 애니메이션
         count -= 1
+        // 숫자가 1 이상일 때만 애니메이션
+        // 0일 때는 countLabel이 사라지는 효과가 존재함
+        if count > 0 {
+            pushAnimation(subtype: .fromBottom)
+        }
+    }
+    
+    private func pushAnimation(subtype: CATransitionSubtype) {
+        let animation = CATransition()
+        animation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        animation.duration = 0.15
+        animation.type = .push
+        animation.subtype = subtype
+        animation.delegate = self
+        
+        countLabel.layer.add(animation, forKey: CATransitionType.push.rawValue)
     }
     
     // MARK: - Setup
@@ -156,6 +175,6 @@ public final class EmojiButton: BounceButton {
     
     private func applyDeselectedStyle() {
         applyNormalUI()
-        countLabel.textColor = .black
+        countLabel.textColor = .emojiButtonTitle
     }
 }

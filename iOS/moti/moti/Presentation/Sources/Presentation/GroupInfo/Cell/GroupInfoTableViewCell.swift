@@ -35,6 +35,7 @@ final class GroupInfoTableViewCell: UITableViewCell {
 // MARK: - Setup
 private extension GroupInfoTableViewCell {
     func setupUI() {
+        backgroundColor = .motiBackground
         accessoryType = .disclosureIndicator
         
         addSubview(label)

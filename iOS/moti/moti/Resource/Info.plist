@@ -21,7 +21,5 @@
 			</array>
 		</dict>
 	</dict>
-	<key>NSCameraUsageDescription</key>
-	<string>목표 기록에 넣을 사진을 찍기 위한 카메라 권한이 필요합니다.</string>
 </dict>
 </plist>

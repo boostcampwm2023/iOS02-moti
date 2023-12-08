@@ -130,9 +130,10 @@ private extension HomeView {
 
 private extension HomeView {
     func makeAchievementCollectionView() -> UICollectionViewLayout {
+        let count: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 9 : 3
         let itemPadding: CGFloat = 1
         let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0 / 3),
+            widthDimension: .fractionalWidth(1.0 / count),
             heightDimension: .fractionalHeight(1))
         let itemInset = NSDirectionalEdgeInsets(top: itemPadding, leading: itemPadding, bottom: itemPadding, trailing: itemPadding)
         
