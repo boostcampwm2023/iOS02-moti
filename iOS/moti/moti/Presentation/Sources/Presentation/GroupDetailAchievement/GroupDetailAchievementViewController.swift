@@ -110,13 +110,25 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         })
         // 작성자가 아닌 유저에게만 표시
         let blockingAchievementAction = UIAction(title: "도전기록 차단", attributes: .destructive, handler: { _ in
-            self.viewModel.action(.blockingAchievement)
-            self.delegate?.blockingAchievementMenuDidClicked(achievementId: self.viewModel.achievement.id)
+            self.showDestructiveTwoButtonAlert(
+                title: "도전기록 차단",
+                message: "더이상 해당 도전기록을 볼 수 없습니다.\n정말 차단하시겠습니까?",
+                okTitle: "차단",
+                okAction: {
+                    self.viewModel.action(.blockingAchievement)
+                    self.delegate?.blockingAchievementMenuDidClicked(achievementId: self.viewModel.achievement.id)
+            })
         })
         // 작성자가 아닌 유저에게만 표시
         let blockingUserAction = UIAction(title: "사용자 차단", attributes: .destructive, handler: { _ in
-            self.viewModel.action(.blockingUser)
-            self.delegate?.blockingUserMenuDidClicked(userCode: self.viewModel.achievement.userCode)
+            self.showDestructiveTwoButtonAlert(
+                title: "사용자 차단",
+                message: "더이상 해당 사용자의 모든 도전기록을 볼 수 없습니다.\n정말 차단하시겠습니까?",
+                okTitle: "차단",
+                okAction: {
+                    self.viewModel.action(.blockingUser)
+                    self.delegate?.blockingUserMenuDidClicked(userCode: self.viewModel.achievement.userCode)
+            })
         })
         
         var children: [UIAction] = []

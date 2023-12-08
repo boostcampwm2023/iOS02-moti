@@ -24,6 +24,9 @@ public final class CaptureButton: UIButton {
         
         setupUI()
         addTarget()
+        
+        let size = min(Self.defaultSize, Self.defaultSize)
+        applyCorenrRadius(size: size)
     }
     
     required init?(coder: NSCoder) {
@@ -34,13 +37,6 @@ public final class CaptureButton: UIButton {
         addTarget(self, action: #selector(captureButtonTouchDown), for: .touchDown)
         addTarget(self, action: #selector(captureButtonTouchUpInside), for: .touchUpInside)
         addTarget(self, action: #selector(captureButtonTouchUpOutside), for: .touchUpOutside)
-    }
-    
-    public override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        let size = min(frame.width, frame.height)
-        applyCorenrRadius(size: size)
     }
     
     // MARK: - Setup
