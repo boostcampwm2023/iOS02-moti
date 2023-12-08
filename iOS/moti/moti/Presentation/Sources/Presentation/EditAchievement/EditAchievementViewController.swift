@@ -178,8 +178,6 @@ extension EditAchievementViewController: UIPickerViewDataSource {
 private extension EditAchievementViewController {
     func setupNavigationBar() {
         navigationItem.rightBarButtonItems = [doneButton]
-        doneButton.isEnabled = false
-        doneButton.title = "로딩 중"
     }
     
     func showDoneButton() {
@@ -276,7 +274,8 @@ private extension EditAchievementViewController {
                 guard let self else { return }
                 print("Save Image: \(state)")
                 switch state {
-                case .none, .loading:
+                case .none: break
+                case .loading:
                     doneButton.isEnabled = false
                     doneButton.title = "로딩 중"
                 case .finish:
