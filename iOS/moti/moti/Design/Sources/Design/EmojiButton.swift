@@ -43,7 +43,7 @@ public final class EmojiButton: BounceButton, CAAnimationDelegate {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = false
-        label.font = UIFont.systemFont(ofSize: 18) // 디자인시스템에 넣기..? 좀 고민 중
+        label.font = UIFont.systemFont(ofSize: 18)
         return label
     }()
     
@@ -175,6 +175,6 @@ public final class EmojiButton: BounceButton, CAAnimationDelegate {
     
     private func applyDeselectedStyle() {
         applyNormalUI()
-        countLabel.textColor = .black
+        countLabel.textColor = .emojiButtonTitle
     }
 }
