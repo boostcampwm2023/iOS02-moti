@@ -36,7 +36,7 @@ final class GroupDetailAchievementView: UIView {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .primaryDarkGray
-        imageView.image = MotiImage.skeleton
+        imageView.image = MotiImage.smallSkeleton
         imageView.clipsToBounds = true
         return imageView
     }()
