@@ -131,7 +131,7 @@ extension EditAchievementView {
         addSubview(resultImageView)
         if UIDevice.current.userInterfaceIdiom == .pad {
             resultImageView.atl
-                .size(width: 800, height: 800)
+                .size(width: 600, height: 600)
                 .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
                 .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
         } else {
