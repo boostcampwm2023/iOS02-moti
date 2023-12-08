@@ -15,6 +15,7 @@ import { ApiData } from '../../../common/api/api-data';
 import { GroupAchievementEmojiResponse } from '../dto/group-achievement-emoji-response';
 import { ParseEmojiPipe } from '../../../common/pipe/parse-emoji.pipe';
 import { GroupAchievementEmojiListElement } from '../dto/group-achievement-emoji-list-element';
+import { CompositeGroupAchievementEmoji } from '../dto/composite-group-achievement-emoji';
 
 @ApiTags('그룹 도전기록 이모지 API')
 @Controller('/api/v1/groups/:groupId/achievements/:achievementId/emojis')
@@ -66,11 +67,12 @@ export class GroupAchievementEmojiController {
     @Param('groupId', ParseIntPipe) groupId: number,
     @Param('achievementId', ParseIntPipe) achievementId: number,
   ): Promise<ApiData<GroupAchievementEmojiListElement[]>> {
-    const groupAchievementEmojiResponse: GroupAchievementEmojiListElement[] =
+    const groupAchievementEmojiResponse: CompositeGroupAchievementEmoji =
       await this.groupAchievementEmojiService.getGroupAchievementEmojiCount(
         user,
+        groupId,
         achievementId,
       );
-    return ApiData.success(groupAchievementEmojiResponse);
+    return ApiData.success(groupAchievementEmojiResponse.toResponse());
   }
 }
