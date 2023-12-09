@@ -136,6 +136,10 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
                     self.delegate?.blockingUserMenuDidClicked(userCode: self.viewModel.achievement.userCode)
             })
         })
+        // 신고
+        let reportAction = UIAction(title: "신고", attributes: .destructive, handler: { _ in
+            self.showOneButtonAlert(title: "신고 완료", message: "신고 처리되었습니다.")
+        })
         
         var children: [UIAction] = []
         if isMyAchievement || grade == .leader || grade == .manager {
@@ -144,9 +148,8 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         
         // 그룹장, 관리자에게도 표시하기 위해 조건문 분리
         if !isMyAchievement {
-            children.append(contentsOf: [blockingAchievementAction, blockingUserAction])
+            children.append(contentsOf: [blockingAchievementAction, blockingUserAction, reportAction])
         }
-        
         moreItem.menu = UIMenu(children: children)
         
         if isMyAchievement {
