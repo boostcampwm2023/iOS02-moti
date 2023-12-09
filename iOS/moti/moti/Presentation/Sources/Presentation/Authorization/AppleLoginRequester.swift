@@ -45,13 +45,13 @@ extension AppleLoginRequester: ASAuthorizationControllerDelegate {
             return
         }
         
-        #if DEBUG
         guard let authorizationCodeData = appleIDCredential.authorizationCode,
               let authorizationCode = String(data: authorizationCodeData, encoding: .utf8) else {
             delegate?.failed(message: "로그인 실패")
             return
         }
 
+        #if DEBUG        
         Logger.debug("identityToken: \(identityToken)")
         Logger.debug("authorizationCode: \(authorizationCode)")
         #endif
