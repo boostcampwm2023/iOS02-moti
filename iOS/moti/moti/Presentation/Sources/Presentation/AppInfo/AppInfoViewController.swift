@@ -15,6 +15,7 @@ final class AppInfoViewController: BaseViewController<AppInfoView>, LoadingIndic
     let viewModel: AppInfoViewModel
     private var cancellables: Set<AnyCancellable> = []
     weak var coordinator: AppInfoCoordinator?
+    private var appleLoginRequester: AppleLoginRequester?
     private let version: Version
     
     // MARK: - Init
@@ -36,6 +37,14 @@ final class AppInfoViewController: BaseViewController<AppInfoView>, LoadingIndic
         addTarget()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        // view.window가 필요하므로 viewDidAppear에서 setup
+        // viewDidLayoutSubviews부터 window가 생기지만, 한 번만 호출하기 위해 viewDidAppear에서 호출
+        setupAppleLoginRequester()
+    }
+
     private func bind() {
         viewModel.revokeState
             .receive(on: RunLoop.main)
@@ -81,14 +90,30 @@ final class AppInfoViewController: BaseViewController<AppInfoView>, LoadingIndic
     }
     
     // MARK: - Methods
-    
-    
     private func openURL(_ url: String) {
         guard let url = URL(string: url) else { return }
         UIApplication.shared.open(url)
     }
     
     @objc private func revokeButtonDidClicked() {
+        appleLoginRequester?.request()
+    }
+    
+    private func setupAppleLoginRequester() {
+        guard appleLoginRequester == nil,
+              let window = view.window else { return }
         
+        appleLoginRequester = AppleLoginRequester(window: window)
+        appleLoginRequester?.delegate = self
+    }
+}
+
+extension AppInfoViewController: AppleLoginRequesterDelegate {
+    func success(token: String, authorizationCode: String) {
+        viewModel.action(.revoke(identityToken: token, authorizationCode: authorizationCode))
+    }
+    
+    func failed(message: String) {
+        showOneButtonAlert(title: "회원 탈퇴 실패", message: "다시 시도해 주세요.")
     }
 }

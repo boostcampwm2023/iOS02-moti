@@ -45,7 +45,7 @@ private extension AppInfoViewModel {
             do {
                 revokeState.send(.loading)
                 
-                let requestValue = RevokeRequestValue(identityToken: identityToken, authrizationCode: authorizationCode)
+                let requestValue = RevokeRequestValue(identityToken: identityToken, authorizationCode: authorizationCode)
                 let isSuccess = try await revokeUseCase.execute(requestValue: requestValue)
                 revokeState.send(.finish)
                 

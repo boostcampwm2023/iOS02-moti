@@ -9,11 +9,11 @@ import Foundation
 
 public struct RevokeRequestValue: RequestValue {
     public let identityToken: String
-    public let authrizationCode: String
+    public let authorizationCode: String
     
-    public init(identityToken: String, authrizationCode: String) {
+    public init(identityToken: String, authorizationCode: String) {
         self.identityToken = identityToken
-        self.authrizationCode = authrizationCode
+        self.authorizationCode = authorizationCode
     }
 }
 
