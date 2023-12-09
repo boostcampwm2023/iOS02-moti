@@ -52,6 +52,12 @@ jobs:
           SWAGGER_VERSION=${{ secrets.SWAGGER_VERSION }}
           SWAGGER_TAG=${{ secrets.SWAGGER_TAG }}
           APPLE_PUBLIC_KEY_URL=${{ secrets.APPLE_PUBLIC_KEY_URL }}
+          APPLE_TOKEN_URL=${{ secrets.APPLE_TOKEN_URL }}
+          APPLE_REVOKE_URL=${{ secrets.APPLE_REVOKE_URL }}
+          APPLE_CLIENT_ID=${{ secrets.APPLE_CLIENT_ID }}
+          APPLE_KEY_ID=${{ secrets.APPLE_KEY_ID }}
+          APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}
+          APPLE_AUD=${{ secrets.APPLE_AUD }}
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           JWT_VALIDITY=${{ secrets.JWT_VALIDITY }}
           REFRESH_JWT_SECRET=${{ secrets.REFRESH_JWT_SECRET }}
