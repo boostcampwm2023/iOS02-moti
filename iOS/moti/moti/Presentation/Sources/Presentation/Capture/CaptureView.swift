@@ -53,10 +53,6 @@ final class CaptureView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        debugPrint(safeAreaLayoutGuide)
-        // 프리뷰 레이어 조정
-        updatePreviewConstraint()
         previewLayer.frame = preview.bounds
     }
     
@@ -141,22 +137,21 @@ private extension CaptureView {
     func setupPreview() {
         // 카메라 Preview
         addSubview(preview)
+        preview.atl
+            .height(equalTo: preview.widthAnchor)
+            .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
+            .centerY(greaterThanOrEqualTo: centerYAnchor, constant: -20)
         
+        let widthConstraint = preview.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor)
+        widthConstraint.priority = .defaultHigh
+        NSLayoutConstraint.activate([
+            preview.widthAnchor.constraint(lessThanOrEqualToConstant: 400),
+            widthConstraint
+        ])
+
         // PreviewLayer를 Preview 에 넣기
         previewLayer.backgroundColor = UIColor.primaryGray.cgColor
         previewLayer.videoGravity = .resizeAspectFill
         preview.layer.addSublayer(previewLayer)
-    }
-    
-    private func updatePreviewConstraint() {
-        if let bounds = window?.windowScene?.screen.bounds {
-            NSLayoutConstraint.deactivate(preview.constraints)
-            
-            let minSize = min(400, bounds.width, bounds.height)
-            preview.atl
-                .size(width: minSize, height: minSize)
-                .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
-                .centerY(equalTo: centerYAnchor, constant: -20)
-        }
     }
 }

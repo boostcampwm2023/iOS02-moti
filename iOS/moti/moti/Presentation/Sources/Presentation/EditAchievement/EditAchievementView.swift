@@ -64,11 +64,6 @@ final class EditAchievementView: UIView {
         setupUI()
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        updateImageViewConstraint()
-    }
-    
     func configure(image: UIImage?, category: String? = nil) {
         resultImageView.image = image
         
@@ -136,20 +131,19 @@ extension EditAchievementView {
     
     private func setupResultImageView() {
         addSubview(resultImageView)
+        resultImageView.atl
+            .height(equalTo: resultImageView.widthAnchor)
+            .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
+            .centerY(greaterThanOrEqualTo: centerYAnchor, constant: -20)
+        
+        let widthConstraint = resultImageView.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor)
+        widthConstraint.priority = .defaultHigh
+        NSLayoutConstraint.activate([
+            resultImageView.widthAnchor.constraint(lessThanOrEqualToConstant: 400),
+            widthConstraint
+        ])
     }
     
-    private func updateImageViewConstraint() {
-        if let bounds = window?.windowScene?.screen.bounds {
-            NSLayoutConstraint.deactivate(resultImageView.constraints)
-            
-            let minSize = min(400, bounds.width, bounds.height)
-            resultImageView.atl
-                .size(width: minSize, height: minSize)
-                .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
-                .centerY(greaterThanOrEqualTo: centerYAnchor, constant: -20)
-        }
-    }
-        
     private func setupCategoryPickerView() {
         addSubview(categoryPickerView)
         addSubview(selectDoneButton)
