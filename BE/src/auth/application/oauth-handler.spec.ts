@@ -1,18 +1,29 @@
 import { OauthRequester } from './oauth-requester';
-import { ConfigService } from '@nestjs/config';
-import { HttpService } from '@nestjs/axios';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { PublicKeysResponse } from '../index';
 import { JwtUtils } from './jwt-utils';
 import { OauthHandler } from './oauth-handler';
+import { Test, TestingModule } from '@nestjs/testing';
+import { configServiceModuleOptions } from '../../config/config';
+import { anyString, instance, mock, when } from 'ts-mockito';
 
 describe('OauthHandler test', () => {
-  const oauthRequester = new OauthRequester(
-    new ConfigService(),
-    new HttpService(),
-  );
-  const jwtUtils = new JwtUtils(new JwtService(), new ConfigService());
-  const oauthHandler = new OauthHandler(oauthRequester, jwtUtils);
+  const mockOauthRequester: OauthRequester =
+    mock<OauthRequester>(OauthRequester);
+  const oauthRequester = instance<OauthRequester>(mockOauthRequester);
+  let jwtUtils: JwtUtils;
+  let oauthHandler: OauthHandler;
+  let configService: ConfigService;
+
+  beforeAll(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      imports: [ConfigModule.forRoot(configServiceModuleOptions)],
+    }).compile();
+    configService = module.get<ConfigService>(ConfigService);
+    jwtUtils = new JwtUtils(new JwtService(), configService);
+    oauthHandler = new OauthHandler(oauthRequester, jwtUtils);
+  });
 
   test('apple ID 서버로 부터 public key를 가져와서 identityToken을 검증한다.', async () => {
     const mockPublicKeyResponse: PublicKeysResponse = {
@@ -43,9 +54,8 @@ describe('OauthHandler test', () => {
         },
       ],
     };
-    jest
-      .spyOn(oauthRequester, 'getPublicKeys')
-      .mockResolvedValue(mockPublicKeyResponse);
+
+    when(mockOauthRequester.getPublicKeys()).thenResolve(mockPublicKeyResponse);
 
     const userIdentifier = await oauthHandler.getUserIdentifier(
       'eyJraWQiOiJmaDZCczhDIiwiYWxnIjoiUlMyNTYifQ.eyJpc3MiOiJodHRwczovL2FwcGxlaWQuYXBwbGUuY29tIiwiYXVkIjoiY29tLm1vdGltYXRlLm1vdGkiLCJleHAiOjE5MjA1OTkxNjgsImlhdCI6MTY5OTYxMjczMiwic3ViIjoiMTIzNDU2LjEyNTU5ZWUxNTkyYjQ0YWY5NzA1ZmRhYmYyOGFlMzhiLjEyMzQiLCJjX2hhc2giOiJxSkd3ZEhyNEZYb055Qllobm5vQ21RIiwiYXV0aF90aW1lIjoxNjk5NjEyNzMyLCJub25jZV9zdXBwb3J0ZWQiOnRydWV9.YdK6WYDeGBskSPCARJl-OSGJ8Bo5RiO36lmo8KV2xRpf-QNbHJXakvfrEREXyxsesNQnGxD6AV0hJTNVYIC5LbDlDRP-09Kihg8RgksAseVvSNLic1Ug0sTN2Aivhmcu9GqB4s0p2Uv4E1mKcx5u5JQtu5c_6oNLrn4AmXJQrwfWebYFyuqkr0gFYaltpd4mVNrgJzuSNJdNyt6-UUefq6KYuPHsm3cIYUTZWzSLxaDV3Kr7vnxta-CFN_EHCDiA5nqRofO0jIDgcE7M8cudpejRtZ7zhzIlOE8ggGyvW3Qg-7MaMTxAaUuIivSqeY_f0GYtsiEl_ouKuWlQ1SPPNA',
@@ -54,5 +64,31 @@ describe('OauthHandler test', () => {
     expect(userIdentifier).toEqual(
       '123456.12559ee1592b44af9705fdabf28ae38b.1234',
     );
+  });
+
+  test('apple ID 서버로 revoke 요청을 한다.', async () => {
+    when(
+      mockOauthRequester.getAccessToken(anyString(), anyString()),
+    ).thenResolve({
+      access_token: 'access_token',
+      expires_in: 1702108011,
+      id_token: 'id_token',
+      refresh_token: 'refresh_token',
+      token_type: 'access_token',
+    });
+
+    when(mockOauthRequester.revoke(anyString(), anyString())).thenResolve({
+      status: 200,
+      statusText: 'OK',
+      data: null,
+      headers: null,
+      config: null,
+    });
+
+    const revokeResponse = await oauthHandler.revokeUser(
+      'cfbe8301326694c9eb1f6ca027c1002b5.0.srtqw.U4Ma5JMUVe6CeWbsxy5dYA',
+    );
+
+    expect(revokeResponse.status).toEqual(200);
   });
 });
