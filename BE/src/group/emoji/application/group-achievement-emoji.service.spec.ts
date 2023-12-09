@@ -640,4 +640,248 @@ describe('GroupAchievementEmojiService Test', () => {
       });
     });
   });
+
+  describe('getGroupAchievementEmojiCount는 그룹 달성기록에 이모지를 조회할 수 있다.', () => {
+    it('그룹 달성기록에 이모지를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('user');
+        const group = await groupFixture.createGroups(leader);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            leader,
+            group,
+            groupCategory,
+          );
+
+        const user = await usersFixture.getUser('otherUser');
+        await groupFixture.addMember(group, user, UserGroupGrade.MANAGER);
+
+        // when
+        const groupAchievementEmojiListElements =
+          await groupAchievementEmojiService.getGroupAchievementEmojiCount(
+            user,
+            group.id,
+            groupAchievement.id,
+          );
+
+        // then
+        expect(groupAchievementEmojiListElements.LIKE.id).toBe(Emoji.LIKE);
+        expect(groupAchievementEmojiListElements.LIKE.count).toBe(0);
+        expect(groupAchievementEmojiListElements.LIKE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElements.FIRE.id).toBe(Emoji.FIRE);
+        expect(groupAchievementEmojiListElements.FIRE.count).toBe(0);
+        expect(groupAchievementEmojiListElements.FIRE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElements.SMILE.id).toBe(Emoji.SMILE);
+        expect(groupAchievementEmojiListElements.SMILE.count).toBe(0);
+        expect(groupAchievementEmojiListElements.SMILE.isSelected).toBe(false);
+      });
+    });
+
+    it('그룹 달성기록에 이모지를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('user');
+        const group = await groupFixture.createGroups(leader);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            leader,
+            group,
+            groupCategory,
+          );
+
+        const user = await usersFixture.getUser('otherUser');
+        await groupFixture.addMember(group, user, UserGroupGrade.MANAGER);
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmoji(
+          user,
+          groupAchievement,
+          Emoji.LIKE,
+        );
+
+        // when
+        const groupAchievementEmojiListElements =
+          await groupAchievementEmojiService.getGroupAchievementEmojiCount(
+            user,
+            group.id,
+            groupAchievement.id,
+          );
+
+        // then
+        expect(groupAchievementEmojiListElements.LIKE.id).toBe(Emoji.LIKE);
+        expect(groupAchievementEmojiListElements.LIKE.count).toBe(1);
+        expect(groupAchievementEmojiListElements.LIKE.isSelected).toBe(true);
+        expect(groupAchievementEmojiListElements.FIRE.id).toBe(Emoji.FIRE);
+        expect(groupAchievementEmojiListElements.FIRE.count).toBe(0);
+        expect(groupAchievementEmojiListElements.FIRE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElements.SMILE.id).toBe(Emoji.SMILE);
+        expect(groupAchievementEmojiListElements.SMILE.count).toBe(0);
+        expect(groupAchievementEmojiListElements.SMILE.isSelected).toBe(false);
+      });
+    });
+
+    it('그룹 달성기록에 이모지를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('user');
+        const group = await groupFixture.createGroups(leader);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            leader,
+            group,
+            groupCategory,
+          );
+
+        const user = await usersFixture.getUser('otherUser');
+        await groupFixture.addMember(group, user, UserGroupGrade.MANAGER);
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmoji(
+          user,
+          groupAchievement,
+          Emoji.FIRE,
+        );
+
+        // when
+        const groupAchievementEmojiListElements =
+          await groupAchievementEmojiService.getGroupAchievementEmojiCount(
+            user,
+            group.id,
+            groupAchievement.id,
+          );
+
+        // then
+        expect(groupAchievementEmojiListElements.LIKE.id).toBe(Emoji.LIKE);
+        expect(groupAchievementEmojiListElements.LIKE.count).toBe(0);
+        expect(groupAchievementEmojiListElements.LIKE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElements.FIRE.id).toBe(Emoji.FIRE);
+        expect(groupAchievementEmojiListElements.FIRE.count).toBe(1);
+        expect(groupAchievementEmojiListElements.FIRE.isSelected).toBe(true);
+        expect(groupAchievementEmojiListElements.SMILE.id).toBe(Emoji.SMILE);
+        expect(groupAchievementEmojiListElements.SMILE.count).toBe(0);
+        expect(groupAchievementEmojiListElements.SMILE.isSelected).toBe(false);
+      });
+    });
+
+    it('그룹 달성기록에 이모지를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('user');
+        const group = await groupFixture.createGroups(leader);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            leader,
+            group,
+            groupCategory,
+          );
+
+        const user = await usersFixture.getUser('otherUser');
+        await groupFixture.addMember(group, user, UserGroupGrade.MANAGER);
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmoji(
+          user,
+          groupAchievement,
+          Emoji.FIRE,
+        );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmojis(
+          10,
+          groupAchievement,
+          Emoji.LIKE,
+        );
+
+        // when
+        const groupAchievementEmojiListElements =
+          await groupAchievementEmojiService.getGroupAchievementEmojiCount(
+            user,
+            group.id,
+            groupAchievement.id,
+          );
+
+        // then
+        expect(groupAchievementEmojiListElements.LIKE.id).toBe(Emoji.LIKE);
+        expect(groupAchievementEmojiListElements.LIKE.count).toBe(10);
+        expect(groupAchievementEmojiListElements.LIKE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElements.FIRE.id).toBe(Emoji.FIRE);
+        expect(groupAchievementEmojiListElements.FIRE.count).toBe(1);
+        expect(groupAchievementEmojiListElements.FIRE.isSelected).toBe(true);
+        expect(groupAchievementEmojiListElements.SMILE.id).toBe(Emoji.SMILE);
+        expect(groupAchievementEmojiListElements.SMILE.count).toBe(0);
+        expect(groupAchievementEmojiListElements.SMILE.isSelected).toBe(false);
+      });
+    });
+
+    it('그룹 달성기록에 이모지를 조회할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('user');
+        const group = await groupFixture.createGroups(leader);
+        const groupCategory = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+        );
+        const groupAchievement =
+          await groupAchievementFixture.createGroupAchievement(
+            leader,
+            group,
+            groupCategory,
+          );
+
+        const user = await usersFixture.getUser('otherUser');
+        await groupFixture.addMember(group, user, UserGroupGrade.MANAGER);
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmoji(
+          user,
+          groupAchievement,
+          Emoji.FIRE,
+        );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmojis(
+          15,
+          groupAchievement,
+          Emoji.FIRE,
+        );
+
+        await groupAchievementEmojiFixture.createGroupAchievementEmojis(
+          10,
+          groupAchievement,
+          Emoji.LIKE,
+        );
+
+        // when
+        const groupAchievementEmojiListElements =
+          await groupAchievementEmojiService.getGroupAchievementEmojiCount(
+            user,
+            group.id,
+            groupAchievement.id,
+          );
+
+        // then
+        expect(groupAchievementEmojiListElements.LIKE.id).toBe(Emoji.LIKE);
+        expect(groupAchievementEmojiListElements.LIKE.count).toBe(10);
+        expect(groupAchievementEmojiListElements.LIKE.isSelected).toBe(false);
+        expect(groupAchievementEmojiListElements.FIRE.id).toBe(Emoji.FIRE);
+        expect(groupAchievementEmojiListElements.FIRE.count).toBe(16);
+        expect(groupAchievementEmojiListElements.FIRE.isSelected).toBe(true);
+        expect(groupAchievementEmojiListElements.SMILE.id).toBe(Emoji.SMILE);
+        expect(groupAchievementEmojiListElements.SMILE.count).toBe(0);
+        expect(groupAchievementEmojiListElements.SMILE.isSelected).toBe(false);
+      });
+    });
+  });
 });

@@ -6,6 +6,7 @@ import { User } from '../../../users/domain/user.domain';
 import { Emoji } from '../domain/emoji';
 import { IGroupAchievementEmojiMetadata } from '../dto';
 import { GroupAchievementEmojiListElement } from '../dto/group-achievement-emoji-list-element';
+import { CompositeGroupAchievementEmoji } from '../dto/composite-group-achievement-emoji';
 
 @CustomRepository(GroupAchievementEmojiEntity)
 export class GroupAchievementEmojiRepository extends TransactionalRepository<GroupAchievementEmojiEntity> {
@@ -56,7 +57,22 @@ export class GroupAchievementEmojiRepository extends TransactionalRepository<Gro
   ) {
     const metadata = await this.repository
       .createQueryBuilder('gae')
-      .select('COUNT(gae.id)', 'count')
+      .select(':emoji', 'id')
+      .addSelect('COALESCE(COUNT(gae.id), 0)', 'count')
+      .setParameters({
+        emoji: emoji,
+      })
+      .addSelect(
+        '(SELECT CASE WHEN EXISTS (SELECT 1 FROM group_achievement_emoji ' +
+          ' WHERE user_id = :userId AND emoji = :emoji and group_achievement_id = :groupAchievementId) ' +
+          'THEN 1 ELSE 0 END AS result)',
+        'isSelected',
+      )
+      .setParameters({
+        emoji: emoji,
+        groupAchievementId: groupAchievementId,
+        userId: user.id,
+      })
       .where('gae.group_achievement_id = :groupAchievementId', {
         groupAchievementId,
       })
@@ -64,36 +80,39 @@ export class GroupAchievementEmojiRepository extends TransactionalRepository<Gro
       .groupBy('gae.groupAchievement')
       .getRawOne<IGroupAchievementEmojiMetadata>();
 
-    const userEmoji = await this.findGroupAchievementEmojiByUser(
-      groupAchievementId,
-      user,
-      emoji,
-    );
-
-    return GroupAchievementEmojiListElement.of(
-      emoji,
-      isNaN(parseInt(metadata?.count)) ? 0 : parseInt(metadata.count),
-      userEmoji != null,
-    );
+    return metadata
+      ? GroupAchievementEmojiListElement.of(metadata)
+      : GroupAchievementEmojiListElement.noEmoji(emoji);
   }
 
-  async findGroupAchievementEmojiByUser(
-    groupAchievementId: number,
+  async findAllGroupAchievementEmojiMetaData(
     user: User,
-    emoji: Emoji,
-  ) {
-    const groupAchievementEmojiEntity = await this.repository.findOne({
-      where: {
-        user: {
-          id: user.id,
-        },
-        groupAchievement: {
-          id: groupAchievementId,
-        },
-        emoji: emoji,
-      },
-    });
+    groupAchievementId: number,
+  ): Promise<CompositeGroupAchievementEmoji> {
+    const metadata = await this.repository
+      .createQueryBuilder('gae')
+      .select('gae.emoji', 'id')
+      .addSelect('COALESCE(COUNT(gae.id), 0)', 'count')
+      .addSelect(
+        '(SELECT CASE WHEN EXISTS (SELECT 1 FROM group_achievement_emoji ' +
+          ' WHERE user_id = :userId AND emoji = gae.emoji and group_achievement_id = :groupAchievementId) ' +
+          'THEN 1 ELSE 0 END AS result)',
+        'isSelected',
+      )
+      .setParameters({
+        groupAchievementId: groupAchievementId,
+        userId: user.id,
+      })
+      .where('gae.group_achievement_id = :groupAchievementId', {
+        groupAchievementId,
+      })
+      .groupBy('gae.groupAchievement')
+      .addGroupBy('gae.emoji')
+      .getRawMany<IGroupAchievementEmojiMetadata>();
 
-    return groupAchievementEmojiEntity?.toModel();
+    const groupAchievementEmojiListElements = metadata.map((m) =>
+      GroupAchievementEmojiListElement.of(m),
+    );
+    return CompositeGroupAchievementEmoji.of(groupAchievementEmojiListElements);
   }
 }

@@ -14,6 +14,8 @@ import { User } from '../../../users/domain/user.domain';
 import * as request from 'supertest';
 import { UnauthorizedAchievementException } from '../../../achievement/exception/unauthorized-achievement.exception';
 import { NoSuchGroupUserException } from '../../achievement/exception/no-such-group-user.exception';
+import { GroupAchievementEmojiListElement } from '../dto/group-achievement-emoji-list-element';
+import { CompositeGroupAchievementEmoji } from '../dto/composite-group-achievement-emoji';
 
 describe('GroupAchievementEmojiController Test', () => {
   let app: INestApplication;
@@ -210,6 +212,132 @@ describe('GroupAchievementEmojiController Test', () => {
       // then
       return request(app.getHttpServer())
         .post(`/api/v1/groups/1004/achievements/1007/emojis/SMILE`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('만료된 토큰입니다.');
+        });
+    });
+  });
+
+  describe('그룹 도전기록에 이모지를 조회할 수 있다.', () => {
+    it('그룹 도전기록에 이모지를 성공적으로 조회하면 200을 반환한다.', async () => {
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      const gae = [
+        GroupAchievementEmojiListElement.of({
+          id: Emoji.SMILE,
+          count: '1',
+          isSelected: 1,
+        }),
+        GroupAchievementEmojiListElement.of({
+          id: Emoji.LIKE,
+          count: '5',
+          isSelected: 1,
+        }),
+        GroupAchievementEmojiListElement.of({
+          id: Emoji.FIRE,
+          count: '0',
+          isSelected: 0,
+        }),
+      ];
+      const compositeGroupAchievementEmoji =
+        CompositeGroupAchievementEmoji.of(gae);
+
+      when(
+        mockGroupAchievementEmojiService.getGroupAchievementEmojiCount(
+          anyOfClass(User),
+          1004,
+          1004,
+        ),
+      ).thenResolve(compositeGroupAchievementEmoji);
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get(`/api/v1/groups/1004/achievements/1004/emojis`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(200)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(true);
+          expect(res.body.data).toEqual(
+            compositeGroupAchievementEmoji.toResponse(),
+          );
+        });
+    });
+
+    it('그룹과 그룹 달성기록이 매칭되지 않으면 403을 반환한다.', async () => {
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupAchievementEmojiService.getGroupAchievementEmojiCount(
+          anyOfClass(User),
+          1004,
+          1006,
+        ),
+      ).thenThrow(new UnauthorizedAchievementException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get(`/api/v1/groups/1004/achievements/1006/emojis`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(403)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(false);
+          expect(res.body.message).toEqual('달성기록에 접근할 수 없습니다.');
+        });
+    });
+
+    it('그룹에 속하지 않은 사용자의 이모지 요청시 400을 반환한다.', async () => {
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupAchievementEmojiService.getGroupAchievementEmojiCount(
+          anyOfClass(User),
+          1004,
+          1007,
+        ),
+      ).thenThrow(new NoSuchGroupUserException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get(`/api/v1/groups/1004/achievements/1007/emojis`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(false);
+          expect(res.body.message).toEqual('그룹의 멤버가 아닙니다.');
+        });
+    });
+
+    it('잘못된 인증시 401을 반환한다.', async () => {
+      // given
+      const accessToken = 'abcd.abcd.efgh';
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get(`/api/v1/groups/1004/achievements/1007/emojis`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('잘못된 토큰입니다.');
+        });
+    });
+
+    it('잘못된 인증시 401을 반환한다.', async () => {
+      // given
+      const { accessToken } =
+        await authFixture.getExpiredAccessTokenUser('ABC');
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get(`/api/v1/groups/1004/achievements/1007/emojis`)
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(401)
         .expect((res: request.Response) => {
