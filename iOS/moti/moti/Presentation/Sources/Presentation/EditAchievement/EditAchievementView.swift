@@ -121,15 +121,17 @@ extension EditAchievementView {
     private func setupCategoryButton() {
         addSubview(categoryButton)
         categoryButton.atl
+            .top(greaterThanOrEqualTo: safeAreaLayoutGuide.topAnchor)
+            .bottom(greaterThanOrEqualTo: titleTextField.topAnchor, constant: -5)
             .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
-            .bottom(equalTo: titleTextField.topAnchor, constant: -5)
     }
 
     private func setupTitleTextField() {
         addSubview(titleTextField)
         titleTextField.atl
             .horizontal(equalTo: safeAreaLayoutGuide, constant: 20)
-            .bottom(equalTo: resultImageView.topAnchor, constant: -10)
+            .bottom(greaterThanOrEqualTo: resultImageView.topAnchor, constant: -10)
+            .bottom(lessThanOrEqualTo: resultImageView.topAnchor, constant: 0)
     }
     
     private func setupResultImageView() {
@@ -144,7 +146,7 @@ extension EditAchievementView {
             resultImageView.atl
                 .size(width: minSize, height: minSize)
                 .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
-                .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
+                .centerY(greaterThanOrEqualTo: centerYAnchor, constant: -20)
         }
     }
         

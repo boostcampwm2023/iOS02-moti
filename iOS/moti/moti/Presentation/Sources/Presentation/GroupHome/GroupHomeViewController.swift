@@ -268,9 +268,10 @@ extension GroupHomeViewController: UICollectionViewDelegate {
             // 카테고리 셀을 눌렀을 때
             categoryCellDidSelected(cell: cell, row: indexPath.row)
         } else if let _ = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
-            // 달성 기록 리스트 셀을 눌렀을 때
-            // 상세 정보 화면으로 이동
+            // 달성 기록 리스트 셀을 눌렀을 때 상세 정보 화면으로 이동
             let achievement = viewModel.findAchievement(at: indexPath.row)
+            // 스켈레톤 아이템 예외 처리
+            guard achievement.id >= 0 else { return }
             coordinator?.moveToGroupDetailAchievementViewController(
                 achievement: achievement,
                 group: viewModel.group

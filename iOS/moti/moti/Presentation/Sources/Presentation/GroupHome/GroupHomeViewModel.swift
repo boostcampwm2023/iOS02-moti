@@ -42,7 +42,7 @@ final class GroupHomeViewModel {
             achievementDataSource?.update(data: achievements)
         }
     }
-    private let skeletonAchievements: [Achievement] = (-20...(-1)).map { _ in Achievement.makeSkeleton() }
+    private let skeletonAchievements: [Achievement] = (-20...(-1)).map { Achievement.makeSkeleton(id: $0) }
     
     // Blocking
     private let blockingUserUseCase: BlockingUserUseCase

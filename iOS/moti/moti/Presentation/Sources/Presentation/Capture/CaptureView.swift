@@ -54,6 +54,7 @@ final class CaptureView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         
+        debugPrint(safeAreaLayoutGuide)
         // 프리뷰 레이어 조정
         updatePreviewConstraint()
         previewLayer.frame = preview.bounds
@@ -148,14 +149,14 @@ private extension CaptureView {
     }
     
     private func updatePreviewConstraint() {
-        if let bounds = window?.windowScene?.screen.bounds, let window {
+        if let bounds = window?.windowScene?.screen.bounds {
             NSLayoutConstraint.deactivate(preview.constraints)
             
             let minSize = min(400, bounds.width, bounds.height)
             preview.atl
                 .size(width: minSize, height: minSize)
                 .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
-                .centerY(equalTo: window.centerYAnchor, constant: -20)
+                .centerY(equalTo: centerYAnchor, constant: -20)
         }
     }
 }
