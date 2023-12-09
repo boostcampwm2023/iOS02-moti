@@ -13,6 +13,7 @@ enum MotiAPI: EndpointProtocol {
     case version
     case login(requestValue: LoginRequestValue)
     case autoLogin(requestValue: AutoLoginRequestValue)
+    case revoke(requestValue: RevokeRequestValue)
     case saveImage(requestValue: SaveImageRequestValue)
     // 개인
     case fetchAchievementList(requestValue: FetchAchievementListRequestValue?)
@@ -64,6 +65,7 @@ extension MotiAPI {
         case .version: return "/operate/policy"
         case .login: return "/auth/login"
         case .autoLogin: return "/auth/refresh"
+        case .revoke: return "/auth/revoke"
         case .fetchAchievementList: return "/achievements"
         case .fetchCategory(let categoryId): return "/categories/\(categoryId)"
         case .fetchCategoryList: return "/categories"
@@ -115,6 +117,7 @@ extension MotiAPI {
         case .version: return .get
         case .login: return .post
         case .autoLogin: return .post
+        case .revoke: return .delete
         case .fetchAchievementList: return .get
         case .fetchCategory: return .get
         case .fetchCategoryList: return .get
@@ -161,6 +164,8 @@ extension MotiAPI {
         case .login(let requestValue):
             return requestValue
         case .autoLogin(let requestValue):
+            return requestValue
+        case .revoke(let requestValue):
             return requestValue
         case .addCategory(let requestValue):
             return requestValue
