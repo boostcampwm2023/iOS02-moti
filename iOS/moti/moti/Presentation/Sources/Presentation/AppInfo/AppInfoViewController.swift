@@ -96,7 +96,13 @@ final class AppInfoViewController: BaseViewController<AppInfoView>, LoadingIndic
     }
     
     @objc private func revokeButtonDidClicked() {
-        appleLoginRequester?.request()
+        showTwoButtonAlert(
+            title: "정말 회원 탈퇴를 하시겠습니까?",
+            message: "회원 탈퇴 시 모든 기록이 삭제됩니다.",
+            okAction: {
+                self.appleLoginRequester?.request()
+            }
+        )
     }
     
     private func setupAppleLoginRequester() {
