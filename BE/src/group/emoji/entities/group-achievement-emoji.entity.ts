@@ -16,11 +16,11 @@ export class GroupAchievementEmojiEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => GroupAchievementEntity)
+  @ManyToOne(() => GroupAchievementEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'group_achievement_id', referencedColumnName: 'id' })
   groupAchievement: GroupAchievementEntity;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: UserEntity;
 

@@ -22,7 +22,7 @@ export class GroupAchievementEntity extends BaseTimeEntity {
   @Column({ type: 'varchar', length: 100, nullable: false })
   title: string;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: UserEntity;
 
