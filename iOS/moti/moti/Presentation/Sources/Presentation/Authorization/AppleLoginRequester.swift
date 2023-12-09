@@ -51,7 +51,7 @@ extension AppleLoginRequester: ASAuthorizationControllerDelegate {
             return
         }
 
-        #if DEBUG        
+        #if DEBUG
         Logger.debug("identityToken: \(identityToken)")
         Logger.debug("authorizationCode: \(authorizationCode)")
         #endif
