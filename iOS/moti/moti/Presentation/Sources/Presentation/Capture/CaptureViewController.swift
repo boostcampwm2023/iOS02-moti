@@ -50,6 +50,13 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
         checkCameraPermissions()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.hideTabBar()
+        }
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         startSession()

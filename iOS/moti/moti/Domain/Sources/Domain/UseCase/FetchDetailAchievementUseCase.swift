@@ -26,4 +26,3 @@ public struct FetchDetailAchievementUseCase {
         return try await repository.fetchDetailAchievement(requestValue: requestValue)
     }
 }
-

@@ -42,7 +42,7 @@ final class GroupHomeViewModel {
             achievementDataSource?.update(data: achievements)
         }
     }
-    private let skeletonAchievements: [Achievement] = (-20...(-1)).map { _ in Achievement.makeSkeleton() }
+    private let skeletonAchievements: [Achievement] = (-20...(-1)).map { Achievement.makeSkeleton(id: $0) }
     
     // Blocking
     private let blockingUserUseCase: BlockingUserUseCase
@@ -343,6 +343,9 @@ private extension GroupHomeViewModel {
                 
                 nextRequestValue = achievementListItem.next
                 achievementListState.send(.finish)
+                if achievements.isEmpty {
+                    achievementListState.send(.isEmpty)
+                }
             } catch {
                 if let nextAchievementTask, nextAchievementTask.isCancelled {
                     Logger.debug("NextAchievementTask is Cancelled")

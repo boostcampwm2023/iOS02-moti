@@ -83,7 +83,8 @@ public struct Achievement: Hashable {
 }
 
 public extension Achievement {
-    static func makeSkeleton() -> Achievement {
-        return .init(id: -(UUID().hashValue), title: "", imageURL: nil, categoryId: 0, user: nil)
+    static func makeSkeleton(id: Int) -> Achievement {
+        let id = id < 0 ? id : -id
+        return .init(id: id, title: "", imageURL: nil, categoryId: 0, user: nil)
     }
 }

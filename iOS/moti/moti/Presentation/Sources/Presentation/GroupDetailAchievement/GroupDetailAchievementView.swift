@@ -78,11 +78,6 @@ final class GroupDetailAchievementView: UIView {
         setupUI()
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        updateImageViewConstraint()
-    }
-    
     func configure(achievement: Achievement) {
         titleLabel.text = achievement.title
         categoryLabel.text = achievement.category?.name
@@ -200,18 +195,17 @@ private extension GroupDetailAchievementView {
     
     private func setupImageView() {
         scrollView.addSubview(imageView)
-    }
-    
-    private func updateImageViewConstraint() {
-        if let bounds = window?.windowScene?.screen.bounds {
-            NSLayoutConstraint.deactivate(imageView.constraints)
-            
-            let minSize = min(400, bounds.width, bounds.height)
-            imageView.atl
-                .size(width: minSize, height: minSize)
-                .top(equalTo: titleLabel.bottomAnchor, constant: 10)
-                .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
-        }
+        imageView.atl
+            .height(equalTo: imageView.widthAnchor)
+            .top(equalTo: titleLabel.bottomAnchor, constant: 10)
+            .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
+        
+        let widthConstraint = imageView.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor)
+        widthConstraint.priority = .defaultHigh
+        NSLayoutConstraint.activate([
+            imageView.widthAnchor.constraint(lessThanOrEqualToConstant: 400),
+            widthConstraint
+        ])
     }
     
     private func setupEmojiButtons() {

@@ -51,6 +51,16 @@ final class AppInfoView: UIView {
         button.titleLabel?.font = .medium
         return button
     }()
+    private(set) var revokeButton = {
+        let button = UIButton(type: .system)
+        button.clipsToBounds = true
+        button.layer.cornerRadius = CornerRadius.big
+        button.titleLabel?.font = .medium
+        button.setTitle("회원 탈퇴", for: .normal)
+        button.setTitleColor(.label, for: .normal)
+        button.backgroundColor = .primaryDarkGray
+        return button
+    }()
     
     // MARK: - Init
     override init(frame: CGRect) {
@@ -92,6 +102,7 @@ private extension AppInfoView {
         setupTitleLabel()
         setupVersionLabel()
         
+        setupRevokeButton()
         setupUpdateButton()
         setupPolicyButton()
     }
@@ -125,12 +136,21 @@ private extension AppInfoView {
             .top(equalTo: titleLabel.bottomAnchor, constant: 20)
     }
     
+    func setupRevokeButton() {
+        addSubview(revokeButton)
+        revokeButton.atl
+            .height(constant: 40)
+            .centerX(equalTo: centerXAnchor)
+            .bottom(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -20)
+            .horizontal(equalTo: safeAreaLayoutGuide, constant: 40)
+    }
+    
     func setupUpdateButton() {
         addSubview(updateButton)
         updateButton.atl
             .height(constant: 40)
             .centerX(equalTo: centerXAnchor)
-            .bottom(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -20)
+            .bottom(equalTo: revokeButton.topAnchor, constant: -10)
             .horizontal(equalTo: safeAreaLayoutGuide, constant: 40)
     }
     
