@@ -46,14 +46,6 @@ final class CaptureCoordinator: Coordinator {
         let captureVC = CaptureViewController(group: group)
         captureVC.delegate = self
         captureVC.coordinator = self
-        
-        captureVC.navigationItem.leftBarButtonItem = UIBarButtonItem(
-            title: "취소", style: .plain, target: self,
-            action: #selector(cancelButtonAction)
-        )
-        
-        captureVC.navigationItem.rightBarButtonItem = nil
-        
         navigationController.pushViewController(captureVC, animated: true)
     }
     
@@ -62,10 +54,6 @@ final class CaptureCoordinator: Coordinator {
         editAchievementCoordinator.delegate = self
         editAchievementCoordinator.startAfterCapture(image: image, group: group)
         childCoordinators.append(editAchievementCoordinator)
-    }
-    
-    @objc func cancelButtonAction() {
-        finish()
     }
 }
 
