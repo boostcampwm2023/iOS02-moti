@@ -58,6 +58,18 @@ final class HomeView: UIView {
         return refreshControl
     }()
     
+    // 아이템이 없을 때 표시하는 Label
+    private let emptyGuideLabel = {
+        let label = UILabel()
+        label.isHidden = true
+        label.text = "도전 기록이 없습니다.\n새로운 도전을 기록해 보세요."
+        label.numberOfLines = 2
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 16)
+        label.alpha = 0.5
+        return label
+    }()
+    
     // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -85,6 +97,14 @@ final class HomeView: UIView {
             }
         }
     }
+    
+    func showEmptyGuideLabel() {
+        emptyGuideLabel.isHidden = false
+    }
+    
+    func hideEmptyGuideLabel() {
+        emptyGuideLabel.isHidden = true
+    }
 }
 
 // MARK: - SetUp
@@ -93,6 +113,7 @@ private extension HomeView {
         setupCategoryAddButton()
         setupCategoryCollectionView()
         setupAchievementCollectionView()
+        setupEmptyGuideLabel()
     }
     
     private func setupCategoryAddButton() {
@@ -122,9 +143,15 @@ private extension HomeView {
     private func setupAchievementCollectionView() {
         addSubview(achievementCollectionView)
         achievementCollectionView.atl
-            .width(equalTo: self.widthAnchor)
+            .horizontal(equalTo: safeAreaLayoutGuide)
             .top(equalTo: categoryCollectionView.bottomAnchor, constant: 10)
             .bottom(equalTo: self.bottomAnchor)
+    }
+    
+    private func setupEmptyGuideLabel() {
+        addSubview(emptyGuideLabel)
+        emptyGuideLabel.atl
+            .center(of: safeAreaLayoutGuide)
     }
 }
 

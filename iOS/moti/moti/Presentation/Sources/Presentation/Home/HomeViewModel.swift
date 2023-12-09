@@ -285,6 +285,9 @@ private extension HomeViewModel {
                 
                 nextRequestValue = achievementListItem.next
                 achievementListState = .finish
+                if achievements.isEmpty {
+                    achievementListState = .isEmpty
+                }
             } catch {
                 if let nextAchievementTask, nextAchievementTask.isCancelled {
                     Logger.debug("NextAchievementTask is Cancelled")

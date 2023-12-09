@@ -440,11 +440,15 @@ private extension GroupHomeViewController {
                 switch state {
                 case .loading:
                     break
+                case .isEmpty:
+                    layoutView.showEmptyGuideLabel()
                 case .finish:
+                    layoutView.hideEmptyGuideLabel()
                     isFetchingNextPage = false
                     layoutView.endRefreshing()
                 case .error(let message):
                     Logger.error("Fetch Achievement Error: \(message)")
+                    layoutView.hideEmptyGuideLabel()
                     isFetchingNextPage = false
                     layoutView.endRefreshing()
                 }

@@ -343,6 +343,9 @@ private extension GroupHomeViewModel {
                 
                 nextRequestValue = achievementListItem.next
                 achievementListState.send(.finish)
+                if achievements.isEmpty {
+                    achievementListState.send(.isEmpty)
+                }
             } catch {
                 if let nextAchievementTask, nextAchievementTask.isCancelled {
                     Logger.debug("NextAchievementTask is Cancelled")

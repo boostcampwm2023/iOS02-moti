@@ -386,10 +386,14 @@ private extension HomeViewController {
                 // state 에 따른 뷰 처리 - 스켈레톤 뷰, fetch 에러 뷰 등
                 Logger.debug(state)
                 switch state {
+                case .isEmpty:
+                    layoutView.showEmptyGuideLabel()
                 case .finish:
+                    layoutView.hideEmptyGuideLabel()
                     isFetchingNextPage = false
                     layoutView.endRefreshing()
                 case .error(let message):
+                    layoutView.hideEmptyGuideLabel()
                     isFetchingNextPage = false
                     layoutView.endRefreshing()
                     Logger.error("Fetch Achievement Error: \(message)")

@@ -49,6 +49,7 @@ extension GroupHomeViewModel {
     
     enum AchievementListState {
         case loading
+        case isEmpty
         case finish
         case error(message: String)
     }

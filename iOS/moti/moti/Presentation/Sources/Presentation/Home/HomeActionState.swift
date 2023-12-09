@@ -47,6 +47,7 @@ extension HomeViewModel {
     enum AchievementListState {
         case initial
         case loading
+        case isEmpty
         case finish
         case error(message: String)
     }
