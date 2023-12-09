@@ -57,6 +57,27 @@ final class CaptureView: UIView {
     }
     
     // MARK: - Methods
+    func showToolItem() {
+        albumButton.isHidden = false
+        captureButton.isHidden = false
+        cameraSwitchingButton.isHidden = false
+        
+        albumButton.transform = .identity
+        captureButton.transform = .identity
+        cameraSwitchingButton.transform = .identity
+    }
+    
+    func hideToolItem(translationY: CGFloat) {
+        let transform = CGAffineTransform(translationX: 0, y: translationY)
+        albumButton.transform = transform
+        captureButton.transform = transform
+        cameraSwitchingButton.transform = transform
+        
+        albumButton.isHidden = true
+        captureButton.isHidden = true
+        cameraSwitchingButton.isHidden = true
+    }
+    
     func updatePreviewLayer(session: AVCaptureSession) {
         previewLayer.session = session
     }
@@ -115,7 +136,7 @@ private extension CaptureView {
         captureButton.atl
             .size(width: CaptureButton.defaultSize, height: CaptureButton.defaultSize)
             .centerX(equalTo: centerXAnchor)
-            .bottom(equalTo: bottomAnchor, constant: -36)
+            .bottom(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -5)
     }
 
     func setupPhotoButton() {

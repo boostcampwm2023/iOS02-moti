@@ -23,7 +23,9 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
     weak var delegate: CaptureViewControllerDelegate?
     weak var coordinator: CaptureCoordinator?
     private let group: Group?
-
+    // viewDidAppear가 처음 호출되는지 확인
+    private var isFirstAppear = false
+    
     // Capture Session
     private var isBackCamera = true
     private var session: AVCaptureSession?
@@ -46,6 +48,7 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupNavigationBar()
         addTargets()
         checkCameraPermissions()
     }
@@ -54,13 +57,26 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
         super.viewWillAppear(animated)
         if let tabBarController = tabBarController as? TabBarViewController {
             tabBarController.hideTabBar()
+            layoutView.hideToolItem(translationY: tabBarController.tabBarHeight + 30)
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         startSession()
-        layoutView.captureButton.isEnabled = true
+
+        if !isFirstAppear {
+            isFirstAppear = true
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                self.layoutView.showToolItem()
+            }, completion: { _ in
+                self.layoutView.captureButton.isEnabled = true
+            })
+        } else {
+            layoutView.showToolItem()
+            layoutView.captureButton.isEnabled = true
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -89,6 +105,20 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
         #endif
         
         delegate?.didCapture(image: downsampledImage)
+    }
+    
+    // MARK: - Setup
+    private func setupNavigationBar() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: "취소", style: .plain, target: self,
+            action: #selector(cancelButtonDidClicked)
+        )
+        
+        navigationItem.rightBarButtonItem = nil
+    }
+    
+    @objc private func cancelButtonDidClicked() {
+        coordinator?.finish()
     }
 }
 
