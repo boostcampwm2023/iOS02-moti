@@ -70,6 +70,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
         if let tabBarController = tabBarController as? TabBarViewController {
             tabBarController.showTabBar()
         }
+        layoutView.hideEmptyGuideLabel()
         viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.postAchievement(newAchievement: newAchievement))
         showCelebrate(with: newAchievement)
@@ -430,6 +431,7 @@ private extension HomeViewController {
                 case .loading:
                     showLoadingIndicator()
                 case .success:
+                    viewModel.action(.fetchCurrentCategoryInfo)
                     hideLoadingIndicator()
                 case .failed:
                     hideLoadingIndicator()
