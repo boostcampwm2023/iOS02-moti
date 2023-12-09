@@ -24,7 +24,7 @@ public struct RevokeUseCase {
         self.repository = repository
     }
     
-    func execute(requestValue: RevokeRequestValue) async throws -> Bool {
+    public func execute(requestValue: RevokeRequestValue) async throws -> Bool {
         return try await repository.revoke(requestValue: requestValue)
     }
 }

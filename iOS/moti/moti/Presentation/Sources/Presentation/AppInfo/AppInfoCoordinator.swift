@@ -8,6 +8,7 @@
 import UIKit
 import Core
 import Domain
+import Data
 
 final class AppInfoCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
@@ -28,7 +29,9 @@ final class AppInfoCoordinator: Coordinator {
               let privacyPolicy = UserDefaults.standard.readString(key: .privacyPolicy) else { return }
         
         let version = Version(latest: latest, required: required, privacyPolicy: privacyPolicy)
-        let appInfoVC = AppInfoViewController(version: version)
+        let revokeUseCase = RevokeUseCase(repository: AuthRepository())
+        let appInfoVM = AppInfoViewModel(revokeUseCase: revokeUseCase)
+        let appInfoVC = AppInfoViewController(viewModel: appInfoVM, version: version)
         appInfoVC.coordinator = self
         navigationController.present(appInfoVC, animated: true)
     }
