@@ -152,6 +152,7 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
     func postedAchievement(newAchievement: Achievement) {
         viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.postAchievement(newAchievement: newAchievement))
+        layoutView.hideEmptyGuideLabel()
         showCelebrate(with: newAchievement)
     }
     
@@ -481,6 +482,7 @@ private extension GroupHomeViewController {
                 case .loading:
                     showLoadingIndicator()
                 case .success:
+                    viewModel.action(.fetchCurrentCategoryInfo)
                     hideLoadingIndicator()
                 case .failed:
                     hideLoadingIndicator()

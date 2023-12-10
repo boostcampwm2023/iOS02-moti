@@ -1,5 +1,5 @@
 //
-//  LoginRepository.swift
+//  AuthRepository.swift
 //
 //
 //  Created by 유정주 on 11/14/23.
@@ -9,7 +9,7 @@ import Foundation
 import Domain
 import Core
 
-public struct LoginRepository: LoginRepositoryProtocol {
+public struct AuthRepository: AuthRepositoryProtocol {
     private let provider: ProviderProtocol
     
     public init(provider: ProviderProtocol = Provider()) {
@@ -30,5 +30,12 @@ public struct LoginRepository: LoginRepositoryProtocol {
         
         guard let userTokenDTO = responseDTO.data else { throw NetworkError.decode }
         return UserToken(dto: userTokenDTO)
+    }
+    
+    public func revoke(requestValue: RevokeRequestValue) async throws -> Bool {
+        let endpoint = MotiAPI.revoke(requestValue: requestValue)
+        let responseDTO = try await provider.request(with: endpoint, type: SimpleResponseDTO.self)
+        
+        return responseDTO.success ?? false
     }
 }

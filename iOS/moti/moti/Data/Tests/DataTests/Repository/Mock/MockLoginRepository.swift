@@ -10,7 +10,7 @@ import Foundation
 @testable import Data
 @testable import Core
 
-public struct MockLoginRepository: LoginRepositoryProtocol {
+public struct MockLoginRepository: AuthRepositoryProtocol {
     private var json = """
         {
             "success": true,
