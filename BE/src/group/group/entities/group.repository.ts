@@ -84,4 +84,8 @@ export class GroupRepository extends TransactionalRepository<GroupEntity> {
     });
     return group?.toModel();
   }
+
+  async existByGroupCode(groupCode: string) {
+    return await this.repository.exist({ where: { groupCode: groupCode } });
+  }
 }

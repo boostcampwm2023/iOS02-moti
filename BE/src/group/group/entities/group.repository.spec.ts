@@ -84,6 +84,25 @@ describe('GroupRepository Test', () => {
     });
   });
 
+  test('groupCode로 group 존재 유뮤를 알 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const group = await groupFixture.createGroup('Test Group', user);
+
+      // when
+      const existByGroupCode = await groupRepository.existByGroupCode(
+        group.groupCode,
+      );
+      const nonExistByGroupCode =
+        await groupRepository.existByGroupCode('INVALID');
+
+      // then
+      expect(existByGroupCode).toBe(true);
+      expect(nonExistByGroupCode).toBe(false);
+    });
+  });
+
   test('그룹을 생성하면 생성한 유저가 리더가 된다.', async () => {
     await transactionTest(dataSource, async () => {
       // given
