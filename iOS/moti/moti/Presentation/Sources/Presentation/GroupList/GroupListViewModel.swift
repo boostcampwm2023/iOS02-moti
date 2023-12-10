@@ -104,7 +104,8 @@ extension GroupListViewModel {
         Task {
             groupListState = .loading
             do {
-                groups = try await fetchGroupListUseCase.execute()
+                let groups = try await fetchGroupListUseCase.execute()
+                self.groups = groups.sorted { $0.lastChallenged ?? .distantPast > $1.lastChallenged ?? .distantPast }
                 groupListState = .finish
             } catch {
                 Logger.error("\(#function) error: \(error.localizedDescription)")
@@ -134,7 +135,8 @@ extension GroupListViewModel {
                 } else {
                     refetchGroupListState.send(.finishDecreased)
                 }
-                groups = newGroups
+                
+                groups = newGroups.sorted { $0.lastChallenged ?? .distantPast > $1.lastChallenged ?? .distantPast }
             } catch {
                 Logger.error("\(#function) error: \(error.localizedDescription)")
                 refetchGroupListState.send(.error(message: error.localizedDescription))
