@@ -24,6 +24,7 @@ export class GroupRepository extends TransactionalRepository<GroupEntity> {
         'group.id as id',
         'group.name as name',
         'group.avatarUrl as avatarUrl',
+        'group.groupCode as groupCode',
         'user_group.grade as grade',
       ])
       .addSelect('COUNT(achievements.id)', 'continued')

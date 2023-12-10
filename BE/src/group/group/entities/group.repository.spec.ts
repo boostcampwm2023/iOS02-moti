@@ -131,9 +131,9 @@ describe('GroupRepository Test', () => {
     await transactionTest(dataSource, async () => {
       // given
       const user = await usersFixture.getUser('ABC');
-      await groupFixture.createGroup('Test Group1', user);
-      await groupFixture.createGroup('Test Group2', user);
-      await groupFixture.createGroup('Test Group3', user);
+      const group1 = await groupFixture.createGroup('Test Group1', user);
+      const group2 = await groupFixture.createGroup('Test Group2', user);
+      const group3 = await groupFixture.createGroup('Test Group3', user);
 
       // when
       const groups = await groupRepository.findByUserId(user.id);
@@ -142,10 +142,13 @@ describe('GroupRepository Test', () => {
       expect(groups.length).toEqual(3);
       expect(groups[0].name).toEqual('Test Group1');
       expect(groups[0].grade).toEqual(UserGroupGrade.LEADER);
+      expect(groups[0].groupCode).toEqual(group1.groupCode);
       expect(groups[1].name).toEqual('Test Group2');
       expect(groups[1].grade).toEqual(UserGroupGrade.LEADER);
+      expect(groups[1].groupCode).toEqual(group2.groupCode);
       expect(groups[2].name).toEqual('Test Group3');
       expect(groups[2].grade).toEqual(UserGroupGrade.LEADER);
+      expect(groups[2].groupCode).toEqual(group3.groupCode);
     });
   });
 

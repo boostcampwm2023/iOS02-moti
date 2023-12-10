@@ -157,6 +157,7 @@ describe('GroupController', () => {
           id: 1,
           name: 'Test Group1',
           avatarUrl: 'avatarUrl1',
+          groupCode: 'GABACD1',
           continued: 2,
           lastChallenged: '2023-11-29T21:58:402Z',
           grade: UserGroupGrade.LEADER,
@@ -165,6 +166,7 @@ describe('GroupController', () => {
           id: 2,
           name: 'Test Group2',
           avatarUrl: 'avatarUrl2',
+          groupCode: 'GABACD2',
           continued: 3,
           lastChallenged: null,
           grade: UserGroupGrade.PARTICIPANT,
@@ -187,6 +189,7 @@ describe('GroupController', () => {
             data: [
               {
                 avatarUrl: 'avatarUrl1',
+                groupCode: 'GABACD1',
                 continued: 2,
                 id: 1,
                 lastChallenged: '2023-11-29T21:58:402Z',
@@ -195,6 +198,7 @@ describe('GroupController', () => {
               },
               {
                 avatarUrl: 'avatarUrl2',
+                groupCode: 'GABACD2',
                 continued: 3,
                 id: 2,
                 lastChallenged: null,
