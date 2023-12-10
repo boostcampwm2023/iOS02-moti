@@ -20,6 +20,7 @@ struct FetchGroupListDataDTO: Codable {
 
 struct GroupDTO: Codable {
     let id: Int
+    let groupCode: String?
     let name: String?
     let avatarUrl: URL?
     let continued: Int?
@@ -31,6 +32,7 @@ extension Group {
     init(dto: GroupDTO) {
         self.init(
             id: dto.id,
+            code: dto.groupCode ?? "",
             name: dto.name ?? "",
             avatarUrl: dto.avatarUrl,
             continued: dto.continued ?? 0,
@@ -41,6 +43,7 @@ extension Group {
     init(dto: GroupDTO, grade: GroupGrade) {
         self.init(
             id: dto.id,
+            code: dto.groupCode ?? "",
             name: dto.name ?? "",
             avatarUrl: dto.avatarUrl,
             continued: dto.continued ?? 0,
