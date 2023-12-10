@@ -39,4 +39,12 @@ public struct GroupRepository: GroupRepositoryProtocol {
         
         return responseDTO.success ?? false
     }
+    
+    public func joinGroup(requestValue: JoinGroupRequestValue) async throws -> Bool {
+        let endpoint = MotiAPI.joinGroup(requestValue: requestValue)
+        let responseDTO = try await provider.request(with: endpoint, type: JoinGroupDTO.self)
+        guard let joinGroupDataDTO = responseDTO.data else { throw NetworkError.decode }
+        
+        return responseDTO.success ?? false
+    }
 }
