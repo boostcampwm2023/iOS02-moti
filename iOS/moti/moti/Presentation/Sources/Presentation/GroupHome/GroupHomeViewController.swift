@@ -236,7 +236,7 @@ private extension GroupHomeViewController {
         showTextFieldAlert(
             title: "그룹원 초대",
             okTitle: "초대",
-            placeholder: "초대할 유저의 7자리 유저코드를 입력하세요.",
+            placeholder: "7자리 유저코드를 입력하세요.",
             okAction: { text in
                 guard let text = text else { return }
                 Logger.debug("초대할 유저코드: \(text)")
