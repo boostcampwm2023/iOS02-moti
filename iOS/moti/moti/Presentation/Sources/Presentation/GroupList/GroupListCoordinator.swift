@@ -29,7 +29,8 @@ final class GroupListCoordinator: Coordinator {
         let groupVM = GroupListViewModel(
             fetchGroupListUseCase: .init(groupRepository: groupRepository),
             createGroupUseCase: .init(groupRepository: groupRepository), 
-            dropGroupUseCase: .init(groupRepository: groupRepository)
+            dropGroupUseCase: .init(groupRepository: groupRepository), 
+            joinGroupUseCase: .init(groupRepository: groupRepository)
         )
         let groupListVC = GroupListViewController(viewModel: groupVM)
         groupListVC.coordinator = self
