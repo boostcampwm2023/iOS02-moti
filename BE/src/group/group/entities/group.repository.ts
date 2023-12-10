@@ -75,4 +75,13 @@ export class GroupRepository extends TransactionalRepository<GroupEntity> {
     });
     return group?.toModel();
   }
+
+  async findByGroupCode(groupCode: string) {
+    const group = await this.repository.findOne({
+      where: {
+        groupCode: groupCode,
+      },
+    });
+    return group?.toModel();
+  }
 }
