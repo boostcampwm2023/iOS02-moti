@@ -199,7 +199,7 @@ extension GroupListViewModel {
                 if isSuccess {
                     joinGroupState.send(.finish)
                 } else {
-                    joinGroupState.send(.error(message: "그룹코드가 \(groupCode)인 그룹 참가에 실패했습니다."))
+                    joinGroupState.send(.error(message: "\(groupCode) 그룹 참가에 실패했습니다."))
                 }
             } catch {
                 Logger.error("\(#function) error: \(error.localizedDescription)")
