@@ -101,7 +101,7 @@ final class GroupListViewController: BaseViewController<GroupListView> {
     }
     
     @objc private func showJoinGroupTextFieldAlert() {
-        let textFieldAlertVC = AlertFactory.makeTextFieldAlert(
+        showTextFieldAlert(
             title: "그룹 참가",
             okTitle: "참가",
             placeholder: "7자리 그룹코드를 입력하세요.",
@@ -109,9 +109,8 @@ final class GroupListViewController: BaseViewController<GroupListView> {
                 guard let self, let text else { return }
                 Logger.debug("그룹 참가 입력: \(text)")
                 viewModel.action(.join(groupCode: text))
-            })
-        
-        present(textFieldAlertVC, animated: true)
+            }
+        )
     }
 }
 
