@@ -34,6 +34,7 @@ import { DuplicatedJoinException } from '../exception/duplicated-join.exception'
 describe('GroupSerivce Test', () => {
   let groupService: GroupService;
   let userGroupRepository: UserGroupRepository;
+  let groupRepository: GroupRepository;
   let usersFixture: UsersFixture;
   let groupFixture: GroupFixture;
   let groupAchievementFixture: GroupAchievementFixture;
@@ -60,6 +61,7 @@ describe('GroupSerivce Test', () => {
 
     groupService = module.get<GroupService>(GroupService);
     userGroupRepository = module.get<UserGroupRepository>(UserGroupRepository);
+    groupRepository = module.get<GroupRepository>(GroupRepository);
     usersFixture = module.get<UsersFixture>(UsersFixture);
     groupFixture = module.get<GroupFixture>(GroupFixture);
     groupAchievementFixture = module.get<GroupAchievementFixture>(
@@ -85,6 +87,8 @@ describe('GroupSerivce Test', () => {
       );
       // when
       const groupResponse = await groupService.create(user, createGroupRequest);
+
+      // then
       const userGroup = await userGroupRepository.repository.findOne({
         where: { group: { id: groupResponse.id }, user: { id: user.id } },
         relations: {
@@ -92,13 +96,13 @@ describe('GroupSerivce Test', () => {
           user: true,
         },
       });
-
-      // then
+      const group = await groupRepository.findById(groupResponse.id);
       expect(groupResponse.name).toEqual('Group Name');
       expect(groupResponse.avatarUrl).toEqual('avatarUrl');
       expect(userGroup.group.id).toEqual(groupResponse.id);
       expect(userGroup.user.id).toEqual(user.id);
       expect(userGroup.grade).toEqual(UserGroupGrade.LEADER);
+      expect(group.groupCode.length).toEqual(7);
     });
   });
 

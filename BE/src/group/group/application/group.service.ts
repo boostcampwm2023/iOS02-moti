@@ -25,6 +25,7 @@ import { NoSucGroupException } from '../exception/no-such-group.exception';
 import { JoinGroupRequest } from '../dto/join-group-request.dto';
 import { JoinGroupResponse } from '../dto/join-group-response.dto';
 import { DuplicatedJoinException } from '../exception/duplicated-join.exception';
+import { GroupCodeGenerator } from './group-code-generator';
 
 @Injectable()
 export class GroupService {
@@ -33,6 +34,7 @@ export class GroupService {
     private readonly userRepository: UserRepository,
     private readonly userGroupRepository: UserGroupRepository,
     private readonly groupAvatarHolder: GroupAvatarHolder,
+    private readonly groupCodeGenerator: GroupCodeGenerator,
   ) {}
 
   @Transactional()
@@ -41,6 +43,8 @@ export class GroupService {
     group.addMember(user, UserGroupGrade.LEADER);
     if (!group.avatarUrl)
       group.assignAvatarUrl(this.groupAvatarHolder.getUrl());
+    const groupCode = await this.groupCodeGenerator.generate();
+    group.assignGroupCode(groupCode);
     return GroupResponse.from(await this.groupRepository.saveGroup(group));
   }
 
