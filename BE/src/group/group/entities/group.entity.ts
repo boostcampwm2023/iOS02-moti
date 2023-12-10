@@ -16,6 +16,9 @@ export class GroupEntity extends BaseTimeEntity {
   @Column({ type: 'varchar', length: 100, nullable: true })
   avatarUrl: string;
 
+  @Column({ type: 'varchar', length: 7, nullable: true })
+  groupCode: string;
+
   @OneToMany(() => UserGroupEntity, (userGroup) => userGroup.group, {
     cascade: true,
   })
@@ -30,6 +33,7 @@ export class GroupEntity extends BaseTimeEntity {
   toModel(): Group {
     const group = new Group(this.name, this.avatarUrl);
     group.id = this.id;
+    group.groupCode = this.groupCode;
     group.userGroups = this.userGroups
       ? this.userGroups.map((ug) => ug.toModel())
       : [];
@@ -41,6 +45,7 @@ export class GroupEntity extends BaseTimeEntity {
     const groupEntity = new GroupEntity();
     groupEntity.id = group.id;
     groupEntity.name = group.name;
+    groupEntity.groupCode = group.groupCode;
     groupEntity.userGroups = group.userGroups.length
       ? group.userGroups.map((ug) => UserGroupEntity.strictFrom(ug))
       : undefined;
@@ -53,6 +58,7 @@ export class GroupEntity extends BaseTimeEntity {
     const groupEntity = new GroupEntity();
     groupEntity.id = group.id;
     groupEntity.name = group.name;
+    groupEntity.groupCode = group.groupCode;
     groupEntity.avatarUrl = group.avatarUrl;
     return groupEntity;
   }
