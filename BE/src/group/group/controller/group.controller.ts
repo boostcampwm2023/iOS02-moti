@@ -31,6 +31,8 @@ import { InviteGroupResponse } from '../dto/invite-group-response';
 import { GroupUserListResponse } from '../dto/group-user-list-response';
 import { AssignGradeRequest } from '../dto/assign-grade-request.dto';
 import { AssignGradeResponse } from '../dto/assign-grade-response.dto';
+import { JoinGroupRequest } from '../dto/join-group-request.dto';
+import { JoinGroupResponse } from '../dto/join-group-response.dto';
 
 @Controller('/api/v1/groups')
 @ApiTags('그룹 API')
@@ -92,6 +94,27 @@ export class GroupController {
   ) {
     return ApiData.success(
       await this.groupService.removeUser(user.id, groupId),
+    );
+  }
+
+  @ApiOperation({
+    summary: '그룹 가입 API',
+    description: '그룹 코드를 입력해서 그룹에 가입한다.',
+  })
+  @ApiOkResponse({
+    description: '그룹 가입',
+    type: JoinGroupResponse,
+  })
+  @ApiBearerAuth('accessToken')
+  @Post('participation')
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  async join(
+    @AuthenticatedUser() user: User,
+    @Body() joinGroupRequest: JoinGroupRequest,
+  ) {
+    return ApiData.success(
+      await this.groupService.join(user, joinGroupRequest),
     );
   }
 

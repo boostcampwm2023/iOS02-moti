@@ -10,6 +10,7 @@ describe('GroupEntity Test', () => {
     it('userGroups를 가지고 있지 않은 경우에 변환이 가능하다.', () => {
       // given
       const group = new Group('group', 'avatarUrl');
+      group.assignGroupCode('ABCDEF1');
 
       // when
       const groupEntity = GroupEntity.from(group);
@@ -18,6 +19,7 @@ describe('GroupEntity Test', () => {
       expect(groupEntity).toBeInstanceOf(GroupEntity);
       expect(groupEntity.name).toEqual('group');
       expect(groupEntity.avatarUrl).toEqual('avatarUrl');
+      expect(groupEntity.groupCode).toEqual('ABCDEF1');
       expect(groupEntity.userGroups).toEqual(undefined);
     });
 
@@ -45,16 +47,19 @@ describe('GroupEntity Test', () => {
   describe('toModel으로 GroupEntity를 Group 도메인 객체로 변환할 수 있다.', () => {
     it('userGroups를 가지고 있지 않은 경우에 변환이 가능하다.', () => {
       // given
-      const groupEntity = GroupEntity.from(new Group('group', 'avatarUrl'));
+      const group = new Group('group', 'avatarUrl');
+      group.assignGroupCode('ABCDEF1');
+      const groupEntity = GroupEntity.from(group);
 
       // when
-      const group = groupEntity.toModel();
+      const domain = groupEntity.toModel();
 
       // then
-      expect(group).toBeInstanceOf(Group);
-      expect(group.name).toEqual('group');
-      expect(group.avatarUrl).toEqual('avatarUrl');
-      expect(group.userGroups.length).toEqual(0);
+      expect(domain).toBeInstanceOf(Group);
+      expect(domain.name).toEqual('group');
+      expect(domain.groupCode).toEqual('ABCDEF1');
+      expect(domain.avatarUrl).toEqual('avatarUrl');
+      expect(domain.userGroups.length).toEqual(0);
     });
 
     it('userGroups를 가지고 있는 경우에 변환이 가능하다.', () => {

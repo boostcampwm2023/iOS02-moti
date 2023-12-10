@@ -27,10 +27,14 @@ import { InviteGroupRequest } from '../dto/invite-group-request.dto';
 import { InvitePermissionDeniedException } from '../exception/invite-permission-denied.exception';
 import { AssignGradeRequest } from '../dto/assign-grade-request.dto';
 import { OnlyLeaderAllowedAssignGradeException } from '../exception/only-leader-allowed-assign-grade.exception';
+import { JoinGroupRequest } from '../dto/join-group-request.dto';
+import { NoSucGroupException } from '../exception/no-such-group.exception';
+import { DuplicatedJoinException } from '../exception/duplicated-join.exception';
 
 describe('GroupSerivce Test', () => {
   let groupService: GroupService;
   let userGroupRepository: UserGroupRepository;
+  let groupRepository: GroupRepository;
   let usersFixture: UsersFixture;
   let groupFixture: GroupFixture;
   let groupAchievementFixture: GroupAchievementFixture;
@@ -57,6 +61,7 @@ describe('GroupSerivce Test', () => {
 
     groupService = module.get<GroupService>(GroupService);
     userGroupRepository = module.get<UserGroupRepository>(UserGroupRepository);
+    groupRepository = module.get<GroupRepository>(GroupRepository);
     usersFixture = module.get<UsersFixture>(UsersFixture);
     groupFixture = module.get<GroupFixture>(GroupFixture);
     groupAchievementFixture = module.get<GroupAchievementFixture>(
@@ -82,6 +87,8 @@ describe('GroupSerivce Test', () => {
       );
       // when
       const groupResponse = await groupService.create(user, createGroupRequest);
+
+      // then
       const userGroup = await userGroupRepository.repository.findOne({
         where: { group: { id: groupResponse.id }, user: { id: user.id } },
         relations: {
@@ -89,13 +96,13 @@ describe('GroupSerivce Test', () => {
           user: true,
         },
       });
-
-      // then
+      const group = await groupRepository.findById(groupResponse.id);
       expect(groupResponse.name).toEqual('Group Name');
       expect(groupResponse.avatarUrl).toEqual('avatarUrl');
       expect(userGroup.group.id).toEqual(groupResponse.id);
       expect(userGroup.user.id).toEqual(user.id);
       expect(userGroup.grade).toEqual(UserGroupGrade.LEADER);
+      expect(group.groupCode.length).toEqual(7);
     });
   });
 
@@ -475,6 +482,58 @@ describe('GroupSerivce Test', () => {
           new AssignGradeRequest(UserGroupGrade.PARTICIPANT),
         ),
       ).rejects.toThrow(OnlyLeaderAllowedAssignGradeException);
+    });
+  });
+
+  test('그룹 코드를 이용해서 그룹에 참여할 수 있디.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('GHI');
+      const group = await groupFixture.createGroup('Test Group', user1);
+
+      // when
+      const joinGroupResponse = await groupService.join(
+        user2,
+        new JoinGroupRequest(group.groupCode),
+      );
+
+      // then
+      expect(joinGroupResponse.groupCode).toEqual(group.groupCode);
+      expect(joinGroupResponse.userCode).toEqual(user2.userCode);
+    });
+  });
+
+  test('존해하지 않는 그룹코드에는 NoSucGroupException를 던진다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('GHI');
+
+      // when
+      // then
+      await expect(
+        groupService.join(user2, new JoinGroupRequest('INVALID_GROUP_CODE')),
+      ).rejects.toThrow(NoSucGroupException);
+    });
+  });
+
+  test('이미 가입된 그룹 가입 요청에는 NoSucGroupException를 던진다.', async () => {
+    // given
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('Test Group', user1);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+
+      // when
+      // then
+      await expect(
+        groupService.join(user2, new JoinGroupRequest(group.groupCode)),
+      ).rejects.toThrow(DuplicatedJoinException);
     });
   });
 });

@@ -21,6 +21,11 @@ import { GroupUserListResponse } from '../dto/group-user-list-response';
 import { AssignGradeRequest } from '../dto/assign-grade-request.dto';
 import { AssignGradeResponse } from '../dto/assign-grade-response.dto';
 import { OnlyLeaderAllowedAssignGradeException } from '../exception/only-leader-allowed-assign-grade.exception';
+import { NoSucGroupException } from '../exception/no-such-group.exception';
+import { JoinGroupRequest } from '../dto/join-group-request.dto';
+import { JoinGroupResponse } from '../dto/join-group-response.dto';
+import { DuplicatedJoinException } from '../exception/duplicated-join.exception';
+import { GroupCodeGenerator } from './group-code-generator';
 
 @Injectable()
 export class GroupService {
@@ -29,6 +34,7 @@ export class GroupService {
     private readonly userRepository: UserRepository,
     private readonly userGroupRepository: UserGroupRepository,
     private readonly groupAvatarHolder: GroupAvatarHolder,
+    private readonly groupCodeGenerator: GroupCodeGenerator,
   ) {}
 
   @Transactional()
@@ -37,6 +43,8 @@ export class GroupService {
     group.addMember(user, UserGroupGrade.LEADER);
     if (!group.avatarUrl)
       group.assignAvatarUrl(this.groupAvatarHolder.getUrl());
+    const groupCode = await this.groupCodeGenerator.generate();
+    group.assignGroupCode(groupCode);
     return GroupResponse.from(await this.groupRepository.saveGroup(group));
   }
 
@@ -107,6 +115,20 @@ export class GroupService {
       await this.userGroupRepository.saveUserGroup(userGroup),
     );
   }
+  @Transactional()
+  async join(user: User, joinGroupRequest: JoinGroupRequest) {
+    const group = await this.groupRepository.findByGroupCode(
+      joinGroupRequest.groupCode,
+    );
+    if (!group) throw new NoSucGroupException();
+    await this.checkDuplicatedJoin(user.userCode, group.id);
+
+    const saved = await this.userGroupRepository.saveUserGroup(
+      new UserGroup(user, group, UserGroupGrade.PARTICIPANT),
+    );
+
+    return new JoinGroupResponse(saved.group.groupCode, saved.user.userCode);
+  }
 
   private async getUserGroup(userId: number, groupId: number) {
     const userGroup = await this.userGroupRepository.findOneByUserIdAndGroupId(
@@ -124,6 +146,15 @@ export class GroupService {
         groupId,
       );
     if (userGroup) throw new DuplicatedInviteException();
+  }
+
+  private async checkDuplicatedJoin(userCode: string, groupId: number) {
+    const userGroup =
+      await this.userGroupRepository.findOneByUserCodeAndGroupId(
+        userCode,
+        groupId,
+      );
+    if (userGroup) throw new DuplicatedJoinException();
   }
 
   private checkPermission(userGroup: UserGroup) {

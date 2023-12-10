@@ -10,6 +10,8 @@ export class GroupPreview {
   name: string;
   @ApiProperty({ description: '그룹 로고 Url' })
   avatarUrl: string;
+  @ApiProperty({ description: '그룹 그룹코드' })
+  groupCode: string;
   @ApiProperty({ description: '그룹 달성기록 총 회수' })
   continued: number;
   @ApiProperty({ description: '그룹 달성기록 최근 등록 일자' })
@@ -25,6 +27,7 @@ export class GroupPreview {
     this.id = groupPreview.id;
     this.name = groupPreview.name;
     this.avatarUrl = groupPreview.avatarUrl;
+    this.groupCode = groupPreview.groupCode;
     this.continued = parseInt(groupPreview.continued);
     this.lastChallenged = dateFormat(groupPreview.lastChallenged);
     this.grade = UserGroupGrade[groupPreview.grade];

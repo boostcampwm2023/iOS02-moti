@@ -6,6 +6,7 @@ import { GroupService } from './application/group.service';
 import { UserGroupRepository } from './entities/user-group.repository';
 import { GroupAvatarHolder } from './application/group-avatar.holder';
 import { UserRepository } from '../../users/entities/user.repository';
+import { GroupCodeGenerator } from './application/group-code-generator';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { UserRepository } from '../../users/entities/user.repository';
     ]),
   ],
   controllers: [GroupController],
-  providers: [GroupService, GroupAvatarHolder],
+  providers: [GroupService, GroupAvatarHolder, GroupCodeGenerator],
 })
 export class GroupModule {}
