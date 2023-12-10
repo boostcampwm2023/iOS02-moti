@@ -40,6 +40,13 @@ final class GroupInfoView: UIView {
         return label
     }()
     
+    private let groupCodeLabel: UILabel = {
+        let label = UILabel()
+        label.text = "@ABCDEFG"
+        label.font = .mediumBold
+        return label
+    }()
+    
     private(set) var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(GroupInfoTableViewCell.self, forCellReuseIdentifier: GroupInfoTableViewCell.identifier)
@@ -68,6 +75,8 @@ final class GroupInfoView: UIView {
         if group.grade != .leader {
             cameraIcon.isHidden = true
         }
+        
+        groupCodeLabel.text = "@\(group.code)"
     }
     
     func cancelDownloadImage() {
@@ -92,6 +101,11 @@ extension GroupInfoView {
             .top(equalTo: imageView.bottomAnchor, constant: 20)
             .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
         
+        addSubview(groupCodeLabel)
+        groupCodeLabel.atl
+            .top(equalTo: groupNameLabel.bottomAnchor, constant: 20)
+            .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
+        
         addSubview(cameraIcon)
         cameraIcon.atl
             .size(width: cameraIconSize, height: cameraIconSize)
@@ -100,7 +114,7 @@ extension GroupInfoView {
         
         addSubview(tableView)
         tableView.atl
-            .top(equalTo: groupNameLabel.bottomAnchor, constant: 40)
+            .top(equalTo: groupCodeLabel.bottomAnchor, constant: 30)
             .bottom(equalTo: self.bottomAnchor)
             .horizontal(equalTo: safeAreaLayoutGuide)
     }
