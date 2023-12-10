@@ -248,7 +248,7 @@ extension GroupListViewController: LoadingIndicator {
                     showOneButtonAlert(title: "그룹에서 탈퇴되었습니다.")
                 case .finishIncreased:
                     hideLoadingIndicator()
-                    showOneButtonAlert(title: "새로운 그룹에 초대되었습니다!")
+                    showOneButtonAlert(title: "새로운 그룹이 었습니다!")
                 case .error(let message):
                     hideLoadingIndicator()
                     showErrorAlert(message: message)
