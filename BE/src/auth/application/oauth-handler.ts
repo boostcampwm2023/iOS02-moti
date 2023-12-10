@@ -23,4 +23,18 @@ export class OauthHandler implements IOauthHandler {
   private validateIdentityToken(identityToken: string, publicKey: PublicKey) {
     this.jwtUtils.validate(identityToken, publicKey);
   }
+
+  async revokeUser(authorizationCode: string) {
+    const clientSecret = this.jwtUtils.clientSecretGenerator(
+      new Date(new Date().toUTCString()),
+    );
+
+    const tokenResponse = await this.oauthRequester.getAccessToken(
+      clientSecret,
+      authorizationCode,
+    );
+
+    const refreshToken = tokenResponse.refresh_token;
+    return await this.oauthRequester.revoke(clientSecret, refreshToken);
+  }
 }

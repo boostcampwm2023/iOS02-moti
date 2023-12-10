@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { AppleLoginRequest } from '../dto/apple-login-request.dto';
 import {
@@ -15,6 +15,8 @@ import { AccessTokenGuard } from '../guard/access-token.guard';
 import { User } from '../../users/domain/user.domain';
 import { AuthenticatedUser } from '../decorator/athenticated-user.decorator';
 import { RefreshAuthResponseDto } from '../dto/refresh-auth-response.dto';
+import { RevokeAppleAuthRequest } from '../dto/revoke-apple-auth-request.dto';
+import { RevokeAppleAuthResponse } from '../dto/revoke-apple-auth-response.dto';
 
 @Controller('/api/v1/auth')
 @ApiTags('auth API')
@@ -57,5 +59,28 @@ export class AuthController {
       refreshAuthRequestDto,
     );
     return ApiData.success(refreshAuthResponse);
+  }
+
+  @Delete('revoke')
+  @UseGuards(AccessTokenGuard)
+  @ApiOperation({
+    summary: '회원탈퇴 API',
+    description: 'refreshToken을 통해 accessToken을 재발급한다.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '회원 탈퇴',
+    type: RevokeAppleAuthResponse,
+  })
+  @ApiBearerAuth('accessToken')
+  async deactivateUser(
+    @AuthenticatedUser() user: User,
+    @Body() revokeAuthRequest: RevokeAppleAuthRequest,
+  ) {
+    const revokeAuthResponse = await this.authService.revoke(
+      user,
+      revokeAuthRequest,
+    );
+    return ApiData.success(revokeAuthResponse);
   }
 }

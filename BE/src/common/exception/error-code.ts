@@ -11,6 +11,18 @@ export const ERROR_INFO = {
     statusCode: 500,
     message: 'Apple ID 서버로의 public key 요청이 실패했습니다.',
   },
+  FETCH_ACCESS_TOKEN: {
+    statusCode: 500,
+    message: 'Apple ID 서버로의 access token 요청이 실패했습니다.',
+  },
+  REVOKE_REQUEST_FAIL: {
+    statusCode: 500,
+    message: 'Apple ID 서버로 revoke 요청이 실패했습니다.',
+  },
+  INVALID_IDENTIFIER: {
+    statusCode: 400,
+    message: '유효하지 않는 identifier 입니다.',
+  },
   INVALID_TOKEN: {
     statusCode: 401,
     message: '잘못된 토큰입니다.',

@@ -15,6 +15,10 @@ import { RefreshTokenNotFoundException } from '../exception/refresh-token-not-fo
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { AvatarHolder } from './avatar.holder';
+import { RevokeAppleAuthRequest } from '../dto/revoke-apple-auth-request.dto';
+import { RevokeAppleAuthResponse } from '../dto/revoke-apple-auth-response.dto';
+import { RevokeRequestFailException } from '../exception/revoke-request-fail.exception';
+import { InvalidIdentifierException } from '../exception/invalid-identifier.exception';
 
 @Injectable()
 export class AuthService {
@@ -72,5 +76,22 @@ export class AuthService {
     const claim: JwtClaim = { userCode: user.userCode };
     const accessToken = this.jwtUtils.createToken(claim, new Date());
     return new RefreshAuthResponseDto(UserDto.from(user), accessToken);
+  }
+
+  async revoke(user: User, revokeAuthRequest: RevokeAppleAuthRequest) {
+    const requestUserIdentifier = await this.oauthHandler.getUserIdentifier(
+      revokeAuthRequest.identityToken,
+    );
+    if (user.userIdentifier !== requestUserIdentifier)
+      throw new InvalidIdentifierException();
+
+    const authorizationCode = revokeAuthRequest.authorizationCode;
+
+    const revokeResponse =
+      await this.oauthHandler.revokeUser(authorizationCode);
+    if (revokeResponse.status !== 200) throw new RevokeRequestFailException();
+
+    await this.usersRepository.repository.delete(user.id);
+    return new RevokeAppleAuthResponse(user.userCode);
   }
 }
