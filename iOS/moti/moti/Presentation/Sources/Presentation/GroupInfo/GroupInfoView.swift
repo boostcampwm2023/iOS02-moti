@@ -42,7 +42,6 @@ final class GroupInfoView: UIView {
     
     private let groupCodeLabel: UILabel = {
         let label = UILabel()
-        label.text = "@ABCDEFG"
         label.font = .mediumBold
         return label
     }()
