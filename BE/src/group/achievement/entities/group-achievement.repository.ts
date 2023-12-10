@@ -38,7 +38,7 @@ export class GroupAchievementRepository extends TransactionalRepository<GroupAch
     userId: number,
   ) {
     const groupAchievementEntitySelectQueryBuilder =
-      await this.achievementDetailQuery(achievementId);
+      await this.achievementDetailQuery(achievementId, groupId);
     const result = await groupAchievementEntitySelectQueryBuilder
       .andWhere(
         'groupAchievement.group_id in (select group_id from user_group where user_id = :userId and group_id = :groupId)',
@@ -52,10 +52,11 @@ export class GroupAchievementRepository extends TransactionalRepository<GroupAch
 
   async findAchievementDetailByIdAndUser(
     userId: number,
+    groupId: number,
     achievementId: number,
   ) {
     const groupAchievementEntitySelectQueryBuilder =
-      await this.achievementDetailQuery(achievementId);
+      await this.achievementDetailQuery(achievementId, groupId);
     const result = await groupAchievementEntitySelectQueryBuilder
       .andWhere('groupAchievement.user_id = :userId', { userId })
       .getRawOne<IGroupAchievementDetail>();
@@ -70,7 +71,7 @@ export class GroupAchievementRepository extends TransactionalRepository<GroupAch
     return saved.toModel();
   }
 
-  private async achievementDetailQuery(achievementId: number) {
+  private async achievementDetailQuery(achievementId: number, groupId: number) {
     return this.repository
       .createQueryBuilder('groupAchievement')
       .leftJoinAndSelect('groupAchievement.groupCategory', 'gc')
@@ -86,11 +87,12 @@ export class GroupAchievementRepository extends TransactionalRepository<GroupAch
       .leftJoin(
         'group_achievement',
         'ga',
-        'COALESCE(ga.group_category_id, -1) = COALESCE(groupAchievement.group_category_id, -1) AND ga.id <= groupAchievement.id',
+        'COALESCE(ga.group_category_id, -1) = COALESCE(groupAchievement.group_category_id, -1) AND ga.id <= groupAchievement.id and ga.group_id = groupAchievement.group_id',
       )
       .leftJoin('image', 'i', 'i.group_achievement_id = groupAchievement.id')
       .leftJoin('groupAchievement.user', 'user')
-      .where('groupAchievement.id = :achievementId', { achievementId });
+      .where('groupAchievement.id = :achievementId', { achievementId })
+      .andWhere('groupAchievement.group_id = :groupId', { groupId: groupId });
   }
 
   async findAll(
