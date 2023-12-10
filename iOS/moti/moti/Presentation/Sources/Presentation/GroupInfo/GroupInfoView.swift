@@ -103,7 +103,7 @@ extension GroupInfoView {
         
         addSubview(groupCodeLabel)
         groupCodeLabel.atl
-            .top(equalTo: groupNameLabel.bottomAnchor, constant: 20)
+            .top(equalTo: groupNameLabel.bottomAnchor, constant: 5)
             .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
         
         addSubview(cameraIcon)
