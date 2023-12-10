@@ -17,7 +17,6 @@ import { CategoryTestModule } from '../../../test/category/category-test.module'
 import { Achievement } from '../domain/achievement.domain';
 import { PaginateAchievementRequest } from '../dto/paginate-achievement-request';
 import { ImageFixture } from '../../../test/image/image-fixture';
-import { Category } from '../../category/domain/category.domain';
 
 describe('AchievementRepository test', () => {
   let achievementRepository: AchievementRepository;
@@ -297,6 +296,31 @@ describe('AchievementRepository test', () => {
 
       // then
       expect(achievementDetail).toBeNull();
+    });
+  });
+
+  test('자신의 미설정 카테고리의 도전기록을 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const otherUser1 = await usersFixture.getUser('BCD');
+      const otherUser2 = await usersFixture.getUser('BCD');
+      await achievementFixture.getAchievements(10, otherUser1, null);
+      await achievementFixture.getAchievements(10, otherUser2, null);
+
+      const user = await usersFixture.getUser('ABC');
+
+      const achievements: Achievement[] =
+        await achievementFixture.getAchievements(10, user, null);
+
+      // when
+      const achievementDetail =
+        await achievementRepository.findAchievementDetail(
+          user.id,
+          achievements[9].id,
+        );
+
+      // then
+      expect(achievementDetail.category.achieveCount).toEqual(10);
     });
   });
 
