@@ -30,6 +30,7 @@ import { UsersService } from '../../../users/application/users.service';
 import { UsersModule } from '../../../users/users.module';
 import { GroupAchievementRepository } from '../entities/group-achievement.repository';
 import { GroupAchievementUpdateRequest } from '../dto/group-achievement-update-request';
+import { NoSuchUserGroupException } from '../../group/exception/no-such-user-group.exception';
 
 describe('GroupAchievementService Test', () => {
   let groupAchievementService: GroupAchievementService;
@@ -774,7 +775,40 @@ describe('GroupAchievementService Test', () => {
     });
   });
 
-  test('남의 달성기록을 삭제하려하면 NoSuchGroupAchievementException를 던진다.', async () => {
+  test('관리자나 매니저는 다른 사람이 작성한 달성기록을 삭제할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const leader = await usersFixture.getUser('ABC');
+      const member = await usersFixture.getUser('DEF');
+      const group = await groupFixture.createGroup('GROUP1', leader);
+      await groupFixture.addMember(group, member, UserGroupGrade.PARTICIPANT);
+      const groupAchievement =
+        await groupAchievementFixture.createGroupAchievement(
+          member,
+          group,
+          null,
+          'title',
+        );
+
+      // when
+      await groupAchievementService.delete(
+        leader.id,
+        group.id,
+        groupAchievement.id,
+      );
+      const findOne =
+        await groupAchievementRepository.findOneByIdAndUserAndGroup(
+          member.id,
+          group.id,
+          groupAchievement.id,
+        );
+
+      // then
+      expect(findOne).toBeUndefined();
+    });
+  });
+
+  test('관리자나 매니저가 아닌 사람이 남의 달성기록을 삭제하려하면 NoSuchGroupAchievementException를 던진다.', async () => {
     await transactionTest(dataSource, async () => {
       // given
       const user1 = await usersFixture.getUser('ABC');
@@ -793,10 +827,10 @@ describe('GroupAchievementService Test', () => {
       // then
       await expect(
         groupAchievementService.delete(user2.id, group.id, groupAchievement.id),
-      ).rejects.toThrow(NoSuchGroupAchievementException);
+      ).rejects.toThrow(UnauthorizedAchievementException);
     });
   });
-  test('다른 그룹의 달성을 삭제하려하면 NoSuchGroupAchievementException를 던진다.', async () => {
+  test('다른 그룹의 달성을 삭제하려하면 NoSuchUserGroupException 던진다.', async () => {
     await transactionTest(dataSource, async () => {
       // given
       const user1 = await usersFixture.getUser('ABC');
@@ -819,7 +853,7 @@ describe('GroupAchievementService Test', () => {
           group1.id,
           groupAchievement.id,
         ),
-      ).rejects.toThrow(NoSuchGroupAchievementException);
+      ).rejects.toThrow(NoSuchUserGroupException);
     });
   });
 

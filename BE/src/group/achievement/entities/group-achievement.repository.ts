@@ -164,12 +164,12 @@ export class GroupAchievementRepository extends TransactionalRepository<GroupAch
   }
 
   async findOneByIdAndGroupId(achievementId: number, groupId: number) {
-    const findOne = await this.repository
-      .createQueryBuilder('ga')
-      .select('ga')
-      .where('ga.id = :achievementId', { achievementId })
-      .andWhere('ga.group_id = :groupId', { groupId })
-      .getOne();
+    const findOne = await this.repository.findOne({
+      where: { id: achievementId, group: { id: groupId } },
+      relations: {
+        user: true,
+      },
+    });
     return findOne?.toModel();
   }
 
