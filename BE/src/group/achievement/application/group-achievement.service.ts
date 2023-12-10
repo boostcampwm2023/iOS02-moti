@@ -79,7 +79,7 @@ export class GroupAchievementService {
     const achievement = achieveCreate.toModel(user, group, category, image);
     const saved =
       await this.groupAchievementRepository.saveAchievement(achievement);
-    return this.getAchievementResponse(user.id, saved.id);
+    return this.getAchievementResponse(user.id, groupId, saved.id);
   }
 
   @Transactional({ readonly: true })
@@ -157,10 +157,15 @@ export class GroupAchievementService {
     return group;
   }
 
-  private async getAchievementResponse(userId: number, achieveId: number) {
+  private async getAchievementResponse(
+    userId: number,
+    groupId: number,
+    achieveId: number,
+  ) {
     const achievement =
       await this.groupAchievementRepository.findAchievementDetailByIdAndUser(
         userId,
+        groupId,
         achieveId,
       );
     if (!achievement) throw new NoSuchAchievementException();

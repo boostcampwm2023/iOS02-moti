@@ -175,6 +175,7 @@ describe('GroupRepository Test', () => {
       const findGroupAchievement =
         await groupAchievementRepository.findAchievementDetailByIdAndUser(
           user.id,
+          group.id,
           groupAchievement.id,
         );
 
@@ -203,6 +204,7 @@ describe('GroupRepository Test', () => {
       const findGroupAchievement =
         await groupAchievementRepository.findAchievementDetailByIdAndUser(
           user.id,
+          1,
           2,
         );
 
@@ -232,11 +234,110 @@ describe('GroupRepository Test', () => {
       const findGroupAchievement =
         await groupAchievementRepository.findAchievementDetailByIdAndUser(
           user.id,
+          group.id,
           groupAchievements[9].id,
         );
 
       // then
       expect(findGroupAchievement.category.achieveCount).toEqual(10);
+    });
+  });
+
+  test('미설정 카테고리의 그룹 달성 기록을 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const otherLeader = await usersFixture.getUser('DEF');
+      const otherGroup = await groupFixture.createGroup('OTHER', otherLeader);
+      const otherGroupCategory = await groupCategoryFixture.createCategory(
+        otherLeader,
+        otherGroup,
+      );
+
+      await groupAchievementFixture.createGroupAchievements(
+        10,
+        otherLeader,
+        otherGroup,
+        otherGroupCategory,
+      );
+
+      await groupAchievementFixture.createGroupAchievements(
+        null,
+        otherLeader,
+        otherGroup,
+        otherGroupCategory,
+      );
+
+      const user = await usersFixture.getUser('ABC');
+      const group = await groupFixture.createGroup('GROUP', user);
+      const groupCategory = await groupCategoryFixture.createCategory(
+        user,
+        group,
+      );
+      const groupAchievements =
+        await groupAchievementFixture.createGroupAchievements(
+          12,
+          user,
+          group,
+          groupCategory,
+        );
+
+      // when
+      const findGroupAchievement =
+        await groupAchievementRepository.findAchievementDetailByIdAndUser(
+          user.id,
+          group.id,
+          groupAchievements[11].id,
+        );
+
+      // then
+      expect(findGroupAchievement.category.achieveCount).toEqual(12);
+    });
+  });
+
+  test('미설정 카테고리의 그룹 달성 기록을 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const otherLeader = await usersFixture.getUser('DEF');
+      const otherGroup = await groupFixture.createGroup('OTHER', otherLeader);
+      const otherGroupCategory = await groupCategoryFixture.createCategory(
+        otherLeader,
+        otherGroup,
+      );
+
+      await groupAchievementFixture.createGroupAchievements(
+        10,
+        otherLeader,
+        otherGroup,
+        otherGroupCategory,
+      );
+
+      await groupAchievementFixture.createGroupAchievements(
+        null,
+        otherLeader,
+        otherGroup,
+        otherGroupCategory,
+      );
+
+      const user = await usersFixture.getUser('ABC');
+      const group = await groupFixture.createGroup('GROUP', user);
+      const groupAchievements =
+        await groupAchievementFixture.createGroupAchievements(
+          12,
+          user,
+          group,
+          null,
+        );
+
+      // when
+      const findGroupAchievement =
+        await groupAchievementRepository.findAchievementDetailByIdAndUser(
+          user.id,
+          group.id,
+          groupAchievements[11].id,
+        );
+
+      // then
+      expect(findGroupAchievement.category.achieveCount).toEqual(12);
     });
   });
 
