@@ -16,6 +16,7 @@ final class GroupListViewModel {
         case createGroup(groupName: String)
         case dropGroup(groupId: Int)
         case refetch
+        case join(groupCode: String)
     }
     
     enum GroupListState {
@@ -44,6 +45,12 @@ final class GroupListViewModel {
         case finishIncreased
         case error(message: String)
     }
+    
+    enum JoinGroupState {
+        case loading
+        case finish
+        case error(message: String)
+    }
 
     typealias GroupDataSource = ListDiffableDataSource<Group>
     
@@ -51,6 +58,7 @@ final class GroupListViewModel {
     private let fetchGroupListUseCase: FetchGroupListUseCase
     private let createGroupUseCase: CreateGroupUseCase
     private let dropGroupUseCase: DropGroupUseCase
+    private let joinGroupUseCase: JoinGroupUseCase
     private var groupDataSource: GroupDataSource?
     private var groups: [Group] = [] {
         didSet {
@@ -62,16 +70,19 @@ final class GroupListViewModel {
     private(set) var createGroupState = PassthroughSubject<CreateGroupState, Never>()
     private(set) var dropGroupState = PassthroughSubject<DropGroupState, Never>()
     private(set) var refetchGroupListState = PassthroughSubject<RefetchGroupListState, Never>()
+    private(set) var joinGroupState = PassthroughSubject<JoinGroupState, Never>()
     
     // MARK: - Init
     init(
         fetchGroupListUseCase: FetchGroupListUseCase,
         createGroupUseCase: CreateGroupUseCase,
-        dropGroupUseCase: DropGroupUseCase
+        dropGroupUseCase: DropGroupUseCase,
+        joinGroupUseCase: JoinGroupUseCase
     ) {
         self.fetchGroupListUseCase = fetchGroupListUseCase
         self.createGroupUseCase = createGroupUseCase
         self.dropGroupUseCase = dropGroupUseCase
+        self.joinGroupUseCase = joinGroupUseCase
     }
     
     // MARK: - Setup
@@ -94,6 +105,8 @@ final class GroupListViewModel {
             dropGroup(groupId: groupId)
         case .refetch:
             refetchGroupList()
+        case .join(let groupCode):
+            joinGroup(groupCode: groupCode)
         }
     }
 }
@@ -173,6 +186,24 @@ extension GroupListViewModel {
             } catch {
                 Logger.error("\(#function) error: \(error.localizedDescription)")
                 dropGroupState.send(.error(message: error.localizedDescription))
+            }
+        }
+    }
+    
+    private func joinGroup(groupCode: String) {
+        Task {
+            joinGroupState.send(.loading)
+            do {
+                let requestValue = JoinGroupRequestValue(groupCode: groupCode)
+                let isSuccess = try await joinGroupUseCase.execute(requestValue: requestValue)
+                if isSuccess {
+                    joinGroupState.send(.finish)
+                } else {
+                    joinGroupState.send(.error(message: "그룹코드가 \(groupCode)인 그룹 참가에 실패했습니다."))
+                }
+            } catch {
+                Logger.error("\(#function) error: \(error.localizedDescription)")
+                joinGroupState.send(.error(message: error.localizedDescription))
             }
         }
     }
