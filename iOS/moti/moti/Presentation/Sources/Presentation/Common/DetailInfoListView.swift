@@ -112,12 +112,14 @@ final class DetailInfoListItemView: UIView {
 
     private func setupUI() {
         addSubview(titleLabel)
+        addSubview(contentLabel)
+        
         titleLabel.atl
             .top(equalTo: safeAreaLayoutGuide.topAnchor)
             .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor)
             .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
+        titleLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 200).isActive = true
         
-        addSubview(contentLabel)
         contentLabel.atl
             .top(equalTo: safeAreaLayoutGuide.topAnchor)
             .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor)
