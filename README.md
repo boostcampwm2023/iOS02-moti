@@ -16,10 +16,10 @@
 ![모티메이트-표지](https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/8c43710a-6a83-4bbf-b34e-27806c5b9158)
 
 <div align="center">
-<img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/7bd61fcf-f7af-45f9-b205-77ecbd2b37af" width = "22%">
-<img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/27334baf-b7d6-435d-99ee-609fd69663d3" width = "22%">
-<img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/4cb09f36-9036-405c-a479-3e184d98e712" width = "22%">
-<img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/da25b862-f093-4101-b341-81f6354e3f6b" width = "22%">
+<img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/7bd61fcf-f7af-45f9-b205-77ecbd2b37af" width = "24.5%">
+<img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/27334baf-b7d6-435d-99ee-609fd69663d3" width = "24.5%">
+<img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/4cb09f36-9036-405c-a479-3e184d98e712" width = "24.5%">
+<img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/da25b862-f093-4101-b341-81f6354e3f6b" width = "24.5%">
 </div>
 
 </br>
