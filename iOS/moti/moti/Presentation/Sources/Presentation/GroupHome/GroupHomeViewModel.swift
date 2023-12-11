@@ -249,7 +249,9 @@ private extension GroupHomeViewModel {
     
     /// 새로 생성된 도전 기록을 추가하는 액션
     func postAchievement(newAchievement: Achievement) {
-        achievements.insert(newAchievement, at: 0)
+        if newAchievement.categoryId == currentCategory?.id {
+            achievements.insert(newAchievement, at: 0)
+        }
     }
     
     /// 삭제 API 액션
