@@ -13,6 +13,7 @@ import JKImageCache
 final class AchievementCollectionViewCell: UICollectionViewCell {
     private let imageView = {
         let imageView = UIImageView()
+        imageView.isAccessibilityElement = true
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
@@ -60,7 +61,8 @@ final class AchievementCollectionViewCell: UICollectionViewCell {
         iconImageView.isHidden = true
     }
     
-    func configure(imageURL: URL?, avatarURL: URL? = nil) {
+    func configure(imageURL: URL?, avatarURL: URL? = nil, title: String? = nil) {
+        imageView.accessibilityLabel = title
         if let imageURL {
             imageView.jk.setImage(with: imageURL, placeHolder: MotiImage.skeleton, downsamplingScale: 1.5)
         } else {

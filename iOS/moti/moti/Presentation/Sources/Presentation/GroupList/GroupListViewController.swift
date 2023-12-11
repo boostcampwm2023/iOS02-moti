@@ -122,6 +122,8 @@ private extension GroupListViewController {
     
     func setupNavigationBar() {
         let logoItem = UIImageView(image: MotiImage.logoBlue)
+        logoItem.isAccessibilityElement = true
+        logoItem.accessibilityLabel = "모티 로고"
         logoItem.contentMode = .scaleAspectFit
         let leftItem = UIBarButtonItem(customView: logoItem)
         leftItem.customView?.atl
@@ -131,6 +133,8 @@ private extension GroupListViewController {
         // 프로필 버튼
         let avatarItemSize: CGFloat = 34
         let avatarImageView = UIImageView()
+        avatarImageView.isAccessibilityElement = true
+        avatarImageView.accessibilityLabel = "개인 프로필"
         avatarImageView.contentMode = .scaleAspectFit
         avatarImageView.clipsToBounds = true
         avatarImageView.layer.cornerRadius = avatarItemSize / 2

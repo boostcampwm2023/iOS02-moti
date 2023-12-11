@@ -24,6 +24,8 @@ final class CaptureView: UIView {
     // Video Preview
     let preview = {
         let view = UIView()
+        view.isAccessibilityElement = true
+        view.accessibilityLabel = "촬영 화면 프리뷰"
         view.backgroundColor = .primaryGray
         return view
     }()

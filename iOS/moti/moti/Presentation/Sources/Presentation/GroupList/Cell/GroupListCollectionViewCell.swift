@@ -28,7 +28,7 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
     // MARK: - Views
     private lazy var iconImageView = {
         let imageView = UIImageView()
-        
+        imageView.isAccessibilityElement = true
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = iconSize / 2.0
@@ -79,6 +79,7 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Methods
     func configure(with group: Group) {
+        iconImageView.accessibilityLabel = "\(group.name) 그룹"
         if let url = group.avatarUrl {
             iconImageView.jk.setImage(with: url, downsamplingScale: 1.5)
         }
