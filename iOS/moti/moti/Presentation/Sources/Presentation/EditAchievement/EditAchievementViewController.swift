@@ -25,6 +25,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     private var cancellables: Set<AnyCancellable> = []
     
     private var achievement: Achievement?
+    private let currentCategoryId: Int?
     
     // MARK: - Views
     private var bottomSheet: TextViewBottomSheet
@@ -50,10 +51,12 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     // MARK: - Init
     init(
         viewModel: EditAchievementViewModel,
-        image: UIImage
+        image: UIImage,
+        currentCategoryId: Int?
     ) {
         self.viewModel = viewModel
         self.bottomSheet = TextViewBottomSheet()
+        self.currentCategoryId = currentCategoryId
         super.init(nibName: nil, bundle: nil)
         
         layoutView.configure(image: image)
@@ -69,6 +72,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
         self.viewModel = viewModel
         self.achievement = achievement
         self.bottomSheet = TextViewBottomSheet(text: achievement.body)
+        self.currentCategoryId = nil
         super.init(nibName: nil, bundle: nil)
         
         layoutView.configure(achievement: achievement)
@@ -272,6 +276,12 @@ private extension EditAchievementViewController {
                         layoutView.selectCategory(row: index, inComponent: 0)
                     } else if let firstCategory = viewModel.firstCategory {
                         layoutView.update(category: firstCategory.name)
+                    }
+                    
+                    if let index = viewModel.categories.firstIndex(where: { $0.id == self.currentCategoryId }) {
+                        guard let currentCategory = viewModel.findCategory(at: index) else { return }
+                        layoutView.update(category: currentCategory.name)
+                        layoutView.selectCategory(row: index, inComponent: 0)
                     }
                 }
             }

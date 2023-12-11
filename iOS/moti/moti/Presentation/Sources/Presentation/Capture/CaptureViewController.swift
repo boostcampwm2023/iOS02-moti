@@ -14,7 +14,7 @@ import Domain
 import Jeongfisher
 
 protocol CaptureViewControllerDelegate: AnyObject {
-    func didCapture(image: UIImage)
+    func didCapture(image: UIImage, currentCategoryId: Int?)
 }
 
 final class CaptureViewController: BaseViewController<CaptureView>, VibrationViewController {
@@ -31,13 +31,15 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
     private var session: AVCaptureSession?
     private var backCameraInput: AVCaptureDeviceInput?
     private var frontCameraInput: AVCaptureDeviceInput?
+    private let currentCategoryId: Int?
     
     // Photo Output
     private var output: AVCapturePhotoOutput?
     
     // MARK: - Init
-    init(group: Group? = nil) {
+    init(group: Group? = nil, currentCategoryId: Int?) {
         self.group = group
+        self.currentCategoryId = currentCategoryId
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -104,7 +106,7 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
         Logger.debug("다운샘플링 이미지 사이즈: \(downsampledImage.size)")
         #endif
         
-        delegate?.didCapture(image: downsampledImage)
+        delegate?.didCapture(image: downsampledImage, currentCategoryId: currentCategoryId)
     }
     
     // MARK: - Setup

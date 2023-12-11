@@ -71,7 +71,7 @@ final class EditAchievementCoordinator: Coordinator {
         navigationController.present(navVC, animated: true)
     }
     
-    func startAfterCapture(image: UIImage, group: Group? = nil) {
+    func startAfterCapture(image: UIImage, group: Group? = nil, currentCategoryId: Int?) {
         // VM 생성
         let imageRepository = ImageRepository()
         let editAchievementVM: EditAchievementViewModel
@@ -96,7 +96,8 @@ final class EditAchievementCoordinator: Coordinator {
         // VC 생성
         let editAchievementVC = EditAchievementViewController(
             viewModel: editAchievementVM,
-            image: image
+            image: image,
+            currentCategoryId: currentCategoryId
         )
         editAchievementVC.coordinator = self
         editAchievementVC.delegate = self
