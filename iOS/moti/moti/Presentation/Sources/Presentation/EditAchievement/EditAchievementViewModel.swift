@@ -97,6 +97,10 @@ final class EditAchievementViewModel {
         return categories[index]
     }
     
+    func findCategoryIndex(categoryId: Int) -> Int? {
+        return categories.firstIndex(where: { $0.id == categoryId })
+    }
+    
     func findCategoryIndex(_ item: CategoryItem) -> Int? {
         for (index, category) in categories.enumerated() where item.id == category.id {
             return index
