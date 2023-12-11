@@ -57,6 +57,7 @@ final class AchievementCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         imageView.image = nil
+        iconImageView.isHidden = true
     }
     
     func configure(imageURL: URL?, avatarURL: URL? = nil) {
