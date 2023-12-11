@@ -258,11 +258,11 @@ private extension CaptureViewController {
         #if targetEnvironment(simulator)
         // Simulator
         Logger.debug("시뮬레이터에선 카메라를 테스트할 수 없습니다. 실기기를 연결해 주세요.")
-        let randomImage = [
-            MotiImage.sample1, MotiImage.sample2, MotiImage.sample3,
-            MotiImage.sample4, MotiImage.sample5, MotiImage.sample6, MotiImage.sample7
-        ].randomElement()!
-        capturedPicture(image: randomImage)
+//        let randomImage = [
+//            MotiImage.sample1, MotiImage.sample2, MotiImage.sample3,
+//            MotiImage.sample4, MotiImage.sample5, MotiImage.sample6, MotiImage.sample7
+//        ].randomElement()!
+//        capturedPicture(image: randomImage)
         #else
         // - speed: 약간의 노이즈 감소만이 적용
         // - balanced: speed보다 약간 더 느리지만 더 나은 품질을 얻음
