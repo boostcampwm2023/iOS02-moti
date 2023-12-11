@@ -197,7 +197,10 @@ describe('GroupAchievementService Test', () => {
         expect(groupAchievementResponse.category.id).toEqual(groupCategory.id);
         expect(groupAchievementResponse.category.achieveCount).toEqual(1);
         expect(groupAchievementResponse.category.name).toEqual('category');
-        expect(groupAchievementResponse.userCode).toEqual(user1.userCode);
+        expect(groupAchievementResponse.user.userCode).toEqual(user1.userCode);
+        expect(groupAchievementResponse.user.avatarUrl).toEqual(
+          user1.avatarUrl,
+        );
         expect(groupAchievementResponse.imageUrl).toEqual(image.imageUrl);
         expect(groupAchievementResponse.createdAt).toBeDefined();
       });
@@ -231,7 +234,10 @@ describe('GroupAchievementService Test', () => {
         expect(groupAchievementResponse.category.id).toEqual(-1);
         expect(groupAchievementResponse.category.achieveCount).toEqual(1);
         expect(groupAchievementResponse.category.name).toEqual('미설정');
-        expect(groupAchievementResponse.userCode).toEqual(user1.userCode);
+        expect(groupAchievementResponse.user.userCode).toEqual(user1.userCode);
+        expect(groupAchievementResponse.user.avatarUrl).toEqual(
+          user1.avatarUrl,
+        );
         expect(groupAchievementResponse.imageUrl).toEqual(image.imageUrl);
         expect(groupAchievementResponse.createdAt).toBeDefined();
       });
@@ -328,7 +334,8 @@ describe('GroupAchievementService Test', () => {
         expect(groupAchievementResponse.category.id).toEqual(groupCategory.id);
         expect(groupAchievementResponse.category.achieveCount).toEqual(1);
         expect(groupAchievementResponse.category.name).toEqual('category');
-        expect(groupAchievementResponse.userCode).toEqual(user.userCode);
+        expect(groupAchievementResponse.user.userCode).toEqual(user.userCode);
+        expect(groupAchievementResponse.user.avatarUrl).toEqual(user.avatarUrl);
         expect(groupAchievementResponse.imageUrl).toEqual(image.imageUrl);
         expect(groupAchievementResponse.createdAt).toBeDefined();
       });
@@ -365,8 +372,8 @@ describe('GroupAchievementService Test', () => {
         expect(groupAchievementResponse.category.id).toEqual(-1);
         expect(groupAchievementResponse.category.achieveCount).toEqual(1);
         expect(groupAchievementResponse.category.name).toEqual('미설정');
-        expect(groupAchievementResponse.userCode).toEqual(user.userCode);
-        expect(groupAchievementResponse.imageUrl).toEqual(image.imageUrl);
+        expect(groupAchievementResponse.user.userCode).toEqual(user.userCode);
+        expect(groupAchievementResponse.user.avatarUrl).toEqual(user.avatarUrl);
         expect(groupAchievementResponse.createdAt).toBeDefined();
       });
     });
@@ -407,7 +414,8 @@ describe('GroupAchievementService Test', () => {
         expect(groupAchievementResponse.category.id).toEqual(groupCategory.id);
         expect(groupAchievementResponse.category.achieveCount).toEqual(1);
         expect(groupAchievementResponse.category.name).toEqual('category');
-        expect(groupAchievementResponse.userCode).toEqual(user.userCode);
+        expect(groupAchievementResponse.user.userCode).toEqual(user.userCode);
+        expect(groupAchievementResponse.user.avatarUrl).toEqual(user.avatarUrl);
         expect(groupAchievementResponse.imageUrl).toEqual(image.imageUrl);
         expect(groupAchievementResponse.createdAt).toBeDefined();
       });
@@ -444,7 +452,8 @@ describe('GroupAchievementService Test', () => {
         expect(groupAchievementResponse.category.id).toEqual(-1);
         expect(groupAchievementResponse.category.achieveCount).toEqual(1);
         expect(groupAchievementResponse.category.name).toEqual('미설정');
-        expect(groupAchievementResponse.userCode).toEqual(user.userCode);
+        expect(groupAchievementResponse.user.userCode).toEqual(user.userCode);
+        expect(groupAchievementResponse.user.avatarUrl).toEqual(user.avatarUrl);
         expect(groupAchievementResponse.imageUrl).toEqual(image.imageUrl);
         expect(groupAchievementResponse.createdAt).toBeDefined();
       });

@@ -58,9 +58,9 @@ export class GroupAchievementRepository extends TransactionalRepository<GroupAch
     const groupAchievementEntitySelectQueryBuilder =
       await this.achievementDetailQuery(achievementId, groupId);
     const result = await groupAchievementEntitySelectQueryBuilder
+      .addSelect('user.avatarUrl', 'avatarUrl')
       .andWhere('groupAchievement.user_id = :userId', { userId })
       .getRawOne<IGroupAchievementDetail>();
-
     if (result.id) return new GroupAchievementDetailResponse(result);
     return null;
   }
