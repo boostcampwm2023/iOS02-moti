@@ -61,7 +61,7 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
     @objc private func captureButtonDidClicked() {
         if let tabBarController = tabBarController as? TabBarViewController,
            tabBarController.selectedIndex == 1 {
-            coordinator?.moveToCaptureViewController(group: viewModel.group)
+            coordinator?.moveToCaptureViewController(group: viewModel.group, currentCategoryId: viewModel.currentCategory?.id)
             tabBarController.hideTabBar()
         }
     }

@@ -42,24 +42,26 @@ final class CaptureCoordinator: Coordinator {
         self.group = group
     }
     
-    func start() { 
-        let captureVC = CaptureViewController(group: group)
+    func start() { }
+    
+    func start(currentCategoryId: Int?) { 
+        let captureVC = CaptureViewController(group: group, currentCategoryId: currentCategoryId)
         captureVC.delegate = self
         captureVC.coordinator = self
         navigationController.pushViewController(captureVC, animated: true)
     }
     
-    private func moveEditAchievementViewConrtoller(image: UIImage) {
+    private func moveEditAchievementViewConrtoller(image: UIImage, currentCategoryId: Int?) {
         let editAchievementCoordinator = EditAchievementCoordinator(navigationController, self)
         editAchievementCoordinator.delegate = self
-        editAchievementCoordinator.startAfterCapture(image: image, group: group)
+        editAchievementCoordinator.startAfterCapture(image: image, group: group, currentCategoryId: currentCategoryId)
         childCoordinators.append(editAchievementCoordinator)
     }
 }
 
 extension CaptureCoordinator: CaptureViewControllerDelegate {
-    func didCapture(image: UIImage) {
-        moveEditAchievementViewConrtoller(image: image)
+    func didCapture(image: UIImage, currentCategoryId: Int?) {
+        moveEditAchievementViewConrtoller(image: image, currentCategoryId: currentCategoryId)
     }
 }
 

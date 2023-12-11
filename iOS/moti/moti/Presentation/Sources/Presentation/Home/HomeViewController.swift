@@ -88,7 +88,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
     @objc private func captureButtonDidClicked() {
         if let tabBarController = tabBarController as? TabBarViewController,
            tabBarController.selectedIndex == 0 {
-            coordinator?.moveToCaptureViewController()
+            coordinator?.moveToCaptureViewController(currentCategoryId: viewModel.currentCategory?.id)
         }
     }
     

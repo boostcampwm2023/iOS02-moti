@@ -74,10 +74,10 @@ final class GroupHomeCoordinator: Coordinator {
         editAchievementCoordinator.start(achievement: achievement)
     }
 
-    func moveToCaptureViewController(group: Group) {
+    func moveToCaptureViewController(group: Group, currentCategoryId: Int?) {
         let captureCoordinator = CaptureCoordinator(navigationController, self, group: group)
         captureCoordinator.delegate = self
-        captureCoordinator.start()
+        captureCoordinator.start(currentCategoryId: currentCategoryId)
         childCoordinators.append(captureCoordinator)
     }
 }

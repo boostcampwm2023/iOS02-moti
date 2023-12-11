@@ -54,8 +54,8 @@ final class TextViewBottomSheet: UIViewController {
         view.addSubview(textView)
         textView.atl
             .top(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40)
-            .bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
             .horizontal(equalTo: view.safeAreaLayoutGuide, constant: 20)
+        textView.heightAnchor.constraint(lessThanOrEqualToConstant: 350).isActive = true
         
         view.addSubview(doneButton)
         doneButton.atl
