@@ -24,6 +24,31 @@
 
 </br>
 
+
+# 기술적 고민
+- 내용은 TODO, 더 많은 기술적 고민은 깃허브 프로젝트에서 확인 가능합니다.
+## iOS
+### Interaction Animation
+### 메모리 최적화 (1차, 2차)
+### 보이스 오버
+
+## BE
+### 서버리스
+### 테스트 코드 
+### 쿼리 최적화
+
+
+</br>
+
+# 기술 스택
+### iOS
+```Swift``` ```UIKit``` ```Code Based UI``` ```SPM``` ```MVVM``` ```Clean Architecture``` ```SwiftLint```
+### BE
+```TypeScript``` ```NestJS``` ```Jest``` ```MySQL``` ```Redis``` ```Docker```
+
+</br>
+
+
 # 팀원 소개
 <div align="center">
 <table>
@@ -59,23 +84,3 @@
 </div align="center">
 
 </br>
-
-# 기술 스택
-### iOS
-```Swift``` ```UIKit``` ```Code Based UI``` ```SPM``` ```MVVM``` ```Clean Architecture``` ```SwiftLint```
-### BE
-```TypeScript``` ```NestJS``` ```Jest``` ```MySQL``` ```Redis``` ```Docker```
-
-</br>
-
-# 기술적 고민
-- 내용은 TODO, 더 많은 기술적 고민은 깃허브 프로젝트에서 확인 가능합니다.
-## iOS
-### Interaction Animation
-### 메모리 최적화 (1차, 2차)
-### 보이스 오버
-
-## BE
-### 서버리스
-### 테스트 코드 
-### 쿼리 최적화
