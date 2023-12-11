@@ -55,6 +55,7 @@ final class DetailAchievementView: UIView {
         let textView = UITextView()
         textView.font = .medium
         textView.backgroundColor = .motiBackground
+        textView.isEditable = false
         return textView
     }()
     

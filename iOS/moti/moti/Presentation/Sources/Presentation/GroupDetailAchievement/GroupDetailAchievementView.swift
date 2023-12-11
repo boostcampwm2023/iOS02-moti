@@ -62,6 +62,7 @@ final class GroupDetailAchievementView: UIView {
         let textView = UITextView()
         textView.font = .medium
         textView.backgroundColor = .motiBackground
+        textView.isEditable = false
         return textView
     }()
     

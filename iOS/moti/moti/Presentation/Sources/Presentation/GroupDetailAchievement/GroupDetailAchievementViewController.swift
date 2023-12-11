@@ -48,19 +48,13 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         // 화면에 보이면 이모지 polling
-        if timer == nil {
-            timer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
-                guard let self else { return }
-                viewModel.action(.fetchEmojis)
-            }
-        }
+        startPollingTimer(timeInterval: 2, repeats: true)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         layoutView.cancelDownloadImage()
-        timer?.invalidate()
-        timer = nil
+        stopTimer()
     }
     
     // MARK: - Methods
@@ -83,9 +77,26 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
     @objc private func emojiButtonDidToggled(_ sender: EmojiButton) {
         if let emojiType = EmojiType(emoji: sender.emoji) {
             viewModel.toggleEmoji(emojiType)
+            stopTimer()
+            startPollingTimer(timeInterval: 2, repeats: true)
         }
         sender.toggle()
         vibration(.selection)
+    }
+    
+    func startPollingTimer(timeInterval: CGFloat, repeats: Bool) {
+        stopTimer()
+        if timer == nil {
+            timer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: repeats) { [weak self] _ in
+                guard let self else { return }
+                viewModel.action(.fetchEmojis)
+            }
+        }
+    }
+    
+    func stopTimer() {
+        timer?.invalidate()
+        timer = nil
     }
     
     // MARK: - Setup

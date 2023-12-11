@@ -107,8 +107,17 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
     }
     
     private func addTarget() {
+        layoutView.titleTextField.delegate  = self
         layoutView.categoryButton.addTarget(self, action: #selector(showPicker), for: .touchUpInside)
         layoutView.selectDoneButton.addTarget(self, action: #selector(donePicker), for: .touchUpInside)
+    }
+}
+
+extension EditAchievementViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        guard let text = textField.text else { return true }
+        let newLength = text.count + string.count - range.length
+        return newLength <= 21 // 한글 종성때문에 20 + 1로 설정
     }
 }
 

@@ -41,8 +41,10 @@ extension BaseViewController {
         message: String? = nil,
         okAction: (() -> Void)? = nil
     ) {
-        let alertVC = AlertFactory.makeOneButtonAlert(title: title, message: message, okAction: okAction)
-        present(alertVC, animated: true)
+        DispatchQueue.main.async {
+            let alertVC = AlertFactory.makeOneButtonAlert(title: title, message: message, okAction: okAction)
+            self.present(alertVC, animated: true)
+        }
     }
     
     /// 버튼이 하나인 일반 Alert
@@ -52,8 +54,10 @@ extension BaseViewController {
         okTitle: String? = "확인",
         okAction: (() -> Void)? = nil
     ) {
-        let alertVC = AlertFactory.makeOneButtonAlert(title: title, message: message, okTitle: okTitle, okAction: okAction)
-        present(alertVC, animated: true)
+        DispatchQueue.main.async {
+            let alertVC = AlertFactory.makeOneButtonAlert(title: title, message: message, okTitle: okTitle, okAction: okAction)
+            self.present(alertVC, animated: true)
+        }
     }
     
     /// 버튼이 두 개인 일반 Alert
@@ -65,15 +69,17 @@ extension BaseViewController {
         cancelTitle: String? = "취소",
         cancelAction: (() -> Void)? = nil
     ) {
-        let alertVC = AlertFactory.makeTwoButtonAlert(
-            title: title,
-            message: message,
-            okTitle: okTitle,
-            okAction: okAction,
-            cancelTitle: cancelTitle,
-            cancelAction: cancelAction
-        )
-        present(alertVC, animated: true)
+        DispatchQueue.main.async {
+            let alertVC = AlertFactory.makeTwoButtonAlert(
+                title: title,
+                message: message,
+                okTitle: okTitle,
+                okAction: okAction,
+                cancelTitle: cancelTitle,
+                cancelAction: cancelAction
+            )
+            self.present(alertVC, animated: true)
+        }
     }
     
     func showDestructiveTwoButtonAlert(
@@ -82,8 +88,10 @@ extension BaseViewController {
         okTitle: String? = "삭제",
         okAction: (() -> Void)? = nil
     ) {
-        let alertVC = AlertFactory.makeDestructiveTwoButtonAlert(title: title, message: message, okTitle: okTitle, okAction: okAction)
-        present(alertVC, animated: true)
+        DispatchQueue.main.async {
+            let alertVC = AlertFactory.makeDestructiveTwoButtonAlert(title: title, message: message, okTitle: okTitle, okAction: okAction)
+            self.present(alertVC, animated: true)
+        }
     }
     
     func showTextFieldAlert(
@@ -92,7 +100,9 @@ extension BaseViewController {
         placeholder: String? = nil,
         okAction: ((String?) -> Void)? = nil
     ) {
-        let alertVC = AlertFactory.makeTextFieldAlert(title: title, okTitle: okTitle, placeholder: placeholder, okAction: okAction)
-        present(alertVC, animated: true)
+        DispatchQueue.main.async {
+            let alertVC = AlertFactory.makeTextFieldAlert(title: title, okTitle: okTitle, placeholder: placeholder, okAction: okAction)
+            self.present(alertVC, animated: true)
+        }
     }
 }
