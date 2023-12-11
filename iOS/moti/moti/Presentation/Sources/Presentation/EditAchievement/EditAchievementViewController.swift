@@ -274,8 +274,8 @@ private extension EditAchievementViewController {
                        let category = achievement.category,
                        let index = viewModel.findCategoryIndex(category) {
                         layoutView.selectCategory(row: index, inComponent: 0)
-                    } else if let currentCategoryId, let index = viewModel.findCategoryIndex(categoryId: currentCategoryId) {
-                        guard let currentCategory = viewModel.findCategory(at: index) else { return }
+                    } else if let currentCategoryId,
+                              let (index, currentCategory) = viewModel.findCategoryItem(categoryId: currentCategoryId) {
                         layoutView.update(category: currentCategory.name)
                         layoutView.selectCategory(row: index, inComponent: 0)
                     } else if let firstCategory = viewModel.firstCategory {
