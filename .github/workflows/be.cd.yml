@@ -114,4 +114,4 @@ jobs:
             docker pull ${{ secrets.NCP_REGISTRY }}/motimate:latest
             docker stop motimate
             docker rm motimate
-            docker run -v /home/iOS02-moti/BE/.production.env:/usr/src/app/.production.env -d -p 3000:3000 --name motimate ${{ secrets.NCP_REGISTRY }}/motimate:latest
+            docker run -v /home/iOS02-moti/BE/.production.env:/usr/src/app/.production.env -e TZ=Asia/Seoul -d -p 3000:3000 --name motimate ${{ secrets.NCP_REGISTRY }}/motimate:latest
