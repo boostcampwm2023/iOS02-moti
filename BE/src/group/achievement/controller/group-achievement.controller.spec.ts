@@ -197,6 +197,7 @@ describe('GroupAchievementController', () => {
         createdAt: new Date(),
         achieveCount: 2,
         userCode: user.userCode,
+        avatarUrl: user.avatarUrl,
       });
 
       when(
@@ -488,6 +489,7 @@ describe('GroupAchievementController', () => {
         createdAt: new Date(),
         achieveCount: 2,
         userCode: user.userCode,
+        avatarUrl: user.avatarUrl,
       });
 
       when(

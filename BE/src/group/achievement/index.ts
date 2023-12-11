@@ -4,6 +4,7 @@ import { GroupCategory } from '../category/domain/group.category';
 
 export interface IGroupAchievementDetail extends IAchievementDetail {
   userCode: string;
+  avatarUrl: string;
 }
 
 export interface IGroupAchievementListDetail {
