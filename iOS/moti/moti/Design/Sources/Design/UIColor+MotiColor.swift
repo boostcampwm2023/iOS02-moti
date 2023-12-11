@@ -31,4 +31,7 @@ public extension UIColor {
     
     /// 탭바 아이템과 동일한 회색 색상
     static var tabBarItemGray = UIColor(resource: .tabBarItemGray)
+    
+    /// 이모지 버튼 count 라벨 새상
+    static var emojiButtonTitle = UIColor(resource: .emojiButtonTitle)
 }

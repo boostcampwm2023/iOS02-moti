@@ -7,7 +7,7 @@ export class UsersRoleEntity {
   @PrimaryColumn({ type: 'bigint', nullable: false })
   userId: number;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: UserEntity;
 

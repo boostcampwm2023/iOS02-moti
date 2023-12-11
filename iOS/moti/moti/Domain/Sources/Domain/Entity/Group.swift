@@ -23,6 +23,7 @@ public enum GroupGrade: String, CustomStringConvertible {
 
 public struct Group: Hashable {
     public let id: Int
+    public let code: String
     public let name: String
     public var avatarUrl: URL?
     public var continued: Int
@@ -31,6 +32,7 @@ public struct Group: Hashable {
     
     public init(
         id: Int,
+        code: String,
         name: String,
         avatarUrl: URL?,
         continued: Int,
@@ -38,6 +40,7 @@ public struct Group: Hashable {
         grade: GroupGrade
     ) {
         self.id = id
+        self.code = code
         self.name = name
         self.avatarUrl = avatarUrl
         self.continued = continued
@@ -47,11 +50,13 @@ public struct Group: Hashable {
     
     public init(
         id: Int,
+        code: String,
         name: String,
         avatarUrl: URL?,
         grade: GroupGrade
     ) {
         self.id = id
+        self.code = code
         self.name = name
         self.avatarUrl = avatarUrl
         self.continued = 0

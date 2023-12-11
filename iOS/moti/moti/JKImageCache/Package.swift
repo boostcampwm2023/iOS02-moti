@@ -10,7 +10,7 @@ let package = Package(
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "JKImageCache",
-            targets: ["JKImageCache"]),
+            targets: ["JKImageCache"])
     ],
     dependencies: [
         .package(url: "https://github.com/jeongju9216/Jeongfisher.git", from: "2.5.0")
@@ -26,6 +26,6 @@ let package = Package(
             path: "Sources"),
         .testTarget(
             name: "JKImageCacheTests",
-            dependencies: ["JKImageCache"]),
+            dependencies: ["JKImageCache"])
     ]
 )

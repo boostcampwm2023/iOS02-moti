@@ -15,7 +15,7 @@ final class TabBarViewController: UITabBarController, VibrationViewController {
     private let borderView = UIView()
     
     // MARK: - Properties
-    private var tabBarHeight: CGFloat {
+    var tabBarHeight: CGFloat {
         return tabBar.frame.height
     }
     private var isShowing = true
@@ -148,6 +148,6 @@ private extension TabBarViewController {
         captureButton.atl
             .size(width: CaptureButton.defaultSize, height: CaptureButton.defaultSize)
             .centerX(equalTo: view.centerXAnchor)
-            .bottom(equalTo: view.bottomAnchor, constant: -36)
+            .bottom(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -5)
     }
 }

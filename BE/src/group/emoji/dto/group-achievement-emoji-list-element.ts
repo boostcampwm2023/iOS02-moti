@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IGroupAchievementEmojiMetadata } from './index';
 import { Emoji } from '../domain/emoji';
 
 export class GroupAchievementEmojiListElement {
@@ -12,14 +13,22 @@ export class GroupAchievementEmojiListElement {
   count: number;
 
   static of(
-    id: Emoji,
-    count: number,
-    isSelected: boolean,
+    metatdata: IGroupAchievementEmojiMetadata,
   ): GroupAchievementEmojiListElement {
     const response = new GroupAchievementEmojiListElement();
-    response.id = id;
-    response.count = count;
-    response.isSelected = isSelected;
+    response.id = metatdata.id;
+    response.count = isNaN(parseInt(metatdata.count))
+      ? 0
+      : parseInt(metatdata.count);
+    response.isSelected = metatdata.isSelected == 1;
+    return response;
+  }
+
+  static noEmoji(emoji: Emoji): GroupAchievementEmojiListElement {
+    const response = new GroupAchievementEmojiListElement();
+    response.id = emoji;
+    response.count = 0;
+    response.isSelected = false;
     return response;
   }
 }

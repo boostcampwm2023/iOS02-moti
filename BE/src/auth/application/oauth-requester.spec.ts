@@ -4,6 +4,8 @@ import { HttpService } from '@nestjs/axios';
 import axios from 'axios';
 import { PublicKeysResponse } from '../index';
 import { FetchPublicKeyException } from '../exception/fetch-public-key.exception';
+import { FetchAccessTokenException } from '../exception/fetch-access-token.exception';
+import { RevokeRequestFailException } from '../exception/revoke-request-fail.exception';
 
 describe('OauthRequester test', () => {
   const oauthRequester = new OauthRequester(
@@ -59,5 +61,59 @@ describe('OauthRequester test', () => {
     await expect(oauthRequester.getPublicKeys()).rejects.toThrowError(
       FetchPublicKeyException,
     );
+  });
+
+  test('Apple ID Server로 부터 토큰(accessToken, refreshToken)를 얻어온다.', async () => {
+    // given
+    const tokenResponse = {
+      access_token: 'access_token',
+      expires_in: 1702108011,
+      id_token: 'id_token',
+      refresh_token: 'refresh_token',
+      token_type: 'access_token',
+    };
+
+    jest.spyOn(axios, 'post').mockResolvedValue({ data: tokenResponse });
+
+    // when
+    const result = await oauthRequester.getAccessToken(
+      'clientSecret',
+      'authorizationCode',
+    );
+
+    // then
+    expect(result).toEqual(tokenResponse);
+  });
+
+  test('토큰요청에 실패하면 FetchAccessTokenException 던진다.', async () => {
+    // given
+    jest.spyOn(axios, 'post').mockRejectedValue(new Error('Simulated error'));
+
+    // when & then
+    await expect(
+      oauthRequester.getAccessToken('clientSecret', 'authorizationCode'),
+    ).rejects.toThrowError(FetchAccessTokenException);
+  });
+
+  test('Apple ID Server에 revoke 요청을 한다.', async () => {
+    // given
+
+    jest.spyOn(axios, 'post').mockResolvedValue({ status: 200 });
+
+    // when
+    const result = await oauthRequester.revoke('clientSecret', 'refreshToken');
+
+    // then
+    expect(result.status).toEqual(200);
+  });
+
+  test('revoke요청에 실패하면 RevokeRequestFailException 던진다.', async () => {
+    // given
+    jest.spyOn(axios, 'post').mockRejectedValue(new Error('Simulated error'));
+
+    // when & then
+    await expect(
+      oauthRequester.revoke('clientSecret', 'refreshToken'),
+    ).rejects.toThrowError(RevokeRequestFailException);
   });
 });

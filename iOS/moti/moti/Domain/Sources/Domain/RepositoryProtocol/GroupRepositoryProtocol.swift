@@ -11,4 +11,5 @@ public protocol GroupRepositoryProtocol {
     func fetchGroupList() async throws -> [Group]
     func createGroup(requestValue: CreateGroupRequestValue) async throws -> Group
     func dropGroup(groupId: Int) async throws -> Bool
+    func joinGroup(requestValue: JoinGroupRequestValue) async throws -> Bool
 }

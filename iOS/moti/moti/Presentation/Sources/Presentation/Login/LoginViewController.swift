@@ -101,12 +101,11 @@ final class LoginViewController: BaseViewController<LoginView> {
 }
 
 extension LoginViewController: AppleLoginRequesterDelegate {
-    func success(token: String) {
-        Logger.debug("애플에서 전달된 token: \(token)")
+    func success(token: String, authorizationCode: String) {
         viewModel.action(.login(identityToken: token))
     }
     
-    func failed(error: Error) {
+    func failed(message: String) {
         showOneButtonAlert(title: "로그인 실패", message: "다시 시도해 주세요.")
     }
 }

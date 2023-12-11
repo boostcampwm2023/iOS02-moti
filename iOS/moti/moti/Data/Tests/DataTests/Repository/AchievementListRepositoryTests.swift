@@ -134,7 +134,6 @@ final class AchievementListRepositoryTests: XCTestCase {
             XCTAssertEqual(achievements, emptyAchievementList)
             XCTAssertNil(next)
             
-            
             expectation.fulfill()
         }
         

@@ -116,25 +116,34 @@ extension EditAchievementView {
     private func setupCategoryButton() {
         addSubview(categoryButton)
         categoryButton.atl
+            .top(greaterThanOrEqualTo: safeAreaLayoutGuide.topAnchor)
+            .bottom(greaterThanOrEqualTo: titleTextField.topAnchor, constant: -5)
             .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
-            .bottom(equalTo: titleTextField.topAnchor, constant: -5)
     }
 
     private func setupTitleTextField() {
         addSubview(titleTextField)
         titleTextField.atl
             .horizontal(equalTo: safeAreaLayoutGuide, constant: 20)
-            .bottom(equalTo: resultImageView.topAnchor, constant: -10)
+            .bottom(greaterThanOrEqualTo: resultImageView.topAnchor, constant: -10)
+            .bottom(lessThanOrEqualTo: resultImageView.topAnchor, constant: 0)
     }
     
     private func setupResultImageView() {
         addSubview(resultImageView)
         resultImageView.atl
-            .horizontal(equalTo: safeAreaLayoutGuide)
             .height(equalTo: resultImageView.widthAnchor)
-            .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
-    }
+            .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
+            .centerY(greaterThanOrEqualTo: centerYAnchor, constant: -20)
         
+        let widthConstraint = resultImageView.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor)
+        widthConstraint.priority = .defaultHigh
+        NSLayoutConstraint.activate([
+            resultImageView.widthAnchor.constraint(lessThanOrEqualToConstant: 400),
+            widthConstraint
+        ])
+    }
+    
     private func setupCategoryPickerView() {
         addSubview(categoryPickerView)
         addSubview(selectDoneButton)

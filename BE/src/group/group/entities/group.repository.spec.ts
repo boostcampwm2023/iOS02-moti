@@ -54,7 +54,7 @@ describe('GroupRepository Test', () => {
     });
   });
 
-  test('그룹 단건 조회를 할 수 있다.', async () => {
+  test('id로 그룹 단건 조회를 할 수 있다.', async () => {
     await transactionTest(dataSource, async () => {
       // given
       const user = await usersFixture.getUser('ABC');
@@ -66,6 +66,40 @@ describe('GroupRepository Test', () => {
       // then
       expect(savedGroup.name).toEqual('Test Group');
       expect(savedGroup.id).toEqual(group.id);
+    });
+  });
+
+  test('groupCode로 그룹 단건 조회를 할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const group = await groupFixture.createGroup('Test Group', user);
+
+      // when
+      const savedGroup = await groupRepository.findByGroupCode(group.groupCode);
+
+      // then
+      expect(savedGroup.name).toEqual('Test Group');
+      expect(savedGroup.id).toEqual(group.id);
+    });
+  });
+
+  test('groupCode로 group 존재 유뮤를 알 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const group = await groupFixture.createGroup('Test Group', user);
+
+      // when
+      const existByGroupCode = await groupRepository.existByGroupCode(
+        group.groupCode,
+      );
+      const nonExistByGroupCode =
+        await groupRepository.existByGroupCode('INVALID');
+
+      // then
+      expect(existByGroupCode).toBe(true);
+      expect(nonExistByGroupCode).toBe(false);
     });
   });
 
@@ -97,9 +131,9 @@ describe('GroupRepository Test', () => {
     await transactionTest(dataSource, async () => {
       // given
       const user = await usersFixture.getUser('ABC');
-      await groupFixture.createGroup('Test Group1', user);
-      await groupFixture.createGroup('Test Group2', user);
-      await groupFixture.createGroup('Test Group3', user);
+      const group1 = await groupFixture.createGroup('Test Group1', user);
+      const group2 = await groupFixture.createGroup('Test Group2', user);
+      const group3 = await groupFixture.createGroup('Test Group3', user);
 
       // when
       const groups = await groupRepository.findByUserId(user.id);
@@ -108,10 +142,13 @@ describe('GroupRepository Test', () => {
       expect(groups.length).toEqual(3);
       expect(groups[0].name).toEqual('Test Group1');
       expect(groups[0].grade).toEqual(UserGroupGrade.LEADER);
+      expect(groups[0].groupCode).toEqual(group1.groupCode);
       expect(groups[1].name).toEqual('Test Group2');
       expect(groups[1].grade).toEqual(UserGroupGrade.LEADER);
+      expect(groups[1].groupCode).toEqual(group2.groupCode);
       expect(groups[2].name).toEqual('Test Group3');
       expect(groups[2].grade).toEqual(UserGroupGrade.LEADER);
+      expect(groups[2].groupCode).toEqual(group3.groupCode);
     });
   });
 

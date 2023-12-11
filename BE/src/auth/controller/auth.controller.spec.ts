@@ -19,6 +19,10 @@ import { RefreshAuthRequestDto } from '../dto/refresh-auth-request.dto';
 import { RefreshAuthResponseDto } from '../dto/refresh-auth-response.dto';
 import { User } from '../../users/domain/user.domain';
 import { RefreshTokenNotFoundException } from '../exception/refresh-token-not-found.exception';
+import { RevokeAppleAuthRequest } from '../dto/revoke-apple-auth-request.dto';
+import { RevokeAppleAuthResponse } from '../dto/revoke-apple-auth-response.dto';
+import { InvalidIdentifierException } from '../exception/invalid-identifier.exception';
+import { RevokeRequestFailException } from '../exception/revoke-request-fail.exception';
 
 describe('AchievementController', () => {
   let app: INestApplication;
@@ -271,6 +275,118 @@ describe('AchievementController', () => {
         .post('/api/v1/auth/refresh')
         .set('Authorization', `Bearer ${accessToken}`)
         .send(new RefreshAuthRequestDto('refreshToken'))
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('만료된 토큰입니다.');
+        });
+    });
+  });
+
+  describe('회원 탈퇴를 한다.', () => {
+    it('성공 시 200을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      const refreshAuthResponse = new RevokeAppleAuthResponse('ABCDEF1');
+
+      when(
+        mockAuthService.revoke(
+          anyOfClass(User),
+          anyOfClass(RevokeAppleAuthRequest),
+        ),
+      ).thenResolve(refreshAuthResponse);
+
+      // then
+      // when
+      return request(app.getHttpServer())
+        .delete('/api/v1/auth/revoke')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(new RevokeAppleAuthRequest('identityToken', 'authorizationCode'))
+        .expect(200)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(true);
+          expect(res.body.data).toEqual({
+            userCode: 'ABCDEF1',
+          });
+        });
+    });
+    it('존재하지 않는 refresh token으로 요청하는 경우 401을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockAuthService.revoke(
+          anyOfClass(User),
+          anyOfClass(RevokeAppleAuthRequest),
+        ),
+      ).thenThrow(new InvalidIdentifierException());
+
+      // then
+      // when
+      return request(app.getHttpServer())
+        .delete('/api/v1/auth/revoke')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(new RevokeAppleAuthRequest('identityToken', 'authorizationCode'))
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('유효하지 않는 identifier 입니다.');
+        });
+    });
+
+    it('만료된 refresh token에 401을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockAuthService.revoke(
+          anyOfClass(User),
+          anyOfClass(RevokeAppleAuthRequest),
+        ),
+      ).thenThrow(new RevokeRequestFailException());
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete('/api/v1/auth/revoke')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(new RevokeAppleAuthRequest('identityToken', 'authorizationCode'))
+        .expect(500)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe(
+            'Apple ID 서버로 revoke 요청이 실패했습니다.',
+          );
+        });
+    });
+
+    it('잘못된 인증시 401을 반환한다.', async () => {
+      // given
+      const accessToken = 'abcd.abcd.efgh';
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete('/api/v1/auth/revoke')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(new RevokeAppleAuthRequest('identityToken', 'authorizationCode'))
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('잘못된 토큰입니다.');
+        });
+    });
+
+    it('만료된 인증정보에 401을 반환한다.', async () => {
+      // given
+      const { accessToken } =
+        await authFixture.getExpiredAccessTokenUser('ABC');
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete('/api/v1/auth/revoke')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send(new RevokeAppleAuthRequest('identityToken', 'authorizationCode'))
         .expect(401)
         .expect((res: request.Response) => {
           expect(res.body.success).toBe(false);

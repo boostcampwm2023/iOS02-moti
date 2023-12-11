@@ -36,7 +36,7 @@ final class GroupDetailAchievementView: UIView {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .primaryDarkGray
-        imageView.image = MotiImage.skeleton
+        imageView.image = MotiImage.smallSkeleton
         imageView.clipsToBounds = true
         return imageView
     }()
@@ -196,10 +196,16 @@ private extension GroupDetailAchievementView {
     private func setupImageView() {
         scrollView.addSubview(imageView)
         imageView.atl
-            .top(equalTo: titleLabel.bottomAnchor, constant: 10)
-            .left(equalTo: safeAreaLayoutGuide.leftAnchor)
-            .right(equalTo: safeAreaLayoutGuide.rightAnchor)
             .height(equalTo: imageView.widthAnchor)
+            .top(equalTo: titleLabel.bottomAnchor, constant: 10)
+            .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
+        
+        let widthConstraint = imageView.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor)
+        widthConstraint.priority = .defaultHigh
+        NSLayoutConstraint.activate([
+            imageView.widthAnchor.constraint(lessThanOrEqualToConstant: 400),
+            widthConstraint
+        ])
     }
     
     private func setupEmojiButtons() {

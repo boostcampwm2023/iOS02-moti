@@ -24,6 +24,7 @@ export class GroupRepository extends TransactionalRepository<GroupEntity> {
         'group.id as id',
         'group.name as name',
         'group.avatarUrl as avatarUrl',
+        'group.groupCode as groupCode',
         'user_group.grade as grade',
       ])
       .addSelect('COUNT(achievements.id)', 'continued')
@@ -74,5 +75,18 @@ export class GroupRepository extends TransactionalRepository<GroupEntity> {
       relations: ['userGroups.user'],
     });
     return group?.toModel();
+  }
+
+  async findByGroupCode(groupCode: string) {
+    const group = await this.repository.findOne({
+      where: {
+        groupCode: groupCode,
+      },
+    });
+    return group?.toModel();
+  }
+
+  async existByGroupCode(groupCode: string) {
+    return await this.repository.exist({ where: { groupCode: groupCode } });
   }
 }

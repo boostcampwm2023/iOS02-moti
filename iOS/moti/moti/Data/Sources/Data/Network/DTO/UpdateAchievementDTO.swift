@@ -17,4 +17,3 @@ struct UpdateAchievementResponseDTO: ResponseDTO {
 struct UpdateAchievementDataDTO: Codable {
     let id: Int
 }
-

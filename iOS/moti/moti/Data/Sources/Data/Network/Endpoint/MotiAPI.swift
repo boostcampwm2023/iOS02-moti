@@ -13,6 +13,7 @@ enum MotiAPI: EndpointProtocol {
     case version
     case login(requestValue: LoginRequestValue)
     case autoLogin(requestValue: AutoLoginRequestValue)
+    case revoke(requestValue: RevokeRequestValue)
     case saveImage(requestValue: SaveImageRequestValue)
     // 개인
     case fetchAchievementList(requestValue: FetchAchievementListRequestValue?)
@@ -38,6 +39,7 @@ enum MotiAPI: EndpointProtocol {
     case updateGrade(groupId: Int, userCode: String, requestValue: UpdateGradeRequestValue)
     case invite(requestValue: InviteMemberRequestValue, groupId: Int)
     case dropGroup(groupId: Int)
+    case joinGroup(requestValue: JoinGroupRequestValue)
     // 차단
     case blockingUser(userCode: String)
     case blockingAchievement(achievementId: Int, groupId: Int)
@@ -64,6 +66,7 @@ extension MotiAPI {
         case .version: return "/operate/policy"
         case .login: return "/auth/login"
         case .autoLogin: return "/auth/refresh"
+        case .revoke: return "/auth/revoke"
         case .fetchAchievementList: return "/achievements"
         case .fetchCategory(let categoryId): return "/categories/\(categoryId)"
         case .fetchCategoryList: return "/categories"
@@ -107,6 +110,8 @@ extension MotiAPI {
             return "/groups/\(groupId)/achievements/\(achievementId)/emojis/\(emojiId)"
         case .dropGroup(let groupId):
             return "/groups/\(groupId)/participation"
+        case .joinGroup:
+            return "/groups/participation"
         }
     }
     
@@ -115,6 +120,7 @@ extension MotiAPI {
         case .version: return .get
         case .login: return .post
         case .autoLogin: return .post
+        case .revoke: return .delete
         case .fetchAchievementList: return .get
         case .fetchCategory: return .get
         case .fetchCategoryList: return .get
@@ -142,6 +148,7 @@ extension MotiAPI {
         case .fetchEmojis: return .get
         case .toggleEmoji: return .post
         case .dropGroup: return .delete
+        case .joinGroup: return .post
         }
     }
     
@@ -162,6 +169,8 @@ extension MotiAPI {
             return requestValue
         case .autoLogin(let requestValue):
             return requestValue
+        case .revoke(let requestValue):
+            return requestValue
         case .addCategory(let requestValue):
             return requestValue
         case .updateAchievement(let requestValue):
@@ -179,6 +188,8 @@ extension MotiAPI {
         case .invite(let requestValue, _):
             return requestValue
         case .updateGrade(_, _, let requestValue):
+            return requestValue
+        case .joinGroup(let requestValue):
             return requestValue
         default:
             return nil

@@ -18,7 +18,7 @@ export class ImageEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: UserEntity;
 
@@ -35,12 +35,15 @@ export class ImageEntity {
   imageKey: string;
 
   @Index()
-  @OneToOne(() => AchievementEntity, { nullable: true })
+  @OneToOne(() => AchievementEntity, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'achievement_id', referencedColumnName: 'id' })
   achievement: AchievementEntity;
 
   @Index()
-  @OneToOne(() => GroupAchievementEntity, { nullable: true })
+  @OneToOne(() => GroupAchievementEntity, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'group_achievement_id', referencedColumnName: 'id' })
   groupAchievement: GroupAchievementEntity;
 

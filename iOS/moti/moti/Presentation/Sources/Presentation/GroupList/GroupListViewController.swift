@@ -99,6 +99,19 @@ final class GroupListViewController: BaseViewController<GroupListView> {
         
         present(textFieldAlertVC, animated: true)
     }
+    
+    @objc private func showJoinGroupTextFieldAlert() {
+        showTextFieldAlert(
+            title: "그룹 참가",
+            okTitle: "참가",
+            placeholder: "7자리 그룹코드를 입력하세요.",
+            okAction: { [weak self] text in
+                guard let self, let text else { return }
+                Logger.debug("그룹 참가 입력: \(text)")
+                viewModel.action(.join(groupCode: text))
+            }
+        )
+    }
 }
 
 // MARK: - Setup
@@ -139,13 +152,20 @@ private extension GroupListViewController {
             title: "생성", style: .plain, target: self,
             action: #selector(showCreateGroupTextFieldAlert)
         )
+        
+        let joinGroupItem = UIBarButtonItem(
+            title: "참가", style: .plain, target: self,
+            action: #selector(showJoinGroupTextFieldAlert)
+        )
 
-        navigationItem.rightBarButtonItems = [profileItem, createGroupItem]
+        navigationItem.rightBarButtonItems = [profileItem, createGroupItem, joinGroupItem]
     }
     
     @objc func showUserCode() {
         if let userCode = UserDefaults.standard.readString(key: .myUserCode) {
-            showOneButtonAlert(title: "유저 코드", message: userCode)
+            showTwoButtonAlert(title: "유저 코드", message: userCode, okTitle: "확인", cancelTitle: "클립보드 복사", cancelAction: {
+                UIPasteboard.general.string = userCode
+            })
         }
     }
 }
@@ -181,6 +201,11 @@ extension GroupListViewController: UITextFieldDelegate {
 // MARK: - Bind
 extension GroupListViewController: LoadingIndicator {
     func bind() {
+        bindGroupList()
+        bindGroup()
+    }
+    
+    func bindGroupList() {
         viewModel.$groupListState
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
@@ -200,6 +225,31 @@ extension GroupListViewController: LoadingIndicator {
             }
             .store(in: &cancellables)
         
+        viewModel.refetchGroupListState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .finishSame:
+                    hideLoadingIndicator()
+                case .finishDecreased:
+                    hideLoadingIndicator()
+                    showOneButtonAlert(title: "그룹에서 탈퇴되었습니다.")
+                case .finishIncreased:
+                    hideLoadingIndicator()
+                    showOneButtonAlert(title: "새로운 그룹이 있습니다!")
+                case .error(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
+            }
+            .store(in: &cancellables)
+        
+    }
+    
+    func bindGroup() {
         viewModel.createGroupState
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
@@ -232,21 +282,16 @@ extension GroupListViewController: LoadingIndicator {
             }
             .store(in: &cancellables)
         
-        viewModel.refetchGroupListState
+        viewModel.joinGroupState
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
                 switch state {
                 case .loading:
                     showLoadingIndicator()
-                case .finishSame:
+                case .finish:
                     hideLoadingIndicator()
-                case .finishDecreased:
-                    hideLoadingIndicator()
-                    showOneButtonAlert(title: "그룹에서 탈퇴되었습니다.")
-                case .finishIncreased:
-                    hideLoadingIndicator()
-                    showOneButtonAlert(title: "새로운 그룹에 초대되었습니다!")
+                    viewModel.action(.refetch)
                 case .error(let message):
                     hideLoadingIndicator()
                     showErrorAlert(message: message)

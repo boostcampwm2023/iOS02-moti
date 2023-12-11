@@ -36,6 +36,11 @@ export class GroupFixture {
   }
 
   static group(name?: string) {
+    const group = new Group(
+      name || `group${++GroupFixture.id}`,
+      'file://avatarUrl',
+    );
+    group.assignGroupCode(`GABCDE${++GroupFixture.id}`);
     return new Group(name || `group${++GroupFixture.id}`, 'file://avatarUrl');
   }
 }

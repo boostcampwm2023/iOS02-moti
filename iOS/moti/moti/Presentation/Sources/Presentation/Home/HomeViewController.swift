@@ -70,6 +70,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
         if let tabBarController = tabBarController as? TabBarViewController {
             tabBarController.showTabBar()
         }
+        layoutView.hideEmptyGuideLabel()
         viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.postAchievement(newAchievement: newAchievement))
         showCelebrate(with: newAchievement)
@@ -88,7 +89,6 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
         if let tabBarController = tabBarController as? TabBarViewController,
            tabBarController.selectedIndex == 0 {
             coordinator?.moveToCaptureViewController()
-            tabBarController.hideTabBar()
         }
     }
     
@@ -241,7 +241,9 @@ private extension HomeViewController {
     
     @objc func showUserCode() {
         if let userCode = UserDefaults.standard.readString(key: .myUserCode) {
-            showOneButtonAlert(title: "유저 코드", message: userCode)
+            showTwoButtonAlert(title: "유저 코드", message: userCode, okTitle: "확인", cancelTitle: "클립보드 복사", cancelAction: {
+                UIPasteboard.general.string = userCode
+            })
         }
     }
 }
@@ -254,9 +256,10 @@ extension HomeViewController: UICollectionViewDelegate {
             // 카테고리 셀을 눌렀을 때
             categoryCellDidSelected(cell: cell, row: indexPath.row)
         } else if let _ = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
-            // 달성 기록 리스트 셀을 눌렀을 때
-            // 상세 정보 화면으로 이동
+            // 달성 기록 리스트 셀을 눌렀을 때 상세 정보 화면으로 이동
             let achievement = viewModel.findAchievement(at: indexPath.row)
+            // 스켈레톤 아이템 예외 처리
+            guard achievement.id >= 0 else { return }
             coordinator?.moveToDetailAchievementViewController(achievement: achievement)
         }
     }
@@ -384,10 +387,14 @@ private extension HomeViewController {
                 // state 에 따른 뷰 처리 - 스켈레톤 뷰, fetch 에러 뷰 등
                 Logger.debug(state)
                 switch state {
+                case .isEmpty:
+                    layoutView.showEmptyGuideLabel()
                 case .finish:
+                    layoutView.hideEmptyGuideLabel()
                     isFetchingNextPage = false
                     layoutView.endRefreshing()
                 case .error(let message):
+                    layoutView.hideEmptyGuideLabel()
                     isFetchingNextPage = false
                     layoutView.endRefreshing()
                     Logger.error("Fetch Achievement Error: \(message)")
@@ -424,6 +431,7 @@ private extension HomeViewController {
                 case .loading:
                     showLoadingIndicator()
                 case .success:
+                    viewModel.action(.fetchCurrentCategoryInfo)
                     hideLoadingIndicator()
                 case .failed:
                     hideLoadingIndicator()

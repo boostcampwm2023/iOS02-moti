@@ -31,7 +31,7 @@ public final class LaunchCoodinator: Coordinator {
     
     public func start() {
         let autoLoginUseCase = AutoLoginUseCase(
-            repository: LoginRepository(),
+            repository: AuthRepository(),
             keychainStorage: KeychainStorage.shared
         )
         let launchVM = LaunchViewModel(

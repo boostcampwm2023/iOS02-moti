@@ -6,6 +6,7 @@ export class Group {
   id: number;
   name: string;
   avatarUrl: string;
+  groupCode: string;
   userGroups: UserGroup[];
 
   constructor(name: string, avatarUrl: string) {
@@ -20,5 +21,9 @@ export class Group {
 
   assignAvatarUrl(url: string) {
     this.avatarUrl = url;
+  }
+
+  assignGroupCode(groupCode: string) {
+    this.groupCode = groupCode;
   }
 }

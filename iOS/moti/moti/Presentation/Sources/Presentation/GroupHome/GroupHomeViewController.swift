@@ -152,6 +152,7 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
     func postedAchievement(newAchievement: Achievement) {
         viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.postAchievement(newAchievement: newAchievement))
+        layoutView.hideEmptyGuideLabel()
         showCelebrate(with: newAchievement)
     }
     
@@ -235,7 +236,7 @@ private extension GroupHomeViewController {
         showTextFieldAlert(
             title: "그룹원 초대",
             okTitle: "초대",
-            placeholder: "초대할 유저의 7자리 유저코드를 입력하세요.",
+            placeholder: "7자리 유저코드를 입력하세요.",
             okAction: { text in
                 guard let text = text else { return }
                 Logger.debug("초대할 유저코드: \(text)")
@@ -268,9 +269,10 @@ extension GroupHomeViewController: UICollectionViewDelegate {
             // 카테고리 셀을 눌렀을 때
             categoryCellDidSelected(cell: cell, row: indexPath.row)
         } else if let _ = collectionView.cellForItem(at: indexPath) as? AchievementCollectionViewCell {
-            // 달성 기록 리스트 셀을 눌렀을 때
-            // 상세 정보 화면으로 이동
+            // 달성 기록 리스트 셀을 눌렀을 때 상세 정보 화면으로 이동
             let achievement = viewModel.findAchievement(at: indexPath.row)
+            // 스켈레톤 아이템 예외 처리
+            guard achievement.id >= 0 else { return }
             coordinator?.moveToGroupDetailAchievementViewController(
                 achievement: achievement,
                 group: viewModel.group
@@ -440,11 +442,15 @@ private extension GroupHomeViewController {
                 switch state {
                 case .loading:
                     break
+                case .isEmpty:
+                    layoutView.showEmptyGuideLabel()
                 case .finish:
+                    layoutView.hideEmptyGuideLabel()
                     isFetchingNextPage = false
                     layoutView.endRefreshing()
                 case .error(let message):
                     Logger.error("Fetch Achievement Error: \(message)")
+                    layoutView.hideEmptyGuideLabel()
                     isFetchingNextPage = false
                     layoutView.endRefreshing()
                 }
@@ -476,6 +482,7 @@ private extension GroupHomeViewController {
                 case .loading:
                     showLoadingIndicator()
                 case .success:
+                    viewModel.action(.fetchCurrentCategoryInfo)
                     hideLoadingIndicator()
                 case .failed:
                     hideLoadingIndicator()

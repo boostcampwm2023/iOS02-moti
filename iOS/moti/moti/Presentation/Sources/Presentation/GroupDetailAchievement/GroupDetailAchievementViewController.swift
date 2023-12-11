@@ -16,7 +16,7 @@ protocol GroupDetailAchievementViewControllerDelegate: DetailAchievementViewCont
     func blockingUserMenuDidClicked(userCode: String)
 }
 
-final class GroupDetailAchievementViewController: BaseViewController<GroupDetailAchievementView>, HiddenTabBarViewController {
+final class GroupDetailAchievementViewController: BaseViewController<GroupDetailAchievementView>, HiddenTabBarViewController, VibrationViewController {
 
     // MARK: - Properties
     weak var coordinator: GroupDetailAchievementCoordinator?
@@ -85,10 +85,20 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
             viewModel.toggleEmoji(emojiType)
         }
         sender.toggle()
+        vibration(.selection)
     }
     
     // MARK: - Setup
     func setupNavigationBar() {
+        // 오른쪽 편집 버튼
+        // 작성자 본인에게만 표시
+        let editItem = UIBarButtonItem(
+            title: "편집",
+            style: .plain,
+            target: self,
+            action: #selector(editButtonDidClicked)
+        )
+        
         // 오른쪽 더보기 버튼
         let moreItem = UIBarButtonItem(
             image: SymbolImage.ellipsisCircle,
@@ -100,10 +110,6 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         let isMyAchievement = viewModel.isMyAchievement
         let grade = viewModel.group.grade
         
-        // 작성자 본인에게만 표시
-        let editAction = UIAction(title: "편집", handler: { _ in
-            self.editButtonDidClicked()
-        })
         // 작성자 본인, 관리자, 그룹장에게 표시
         let deleteAction = UIAction(title: "삭제", attributes: .destructive, handler: { _ in
             self.removeButtonDidClicked()
@@ -130,22 +136,27 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
                     self.delegate?.blockingUserMenuDidClicked(userCode: self.viewModel.achievement.userCode)
             })
         })
+        // 신고
+        let reportAction = UIAction(title: "신고", attributes: .destructive, handler: { _ in
+            self.showOneButtonAlert(title: "신고 완료", message: "신고 처리되었습니다.")
+        })
         
         var children: [UIAction] = []
-        if isMyAchievement {
-            children.append(contentsOf: [editAction, deleteAction])
-        } else if grade == .leader || grade == .manager {
+        if isMyAchievement || grade == .leader || grade == .manager {
             children.append(contentsOf: [deleteAction])
         }
         
         // 그룹장, 관리자에게도 표시하기 위해 조건문 분리
         if !isMyAchievement {
-            children.append(contentsOf: [blockingAchievementAction, blockingUserAction])
+            children.append(contentsOf: [blockingAchievementAction, blockingUserAction, reportAction])
         }
-        
         moreItem.menu = UIMenu(children: children)
         
-        navigationItem.rightBarButtonItems = [moreItem]
+        if isMyAchievement {
+            navigationItem.rightBarButtonItems = [moreItem, editItem]
+        } else {
+            navigationItem.rightBarButtonItems = [moreItem]
+        }
     }
 }
 

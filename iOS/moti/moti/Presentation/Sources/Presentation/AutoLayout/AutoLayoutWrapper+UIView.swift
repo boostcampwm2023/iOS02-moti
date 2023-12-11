@@ -59,6 +59,16 @@ extension AutoLayoutWrapper {
     }
     
     @discardableResult
+    func centerY(
+        greaterThanOrEqualTo anchor: NSLayoutAnchor<NSLayoutYAxisAnchor>,
+        constant: CGFloat = 0
+    ) -> Self {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.centerYAnchor.constraint(greaterThanOrEqualTo: anchor, constant: constant).isActive = true
+        return self
+    }
+    
+    @discardableResult
     func top(
         equalTo anchor: NSLayoutAnchor<NSLayoutYAxisAnchor>,
         constant: CGFloat = 0
@@ -75,6 +85,46 @@ extension AutoLayoutWrapper {
     ) -> Self {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.bottomAnchor.constraint(equalTo: anchor, constant: constant).isActive = true
+        return self
+    }
+    
+    @discardableResult
+    func top(
+        greaterThanOrEqualTo anchor: NSLayoutAnchor<NSLayoutYAxisAnchor>,
+        constant: CGFloat = 0
+    ) -> Self {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.topAnchor.constraint(greaterThanOrEqualTo: anchor, constant: constant).isActive = true
+        return self
+    }
+    
+    @discardableResult
+    func bottom(
+        greaterThanOrEqualTo anchor: NSLayoutAnchor<NSLayoutYAxisAnchor>,
+        constant: CGFloat = 0
+    ) -> Self {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.bottomAnchor.constraint(greaterThanOrEqualTo: anchor, constant: constant).isActive = true
+        return self
+    }
+    
+    @discardableResult
+    func top(
+        lessThanOrEqualTo anchor: NSLayoutAnchor<NSLayoutYAxisAnchor>,
+        constant: CGFloat = 0
+    ) -> Self {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.topAnchor.constraint(lessThanOrEqualTo: anchor, constant: constant).isActive = true
+        return self
+    }
+    
+    @discardableResult
+    func bottom(
+        lessThanOrEqualTo anchor: NSLayoutAnchor<NSLayoutYAxisAnchor>,
+        constant: CGFloat = 0
+    ) -> Self {
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.bottomAnchor.constraint(lessThanOrEqualTo: anchor, constant: constant).isActive = true
         return self
     }
     

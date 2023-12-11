@@ -614,6 +614,30 @@ describe('GroupAchievementController', () => {
         });
     });
 
+    it('삭제 권한이 없는 경우에는 403을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupAchievementService.delete(
+          anyNumber(),
+          anyNumber(),
+          anyNumber(),
+        ),
+      ).thenThrow(new UnauthorizedAchievementException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete('/api/v1/groups/1/achievements/1')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(403)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('달성기록에 접근할 수 없습니다.');
+        });
+    });
+
     it('잘못된 인증시 401을 반환한다.', async () => {
       // given
       const accessToken = 'abcd.abcd.efgh';

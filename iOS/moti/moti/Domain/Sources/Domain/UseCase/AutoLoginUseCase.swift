@@ -16,11 +16,11 @@ public struct AutoLoginRequestValue: RequestValue {
 }
 
 public struct AutoLoginUseCase {
-    private let repository: LoginRepositoryProtocol
+    private let repository: AuthRepositoryProtocol
     private let keychainStorage: KeychainStorageProtocol
     
     public init(
-        repository: LoginRepositoryProtocol,
+        repository: AuthRepositoryProtocol,
         keychainStorage: KeychainStorageProtocol
     ) {
         self.repository = repository

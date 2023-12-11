@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "IMG_8195.png",
+      "filename" : "small-skeleton.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "IMG_8195 1.png",
+      "filename" : "small-skeleton 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "IMG_8195 2.png",
+      "filename" : "small-skeleton 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

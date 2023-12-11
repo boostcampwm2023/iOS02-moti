@@ -24,6 +24,13 @@ export const configServiceModuleOptions = {
     SWAGGER_TAG: Joi.string().required(),
 
     APPLE_PUBLIC_KEY_URL: Joi.string().required(),
+    APPLE_TOKEN_URL: Joi.string().required(),
+    APPLE_REVOKE_URL: Joi.string().required(),
+    APPLE_CLIENT_ID: Joi.string().required(),
+    APPLE_KEY_ID: Joi.string().required(),
+    APPLE_TEAM_ID: Joi.string().required(),
+    APPLE_AUD: Joi.string().required(),
+    APPLE_PRIVATE_KEY: Joi.string().required(),
     JWT_SECRET: Joi.string().required(),
     JWT_VALIDITY: Joi.number().required(),
     REFRESH_JWT_SECRET: Joi.string().required(),

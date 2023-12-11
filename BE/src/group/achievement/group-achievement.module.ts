@@ -7,6 +7,7 @@ import { UserBlockedGroupAchievementRepository } from './entities/user-blocked-g
 import { GroupCategoryRepository } from '../category/entities/group-category.repository';
 import { GroupRepository } from '../group/entities/group.repository';
 import { ImageRepository } from '../../image/entities/image.repository';
+import { UserGroupRepository } from '../group/entities/user-group.repository';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ImageRepository } from '../../image/entities/image.repository';
       GroupRepository,
       ImageRepository,
       UserBlockedGroupAchievementRepository,
+      UserGroupRepository,
     ]),
   ],
   controllers: [GroupAchievementController],

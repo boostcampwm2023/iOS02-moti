@@ -6,9 +6,6 @@ import { FindOptionsWhere, IsNull, LessThan } from 'typeorm';
 import { PaginateAchievementRequest } from '../dto/paginate-achievement-request';
 import { AchievementDetailResponse } from '../dto/achievement-detail-response';
 import { IAchievementDetail } from '../index';
-import { User } from '../../users/domain/user.domain';
-import { ICategoryMetaData } from '../../category';
-import { CategoryMetaData } from '../../category/dto/category-metadata';
 
 @CustomRepository(AchievementEntity)
 export class AchievementRepository extends TransactionalRepository<AchievementEntity> {
@@ -62,7 +59,7 @@ export class AchievementRepository extends TransactionalRepository<AchievementEn
       .leftJoin(
         'achievement',
         'a',
-        'COALESCE(a.category_id, -1) = COALESCE(achievement.category_id, -1) AND a.id <= achievement.id',
+        'COALESCE(a.category_id, -1) = COALESCE(achievement.category_id, -1) AND a.id <= achievement.id and a.user_id = achievement.user_id',
       )
       .leftJoin('image', 'i', 'i.achievement_id = achievement.id')
       .where('achievement.id = :achievementId', { achievementId })

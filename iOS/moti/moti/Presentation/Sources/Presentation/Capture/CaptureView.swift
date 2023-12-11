@@ -53,22 +53,71 @@ final class CaptureView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        // 프리뷰 레이어 조정
         previewLayer.frame = preview.bounds
     }
     
     // MARK: - Methods
+    func showToolItem() {
+        albumButton.isHidden = false
+        captureButton.isHidden = false
+        cameraSwitchingButton.isHidden = false
+        
+        albumButton.transform = .identity
+        captureButton.transform = .identity
+        cameraSwitchingButton.transform = .identity
+    }
+    
+    func hideToolItem(translationY: CGFloat) {
+        let transform = CGAffineTransform(translationX: 0, y: translationY)
+        albumButton.transform = transform
+        captureButton.transform = transform
+        cameraSwitchingButton.transform = transform
+        
+        albumButton.isHidden = true
+        captureButton.isHidden = true
+        cameraSwitchingButton.isHidden = true
+    }
+    
     func updatePreviewLayer(session: AVCaptureSession) {
         previewLayer.session = session
     }
     
     func changeToBackCamera() {
         cameraSwitchingButton.setImage(SymbolImage.iphone, for: .normal)
+        UIView.transition(
+            with: cameraSwitchingButton,
+            duration: 0.2,
+            options: .transitionFlipFromLeft,
+            animations: nil,
+            completion: nil
+        )
+        
+        UIView.transition(
+            with: preview,
+            duration: 0.2,
+            options: .transitionFlipFromLeft,
+            animations: nil,
+            completion: nil
+        )
     }
     
     func changeToFrontCamera() {
         cameraSwitchingButton.setImage(SymbolImage.iphoneCamera, for: .normal)
+        UIView.transition(
+            with: cameraSwitchingButton,
+            duration: 0.2,
+            options: .transitionFlipFromRight,
+            animations: nil,
+            completion: nil
+        )
+        
+        UIView.transition(
+            with: preview,
+            duration: 0.2,
+            options: .transitionFlipFromRight,
+            animations: nil, 
+            completion: nil
+        )
     }
 }
 
@@ -87,7 +136,7 @@ private extension CaptureView {
         captureButton.atl
             .size(width: CaptureButton.defaultSize, height: CaptureButton.defaultSize)
             .centerX(equalTo: centerXAnchor)
-            .bottom(equalTo: bottomAnchor, constant: -36)
+            .bottom(equalTo: safeAreaLayoutGuide.bottomAnchor, constant: -5)
     }
 
     func setupPhotoButton() {
@@ -111,9 +160,16 @@ private extension CaptureView {
         addSubview(preview)
         preview.atl
             .height(equalTo: preview.widthAnchor)
-            .centerY(equalTo: safeAreaLayoutGuide.centerYAnchor, constant: -50)
-            .horizontal(equalTo: safeAreaLayoutGuide)
+            .centerX(equalTo: safeAreaLayoutGuide.centerXAnchor)
+            .centerY(greaterThanOrEqualTo: centerYAnchor, constant: -20)
         
+        let widthConstraint = preview.widthAnchor.constraint(equalTo: safeAreaLayoutGuide.widthAnchor)
+        widthConstraint.priority = .defaultHigh
+        NSLayoutConstraint.activate([
+            preview.widthAnchor.constraint(lessThanOrEqualToConstant: 400),
+            widthConstraint
+        ])
+
         // PreviewLayer를 Preview 에 넣기
         previewLayer.backgroundColor = UIColor.primaryGray.cgColor
         previewLayer.videoGravity = .resizeAspectFill

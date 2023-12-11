@@ -23,7 +23,9 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
     weak var delegate: CaptureViewControllerDelegate?
     weak var coordinator: CaptureCoordinator?
     private let group: Group?
-
+    // viewDidAppear가 처음 호출되는지 확인
+    private var isFirstAppear = false
+    
     // Capture Session
     private var isBackCamera = true
     private var session: AVCaptureSession?
@@ -46,14 +48,35 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
     // MARK: - Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupNavigationBar()
         addTargets()
         checkCameraPermissions()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let tabBarController = tabBarController as? TabBarViewController {
+            tabBarController.hideTabBar()
+            layoutView.hideToolItem(translationY: tabBarController.tabBarHeight + 30)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         startSession()
-        layoutView.captureButton.isEnabled = true
+
+        if !isFirstAppear {
+            isFirstAppear = true
+            
+            UIView.animate(withDuration: 0.3, animations: {
+                self.layoutView.showToolItem()
+            }, completion: { _ in
+                self.layoutView.captureButton.isEnabled = true
+            })
+        } else {
+            layoutView.showToolItem()
+            layoutView.captureButton.isEnabled = true
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -83,15 +106,33 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
         
         delegate?.didCapture(image: downsampledImage)
     }
+    
+    // MARK: - Setup
+    private func setupNavigationBar() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(
+            title: "취소", style: .plain, target: self,
+            action: #selector(cancelButtonDidClicked)
+        )
+        
+        navigationItem.rightBarButtonItem = nil
+    }
+    
+    @objc private func cancelButtonDidClicked() {
+        coordinator?.finish()
+    }
 }
 
 // MARK: - Camera
-extension CaptureViewController {
-    private func checkCameraPermissions() {
+private extension CaptureViewController {
+    func checkCameraPermissions() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined: // 첫 권한 요청
             AVCaptureDevice.requestAccess(for: .video) { [weak self] isAllowed in
-                guard isAllowed else { return } // 사용자가 권한 거부
+                // 사용자가 권한 거부
+                guard isAllowed else {
+                    self?.moveToSetting()
+                    return
+                }
                 
                 DispatchQueue.main.async { // 사용자가 권한 허용
                     self?.setupCamera()
@@ -99,8 +140,10 @@ extension CaptureViewController {
             }
         case .restricted: // 제한
             Logger.debug("권한 제한")
+            moveToSetting()
         case .denied: // 이미 권한 거부 되어 있는 상태
             Logger.debug("권한 거부")
+            moveToSetting()
         case .authorized: // 이미 권한 허용되어 있는 상태
             Logger.debug("권한 허용")
             setupCamera()
@@ -108,8 +151,19 @@ extension CaptureViewController {
             break
         }
     }
+    
+    func moveToSetting() {
+        let message = "도전 기록 촬영을 위한 카메라 권한이 필요합니다.\n설정에서 권한을 허용해 주세요."
+        showTwoButtonAlert(title: "카메라 권한 없음", message: message, okTitle: "설정으로 이동", okAction: {
+            guard let settingURL = URL(string: UIApplication.openSettingsURLString) else { return }
+            
+            if UIApplication.shared.canOpenURL(settingURL) {
+                UIApplication.shared.open(settingURL)
+            }
+        })
+    }
 
-    private func setupCamera() {
+    func setupCamera() {
         setupBackCamera()
         setupFrontCamera()
         
@@ -153,7 +207,7 @@ extension CaptureViewController {
     }
     
     // 후면 카메라 설정
-    private func setupBackCamera() {
+    func setupBackCamera() {
         if let backCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
            let backCameraInput = try? AVCaptureDeviceInput(device: backCamera) {
             self.backCameraInput = backCameraInput
@@ -163,7 +217,7 @@ extension CaptureViewController {
     }
     
     // 전면 카메라 설정
-    private func setupFrontCamera() {
+    func setupFrontCamera() {
         if let frontCamera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
            let frontCameraInput = try? AVCaptureDeviceInput(device: frontCamera) {
             self.frontCameraInput = frontCameraInput
@@ -172,7 +226,7 @@ extension CaptureViewController {
         }
     }
     
-    private func startSession() {
+    func startSession() {
         guard let session = session else { return }
         
         layoutView.updatePreviewLayer(session: session)
@@ -185,7 +239,7 @@ extension CaptureViewController {
         }
     }
     
-    private func stopSession() {
+    func stopSession() {
         guard let session = session else { return }
         
         layoutView.captureButton.isEnabled = false
@@ -197,18 +251,18 @@ extension CaptureViewController {
         }
     }
 
-    @objc private func didClickedShutterButton() {
+    @objc func didClickedShutterButton() {
         vibration(.soft)
         layoutView.captureButton.isEnabled = false
         // 사진 찍기!
         #if targetEnvironment(simulator)
         // Simulator
         Logger.debug("시뮬레이터에선 카메라를 테스트할 수 없습니다. 실기기를 연결해 주세요.")
-        let randomImage = [
-            MotiImage.sample1, MotiImage.sample2, MotiImage.sample3,
-            MotiImage.sample4, MotiImage.sample5, MotiImage.sample6, MotiImage.sample7
-        ].randomElement()!
-        capturedPicture(image: randomImage)
+//        let randomImage = [
+//            MotiImage.sample1, MotiImage.sample2, MotiImage.sample3,
+//            MotiImage.sample4, MotiImage.sample5, MotiImage.sample6, MotiImage.sample7
+//        ].randomElement()!
+//        capturedPicture(image: randomImage)
         #else
         // - speed: 약간의 노이즈 감소만이 적용
         // - balanced: speed보다 약간 더 느리지만 더 나은 품질을 얻음

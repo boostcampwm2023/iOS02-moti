@@ -7,10 +7,11 @@
 
 import Foundation
 import AuthenticationServices
+import Core
 
 protocol AppleLoginRequesterDelegate: AnyObject {
-    func success(token: String)
-    func failed(error: Error)
+    func success(token: String, authorizationCode: String)
+    func failed(message: String)
 }
 
 final class AppleLoginRequester: NSObject, LoginRequester {
@@ -40,16 +41,27 @@ extension AppleLoginRequester: ASAuthorizationControllerDelegate {
         guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential else { return }
         guard let identityTokenData = appleIDCredential.identityToken,
               let identityToken = String(data: identityTokenData, encoding: .utf8) else {
-            // TODO: 에러 처리
+            delegate?.failed(message: "로그인 실패")
             return
         }
         
-        delegate?.success(token: identityToken)
+        guard let authorizationCodeData = appleIDCredential.authorizationCode,
+              let authorizationCode = String(data: authorizationCodeData, encoding: .utf8) else {
+            delegate?.failed(message: "로그인 실패")
+            return
+        }
+
+        #if DEBUG
+        Logger.debug("identityToken: \(identityToken)")
+        Logger.debug("authorizationCode: \(authorizationCode)")
+        #endif
+        
+        delegate?.success(token: identityToken, authorizationCode: authorizationCode)
     }
     
     // 인증 실패
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
-        delegate?.failed(error: error)
+        delegate?.failed(message: error.localizedDescription)
     }
 }
 
