@@ -77,30 +77,33 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
     @objc private func emojiButtonDidToggled(_ sender: EmojiButton) {
         if let emojiType = EmojiType(emoji: sender.emoji) {
             viewModel.toggleEmoji(emojiType)
-            stopTimer()
             startPollingTimer(timeInterval: 2, repeats: true)
         }
         sender.toggle()
         vibration(.selection)
     }
     
-    func startPollingTimer(timeInterval: CGFloat, repeats: Bool) {
+    private func startPollingTimer(timeInterval: CGFloat, repeats: Bool) {
         stopTimer()
         if timer == nil {
-            timer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: repeats) { [weak self] _ in
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) { [weak self] in
                 guard let self else { return }
                 viewModel.action(.fetchEmojis)
+                timer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: repeats) { [weak self] _ in
+                    guard let self else { return }
+                    viewModel.action(.fetchEmojis)
+                }
             }
         }
     }
     
-    func stopTimer() {
+    private func stopTimer() {
         timer?.invalidate()
         timer = nil
     }
     
     // MARK: - Setup
-    func setupNavigationBar() {
+    private func setupNavigationBar() {
         // 오른쪽 편집 버튼
         // 작성자 본인에게만 표시
         let editItem = UIBarButtonItem(
