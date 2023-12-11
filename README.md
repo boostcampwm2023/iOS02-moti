@@ -1,24 +1,55 @@
+# iOS02 - moti
 <p align="center"><img src="https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/779bef03-5b82-458f-9fd1-12d43eeece57" width="150" height="150"/></p>
 
-<h1 align="center">moti</h1>
-
 <div align="center">
-도전을 사진으로 기록하는 앱<br>
-도전을 빠르고 간편하게 기록해 보세요.<br>
-애플다운 자연스러운 사용성도 느낄 수 있습니다.
+도전을 사진으로 기록하는 앱 <br>
+애플다운 자연스러운 사용성도 느낄 수 있습니다. <br><br>
+<a href="https://github.com/orgs/boostcampwm2023/projects/109">깃허브 프로젝트</a>
+    |
+<a href="https://github.com/boostcampwm2023/iOS02-moti/wiki">깃허브 위키</a>
+
 </div>
 
 </br>
 
-# 🖼️ 스크린샷
+# 스크린샷
+![모티메이트-표지](https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/8c43710a-6a83-4bbf-b34e-27806c5b9158)
 
 <div align="center">
-TODO
+<img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/7bd61fcf-f7af-45f9-b205-77ecbd2b37af" width = "24.5%">
+<img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/27334baf-b7d6-435d-99ee-609fd69663d3" width = "24.5%">
+<img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/4cb09f36-9036-405c-a479-3e184d98e712" width = "24.5%">
+<img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/da25b862-f093-4101-b341-81f6354e3f6b" width = "24.5%">
 </div>
 
 </br>
 
-# 🔥 팀원 소개
+
+# 기술적 고민
+- 내용은 TODO, 더 많은 기술적 고민은 깃허브 프로젝트에서 확인 가능합니다.
+## iOS
+### Interaction Animation
+### 메모리 최적화 (1차, 2차)
+### 보이스 오버
+
+## BE
+### 서버리스
+### 테스트 코드 
+### 쿼리 최적화
+
+
+</br>
+
+# 기술 스택
+### iOS
+```Swift``` ```UIKit``` ```Code Based UI``` ```SPM``` ```MVVM``` ```Clean Architecture``` ```SwiftLint```
+### BE
+```TypeScript``` ```NestJS``` ```Jest``` ```MySQL``` ```Redis``` ```Docker```
+
+</br>
+
+
+# 팀원 소개
 <div align="center">
 <table>
     <thead>
@@ -53,9 +84,3 @@ TODO
 </div align="center">
 
 </br>
-
-# 📔 노션 문서
-
-| 팀 노션 | 백로그 | 그라운드룰 | 기획/디자인 | 템플릿 | 회의록 |
-|---|---|---|---|---|---|
-| [팀 노션](https://jeong9216.notion.site/moti-003002603e5e49c48750d83668508c8e?pvs=4) | [백로그](https://github.com/orgs/boostcampwm2023/projects/109/views/2) | [그라운드룰](https://jeong9216.notion.site/abdf3f7229fe469186dcf11e2ba686bd?pvs=4) | [기획/디자인](https://www.figma.com/file/Qeluz7lzMO7igCvL26BymS/%EB%AA%A8%ED%8B%B0?type=design&node-id=0%3A1&mode=design&t=0no8SURD3YhZBxfp-1) | [템플릿](https://jeong9216.notion.site/dc911fa357ef4063859d8650ba46e30a?pvs=4) | [회의록](https://jeong9216.notion.site/116f25437164432db1e34ab534fe8069?pvs=4) |
