@@ -77,8 +77,7 @@ final class AppInfoViewController: BaseViewController<AppInfoView>, LoadingIndic
     
     @objc private func updateButtonDidClicked() {
         if version.canUpdate {
-            let appleId = 0
-            let appstoreURLString = "itms-apps://itunes.apple.com/app/apple-store/\(appleId)"
+            let appstoreURLString = "itms-apps://itunes.apple.com/app/apple-store/6471563249"
             openURL(appstoreURLString)
         } else {
             showOneButtonAlert(message: "이미 최신 버전입니다.")
