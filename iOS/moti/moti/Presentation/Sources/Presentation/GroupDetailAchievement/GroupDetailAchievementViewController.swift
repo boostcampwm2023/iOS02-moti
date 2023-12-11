@@ -86,13 +86,9 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
     private func startPollingTimer(timeInterval: CGFloat, repeats: Bool) {
         stopTimer()
         if timer == nil {
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1) { [weak self] in
+            timer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: repeats) { [weak self] _ in
                 guard let self else { return }
                 viewModel.action(.fetchEmojis)
-                timer = Timer.scheduledTimer(withTimeInterval: timeInterval, repeats: repeats) { [weak self] _ in
-                    guard let self else { return }
-                    viewModel.action(.fetchEmojis)
-                }
             }
         }
     }
