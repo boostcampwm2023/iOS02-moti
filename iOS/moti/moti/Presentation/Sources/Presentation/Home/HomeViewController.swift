@@ -207,7 +207,7 @@ private extension HomeViewController {
         let profileItem = UIBarButtonItem(customView: avatarImageView)
         profileItem.isAccessibilityElement = true
         profileItem.accessibilityLabel = "개인 프로필"
-        profileItem.accessibilityTraits = .button
+        profileItem.accessibilityTraits = [.image, .button]
         profileItem.customView?.atl
             .size(width: avatarItemSize, height: avatarItemSize)
 
