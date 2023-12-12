@@ -172,7 +172,7 @@
     - 작은 프로젝트 크기지만 체감될 정도로 빌드 시간이 감소되었음
 - 악영향
     - Swift Package 안에서 #Preview 사용 불가  
-      <img width="512" alt="Untitled" src="https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/a9b66d12-de61-478d-ba08-67743409cb9f">
+      <img width="512" src="https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/a9b66d12-de61-478d-ba08-67743409cb9f">
     - #Preview는 매번 컴파일을 하는 원리라서 Swift Package에서는 사용이 불가했음
     - 기대했던 기능이라 아쉬웠고, 기술 간의 상성도 존재한다는 것을 배웠음
 
@@ -180,6 +180,23 @@
 </details>
 
 ## BE
+<details>
+<summary>아키텍처</summary>
+<div markdown="1">      
+
+### 아키텍처
+<img width="512" src="https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/4d52fa16-a390-488d-b2a4-1b8346a64b8d">
+
+
+- NestJS, TypeScript, Jest, Typeorm
+- MySQL, Redis
+- Nginx, Grafana, Prometheus
+- Git Action
+- Docker
+
+</div>
+</details>
+
 <details>
 <summary>서버리스</summary>
 <div markdown="1">      
