@@ -17,6 +17,9 @@ export const typeOrmModuleOptions = {
       dropSchema: configService.get('NODE_ENV') === 'test',
       synchronize: configService.get('DB_SYNC'),
       namingStrategy: new CamelSnakeNameStrategy(),
+      extra: {
+        connectionTimeout: 5000,
+      },
     };
     return option;
   },
