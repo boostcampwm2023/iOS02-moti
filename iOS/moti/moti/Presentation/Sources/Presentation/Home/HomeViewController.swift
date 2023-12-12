@@ -207,6 +207,7 @@ private extension HomeViewController {
         let profileItem = UIBarButtonItem(customView: avatarImageView)
         profileItem.isAccessibilityElement = true
         profileItem.accessibilityLabel = "개인 프로필"
+        profileItem.accessibilityTraits = .button
         profileItem.customView?.atl
             .size(width: avatarItemSize, height: avatarItemSize)
 
@@ -217,6 +218,8 @@ private extension HomeViewController {
             target: self,
             action: nil
         )
+        moreItem.isAccessibilityElement = true
+        moreItem.accessibilityLabel = "더보기"
         let appInfoAction = UIAction(title: "앱 정보", handler: { _ in
             self.moveToAppInfoViewController()
         })
