@@ -88,3 +88,7 @@ jobs:
       - name: Run tests
         run: npm test
         working-directory: ./BE
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
