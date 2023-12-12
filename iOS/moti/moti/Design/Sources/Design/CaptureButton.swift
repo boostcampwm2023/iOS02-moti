@@ -41,6 +41,9 @@ public final class CaptureButton: UIButton {
     
     // MARK: - Setup
     private func setupUI() {
+        isAccessibilityElement = true
+        accessibilityLabel = "촬영"
+        
         backgroundColor = .motiBackground
         layer.borderColor = UIColor.primaryBlue.cgColor
         layer.borderWidth = 6

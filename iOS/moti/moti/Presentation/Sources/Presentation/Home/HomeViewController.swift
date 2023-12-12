@@ -132,7 +132,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
                     cell.showSkeleton()
                 } else {
                     cell.hideSkeleton()
-                    cell.configure(imageURL: item.imageURL)
+                    cell.configure(imageURL: item.imageURL, title: item.title)
                 }
                 
                 return cell
@@ -180,6 +180,8 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
 private extension HomeViewController {
     func setupNavigationBar() {
         let logoItem = UIImageView(image: MotiImage.logoBlue)
+        logoItem.isAccessibilityElement = true
+        logoItem.accessibilityLabel = "모티 로고"
         logoItem.contentMode = .scaleAspectFit
         let leftItem = UIBarButtonItem(customView: logoItem)
         leftItem.customView?.atl
@@ -203,6 +205,9 @@ private extension HomeViewController {
         avatarImageView.addGestureRecognizer(avatarImageTapGesture)
         
         let profileItem = UIBarButtonItem(customView: avatarImageView)
+        profileItem.isAccessibilityElement = true
+        profileItem.accessibilityLabel = "개인 프로필"
+        profileItem.accessibilityTraits = .button
         profileItem.customView?.atl
             .size(width: avatarItemSize, height: avatarItemSize)
 
@@ -213,6 +218,8 @@ private extension HomeViewController {
             target: self,
             action: nil
         )
+        moreItem.isAccessibilityElement = true
+        moreItem.accessibilityLabel = "더보기"
         let appInfoAction = UIAction(title: "앱 정보", handler: { _ in
             self.moveToAppInfoViewController()
         })

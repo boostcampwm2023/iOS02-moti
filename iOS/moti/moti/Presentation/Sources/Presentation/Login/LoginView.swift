@@ -13,6 +13,8 @@ final class LoginView: UIView {
     // MARK: - Views
     private let logoImageView = {
         let imageView = UIImageView(image: MotiImage.logoBlue)
+        imageView.isAccessibilityElement = true
+        imageView.accessibilityLabel = "모티 로고"
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()

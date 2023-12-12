@@ -14,6 +14,7 @@ final class EditAchievementView: UIView {
     // MARK: - Views
     private let resultImageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.isAccessibilityElement = true
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .gray
         imageView.clipsToBounds = true
@@ -74,6 +75,7 @@ final class EditAchievementView: UIView {
     }
     
     func configure(achievement: Achievement) {
+        resultImageView.accessibilityLabel = achievement.title
         if let url = achievement.imageURL {
             resultImageView.jk.setImage(with: url, imageType: .original)
         }

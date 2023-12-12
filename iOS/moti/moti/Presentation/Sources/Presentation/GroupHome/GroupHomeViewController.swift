@@ -101,7 +101,7 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
                     cell.showSkeleton()
                 } else {
                     cell.hideSkeleton()
-                    cell.configure(imageURL: item.imageURL, avatarURL: item.user?.avatarURL)
+                    cell.configure(imageURL: item.imageURL, avatarURL: item.user?.avatarURL, title: item.title)
                 }
                 
                 return cell
@@ -192,6 +192,9 @@ private extension GroupHomeViewController {
         avatarImageView.addGestureRecognizer(avatarImageTapGesture)
         
         let profileItem = UIBarButtonItem(customView: avatarImageView)
+        profileItem.isAccessibilityElement = true
+        profileItem.accessibilityLabel = "그룹 프로필"
+        profileItem.accessibilityTraits = .button
         profileItem.customView?.atl
             .size(width: avatarItemSize, height: avatarItemSize)
         
@@ -202,6 +205,7 @@ private extension GroupHomeViewController {
             target: self,
             action: nil
         )
+        moreItem.accessibilityLabel = "더보기"
         let inviteInfoAction = UIAction(title: "그룹원 초대", handler: { _ in
             self.inviteMember()
         })

@@ -23,6 +23,7 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     // MARK: - Views
     private lazy var iconImageView = {
         let imageView = UIImageView()
+        imageView.isAccessibilityElement = true
         imageView.image = SymbolImage.personProfile
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
@@ -72,6 +73,7 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Methods
     func configureForMember(with groupMember: GroupMember) {
+        iconImageView.accessibilityLabel = "\(groupMember.grade) 프로필"
         if let url = groupMember.user.avatarURL {
             iconImageView.jk.setImage(with: url, downsamplingScale: 1.5)
         }

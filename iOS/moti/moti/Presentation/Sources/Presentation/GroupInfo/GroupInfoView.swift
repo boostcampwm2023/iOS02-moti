@@ -17,6 +17,7 @@ final class GroupInfoView: UIView {
     // MARK: - Views
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.isAccessibilityElement = true
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = imageViewSize / 2
         imageView.backgroundColor = .primaryDarkGray
@@ -67,6 +68,8 @@ final class GroupInfoView: UIView {
     
     func configure(group: Group) {
         groupNameLabel.text = group.name
+        
+        imageView.accessibilityLabel = group.name
         if let url = group.avatarUrl {
             imageView.jk.setImage(with: url, imageType: .original)
         }

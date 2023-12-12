@@ -16,6 +16,7 @@ final class HomeView: UIView {
     // 카테고리 추가 버튼
     let categoryAddButton: BounceButton = {
         let button = BounceButton()
+        button.accessibilityLabel = "카테고리 추가"
         button.setTitle("+", for: .normal)
         return button
     }()

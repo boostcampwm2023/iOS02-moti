@@ -63,6 +63,8 @@ final class CategoryCollectionViewCell: UICollectionViewCell {
     // MARK: - Methods
     func configure(with category: CategoryItem) {
         label.text = category.name
+        label.accessibilityLabel = "\(category.name) 카테고리"
+        label.accessibilityTraits = .button
     }
     
     override func applyHighlightUI() {

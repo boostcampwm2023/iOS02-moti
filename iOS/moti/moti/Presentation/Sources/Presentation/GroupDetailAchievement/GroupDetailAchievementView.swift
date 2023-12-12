@@ -34,6 +34,7 @@ final class GroupDetailAchievementView: UIView {
     
     private let imageView: UIImageView = {
         let imageView = UIImageView()
+        imageView.isAccessibilityElement = true
         imageView.contentMode = .scaleAspectFill
         imageView.backgroundColor = .primaryDarkGray
         imageView.image = MotiImage.smallSkeleton
@@ -82,6 +83,8 @@ final class GroupDetailAchievementView: UIView {
     func configure(achievement: Achievement) {
         titleLabel.text = achievement.title
         categoryLabel.text = achievement.category?.name
+        
+        imageView.accessibilityLabel = achievement.title
         if let url = achievement.imageURL {
             imageView.jk.setImage(with: url, imageType: .original)
         }
@@ -150,6 +153,9 @@ final class GroupDetailAchievementView: UIView {
             count: emoji.count,
             isSelectedEmoji: emoji.isSelected
         )
+        emojiButton.isAccessibilityElement = true
+        emojiButton.accessibilityLabel = emoji.id.rawValue
+        
         emojiButton.addTarget(target, action: action, for: .touchUpInside)
         emojiButtonStackView.addArrangedSubview(emojiButton)
     }
