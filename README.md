@@ -29,7 +29,7 @@
 ## iOS
 
 <details>
-<summary>Interaction Animation</summary>
+<summary>⭐️Interaction Animation</summary>
 <div markdown="1">      
 
 ### Interaction Animation
@@ -57,7 +57,7 @@
 </details>
 
 <details>
-<summary>이미지 메모리 최적화</summary>
+<summary>⭐️이미지 메모리 최적화</summary>
 <div markdown="1">      
 
 ### 이미지 메모리 최적화
@@ -200,7 +200,7 @@
 </details>
 
 <details>
-<summary>서버리스</summary>
+<summary>⭐️서버리스</summary>
 <div markdown="1">      
     
 ### 서버리스
@@ -223,7 +223,7 @@
 
 
 <details>
-<summary>테스트 코드</summary>
+<summary>⭐️테스트 코드</summary>
 <div markdown="1">
     
 ### 테스트 코드

@@ -31,6 +31,13 @@ final class EditAchievementView: UIView {
     
     let categoryButton = {
         let button = UIButton(type: .system)
+        button.configuration = .plain()
+        let config = UIImage.SymbolConfiguration(font: .small)
+        let image = UIImage(systemName: "chevron.up.chevron.down", withConfiguration: config)
+        button.setImage(image, for: .normal)
+        button.tintColor = .label
+        button.configuration?.imagePlacement = .trailing
+        button.configuration?.imagePadding = 3
         
         button.setTitle("카테고리", for: .normal)
         button.setTitleColor(.primaryDarkGray, for: .normal)
@@ -120,7 +127,7 @@ extension EditAchievementView {
         categoryButton.atl
             .top(greaterThanOrEqualTo: safeAreaLayoutGuide.topAnchor)
             .bottom(greaterThanOrEqualTo: titleTextField.topAnchor, constant: -5)
-            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 20)
+            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 10)
     }
 
     private func setupTitleTextField() {
