@@ -180,6 +180,8 @@
 </details>
 
 ## BE
+![example workflow](https://github.com/boostcampwm2023/iOS02-moti/actions/workflows/be.ci.yml/badge.svg)
+[![codecov](https://codecov.io/github/boostcampwm2023/iOS02-moti/graph/badge.svg?token=KAFO13BSUK)](https://codecov.io/github/boostcampwm2023/iOS02-moti)
 <details>
 <summary>아키텍처</summary>
 <div markdown="1">      
@@ -225,7 +227,7 @@
 <div markdown="1">
     
 ### 테스트 코드
-- coverage - 96%
+- [![codecov](https://codecov.io/github/boostcampwm2023/iOS02-moti/graph/badge.svg?token=KAFO13BSUK)](https://codecov.io/github/boostcampwm2023/iOS02-moti)
 - 총 테스트 케이스 550여개
 - Repository layer 테스트
     - DB 연동하여 실제 쿼리 실행 결과에 대한 테스트
@@ -262,7 +264,7 @@
 ### iOS
 ```Swift``` ```UIKit``` ```Code Based UI``` ```SPM``` ```MVVM``` ```Clean Architecture``` ```SwiftLint```
 ### BE
-```TypeScript``` ```NestJS``` ```Jest``` ```MySQL``` ```Redis``` ```Docker```
+```TypeScript``` ```NestJS``` ```Jest``` ```Typeorm``` ```MySQL``` ```Redis``` ```Docker```
 
 </br>
 
