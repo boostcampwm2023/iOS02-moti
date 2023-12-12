@@ -63,7 +63,7 @@ final class AchievementCollectionViewCell: UICollectionViewCell {
     
     func configure(imageURL: URL?, avatarURL: URL? = nil, title: String? = nil) {
         imageView.accessibilityLabel = title
-        imageView.accessibilityTraits = .button
+        imageView.accessibilityTraits = [.image, .button]
         if let imageURL {
             imageView.jk.setImage(with: imageURL, placeHolder: MotiImage.skeleton, downsamplingScale: 1.5)
         } else {
