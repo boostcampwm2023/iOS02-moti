@@ -37,6 +37,7 @@ final class EditAchievementView: UIView {
         button.setImage(image, for: .normal)
         button.tintColor = .label
         button.configuration?.imagePlacement = .trailing
+        button.configuration?.imagePadding = 3
         
         button.setTitle("카테고리", for: .normal)
         button.setTitleColor(.primaryDarkGray, for: .normal)
