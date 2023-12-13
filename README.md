@@ -46,6 +46,8 @@
 
 ### Interaction Animation
 
+https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/a69f0c08-64d6-4f19-8c7e-313b3db38b73
+
 제목
 - 사용자에게 긍정적인 사용성을 주기 위해 고민
 
