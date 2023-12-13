@@ -12,6 +12,18 @@
 
 </br>
 
+# 엡 스토어
+<img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/14b4952c-7d91-43f0-a821-dbec46d5c70b" width = "30%">
+<img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/9e7eba7b-3c97-4f5b-a543-59a2ff9a05a9" width = "30%">
+</br>
+
+### 다운로드 방법
+1. <a href="https://apps.apple.com/kr/app/moti-%EC%82%AC%EC%A7%84%EC%9C%BC%EB%A1%9C-%EB%8F%84%EC%A0%84-%EA%B8%B0%EB%A1%9D/id6471563249">앱 스토어 다운로드</a>
+2. QR 코드 인식
+3. "모티 도전", "모티 사진"으로 검색
+
+</br>
+
 # 스크린샷
 ![모티메이트-표지](https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/8c43710a-6a83-4bbf-b34e-27806c5b9158)
 
