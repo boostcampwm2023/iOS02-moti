@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Param,
@@ -18,6 +19,7 @@ import { AuthenticatedUser } from '../../auth/decorator/athenticated-user.decora
 import { User } from '../domain/user.domain';
 import { UsersService } from '../application/users.service';
 import { RejectUserResponse } from '../dto/reject-user-response.dto';
+import { RejectUserListResponse } from '../dto/reject-user-list-response.dto';
 
 @Controller('/api/v1/users')
 @ApiTags('유저 API')
@@ -36,10 +38,26 @@ export class UserController {
   @Post('/:userCode/reject')
   @UseGuards(AccessTokenGuard)
   @HttpCode(HttpStatus.OK)
-  async users(
+  async reject(
     @AuthenticatedUser() user: User,
     @Param('userCode') userCode: string,
   ) {
     return ApiData.success(await this.userService.reject(user, userCode));
+  }
+
+  @ApiOperation({
+    summary: '차단 유저 목록 API',
+    description: '차단한 유저를 조회한다.',
+  })
+  @ApiResponse({
+    description: '차단 유저 목록',
+    type: RejectUserListResponse,
+  })
+  @ApiBearerAuth('accessToken')
+  @Get('/reject')
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  async rejectUserList(@AuthenticatedUser() user: User) {
+    return ApiData.success(await this.userService.getRejectUserList(user));
   }
 }

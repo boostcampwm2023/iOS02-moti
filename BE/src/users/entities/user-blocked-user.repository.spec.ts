@@ -55,4 +55,26 @@ describe('UserBlockedUserRepository Test', () => {
       expect(saved.blockedUser.id).toEqual(user2.id);
     });
   });
+
+  test('차단한 유저 목록을 조회한다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const user3 = await usersFixture.getUser('GHI');
+      await userBlockedUserRepository.saveUserBlockedUser(
+        new UserBlockedUser(user1, user2),
+      );
+      await userBlockedUserRepository.saveUserBlockedUser(
+        new UserBlockedUser(user1, user3),
+      );
+
+      // when
+      const userBlockedUsers =
+        await userBlockedUserRepository.findByUserIdWithBlockedUser(user1.id);
+
+      // then
+      expect(userBlockedUsers.length).toEqual(2);
+    });
+  });
 });

@@ -8,6 +8,7 @@ import { UserBlockedUserRepository } from '../entities/user-blocked-user.reposit
 import { UserBlockedUser } from '../domain/user-blocked-user.domain';
 import { NoSuchUserException } from '../exception/no-such-user.exception';
 import { RejectUserResponse } from '../dto/reject-user-response.dto';
+import { RejectUserListResponse } from '../dto/reject-user-list-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -37,5 +38,12 @@ export class UsersService {
         new UserBlockedUser(user, blockedUser),
       );
     return RejectUserResponse.from(userBlockedUser);
+  }
+
+  @Transactional({ readonly: true })
+  async getRejectUserList(user: User) {
+    const userBlockedUsers =
+      await this.userBlockedUserRepository.findByUserIdWithBlockedUser(user.id);
+    return new RejectUserListResponse(userBlockedUsers);
   }
 }

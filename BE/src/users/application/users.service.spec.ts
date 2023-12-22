@@ -118,4 +118,20 @@ describe('UsersService Test', () => {
       );
     });
   });
+
+  test('차단한 유저 목록을 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const user3 = await usersFixture.getUser('GHI');
+      await userService.reject(user1, user2.userCode);
+      await userService.reject(user1, user3.userCode);
+
+      // when
+      const rejectUserListResponse = await userService.getRejectUserList(user1);
+      // then
+      expect(rejectUserListResponse.data.length).toEqual(2);
+    });
+  });
 });
