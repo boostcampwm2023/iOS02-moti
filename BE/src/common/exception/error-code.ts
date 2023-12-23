@@ -103,6 +103,10 @@ export const ERROR_INFO = {
     statusCode: 400,
     message: '유효하지 않은 차단 요청입니다.',
   },
+  INVALID_ALLOW_REQUEST: {
+    statusCode: 400,
+    message: '유효하지 않은 차단 해제 요청입니다.',
+  },
   INVITE_PERMISSION_DENIED: {
     statusCode: 400,
     message: '그룹원 초대 권한이 없습니다.',
