@@ -26,10 +26,10 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
     // viewDidAppear가 처음 호출되는지 확인
     private var isFirstAppear = false
     // 고해상도 모드 여부
-    private var isHighQuality = UserDefaults.standard.readBool(key: .highQualityUpload) ?? false {
+    private var isHighQualityUpload = UserDefaults.standard.readBool(key: .highQualityUpload) ?? false {
         didSet {
             setupOptionNavigationItem()
-            UserDefaults.standard.saveBool(key: .highQualityUpload, value: isHighQuality)
+            UserDefaults.standard.saveBool(key: .highQualityUpload, value: isHighQualityUpload)
         }
     }
     
@@ -103,17 +103,21 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
     private func capturedPicture(image: UIImage) {
         guard let croppedImage = image.cropToSquare() else { return }
         
-        // 앨범에서 선택도 가능하기 때문에 해당 위치에서 다운샘플링 진행
-        let size = layoutView.preview.frame.size
-        guard let data = croppedImage.jpegData(compressionQuality: 1.0),
-              let downsampledImage = data.downsampling(to: size, scale: 3) else { return }
-        
-        #if DEBUG
-        Logger.debug("프리뷰 사이즈: \(size)")
-        Logger.debug("다운샘플링 이미지 사이즈: \(downsampledImage.size)")
-        #endif
-        
-        delegate?.didCapture(image: downsampledImage, currentCategoryId: currentCategoryId)
+        if isHighQualityUpload {
+            delegate?.didCapture(image: croppedImage, currentCategoryId: currentCategoryId)
+        } else {
+            // 앨범에서 선택도 가능하기 때문에 해당 위치에서 다운샘플링 진행
+            let size = layoutView.preview.frame.size
+            guard let data = croppedImage.jpegData(compressionQuality: 1.0),
+                  let downsampledImage = data.downsampling(to: size, scale: 3) else { return }
+            
+            #if DEBUG
+            Logger.debug("프리뷰 사이즈: \(size)")
+            Logger.debug("다운샘플링 이미지 사이즈: \(downsampledImage.size)")
+            #endif
+            
+            delegate?.didCapture(image: downsampledImage, currentCategoryId: currentCategoryId)
+        }
     }
     
     // MARK: - Setup
@@ -146,9 +150,9 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
     private func makeHighQualityAction() -> UIAction {
         return UIAction(
             title: "고해상도 업로드",
-            state: isHighQuality ? .on : .off,
+            state: isHighQualityUpload ? .on : .off,
             handler: { _ in
-                self.isHighQuality.toggle()
+                self.isHighQualityUpload.toggle()
             }
         )
     }
