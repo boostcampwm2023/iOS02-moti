@@ -77,4 +77,26 @@ describe('UserBlockedUserRepository Test', () => {
       expect(userBlockedUsers.length).toEqual(2);
     });
   });
+
+  test('차단 요청 userId, 차단 대상 userCode로 차단 정보를 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      await userBlockedUserRepository.saveUserBlockedUser(
+        new UserBlockedUser(user1, user2),
+      );
+
+      // when
+      const userBlockedUser =
+        await userBlockedUserRepository.findByUserIdAndBlockedUserCode(
+          user1.id,
+          user2.userCode,
+        );
+
+      // then
+      expect(userBlockedUser.user.id).toEqual(user1.id);
+      expect(userBlockedUser.blockedUser.id).toEqual(user2.id);
+    });
+  });
 });

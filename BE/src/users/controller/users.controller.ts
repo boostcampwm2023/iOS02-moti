@@ -1,5 +1,6 @@
 import {
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -20,6 +21,7 @@ import { User } from '../domain/user.domain';
 import { UsersService } from '../application/users.service';
 import { RejectUserResponse } from '../dto/reject-user-response.dto';
 import { RejectUserListResponse } from '../dto/reject-user-list-response.dto';
+import { AllowUserResponse } from '../dto/allow-user-response.dto';
 
 @Controller('/api/v1/users')
 @ApiTags('유저 API')
@@ -43,6 +45,25 @@ export class UserController {
     @Param('userCode') userCode: string,
   ) {
     return ApiData.success(await this.userService.reject(user, userCode));
+  }
+
+  @ApiOperation({
+    summary: '유저 차단 해제 API',
+    description: '유저 차단을 해제한다.',
+  })
+  @ApiResponse({
+    description: '유저 차단 해제',
+    type: AllowUserResponse,
+  })
+  @ApiBearerAuth('accessToken')
+  @Delete('/:userCode/reject')
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.OK)
+  async allow(
+    @AuthenticatedUser() user: User,
+    @Param('userCode') userCode: string,
+  ) {
+    return ApiData.success(await this.userService.allow(user, userCode));
   }
 
   @ApiOperation({

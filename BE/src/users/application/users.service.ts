@@ -9,6 +9,8 @@ import { UserBlockedUser } from '../domain/user-blocked-user.domain';
 import { NoSuchUserException } from '../exception/no-such-user.exception';
 import { RejectUserResponse } from '../dto/reject-user-response.dto';
 import { RejectUserListResponse } from '../dto/reject-user-list-response.dto';
+import { InvalidAllowRequestException } from '../exception/invalid-allow-request.exception';
+import { AllowUserResponse } from '../dto/allow-user-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -38,6 +40,19 @@ export class UsersService {
         new UserBlockedUser(user, blockedUser),
       );
     return RejectUserResponse.from(userBlockedUser);
+  }
+  @Transactional()
+  async allow(user: User, userCode: string) {
+    const blockedUser = await this.usersRepository.findOneByUserCode(userCode);
+    if (!blockedUser) throw new NoSuchUserException();
+    const userBlockedUser =
+      await this.userBlockedUserRepository.findByUserIdAndBlockedUserCode(
+        user.id,
+        userCode,
+      );
+    if (!userBlockedUser) throw new InvalidAllowRequestException();
+    await this.userBlockedUserRepository.repository.delete(userBlockedUser);
+    return AllowUserResponse.from(userBlockedUser);
   }
 
   @Transactional({ readonly: true })

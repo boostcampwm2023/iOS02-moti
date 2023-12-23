@@ -16,6 +16,8 @@ import * as request from 'supertest';
 import { RejectUserListResponse } from '../dto/reject-user-list-response.dto';
 import { UserBlockedUser } from '../domain/user-blocked-user.domain';
 import { UsersFixture } from '../../../test/user/users-fixture';
+import { AllowUserResponse } from '../dto/allow-user-response.dto';
+import { InvalidAllowRequestException } from '../exception/invalid-allow-request.exception';
 
 describe('UserController Test', () => {
   let app: INestApplication;
@@ -88,14 +90,12 @@ describe('UserController Test', () => {
       // when
       // then
       return request(app.getHttpServer())
-        .post('/api/v1/groups/1/achievements/1/reject')
+        .post('/api/v1/users/ABCDEF1/reject')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(400)
         .expect((res: request.Response) => {
           expect(res.body.success).toEqual(false);
-          expect(res.body.message).toEqual(
-            '존재하지 않는 그룹 달성기록 입니다.',
-          );
+          expect(res.body.message).toEqual('존재하지 않는 유저입니다.');
         });
     });
     it('자신 스스로를 차단하려고 하는 경우 400을 반환한다.', async () => {
@@ -108,14 +108,12 @@ describe('UserController Test', () => {
       // when
       // then
       return request(app.getHttpServer())
-        .post('/api/v1/groups/1/achievements/1/reject')
+        .post('/api/v1/users/ABCDEF1/reject')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(400)
         .expect((res: request.Response) => {
           expect(res.body.success).toEqual(false);
-          expect(res.body.message).toEqual(
-            '존재하지 않는 그룹 달성기록 입니다.',
-          );
+          expect(res.body.message).toEqual('유효하지 않은 차단 요청입니다.');
         });
     });
     it('잘못된 인증시 401을 반환한다.', async () => {
@@ -125,7 +123,7 @@ describe('UserController Test', () => {
       // when
       // then
       return request(app.getHttpServer())
-        .post('/api/v1/groups/1/achievements/1/reject')
+        .post('/api/v1/users/ABCDEF1/reject')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(401)
         .expect((res: request.Response) => {
@@ -141,7 +139,7 @@ describe('UserController Test', () => {
       // when
       // then
       return request(app.getHttpServer())
-        .post('/api/v1/groups/1/achievements/1/reject')
+        .post('/api/v1/users/ABCDEF1/reject')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(401)
         .expect((res: request.Response) => {
@@ -215,6 +213,100 @@ describe('UserController Test', () => {
       // then
       return request(app.getHttpServer())
         .get('/api/v1/users/reject')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('만료된 토큰입니다.');
+        });
+    });
+  });
+
+  describe('유저 차단 해제를 할 수 있다.', () => {
+    it('성공 시 200을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+      const allowUserResponse = new AllowUserResponse('ABCDEF1', 'ABCDEF2');
+
+      when(mockUsersService.allow(anyOfClass(User), anyString())).thenResolve(
+        allowUserResponse,
+      );
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete('/api/v1/users/ABCDEF1/reject')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(true);
+          expect(res.body.data).toEqual({
+            userCode: 'ABCDEF1',
+            blockedUserCode: 'ABCDEF2',
+          });
+        });
+    });
+    it('존재하지 유저를 차단하려는 경우 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+      when(mockUsersService.allow(anyOfClass(User), anyString())).thenThrow(
+        new NoSuchUserException(),
+      );
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete('/api/v1/users/ABCDEF1/reject')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(false);
+          expect(res.body.message).toEqual('존재하지 않는 유저입니다.');
+        });
+    });
+    it('유효하지 않은 차단 해제 요청을 하는 경우 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+      when(mockUsersService.allow(anyOfClass(User), anyString())).thenThrow(
+        new InvalidAllowRequestException(),
+      );
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete('/api/v1/users/ABCDEF1/reject')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(false);
+          expect(res.body.message).toEqual(
+            '유효하지 않은 차단 해제 요청입니다.',
+          );
+        });
+    });
+    it('잘못된 인증시 401을 반환한다.', async () => {
+      // given
+      const accessToken = 'abcd.abcd.efgh';
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete('/api/v1/users/ABCDEF1/reject')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('잘못된 토큰입니다.');
+        });
+    });
+    it('만료된 인증정보에 401을 반환한다.', async () => {
+      // given
+      const { accessToken } =
+        await authFixture.getExpiredAccessTokenUser('ABC');
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete('/api/v1/users/ABCDEF1/reject')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(401)
         .expect((res: request.Response) => {
