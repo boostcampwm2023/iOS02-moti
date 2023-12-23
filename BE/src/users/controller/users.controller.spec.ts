@@ -159,7 +159,7 @@ describe('UserController Test', () => {
       const user3 = UsersFixture.user('GHI');
       user3.avatarUrl = 'avatarUrl3';
 
-      const rejectDate = new Date(2023, 11, 2, 12, 31, 10);
+      const rejectDate = new Date(Date.UTC(2023, 11, 2, 12, 31, 10));
 
       const rejectUserListResponse = new RejectUserListResponse([
         new UserBlockedUser(user1, user2, rejectDate),
@@ -182,12 +182,12 @@ describe('UserController Test', () => {
               {
                 avatarUrl: 'avatarUrl2',
                 userCode: 'ABCDDEF',
-                createdAt: '2023-12-02T03:31:10Z',
+                createdAt: '2023-12-02T12:31:10Z',
               },
               {
                 avatarUrl: 'avatarUrl3',
                 userCode: 'ABCDGHI',
-                createdAt: '2023-12-02T03:31:10Z',
+                createdAt: '2023-12-02T12:31:10Z',
               },
             ],
           });
