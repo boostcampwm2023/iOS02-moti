@@ -26,9 +26,10 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
     // viewDidAppear가 처음 호출되는지 확인
     private var isFirstAppear = false
     // 고해상도 모드 여부
-    private var isHighQuality = false {
+    private var isHighQuality = UserDefaults.standard.readBool(key: .highQualityUpload) ?? false {
         didSet {
             setupOptionNavigationItem()
+            UserDefaults.standard.saveBool(key: .highQualityUpload, value: isHighQuality)
         }
     }
     
