@@ -56,19 +56,51 @@ describe('CategoryService', () => {
   });
 
   it('saveCategory는 카테고리를 생성할 수 있다.', async () => {
-    // given
-    const user = await usersFixture.getUser(1);
-    const categoryCreate = new CategoryCreate('카테고리1');
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser(1);
+      const categoryCreate = new CategoryCreate('카테고리1');
 
-    // when
-    const savedCategory = await categoryService.saveCategory(
-      categoryCreate,
-      user,
-    );
+      // when
+      const savedCategory = await categoryService.saveCategory(
+        categoryCreate,
+        user,
+      );
 
-    // then
-    expect(savedCategory.name).toBe('카테고리1');
-    expect(savedCategory.user).toStrictEqual(user);
+      // then
+      expect(savedCategory.name).toBe('카테고리1');
+      expect(savedCategory.user).toStrictEqual(user);
+      expect(savedCategory.seq).toEqual(1);
+    });
+  });
+
+  it('saveCategory는 카테고리를 생성할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser(1);
+      const categoryCreate = new CategoryCreate('카테고리1');
+
+      // when
+      const savedCategory1 = await categoryService.saveCategory(
+        categoryCreate,
+        user,
+      );
+
+      const savedCategory2 = await categoryService.saveCategory(
+        categoryCreate,
+        user,
+      );
+
+      const savedCategory3 = await categoryService.saveCategory(
+        categoryCreate,
+        user,
+      );
+
+      // then
+      expect(savedCategory1.seq).toEqual(1);
+      expect(savedCategory2.seq).toEqual(2);
+      expect(savedCategory3.seq).toEqual(3);
+    });
   });
 
   describe('getCategoriesByUsers는 카테고리를 조회할 수 있다', () => {

@@ -9,14 +9,18 @@ import { NotFoundCategoryException } from '../exception/not-found-category.excep
 
 @Injectable()
 export class CategoryService {
-  constructor(private readonly categoryRepository: CategoryRepository) {}
+  constructor(
+    private readonly categoryRepository: CategoryRepository,
+    private readonly userRepository: UserRepository,
+  ) {}
 
   @Transactional()
   async saveCategory(
     categoryCreate: CategoryCreate,
     user: User,
   ): Promise<Category> {
-    const category = categoryCreate.toModel(user);
+    const category = user.newCategory(categoryCreate.name);
+    await this.userRepository.updateUser(user);
     return await this.categoryRepository.saveCategory(category);
   }
 
