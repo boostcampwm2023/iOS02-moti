@@ -46,7 +46,7 @@ export class CategoryRepository extends TransactionalRepository<CategoryEntity> 
       .addSelect('COUNT(achievement.id)', 'achievementCount')
       .leftJoin('category.achievements', 'achievement')
       .where('category.user_id = :user', { user: user.id })
-      .orderBy('category.id', 'ASC')
+      .orderBy('category.seq', 'ASC')
       .groupBy('category.id')
       .getRawMany<ICategoryMetaData>();
 
@@ -66,7 +66,7 @@ export class CategoryRepository extends TransactionalRepository<CategoryEntity> 
       .leftJoin('category.achievements', 'achievement')
       .where('category.user_id = :user', { user: user.id })
       .andWhere('category.id = :categoryId', { categoryId: categoryId })
-      .orderBy('category.id', 'ASC')
+      .orderBy('category.seq', 'ASC')
       .groupBy('category.id')
       .getRawOne<ICategoryMetaData>();
 
