@@ -1,4 +1,5 @@
 import { UserRole } from './user-role';
+import { Category } from '../../category/domain/category.domain';
 
 export class User {
   id: number;
@@ -10,6 +11,10 @@ export class User {
   userIdentifier: string;
 
   roles: UserRole[] = [UserRole.MEMBER];
+
+  categorySequence: number;
+
+  categoryCount: number;
 
   static from(userIdentifier: string) {
     const user = new User();
@@ -23,5 +28,14 @@ export class User {
 
   assignAvatar(avatarUrl: string) {
     this.avatarUrl = avatarUrl;
+  }
+
+  clearRelations() {
+    this.roles = undefined;
+  }
+
+  newCategory(categoryName: string): Category {
+    ++this.categoryCount;
+    return new Category(this, categoryName, ++this.categorySequence);
   }
 }
