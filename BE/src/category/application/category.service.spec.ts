@@ -16,6 +16,8 @@ import { CategoryTestModule } from '../../../test/category/category-test.module'
 import { CategoryFixture } from '../../../test/category/category-fixture';
 import { transactionTest } from '../../../test/common/transaction-test';
 import { NotFoundCategoryException } from '../exception/not-found-category.exception';
+import { CategoryRelocateRequest } from '../dto/category-relocate.request';
+import { InvalidCategoryRelocateException } from '../exception/Invalid-Category-Relocate.exception';
 
 describe('CategoryService', () => {
   let categoryService: CategoryService;
@@ -311,6 +313,63 @@ describe('CategoryService', () => {
         expect(retrievedCategory.categoryId).toEqual(0);
         expect(retrievedCategory.insertedAt).toBeInstanceOf(Date);
         expect(retrievedCategory.achievementCount).toBe(50);
+      });
+    });
+  });
+
+  describe('relocateCategory는 카테고리 순서를 재배열할 수 있다.', () => {
+    it('카테고리 순서를 변경한다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser(1);
+        const category1 = await categoryFixture.getCategory(user, '카테고리1');
+        const category2 = await categoryFixture.getCategory(user, '카테고리2');
+        const category3 = await categoryFixture.getCategory(user, '카테고리3');
+        const category4 = await categoryFixture.getCategory(user, '카테고리4');
+
+        const categoryRelocateRequest = new CategoryRelocateRequest();
+        categoryRelocateRequest.order = [
+          category4.id,
+          category3.id,
+          category1.id,
+          category2.id,
+        ];
+
+        // when
+        await categoryService.relocateCategory(user, categoryRelocateRequest);
+        const categories = await categoryService.getCategoriesByUser(user);
+
+        // then
+        expect(categories.length).toBe(5);
+        expect(categories[0].categoryId).toBe(-1);
+        expect(categories[1].categoryId).toBe(category4.id);
+        expect(categories[2].categoryId).toBe(category3.id);
+        expect(categories[3].categoryId).toBe(category1.id);
+        expect(categories[4].categoryId).toBe(category2.id);
+      });
+    });
+
+    it('모든 카테고리를 요청하지 않으면 에러를 던진다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser(1);
+        const category1 = await categoryFixture.getCategory(user, '카테고리1');
+        const category2 = await categoryFixture.getCategory(user, '카테고리2');
+        const category3 = await categoryFixture.getCategory(user, '카테고리3');
+        const category4 = await categoryFixture.getCategory(user, '카테고리4');
+
+        const categoryRelocateRequest = new CategoryRelocateRequest();
+        categoryRelocateRequest.order = [
+          category4.id,
+          category3.id,
+          category1.id,
+        ];
+
+        // when
+        // then
+        await expect(
+          categoryService.relocateCategory(user, categoryRelocateRequest),
+        ).rejects.toThrow(InvalidCategoryRelocateException);
       });
     });
   });

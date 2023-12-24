@@ -6,6 +6,9 @@ import { Category } from '../domain/category.domain';
 import { User } from '../../users/domain/user.domain';
 import { CategoryMetaData } from '../dto/category-metadata';
 import { NotFoundCategoryException } from '../exception/not-found-category.exception';
+import { CategoryRelocateRequest } from '../dto/category-relocate.request';
+import { UserRepository } from '../../users/entities/user.repository';
+import { InvalidCategoryRelocateException } from '../exception/Invalid-Category-Relocate.exception';
 
 @Injectable()
 export class CategoryService {
@@ -38,5 +41,24 @@ export class CategoryService {
     if (!categoryMetaData) throw new NotFoundCategoryException();
 
     return categoryMetaData;
+  }
+
+  @Transactional()
+  async relocateCategory(
+    user: User,
+    categoryRelocateRequest: CategoryRelocateRequest,
+  ) {
+    if (user.categoryCount != categoryRelocateRequest.getCategoryCount())
+      throw new InvalidCategoryRelocateException();
+    const categories = await this.categoryRepository.findAllByIdAndUser(
+      user.id,
+      categoryRelocateRequest.order,
+    );
+
+    for (let index = 0; index < categories.length; index++) {
+      const category = categories[index];
+      category.seq = index + 1;
+      await this.categoryRepository.saveCategory(category);
+    }
   }
 }
