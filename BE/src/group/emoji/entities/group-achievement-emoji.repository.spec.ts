@@ -646,7 +646,6 @@ describe('GroupAchievementEmojiRepository Test', () => {
           Emoji.FIRE,
         );
 
-        console.log(user);
         // when
         const groupAchievementEmojiListElement =
           await groupAchievementEmojiRepository.findAllGroupAchievementEmojiMetaData(
