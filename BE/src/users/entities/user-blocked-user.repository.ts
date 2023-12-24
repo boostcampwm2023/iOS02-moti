@@ -12,4 +12,25 @@ export class UserBlockedUserRepository extends TransactionalRepository<UserBlock
     const saved = await this.repository.save(userBlockedUserEntity);
     return saved.toModel();
   }
+
+  async findByUserIdWithBlockedUser(userId: number) {
+    const userBlockedUser = await this.repository
+      .createQueryBuilder('userBlockedUser')
+      .leftJoinAndSelect('userBlockedUser.blockedUser', 'blockedUser')
+      .where('userBlockedUser.userId = :userId', { userId })
+      .getMany();
+    return userBlockedUser.map((ub) => ub.toModel());
+  }
+
+  async findByUserIdAndBlockedUserCode(userId: number, userCode: string) {
+    const userBlockedUserEntity = await this.repository
+      .createQueryBuilder('userBlockedUser')
+      .leftJoinAndSelect('userBlockedUser.user', 'user')
+      .leftJoinAndSelect('userBlockedUser.blockedUser', 'blockedUser')
+      .where('user.id = :userId', { userId })
+      .andWhere('blockedUser.userCode = :userCode', { userCode })
+      .getOne();
+
+    return userBlockedUserEntity?.toModel();
+  }
 }

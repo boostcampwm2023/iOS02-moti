@@ -14,6 +14,7 @@ import { DataSource } from 'typeorm';
 import { UsersFixture } from '../../../test/user/users-fixture';
 import { UsersTestModule } from '../../../test/user/users-test.module';
 import { NoSuchUserException } from '../exception/no-such-user.exception';
+import { InvalidAllowRequestException } from '../exception/invalid-allow-request.exception';
 
 describe('UsersService Test', () => {
   let userService: UsersService;
@@ -35,6 +36,10 @@ describe('UsersService Test', () => {
     userRepository = module.get<UserRepository>(UserRepository);
     usersFixture = module.get<UsersFixture>(UsersFixture);
     dataSource = module.get<DataSource>(DataSource);
+  });
+
+  afterAll(async () => {
+    await dataSource.destroy();
   });
 
   test('userService, userRepository가 정의되어 있어야 한다. ', () => {
@@ -115,6 +120,66 @@ describe('UsersService Test', () => {
       // then
       await expect(userService.reject(user1, user1.userCode)).rejects.toThrow(
         InvalidRejectRequestException,
+      );
+    });
+  });
+
+  test('차단한 유저 목록을 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      const user3 = await usersFixture.getUser('GHI');
+      await userService.reject(user1, user2.userCode);
+      await userService.reject(user1, user3.userCode);
+
+      // when
+      const rejectUserListResponse = await userService.getRejectUserList(user1);
+      // then
+      expect(rejectUserListResponse.data.length).toEqual(2);
+    });
+  });
+
+  test('유저 차단 해제를 할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+      await userService.reject(user1, user2.userCode);
+
+      // when
+      const allowUserResponse = await userService.allow(user1, user2.userCode);
+
+      // then
+      expect(allowUserResponse.userCode).toEqual(user1.userCode);
+      expect(allowUserResponse.blockedUserCode).toEqual(user2.userCode);
+    });
+  });
+
+  test('존재하지 않는 유저를 차단 해제하려고 하면 NoSuchUserException를 던진다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const invalidUserCode = 'XYZ1234';
+
+      // when
+      // then
+      await expect(userService.allow(user1, invalidUserCode)).rejects.toThrow(
+        NoSuchUserException,
+      );
+    });
+  });
+
+  test('차단 되어있지 않은 유저를 차단 해제하려고 하면 InvalidAllowRequestException를 던진다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+
+      // when
+      // then
+      await expect(userService.allow(user1, user2.userCode)).rejects.toThrow(
+        InvalidAllowRequestException,
       );
     });
   });

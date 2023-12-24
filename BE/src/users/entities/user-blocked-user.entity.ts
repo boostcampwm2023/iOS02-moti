@@ -24,6 +24,7 @@ export class UserBlockedUserEntity extends BaseTimeEntity {
     return new UserBlockedUser(
       this.user?.toModel() || null,
       this.blockedUser?.toModel() || null,
+      this.createdAt,
     );
   }
 
