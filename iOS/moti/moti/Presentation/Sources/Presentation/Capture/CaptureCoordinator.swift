@@ -61,6 +61,7 @@ final class CaptureCoordinator: Coordinator {
 
 extension CaptureCoordinator: CaptureViewControllerDelegate {
     func didCapture(image: UIImage, currentCategoryId: Int?) {
+        Logger.debug("캡처 이미지 최종 크기: \(image.size)")
         moveEditAchievementViewConrtoller(image: image, currentCategoryId: currentCategoryId)
     }
 }
