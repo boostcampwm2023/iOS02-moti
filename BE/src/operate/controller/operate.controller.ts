@@ -1,18 +1,32 @@
-import { Body, Controller, Get, Patch, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Patch,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { OperateService } from '../application/operate.service';
 import { MotiPolicyResponse } from '../dto/moti-policy-response';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { MotiPolicyCreate } from '../dto/moti-policy-create';
 import { ApiData } from '../../common/api/api-data';
 import { MotiPolicyIdempotentUpdate } from '../dto/moti-policy-idempotent-update';
 import { MotiPolicyPartialUpdate } from '../dto/moti-policy-partitial-update';
+import { AdminTokenGuard } from '../../auth/guard/admin-token.guard';
 
 @Controller('/api/v1/operate')
 @ApiTags('운영 API')
 export class OperateController {
   constructor(private readonly operateService: OperateService) {}
 
-  @Post('policy')
+  @ApiBearerAuth('accessToken')
   @ApiOperation({
     summary: '모티메이트 운영정책 초기화 API',
     description: '운영 정책은 1개만 등록 가능',
@@ -21,6 +35,8 @@ export class OperateController {
     description: '운영 정책',
     type: MotiPolicyResponse,
   })
+  @Post('policy')
+  @UseGuards(AdminTokenGuard)
   async initPolicy(
     @Body() initPolicy: MotiPolicyCreate,
   ): Promise<ApiData<MotiPolicyResponse>> {
@@ -28,7 +44,6 @@ export class OperateController {
     return ApiData.success(MotiPolicyResponse.from(policy));
   }
 
-  @Get('policy')
   @ApiOperation({
     summary: '모티메이트 운영정책 조회 API',
     description: '모티메이트의 현재 버전, 최소 번전, 보안 정책을 조회',
@@ -37,12 +52,13 @@ export class OperateController {
     description: '운영 정책',
     type: MotiPolicyResponse,
   })
+  @Get('policy')
   async getPolicy(): Promise<ApiData<MotiPolicyResponse>> {
     const policy = await this.operateService.retrieveMotimateOperation();
     return ApiData.success(MotiPolicyResponse.from(policy));
   }
 
-  @Put('policy')
+  @ApiBearerAuth('accessToken')
   @ApiOperation({
     summary: '모티메이트 운영정책 업데이트 API',
     description: '모티메이트의 현재 버전, 최소 번전, 보안 정책을 업데이트',
@@ -51,6 +67,8 @@ export class OperateController {
     description: '운영 정책',
     type: MotiPolicyResponse,
   })
+  @Put('policy')
+  @UseGuards(AdminTokenGuard)
   async updateIdempotentPolicy(
     @Body() updatePolicyUpdate: MotiPolicyIdempotentUpdate,
   ): Promise<ApiData<MotiPolicyResponse>> {
@@ -59,7 +77,7 @@ export class OperateController {
     return ApiData.success(MotiPolicyResponse.from(policy));
   }
 
-  @Patch('policy')
+  @ApiBearerAuth('accessToken')
   @ApiOperation({
     summary: '모티메이트 운영정책 업데이트 API',
     description: '모티메이트의 현재 버전, 최소 번전, 보안 정책을 업데이트',
@@ -68,6 +86,8 @@ export class OperateController {
     description: '운영 정책',
     type: MotiPolicyResponse,
   })
+  @Patch('policy')
+  @UseGuards(AdminTokenGuard)
   async updatePartialPolicy(
     @Body() updatePolicyUpdate: MotiPolicyPartialUpdate,
   ): Promise<ApiData<MotiPolicyResponse>> {
