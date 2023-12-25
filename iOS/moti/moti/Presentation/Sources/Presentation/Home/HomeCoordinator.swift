@@ -63,6 +63,12 @@ public final class HomeCoordinator: Coordinator {
         appInfoCoordinator.start()
     }
     
+    func moveToManageCategoryViewController(categories: [CategoryItem]) {
+        let manageCategoryCoordinator = ManageCategoryCoordinator(navigationController, self)
+        childCoordinators.append(manageCategoryCoordinator)
+        manageCategoryCoordinator.start(categories: categories)
+    }
+    
     func moveToCaptureViewController(currentCategoryId: Int?) {
         let captureCoordinator = CaptureCoordinator(navigationController, self)
         captureCoordinator.delegate = self

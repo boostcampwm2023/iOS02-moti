@@ -226,16 +226,20 @@ private extension HomeViewController {
         let logoutAction = UIAction(title: "로그아웃", handler: { _ in
             self.logout()
         })
-        moreItem.menu = UIMenu(children: [appInfoAction, logoutAction])
+        let manageCategoryAction = UIAction(title: "카테고리 관리", handler: { _ in
+            self.moveToManageCategoryViewController()
+        })
+        
+        moreItem.menu = UIMenu(children: [appInfoAction, logoutAction, manageCategoryAction])
         
         navigationItem.rightBarButtonItems = [profileItem, moreItem]
     }
     
-    func moveToAppInfoViewController() {
+    private func moveToAppInfoViewController() {
         coordinator?.moveToAppInfoViewController()
     }
     
-    func logout() {
+    private func logout() {
         showTwoButtonAlert(
             title: "로그아웃",
             message: "정말 로그아웃을 하시겠습니까?",
@@ -244,6 +248,10 @@ private extension HomeViewController {
                 self.viewModel.action(.logout)
             }
         )
+    }
+    
+    private func moveToManageCategoryViewController() {
+        coordinator?.moveToManageCategoryViewController(categories: viewModel.categories)
     }
     
     @objc func showUserCode() {
