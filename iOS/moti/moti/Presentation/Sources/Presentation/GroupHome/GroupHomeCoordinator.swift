@@ -61,6 +61,12 @@ final class GroupHomeCoordinator: Coordinator {
         childCoordinators.append(groupInfoCoordinator)
     }
     
+    func moveToManageCategoryViewController(categories: [CategoryItem]) {
+        let manageCategoryCoordinator = ManageCategoryCoordinator(navigationController, self)
+        childCoordinators.append(manageCategoryCoordinator)
+        manageCategoryCoordinator.start(categories: categories)
+    }
+    
     func moveToAppInfoViewController() {
         let appInfoCoordinator = AppInfoCoordinator(navigationController, self)
         childCoordinators.append(appInfoCoordinator)

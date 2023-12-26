@@ -220,13 +220,17 @@ private extension HomeViewController {
         )
         moreItem.isAccessibilityElement = true
         moreItem.accessibilityLabel = "더보기"
+        let manageCategoryAction = UIAction(title: "카테고리 관리", handler: { _ in
+            self.moveToManageCategoryViewController()
+        })
         let appInfoAction = UIAction(title: "앱 정보", handler: { _ in
             self.moveToAppInfoViewController()
         })
         let logoutAction = UIAction(title: "로그아웃", handler: { _ in
             self.logout()
         })
-        moreItem.menu = UIMenu(children: [appInfoAction, logoutAction])
+        
+        moreItem.menu = UIMenu(children: [manageCategoryAction, appInfoAction, logoutAction])
         
         navigationItem.rightBarButtonItems = [profileItem, moreItem]
     }
@@ -244,6 +248,10 @@ private extension HomeViewController {
                 self.viewModel.action(.logout)
             }
         )
+    }
+    
+    func moveToManageCategoryViewController() {
+        coordinator?.moveToManageCategoryViewController(categories: viewModel.categories)
     }
     
     @objc func showUserCode() {

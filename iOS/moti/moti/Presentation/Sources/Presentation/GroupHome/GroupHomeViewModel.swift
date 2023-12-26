@@ -25,7 +25,7 @@ final class GroupHomeViewModel {
     private let fetchCategoryUseCase: FetchCategoryUseCase
     private let fetchCategoryListUseCase: FetchCategoryListUseCase
     private let addCategoryUseCase: AddCategoryUseCase
-    private var categories: [CategoryItem] = [] {
+    private(set) var categories: [CategoryItem] = [] {
         didSet {
             categoryDataSource?.update(data: categories)
         }

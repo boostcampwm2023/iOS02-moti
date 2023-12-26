@@ -36,4 +36,7 @@ public struct CategoryItem: Hashable {
         self.continued = 0
         self.lastChallenged = nil
     }
+    
+    public var isWhole: Bool { return id == 0 }
+    public var isUnset: Bool { return id == -1 }
 }

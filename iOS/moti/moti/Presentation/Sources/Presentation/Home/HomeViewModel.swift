@@ -22,7 +22,7 @@ final class HomeViewModel {
     private let fetchCategoryListUseCase: FetchCategoryListUseCase
     private let addCategoryUseCase: AddCategoryUseCase
     
-    private var categories: [CategoryItem] = [] {
+    private(set) var categories: [CategoryItem] = [] {
         didSet {
             categoryDataSource?.update(data: categories)
         }
