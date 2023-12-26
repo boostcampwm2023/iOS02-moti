@@ -52,7 +52,7 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
     }
     
     private func setupUI() {
-        let removeButton = UIBarButtonItem(title: "삭제", style: .plain, target: self, action: #selector(didClickedRemoveButton))
+        let removeButton = UIBarButtonItem(title: "삭제", style: .plain, target: self, action: #selector(removeButtonDidClicked))
         removeButton.tintColor = .red
         let editButton = UIBarButtonItem(title: "편집", style: .plain, target: self, action: #selector(didClickedEditButton))
         navigationItem.rightBarButtonItems = [removeButton, editButton]

@@ -42,24 +42,24 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
     
     private func setupNavigationBar() {
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, 
-                                                           action: #selector(didClickedCancelButton))
+                                                           action: #selector(cancelButtonDidClicked))
         
-        let removeButton = UIBarButtonItem(title: "삭제", style: .plain, target: self, action: #selector(didClickedRemoveButton))
+        let removeButton = UIBarButtonItem(title: "삭제", style: .plain, target: self, action: #selector(removeButtonDidClicked))
         removeButton.tintColor = .red
-        let doneButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(didClickedDoneButton))
+        let doneButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(doneButtonDidClicked))
         navigationItem.rightBarButtonItems = [doneButton, removeButton]
         
     }
     
-    @objc private func didClickedCancelButton() {
+    @objc private func cancelButtonDidClicked() {
         delegate?.cancelButtonDidClicked()
     }
     
-    @objc private func didClickedRemoveButton() {
+    @objc private func removeButtonDidClicked() {
         print("remove ..")
     }
     
-    @objc private func didClickedDoneButton() {
+    @objc private func doneButtonDidClicked() {
         // viewModel.action()
         delegate?.doneButtonDidClicked()
     }
