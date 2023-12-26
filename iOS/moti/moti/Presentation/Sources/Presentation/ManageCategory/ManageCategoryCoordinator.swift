@@ -33,7 +33,6 @@ final class ManageCategoryCoordinator: Coordinator {
         manageCategoryVC.coordinator = self
         manageCategoryVC.delegate = self
         let navVC = UINavigationController(rootViewController: manageCategoryVC)
-        navVC.modalPresentationStyle = .overFullScreen
         navigationController.present(navVC, animated: true)
     }
 }
