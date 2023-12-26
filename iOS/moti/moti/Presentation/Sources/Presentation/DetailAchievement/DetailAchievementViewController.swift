@@ -54,18 +54,18 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
     private func setupUI() {
         let removeButton = UIBarButtonItem(title: "삭제", style: .plain, target: self, action: #selector(removeButtonDidClicked))
         removeButton.tintColor = .red
-        let editButton = UIBarButtonItem(title: "편집", style: .plain, target: self, action: #selector(didClickedEditButton))
+        let editButton = UIBarButtonItem(title: "편집", style: .plain, target: self, action: #selector(editButtonDidClicked))
         navigationItem.rightBarButtonItems = [removeButton, editButton]
     }
     
-    @objc private func didClickedRemoveButton() {
+    @objc private func removeButtonDidClicked() {
         showDestructiveTwoButtonAlert(title: "정말로 삭제하시겠습니까?", message: "삭제된 도전 기록은 되돌릴 수 없습니다.") { [weak self] in
             guard let self else { return }
             viewModel.action(.delete)
         }
     }
     
-    @objc private func didClickedEditButton() {
+    @objc private func editButtonDidClicked() {
         delegate?.editButtonDidClicked(achievement: viewModel.achievement)
     }
     

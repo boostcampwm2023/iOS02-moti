@@ -37,7 +37,7 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
-        setupManageCategoryDataSource()
+        setupManageCategoryCollectionView()
     }
     
     private func setupNavigationBar() {
@@ -62,6 +62,11 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
     @objc private func doneButtonDidClicked() {
         // viewModel.action()
         delegate?.doneButtonDidClicked()
+    }
+    
+    private func setupManageCategoryCollectionView() {
+        setupManageCategoryDataSource()
+        
     }
     
     private func setupManageCategoryDataSource() {
