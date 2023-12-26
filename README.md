@@ -12,7 +12,7 @@
 
 </br>
 
-# 엡 스토어
+# 앱 스토어
 <img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/14b4952c-7d91-43f0-a821-dbec46d5c70b" width = "30%">
 <img src = "https://github.com/boostcampwm2023/iOS02-moti/assets/89075274/9e7eba7b-3c97-4f5b-a543-59a2ff9a05a9" width = "30%">
 </br>
