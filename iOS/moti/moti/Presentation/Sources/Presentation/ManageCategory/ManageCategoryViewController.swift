@@ -37,6 +37,7 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
+        bind()
         setupManageCategoryCollectionView()
     }
     
@@ -60,8 +61,7 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
     }
     
     @objc private func doneButtonDidClicked() {
-        // viewModel.action()
-        delegate?.doneButtonDidClicked()
+        viewModel.action(.reorderCategories)
     }
     
     private func setupManageCategoryCollectionView() {
@@ -91,6 +91,24 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
         layoutView.manageCategoryCollectionView.dragDelegate = self
         layoutView.manageCategoryCollectionView.dropDelegate = self
         layoutView.manageCategoryCollectionView.dragInteractionEnabled = true
+    }
+}
+
+private extension ManageCategoryViewController {
+    func bind() {
+        viewModel.reorderCategoriesState
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .success:
+                    delegate?.doneButtonDidClicked()
+                case .failed(let message):
+                    showErrorAlert(message: message)
+                }
+                
+            }
+            .store(in: &cancellables)
     }
 }
 
