@@ -28,7 +28,7 @@ final class ManageCategoryViewModel {
     init(
         categories: [CategoryItem]
     ) {
-        self.categories = categories
+        self.categories = categories.filter { !$0.isWhole && !$0.isUnset }
     }
     
     func setupDataSource(_ dataSource: CategoryDataSource) {
