@@ -76,6 +76,10 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
         showCelebrate(with: newAchievement)
     }
     
+    func fetchCategoryList() {
+        viewModel.action(.fetchCategoryList)
+    }
+    
     private func addTargets() {
         if let tabBarController = navigationController?.tabBarController as? TabBarViewController {
             tabBarController.captureButton.addTarget(self, action: #selector(captureButtonDidClicked), for: .touchUpInside)
