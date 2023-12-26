@@ -45,7 +45,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
         setupAchievementDataSource()
         setupCategoryDataSource()
         
-        viewModel.action(.launch)
+        viewModel.action(.fetchCategoryList)
     }
     
     override func viewWillAppear(_ animated: Bool) {
