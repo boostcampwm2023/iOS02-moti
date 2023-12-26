@@ -235,11 +235,11 @@ private extension HomeViewController {
         navigationItem.rightBarButtonItems = [profileItem, moreItem]
     }
     
-    private func moveToAppInfoViewController() {
+    func moveToAppInfoViewController() {
         coordinator?.moveToAppInfoViewController()
     }
     
-    private func logout() {
+    func logout() {
         showTwoButtonAlert(
             title: "로그아웃",
             message: "정말 로그아웃을 하시겠습니까?",
@@ -250,7 +250,7 @@ private extension HomeViewController {
         )
     }
     
-    private func moveToManageCategoryViewController() {
+    func moveToManageCategoryViewController() {
         coordinator?.moveToManageCategoryViewController(categories: viewModel.categories)
     }
     
