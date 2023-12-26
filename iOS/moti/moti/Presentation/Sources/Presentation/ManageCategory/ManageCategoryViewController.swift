@@ -66,7 +66,7 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
     
     private func setupManageCategoryCollectionView() {
         setupManageCategoryDataSource()
-        
+        setupManageCategoryDragDrop()
     }
     
     private func setupManageCategoryDataSource() {
@@ -86,8 +86,71 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
         let diffableDataSource = ManageCategoryViewModel.CategoryDataSource(dataSource: dataSource)
         viewModel.setupDataSource(diffableDataSource)
     }
+    
+    private func setupManageCategoryDragDrop() {
+        layoutView.manageCategoryCollectionView.dragDelegate = self
+        layoutView.manageCategoryCollectionView.dropDelegate = self
+        layoutView.manageCategoryCollectionView.dragInteractionEnabled = true
+    }
 }
 
 extension ManageCategoryViewController: UICollectionViewDelegate {
     
+}
+
+extension ManageCategoryViewController: UICollectionViewDragDelegate {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        itemsForBeginning session: UIDragSession, 
+        at indexPath: IndexPath
+    ) -> [UIDragItem] {
+        return [UIDragItem(itemProvider: NSItemProvider())]
+    }
+}
+
+extension ManageCategoryViewController: UICollectionViewDropDelegate {
+    func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
+        var destinationIndexPath: IndexPath
+        if let indexPath = coordinator.destinationIndexPath {
+            destinationIndexPath = indexPath
+        } else {
+            let row = collectionView.numberOfItems(inSection: 0)
+            destinationIndexPath = IndexPath(item: row - 1, section: 0)
+        }
+        
+        guard coordinator.proposal.operation == .move else { return }
+        move(coordinator: coordinator, destinationIndexPath: destinationIndexPath, collectionView: collectionView)
+    }
+    
+    private func move(coordinator: UICollectionViewDropCoordinator, destinationIndexPath: IndexPath, collectionView: UICollectionView) {
+        guard
+            let sourceItem = coordinator.items.first,
+            let sourceIndexPath = sourceItem.sourceIndexPath
+        else { return }
+        
+        collectionView.performBatchUpdates { [weak self] in
+            self?.move(sourceIndexPath: sourceIndexPath, destinationIndexPath: destinationIndexPath)
+        } completion: { finish in
+            coordinator.drop(sourceItem.dragItem, toItemAt: destinationIndexPath)
+        }
+    }
+    
+    private func move(sourceIndexPath: IndexPath, destinationIndexPath: IndexPath) {
+        let sourceItem = viewModel.categories[sourceIndexPath.item]
+        
+        // dataSource 이동
+        viewModel.categories.remove(at: sourceIndexPath.item)
+        viewModel.categories.insert(sourceItem, at: destinationIndexPath.item)
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        dropSessionDidUpdate session: UIDropSession,
+        withDestinationIndexPath destinationIndexPath: IndexPath?
+    ) -> UICollectionViewDropProposal {
+        guard collectionView.hasActiveDrag else {
+            return UICollectionViewDropProposal(operation: .forbidden)
+        }
+        return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+    }
 }
