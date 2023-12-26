@@ -39,7 +39,7 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
         setupAchievementDataSource()
         setupCategoryDataSource()
         
-        viewModel.action(.launch)
+        viewModel.action(.fetchCategories)
     }
     
     override func viewWillAppear(_ animated: Bool) {
