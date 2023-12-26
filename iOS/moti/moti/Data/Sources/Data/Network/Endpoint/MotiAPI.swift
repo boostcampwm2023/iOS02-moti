@@ -20,6 +20,7 @@ enum MotiAPI: EndpointProtocol {
     case fetchCategory(categoryId: Int)
     case fetchCategoryList
     case addCategory(requestValue: AddCategoryRequestValue)
+    case reorderCategories(requestValue: ReorderCategoriesRequestValue)
     case fetchDetailAchievement(requestValue: FetchDetailAchievementRequestValue)
     case deleteAchievement(achievementId: Int)
     case updateAchievement(requestValue: UpdateAchievementRequestValue)
@@ -71,6 +72,7 @@ extension MotiAPI {
         case .fetchCategory(let categoryId): return "/categories/\(categoryId)"
         case .fetchCategoryList: return "/categories"
         case .addCategory: return "/categories"
+        case .reorderCategories: return "/categories"
         case .fetchDetailAchievement(let requestValue): return "/achievements/\(requestValue.id)"
         case .saveImage: return "/images"
         case .deleteAchievement(let achievementId): return "/achievements/\(achievementId)"
@@ -125,6 +127,7 @@ extension MotiAPI {
         case .fetchCategory: return .get
         case .fetchCategoryList: return .get
         case .addCategory: return .post
+        case .reorderCategories: return .put
         case .fetchDetailAchievement: return .get
         case .saveImage: return .post
         case .deleteAchievement: return .delete
@@ -172,6 +175,8 @@ extension MotiAPI {
         case .revoke(let requestValue):
             return requestValue
         case .addCategory(let requestValue):
+            return requestValue
+        case .reorderCategories(let requestValue):
             return requestValue
         case .updateAchievement(let requestValue):
             return requestValue.body
