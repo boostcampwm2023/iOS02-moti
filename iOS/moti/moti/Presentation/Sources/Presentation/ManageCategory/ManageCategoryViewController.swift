@@ -41,7 +41,8 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
     }
     
     private func setupNavigationBar() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(didClickedCancelButton))
+        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, 
+                                                           action: #selector(didClickedCancelButton))
         
         let removeButton = UIBarButtonItem(title: "삭제", style: .plain, target: self, action: #selector(didClickedRemoveButton))
         removeButton.tintColor = .red
