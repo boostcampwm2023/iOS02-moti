@@ -112,7 +112,7 @@ final class GroupHomeViewModel {
     
     func action(_ action: GroupHomeViewModelAction) {
         switch action {
-        case .fetchCategories:
+        case .fetchCategoryList:
             fetchCategories()
         case .fetchCurrentCategoryInfo:
             guard let currentCategory else { return }

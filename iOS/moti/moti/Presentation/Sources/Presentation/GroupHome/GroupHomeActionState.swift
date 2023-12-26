@@ -10,7 +10,7 @@ import Domain
 
 extension GroupHomeViewModel {
     enum GroupHomeViewModelAction {
-        case fetchCategories
+        case fetchCategoryList
         case fetchCurrentCategoryInfo
         case fetchCategoryInfo(categoryId: Int)
         case addCategory(name: String)
