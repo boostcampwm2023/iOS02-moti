@@ -206,6 +206,9 @@ private extension GroupHomeViewController {
             action: nil
         )
         moreItem.accessibilityLabel = "더보기"
+        let manageCategoryAction = UIAction(title: "카테고리 관리", handler: { _ in
+            self.moveToManageCategoryViewController()
+        })
         let inviteInfoAction = UIAction(title: "그룹원 초대", handler: { _ in
             self.inviteMember()
         })
@@ -218,12 +221,17 @@ private extension GroupHomeViewController {
         
         var children: [UIAction] = []
         if group.grade == .leader || group.grade == .manager {
+            children.append(manageCategoryAction)
             children.append(inviteInfoAction)
         }
         children.append(contentsOf: [appInfoAction, logoutAction])
         moreItem.menu = UIMenu(children: children)
 
         navigationItem.rightBarButtonItems = [profileItem, moreItem]
+    }
+    
+    func moveToManageCategoryViewController() {
+        coordinator?.moveToManageCategoryViewController(categories: viewModel.categories)
     }
     
     @objc func avatarImageTapAction() {
