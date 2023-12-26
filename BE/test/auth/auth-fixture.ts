@@ -34,7 +34,6 @@ export class AuthFixture {
       userCode: user.userCode,
       roles: user.roles,
     };
-
     const accessToken = this.jwtUtils.createToken(claim, new Date());
     return {
       user,

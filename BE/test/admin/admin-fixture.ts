@@ -23,6 +23,7 @@ export class AdminFixture {
   ): Promise<Admin> {
     const user = UsersFixture.user(id);
     user.roles.push(UserRole.ADMIN);
+    user.assignUserCode(`admin${id}${AdminFixture.id++}`);
     const adminRoleUser = await this.userRepository.saveUser(user);
 
     const admin = AdminFixture.admin(adminRoleUser, email, password);
