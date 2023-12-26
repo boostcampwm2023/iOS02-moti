@@ -10,10 +10,13 @@ export class CategoryFixture {
   constructor(private readonly categoryRepository: CategoryRepository) {}
 
   async getCategory(user: User, name?: string): Promise<Category> {
+    user.categoryCount++;
+    user.categorySequence++;
     const category = CategoryFixture.category(
       user,
       name || CategoryFixture.getDummyCategoryName(),
     );
+
     return await this.categoryRepository.saveCategory(category);
   }
 
@@ -31,7 +34,7 @@ export class CategoryFixture {
   }
 
   static category(user: User, name: string) {
-    return new Category(user, name);
+    return new Category(user, name, 0);
   }
 
   static getDummyCategoryName() {

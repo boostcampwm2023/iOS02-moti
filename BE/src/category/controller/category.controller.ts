@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { CategoryService } from '../application/category.service';
@@ -24,6 +25,7 @@ import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
 import { CategoryResponse } from '../dto/category.response';
 import { CategoryListElementResponse } from '../dto/category-list-element.response';
 import { ParseIntPipe } from '../../common/pipe/parse-int.pipe';
+import { CategoryRelocateRequest } from '../dto/category-relocate.request';
 
 @Controller('/api/v1/categories')
 @ApiTags('카테고리 API')
@@ -90,5 +92,21 @@ export class CategoryController {
   ): Promise<ApiData<CategoryListElementResponse>> {
     const category = await this.categoryService.getCategory(user, categoryId);
     return ApiData.success(new CategoryListElementResponse(category));
+  }
+
+  @ApiBearerAuth('accessToken')
+  @ApiOperation({
+    summary: '카테고리 순서 변경 API',
+    description:
+      '변경될 카테고리 순서로 카테고리 아이디를 배열의 형태로 요청한다.',
+  })
+  @Put()
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async relocateCategory(
+    @Body() categoryRelocateRequest: CategoryRelocateRequest,
+    @AuthenticatedUser() user: User,
+  ) {
+    return this.categoryService.relocateCategory(user, categoryRelocateRequest);
   }
 }

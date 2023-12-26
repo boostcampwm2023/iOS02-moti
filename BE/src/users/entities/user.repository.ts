@@ -27,6 +27,13 @@ export class UserRepository extends TransactionalRepository<UserEntity> {
     return saved.toModel();
   }
 
+  async updateUser(user: User): Promise<User> {
+    user.clearRelations();
+    const userEntity = UserEntity.from(user);
+    const saved = await this.repository.save(userEntity);
+    return saved.toModel();
+  }
+
   async existByUserCode(userCode: string) {
     return await this.repository.exist({ where: { userCode: userCode } });
   }

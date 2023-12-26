@@ -4,14 +4,14 @@ import { CategoryService } from './application/category.service';
 import { CustomTypeOrmModule } from '../config/typeorm/custom-typeorm.module';
 import { CategoryRepository } from './entities/category.repository';
 import { CategoryLegacyController } from './controller/category-legacy.controller';
-import { AchievementRepository } from '../achievement/entities/achievement.repository';
+import { UserRepository } from '../users/entities/user.repository';
 
 @Module({
   controllers: [CategoryController, CategoryLegacyController],
   imports: [
     CustomTypeOrmModule.forCustomRepository([
       CategoryRepository,
-      AchievementRepository,
+      UserRepository,
     ]),
   ],
   providers: [CategoryService],

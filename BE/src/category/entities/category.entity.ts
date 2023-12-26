@@ -29,8 +29,11 @@ export class CategoryEntity extends BaseTimeEntity {
   @OneToMany(() => AchievementEntity, (achievement) => achievement.category)
   achievements: AchievementEntity[];
 
+  @Column()
+  seq: number;
+
   toModel(): Category {
-    const category = new Category(this.user?.toModel(), this.name);
+    const category = new Category(this.user?.toModel(), this.name, this.seq);
     category.id = this.id;
     return category;
   }
@@ -42,6 +45,7 @@ export class CategoryEntity extends BaseTimeEntity {
     categoryEntity.id = category.id;
     categoryEntity.user = UserEntity.from(category.user);
     categoryEntity.name = category.name;
+    categoryEntity.seq = category.seq;
     return categoryEntity;
   }
 }

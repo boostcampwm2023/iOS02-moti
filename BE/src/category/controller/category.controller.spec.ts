@@ -15,6 +15,8 @@ import { CategoryCreate } from '../dto/category-create';
 import { CategoryMetaData } from '../dto/category-metadata';
 import { GroupCategoryMetadata } from '../../group/category/dto/group-category-metadata';
 import { NotFoundCategoryException } from '../exception/not-found-category.exception';
+import { CategoryRelocateRequest } from '../dto/category-relocate.request';
+import { InvalidCategoryRelocateException } from '../exception/Invalid-Category-Relocate.exception';
 
 describe('CategoryController Test', () => {
   let app: INestApplication;
@@ -56,7 +58,7 @@ describe('CategoryController Test', () => {
       // given
       const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
 
-      const category = new Category(undefined, '카테고리1004');
+      const category = new Category(undefined, '카테고리1004', 0);
       category.id = 1004;
 
       when(
@@ -342,6 +344,74 @@ describe('CategoryController Test', () => {
           expect(res.body.success).toBe(false);
           expect(res.body.message).toBe('만료된 토큰입니다.');
         });
+    });
+  });
+
+  describe('카테고리의 순서를 변경할 수 있다.', () => {
+    it('카테고리의 순서를 변경할 수 있다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockCategoryService.relocateCategory(
+          anyOfClass(User),
+          anyOfClass(CategoryRelocateRequest),
+        ),
+      ).thenResolve(undefined);
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .put(`/api/v1/categories`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ order: [1, 2, 3] })
+        .expect(204);
+    });
+
+    it('카테고리의 개수가 일치하지 않으면 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockCategoryService.relocateCategory(
+          anyOfClass(User),
+          anyOfClass(CategoryRelocateRequest),
+        ),
+      ).thenThrow(new InvalidCategoryRelocateException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .put(`/api/v1/categories`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ order: [1, 2, 3] })
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe(
+            '잘못된 카테고리 순서 변경 요청입니다.',
+          );
+        });
+    });
+
+    it('카테고리의 순서가 배열의 형태가 아니면 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockCategoryService.relocateCategory(
+          anyOfClass(User),
+          anyOfClass(CategoryRelocateRequest),
+        ),
+      ).thenResolve(undefined);
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .put(`/api/v1/categories`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ order: 1 })
+        .expect(400);
     });
   });
 });

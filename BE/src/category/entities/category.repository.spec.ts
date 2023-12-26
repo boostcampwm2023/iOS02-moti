@@ -57,7 +57,7 @@ describe('CategoryRepository', () => {
     await transactionTest(dataSource, async () => {
       // given
       const user = await usersFixture.getUser('ABC');
-      const category = new Category(user, '카테고리1');
+      const category = new Category(user, '카테고리1', 0);
 
       // when
       const savedCategory = await categoryRepository.saveCategory(category);
@@ -72,7 +72,7 @@ describe('CategoryRepository', () => {
     await transactionTest(dataSource, async () => {
       // given
       const user = await usersFixture.getUser(1);
-      const category = new Category(user, '카테고리1');
+      const category = new Category(user, '카테고리1', 0);
       const savedCategory = await categoryRepository.saveCategory(category);
 
       // when

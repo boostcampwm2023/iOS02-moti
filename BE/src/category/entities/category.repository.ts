@@ -6,7 +6,7 @@ import { User } from '../../users/domain/user.domain';
 import { ICategoryMetaData } from '../index';
 import { CategoryMetaData } from '../dto/category-metadata';
 import { AchievementEntity } from '../../achievement/entities/achievement.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @CustomRepository(CategoryEntity)
 export class CategoryRepository extends TransactionalRepository<CategoryEntity> {
@@ -46,7 +46,7 @@ export class CategoryRepository extends TransactionalRepository<CategoryEntity> 
       .addSelect('COUNT(achievement.id)', 'achievementCount')
       .leftJoin('category.achievements', 'achievement')
       .where('category.user_id = :user', { user: user.id })
-      .orderBy('category.id', 'ASC')
+      .orderBy('category.seq', 'ASC')
       .groupBy('category.id')
       .getRawMany<ICategoryMetaData>();
 
@@ -66,7 +66,7 @@ export class CategoryRepository extends TransactionalRepository<CategoryEntity> 
       .leftJoin('category.achievements', 'achievement')
       .where('category.user_id = :user', { user: user.id })
       .andWhere('category.id = :categoryId', { categoryId: categoryId })
-      .orderBy('category.id', 'ASC')
+      .orderBy('category.seq', 'ASC')
       .groupBy('category.id')
       .getRawOne<ICategoryMetaData>();
 
@@ -113,5 +113,18 @@ export class CategoryRepository extends TransactionalRepository<CategoryEntity> 
       id: id,
     });
     return categoryEntity?.toModel();
+  }
+
+  async findAllByIdAndUser(userId: number, ids: number[]): Promise<Category[]> {
+    const categories = await this.repository
+      .createQueryBuilder('c')
+      .where('c.user_id = :userId')
+      .andWhere({ id: In(ids) })
+      .setParameter('userId', userId)
+      .orderBy(`FIELD(c.id, :...ids)`)
+      .setParameter('ids', ids)
+      .getMany();
+
+    return categories.map((c) => c.toModel());
   }
 }
