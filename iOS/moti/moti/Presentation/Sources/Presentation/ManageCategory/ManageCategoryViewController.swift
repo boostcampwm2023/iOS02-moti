@@ -154,11 +154,8 @@ extension ManageCategoryViewController: UICollectionViewDropDelegate {
     }
     
     private func move(sourceIndexPath: IndexPath, destinationIndexPath: IndexPath) {
-        let sourceItem = viewModel.categories[sourceIndexPath.item]
-        
-        // dataSource 이동
-        viewModel.categories.remove(at: sourceIndexPath.item)
-        viewModel.categories.insert(sourceItem, at: destinationIndexPath.item)
+        let (sourceIndex, destinationIndex) = (sourceIndexPath.item, destinationIndexPath.item)
+        viewModel.swap(sourceIndex: sourceIndex, destinationIndex: destinationIndex)
     }
     
     func collectionView(

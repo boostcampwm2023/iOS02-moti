@@ -47,6 +47,11 @@ final class ManageCategoryViewModel {
         categoryDataSource?.update(data: categories)
     }
     
+    func swap(sourceIndex: Int, destinationIndex: Int) {
+        // dataSource 이동
+        categories.swapAt(sourceIndex, destinationIndex)
+    }
+    
     func action(_ action: ManageCategoryViewModelAction) {
         switch action {
         case .reorderCategories:
