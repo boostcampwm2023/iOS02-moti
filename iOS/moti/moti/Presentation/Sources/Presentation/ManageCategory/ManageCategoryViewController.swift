@@ -103,8 +103,8 @@ private extension ManageCategoryViewController {
                 switch state {
                 case .success:
                     delegate?.doneButtonDidClicked()
-                case .failed(let message):
-                    showErrorAlert(message: message)
+                case .failed(_):
+                    showErrorAlert(message: "카테고리 순서 변경에 실패했습니다.")
                 }
                 
             }
