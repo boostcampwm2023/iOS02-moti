@@ -63,13 +63,11 @@ final class LaunchViewModel {
                 Logger.debug("version: \(String(describing: version))")
                 
                 versionState = .checkVersion
-                
-                versionState = .requiredUpdate
-//                if version.isNeedForcedUpdate {
-//                    versionState = .requiredUpdate
-//                } else {
-//                    versionState = .finish
-//                }
+                if version.isNeedForcedUpdate {
+                    versionState = .requiredUpdate
+                } else {
+                    versionState = .finish
+                }
             } catch {
                 Logger.debug("version error: \(error)")
                 versionState = .error(message: error.localizedDescription)
