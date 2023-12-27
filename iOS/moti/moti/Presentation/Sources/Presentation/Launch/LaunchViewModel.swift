@@ -25,7 +25,9 @@ final class LaunchViewModel {
     enum VersionState {
         case none
         case loading
-        case finish(version: Version)
+        case checkVersion
+        case finish
+        case requiredUpdate
         case error(message: String)
     }
     
@@ -60,7 +62,14 @@ final class LaunchViewModel {
                 let version = try await fetchVersionUseCase.execute()
                 Logger.debug("version: \(String(describing: version))")
                 
-                versionState = .finish(version: version)
+                versionState = .checkVersion
+                
+                versionState = .requiredUpdate
+//                if version.isNeedForcedUpdate {
+//                    versionState = .requiredUpdate
+//                } else {
+//                    versionState = .finish
+//                }
             } catch {
                 Logger.debug("version error: \(error)")
                 versionState = .error(message: error.localizedDescription)

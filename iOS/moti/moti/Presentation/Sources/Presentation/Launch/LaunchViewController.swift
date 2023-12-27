@@ -55,6 +55,19 @@ final class LaunchViewController: BaseViewController<LaunchView> {
             viewModel.action(.fetchVersion)
         }
     }
+    
+    private func showRequiredUpdateAlert() {
+        showOneButtonAlert(
+            title: "안내",
+            message: "앱 스토어에서 최신 앱으로 업데이트 하셔야만 실행이 가능합니다.",
+            okTitle: "업데이트",
+            okAction: {
+                let appstoreURLString = "itms-apps://itunes.apple.com/app/apple-store/6471563249"
+                guard let url = URL(string: appstoreURLString) else { return }
+                UIApplication.shared.open(url)
+            }
+        )
+    }
 }
 
 private extension LaunchViewController {
@@ -67,9 +80,14 @@ private extension LaunchViewController {
                 case .none: break
                 case .loading:
                     layoutView.update(progressMessage: "버전을 가져오는 중")
+                case .checkVersion:
+                    layoutView.update(progressMessage: "버전을 검사하는 중")
                 case .finish:
                     layoutView.update(progressMessage: "자동 로그인 시도 중")
                     viewModel.action(.autoLogin)
+                case .requiredUpdate:
+                    layoutView.update(progressMessage: "최신 앱으로 업데이트 필요")
+                    showRequiredUpdateAlert()
                 case .error(let message):
                     startRetryVersionTimer()
                     Logger.error("Launch Version Error: \(message)")
