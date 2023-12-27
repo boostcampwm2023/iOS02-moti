@@ -18,10 +18,12 @@ final class LaunchViewController: BaseViewController<LaunchView> {
     // MARK: - Properties
     weak var coordinator: LaunchCoodinator?
     weak var delegate: LaunchViewControllerDelegate?
-    
     private let viewModel: LaunchViewModel
     private var cancellables: Set<AnyCancellable> = []
     
+    private var retryTimer: Timer?
+    
+    // MARK: - Init
     init(viewModel: LaunchViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -36,10 +38,27 @@ final class LaunchViewController: BaseViewController<LaunchView> {
         super.viewDidLoad()
         bind()
         
-        viewModel.action(.launch)
+        viewModel.action(.fetchVersion)
     }
     
-    private func bind() {
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        retryTimer?.invalidate()
+        retryTimer = nil
+    }
+    
+    // MARK: - Methods
+    private func startRetryVersionTimer() {
+        retryTimer?.invalidate()
+        retryTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { [weak self] _ in
+            guard let self else { return }
+            viewModel.action(.fetchVersion)
+        }
+    }
+}
+
+private extension LaunchViewController {
+    func bind() {
         viewModel.$versionState
             .receive(on: RunLoop.main)
             .sink { [weak self] state in
@@ -52,6 +71,7 @@ final class LaunchViewController: BaseViewController<LaunchView> {
                     layoutView.update(progressMessage: "자동 로그인 시도 중")
                     viewModel.action(.autoLogin)
                 case .error(let message):
+                    startRetryVersionTimer()
                     Logger.error("Launch Version Error: \(message)")
                 }
             }

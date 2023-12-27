@@ -11,7 +11,7 @@ import Core
 
 final class LaunchViewModel {
     enum LaunchViewModelAction {
-        case launch
+        case fetchVersion
         case autoLogin
     }
     
@@ -45,7 +45,7 @@ final class LaunchViewModel {
     
     func action(_ action: LaunchViewModelAction) {
         switch action {
-        case .launch:
+        case .fetchVersion:
             fetchVersion()
         case .autoLogin:
             requestAutoLogin()
