@@ -64,7 +64,7 @@ export class CategoryService {
   }
 
   @Transactional()
-  async deleteCategory(user: User, categoryId: number){
+  async deleteCategory(user: User, categoryId: number) {
     const category = await this.categoryRepository.findByIdAndUser(
       user.id,
       categoryId,
