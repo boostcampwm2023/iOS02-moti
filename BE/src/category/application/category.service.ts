@@ -9,6 +9,7 @@ import { NotFoundCategoryException } from '../exception/not-found-category.excep
 import { CategoryRelocateRequest } from '../dto/category-relocate.request';
 import { UserRepository } from '../../users/entities/user.repository';
 import { InvalidCategoryRelocateException } from '../exception/Invalid-Category-Relocate.exception';
+import { CategoryNotFoundException } from '../exception/category-not-found.exception';
 
 @Injectable()
 export class CategoryService {
@@ -60,5 +61,17 @@ export class CategoryService {
       category.seq = index + 1;
       await this.categoryRepository.saveCategory(category);
     }
+  }
+
+  @Transactional()
+  async deleteCategory(user: User, categoryId: number){
+    const category = await this.categoryRepository.findByIdAndUser(
+      user.id,
+      categoryId,
+    );
+    if (!category) throw new CategoryNotFoundException();
+    user.deleteCategory();
+    await this.userRepository.updateUser(user);
+    await this.categoryRepository.deleteCategory(category);
   }
 }
