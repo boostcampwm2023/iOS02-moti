@@ -97,7 +97,7 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
 private extension ManageCategoryViewController {
     func bind() {
         viewModel.reorderCategoriesState
-            .receive(on: DispatchQueue.main)
+            .receive(on: RunLoop.main)
             .sink { [weak self] state in
                 guard let self else { return }
                 switch state {
