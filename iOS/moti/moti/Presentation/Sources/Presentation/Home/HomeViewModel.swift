@@ -92,7 +92,7 @@ final class HomeViewModel {
     
     func action(_ action: HomeViewModelAction) {
         switch action {
-        case .launch:
+        case .fetchCategoryList:
             fetchCategories()
         case .fetchCurrentCategoryInfo:
             guard let currentCategory else { return }

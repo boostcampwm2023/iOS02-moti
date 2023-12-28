@@ -37,7 +37,8 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
-        setupManageCategoryDataSource()
+        bind()
+        setupManageCategoryCollectionView()
     }
     
     private func setupNavigationBar() {
@@ -60,8 +61,12 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
     }
     
     @objc private func doneButtonDidClicked() {
-        // viewModel.action()
-        delegate?.doneButtonDidClicked()
+        viewModel.action(.reorderCategories)
+    }
+    
+    private func setupManageCategoryCollectionView() {
+        setupManageCategoryDataSource()
+        setupManageCategoryDragDrop()
     }
     
     private func setupManageCategoryDataSource() {
@@ -81,8 +86,86 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
         let diffableDataSource = ManageCategoryViewModel.CategoryDataSource(dataSource: dataSource)
         viewModel.setupDataSource(diffableDataSource)
     }
+    
+    private func setupManageCategoryDragDrop() {
+        layoutView.manageCategoryCollectionView.dragDelegate = self
+        layoutView.manageCategoryCollectionView.dropDelegate = self
+        layoutView.manageCategoryCollectionView.dragInteractionEnabled = true
+    }
+}
+
+private extension ManageCategoryViewController {
+    func bind() {
+        viewModel.reorderCategoriesState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .success:
+                    delegate?.doneButtonDidClicked()
+                case .failed(_):
+                    showErrorAlert(message: "카테고리 순서 변경에 실패했습니다.")
+                }
+                
+            }
+            .store(in: &cancellables)
+    }
 }
 
 extension ManageCategoryViewController: UICollectionViewDelegate {
     
+}
+
+extension ManageCategoryViewController: UICollectionViewDragDelegate {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        itemsForBeginning session: UIDragSession, 
+        at indexPath: IndexPath
+    ) -> [UIDragItem] {
+        return [UIDragItem(itemProvider: NSItemProvider())]
+    }
+}
+
+extension ManageCategoryViewController: UICollectionViewDropDelegate {
+    func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
+        var destinationIndexPath: IndexPath
+        if let indexPath = coordinator.destinationIndexPath {
+            destinationIndexPath = indexPath
+        } else {
+            let row = collectionView.numberOfItems(inSection: 0)
+            destinationIndexPath = IndexPath(item: row - 1, section: 0)
+        }
+        
+        guard coordinator.proposal.operation == .move else { return }
+        move(coordinator: coordinator, destinationIndexPath: destinationIndexPath, collectionView: collectionView)
+    }
+    
+    private func move(coordinator: UICollectionViewDropCoordinator, destinationIndexPath: IndexPath, collectionView: UICollectionView) {
+        guard
+            let sourceItem = coordinator.items.first,
+            let sourceIndexPath = sourceItem.sourceIndexPath
+        else { return }
+        
+        collectionView.performBatchUpdates { [weak self] in
+            self?.move(sourceIndexPath: sourceIndexPath, destinationIndexPath: destinationIndexPath)
+        } completion: { finish in
+            coordinator.drop(sourceItem.dragItem, toItemAt: destinationIndexPath)
+        }
+    }
+    
+    private func move(sourceIndexPath: IndexPath, destinationIndexPath: IndexPath) {
+        let (sourceIndex, destinationIndex) = (sourceIndexPath.item, destinationIndexPath.item)
+        viewModel.swap(sourceIndex: sourceIndex, destinationIndex: destinationIndex)
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        dropSessionDidUpdate session: UIDropSession,
+        withDestinationIndexPath destinationIndexPath: IndexPath?
+    ) -> UICollectionViewDropProposal {
+        guard collectionView.hasActiveDrag else {
+            return UICollectionViewDropProposal(operation: .forbidden)
+        }
+        return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+    }
 }

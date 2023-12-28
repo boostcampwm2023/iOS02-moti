@@ -65,6 +65,7 @@ public final class HomeCoordinator: Coordinator {
     
     func moveToManageCategoryViewController(categories: [CategoryItem]) {
         let manageCategoryCoordinator = ManageCategoryCoordinator(navigationController, self)
+        manageCategoryCoordinator.delegate = self
         childCoordinators.append(manageCategoryCoordinator)
         manageCategoryCoordinator.start(categories: categories)
     }
@@ -107,3 +108,10 @@ extension HomeCoordinator: EditAchievementCoordinatorDelegate {
 
 // MARK: - CaptureCoordinatorDelegate
 extension HomeCoordinator: CaptureCoordinatorDelegate { }
+
+// MARK: - ManageCategoryCoordinatorDelegate
+extension HomeCoordinator: ManageCategoryCoordinatorDelegate {
+    func doneButtonDidClicked() {
+        currentViewController?.fetchCategoryList()
+    }
+}
