@@ -2,12 +2,16 @@ import { User } from '../../src/users/domain/user.domain';
 import { Injectable } from '@nestjs/common';
 import { Category } from '../../src/category/domain/category.domain';
 import { CategoryRepository } from '../../src/category/entities/category.repository';
+import { UserRepository } from '../../src/users/entities/user.repository';
 
 @Injectable()
 export class CategoryFixture {
   private static id = 0;
 
-  constructor(private readonly categoryRepository: CategoryRepository) {}
+  constructor(
+    private readonly categoryRepository: CategoryRepository,
+    private readonly userRepository: UserRepository,
+  ) {}
 
   async getCategory(user: User, name?: string): Promise<Category> {
     user.categoryCount++;
@@ -16,7 +20,8 @@ export class CategoryFixture {
       user,
       name || CategoryFixture.getDummyCategoryName(),
     );
-
+    await this.userRepository.updateUser(user);
+    category.seq = user.categorySequence;
     return await this.categoryRepository.saveCategory(category);
   }
 

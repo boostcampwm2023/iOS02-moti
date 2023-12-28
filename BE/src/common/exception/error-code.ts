@@ -151,4 +151,8 @@ export const ERROR_INFO = {
     statusCode: 400,
     message: '잘못된 카테고리 순서 변경 요청입니다.',
   },
+  CATEGORY_NOT_FOUND: {
+    statusCode: 404,
+    message: '카테고리를 찾을 수 없습니다.',
+  },
 } as const;
