@@ -35,8 +35,11 @@ final class ManageCategoryCollectionViewCell: UICollectionViewCell {
     
     private var accessoryButton = {
         let button = UIButton(type: .system)
-        button.setImage(.init(systemName: "line.3.horizontal"), for: .normal)
-        button.tintColor = .lightGray
+//        button.setImage(.init(systemName: "line.3.horizontal"), for: .normal)
+//        button.tintColor = .lightGray
+        
+        button.setTitle("삭제", for: .normal)
+        button.setTitleColor(.red, for: .normal)
         return button
     }()
     
