@@ -66,6 +66,8 @@ extension GroupInfoViewController: UITableViewDelegate {
                     viewModel.action(.dropGroup(groupId: group.id))
                 }
             }
+        } else if dataSource.isBlockCell(indexPath: indexPath) {
+            coordinator?.moveToBlockUserViewController(group: group)
         }
     }
 }
