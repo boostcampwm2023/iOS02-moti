@@ -24,6 +24,12 @@ public struct User: Hashable {
     public let avatarURL: URL?
     public let blockedDate: Date?
     
+    public init(code: String, avatarURL: URL?) {
+        self.code = code
+        self.avatarURL = avatarURL
+        self.blockedDate = nil
+    }
+    
     public init(code: String, avatarURL: URL?, blockedDate: Date?) {
         self.code = code
         self.avatarURL = avatarURL
