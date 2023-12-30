@@ -59,7 +59,7 @@ extension BlockedUserListViewController: UICollectionViewDelegate {
 
 extension BlockedUserListViewController: BlockedUserListCollectionViewCellDelegate {
     func unblockButtonDidClicked() {
-        print("차단 해제 버튼 눌림!")
+        Logger.debug("차단 해제 버튼 눌림!")
         // viewModel.action(.unblock)
     }
 }
