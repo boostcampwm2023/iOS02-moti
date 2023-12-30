@@ -4,10 +4,10 @@ import {
   HttpCode,
   Post,
   Query,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AdminService } from '../application/admin.service';
-import { AccessTokenGuard } from '../../auth/guard/access-token.guard';
 import { AdminRegister } from '../dto/admin-register';
 import { AuthenticatedUser } from '../../auth/decorator/athenticated-user.decorator';
 import { User } from '../../users/domain/user.domain';
@@ -21,6 +21,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { Response } from 'express';
 import { AdminTokenGuard } from '../../auth/guard/admin-token.guard';
 
 @Controller('/api/v1/admin')
@@ -30,7 +31,7 @@ export class AdminRestController {
 
   @HttpCode(204)
   @Post('register')
-  @UseGuards(AccessTokenGuard)
+  @UseGuards(AdminTokenGuard)
   @ApiOperation({
     summary: '어드민 등록 요청 API',
     description: '어드민 등록 요청',
@@ -60,8 +61,10 @@ export class AdminRestController {
   })
   async loginAdmin(
     @Body() loginRequest: AdminLogin,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<ApiData<AdminToken>> {
     const adminToken = await this.adminService.loginAdmin(loginRequest);
+    response.cookie('access-token', adminToken);
     return ApiData.success(AdminToken.from(adminToken));
   }
 
