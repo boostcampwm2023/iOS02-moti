@@ -27,11 +27,11 @@ final class BlockedUserListCoordinator: Coordinator {
     
     func start(group: Group) {
         let blockingRepository = BlockingRepository(groupId: group.id)
-        let blockUserVM = BlockedUserListViewModel(
+        let blockedUserListVM = BlockedUserListViewModel(
             fetchBlockedUserListUseCase: .init(blockingRepository: blockingRepository)
         )
-        let blockUserVC = BlockedUserListViewController(viewModel: blockUserVM)
-        blockUserVC.coordinator = self
-        navigationController.pushViewController(blockUserVC, animated: true)
+        let blockedUserListVC = BlockedUserListViewController(viewModel: blockedUserListVM)
+        blockedUserListVC.coordinator = self
+        navigationController.pushViewController(blockedUserListVC, animated: true)
     }
 }

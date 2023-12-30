@@ -10,7 +10,7 @@ import Combine
 import Core
 import Domain
 
-final class BlockedUserListViewController: BaseViewController<BlockedUserView>, LoadingIndicator, HiddenTabBarViewController {
+final class BlockedUserListViewController: BaseViewController<BlockedUserListView>, LoadingIndicator, HiddenTabBarViewController {
 
     // MARK: - Properties
     weak var coordinator: BlockedUserListCoordinator?
