@@ -47,7 +47,7 @@ final class BlockedUserListCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private let blockDateLabel = {
+    private let blockedDateLabel = {
         let label = UILabel()
         label.font = .medium
         label.numberOfLines = 1
@@ -79,7 +79,7 @@ final class BlockedUserListCollectionViewCell: UICollectionViewCell {
         }
         userCodeLabel.text = "@" + blockedUser.user.code
         guard let blockDate = blockedUser.createdAt else { return }
-        blockDateLabel.text = blockDate.convertStringYYYY년_MM월_dd일() + " 차단"
+        blockedDateLabel.text = blockDate.convertStringYYYY년_MM월_dd일() + " 차단"
     }
     
     func cancelDownloadImage() {
@@ -109,7 +109,7 @@ private extension BlockedUserListCollectionViewCell {
     
     func setupStackView() {
         labelStackView.addArrangedSubview(userCodeLabel)
-        labelStackView.addArrangedSubview(blockDateLabel)
+        labelStackView.addArrangedSubview(blockedDateLabel)
         
         addSubview(labelStackView)
         labelStackView.atl
