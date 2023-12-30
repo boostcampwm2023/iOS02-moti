@@ -73,7 +73,10 @@ final class BlockedUserListViewController: BaseViewController<BlockedUserListVie
 }
 
 extension BlockedUserListViewController: UICollectionViewDelegate {
-    
+    func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let cell = cell as? BlockedUserListCollectionViewCell else { return }
+        cell.cancelDownloadImage()
+    }
 }
 
 extension BlockedUserListViewController: BlockedUserListCollectionViewCellDelegate {
