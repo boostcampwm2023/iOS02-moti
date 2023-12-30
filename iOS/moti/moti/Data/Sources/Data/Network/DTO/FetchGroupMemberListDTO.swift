@@ -28,7 +28,7 @@ struct GroupMemberDTO: Codable {
 extension GroupMember {
     init(dto: GroupMemberDTO) {
         self.init(
-            user: .init(code: dto.userCode, avatarURL: dto.avatarUrl),
+            user: .init(code: dto.userCode, avatarURL: dto.avatarUrl, blockedDate: nil),
             lastChallenged: dto.lastChallenged,
             grade: GroupGrade(rawValue: dto.grade ?? "") ?? .participant
         )

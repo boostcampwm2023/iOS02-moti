@@ -21,11 +21,11 @@ final class BlockedUserListViewModel {
         case failed(message: String)
     }
     
-    typealias BlockedUserListDataSource = ListDiffableDataSource<BlockedUser>
+    typealias BlockedUserListDataSource = ListDiffableDataSource<User>
     
     // MARK: - Properties
     private var blockUserDataSource: BlockedUserListDataSource?
-    private var blockedUsers: [BlockedUser] = [] {
+    private var blockedUsers: [User] = [] {
         didSet {
             blockUserDataSource?.update(data: blockedUsers)
         }

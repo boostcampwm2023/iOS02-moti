@@ -24,11 +24,12 @@ struct BlockedUserDTO: Codable {
     let createdAt: Date?
 }
 
-extension BlockedUser {
+extension User {
     init(dto: BlockedUserDTO) {
         self.init(
-            user: .init(code: dto.userCode, avatarURL: dto.avatarUrl),
-            createdAt: dto.createdAt
+            code: dto.userCode,
+            avatarURL: dto.avatarUrl,
+            blockedDate: dto.createdAt
         )
     }
 }

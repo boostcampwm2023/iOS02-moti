@@ -73,13 +73,13 @@ final class BlockedUserListCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Methods
-    func configure(with blockedUser: BlockedUser) {
-        if let url = blockedUser.user.avatarURL {
+    func configure(with user: User) {
+        if let url = user.avatarURL {
             iconImageView.jk.setImage(with: url, downsamplingScale: 1.5)
         }
-        userCodeLabel.text = "@" + blockedUser.user.code
-        guard let blockDate = blockedUser.createdAt else { return }
-        blockedDateLabel.text = blockDate.convertStringYYYY년_MM월_dd일() + " 차단"
+        userCodeLabel.text = "@" + user.code
+        guard let blockedDate = user.blockedDate else { return }
+        blockedDateLabel.text = blockedDate.convertStringYYYY년_MM월_dd일() + " 차단"
     }
     
     func cancelDownloadImage() {

@@ -30,6 +30,6 @@ extension UserToken {
 
 extension User {
     init(dto: UserDTO) {
-        self.init(code: dto.userCode ?? "", avatarURL: dto.avatarUrl)
+        self.init(code: dto.userCode ?? "", avatarURL: dto.avatarUrl, blockedDate: nil)
     }
 }

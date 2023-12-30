@@ -51,7 +51,7 @@ public struct Achievement: Hashable {
         } else {
             let myUserId = UserDefaults.standard.readString(key: .myUserCode) ?? ""
             let myAvatarUrlString = UserDefaults.standard.readString(key: .myAvatarUrlString) ?? ""
-            self.user = User(code: myUserId, avatarURL: URL(string: myAvatarUrlString))
+            self.user = User(code: myUserId, avatarURL: URL(string: myAvatarUrlString), blockedDate: nil)
             self.userCode = myUserId
         }
     }
@@ -76,7 +76,7 @@ public struct Achievement: Hashable {
         } else {
             let myUserId = UserDefaults.standard.readString(key: .myUserCode) ?? ""
             let myAvatarUrlString = UserDefaults.standard.readString(key: .myAvatarUrlString) ?? ""
-            self.user = User(code: myUserId, avatarURL: URL(string: myAvatarUrlString))
+            self.user = User(code: myUserId, avatarURL: URL(string: myAvatarUrlString), blockedDate: nil)
             self.userCode = myUserId
         }
     }

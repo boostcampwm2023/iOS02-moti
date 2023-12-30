@@ -14,7 +14,7 @@ public struct FetchBlockedUserListUseCase {
         self.blockingRepository = blockingRepository
     }
     
-    public func execute() async throws -> [BlockedUser] {
+    public func execute() async throws -> [User] {
         return try await blockingRepository.fetchBlockedUserList()
     }
 }

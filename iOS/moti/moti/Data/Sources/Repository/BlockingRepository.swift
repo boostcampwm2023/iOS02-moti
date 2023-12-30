@@ -29,11 +29,11 @@ public struct BlockingRepository: BlockingRepositoryProtocol {
         return responseDTO.success ?? false
     }
     
-    public func fetchBlockedUserList() async throws -> [BlockedUser] {
+    public func fetchBlockedUserList() async throws -> [User] {
         let endpoint = MotiAPI.fetchBlockedUserList
         let responseDTO = try await provider.request(with: endpoint, type: FetchBlockedUserListResponseDTO.self)
         
         guard let blockedUserListDTO = responseDTO.data?.data else { throw NetworkError.decode }
-        return blockedUserListDTO.map { BlockedUser(dto: $0) }
+        return blockedUserListDTO.map { User(dto: $0) }
     }
 }

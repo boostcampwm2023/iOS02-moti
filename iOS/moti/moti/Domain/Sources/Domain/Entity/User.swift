@@ -22,14 +22,17 @@ public struct UserToken: Equatable {
 public struct User: Hashable {
     public let code: String
     public let avatarURL: URL?
+    public let blockedDate: Date?
     
-    public init(code: String, avatarURL: URL?) {
+    public init(code: String, avatarURL: URL?, blockedDate: Date?) {
         self.code = code
         self.avatarURL = avatarURL
+        self.blockedDate = blockedDate
     }
     
     public init() {
         self.code = ""
         self.avatarURL = nil
+        self.blockedDate = nil
     }
 }
