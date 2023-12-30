@@ -151,4 +151,8 @@ export const ERROR_INFO = {
     statusCode: 400,
     message: '잘못된 카테고리 순서 변경 요청입니다.',
   },
+  UNAUTHORIZED_ADMIN_PAGE: {
+    statusCode: 403,
+    message: '접근할 수 없는 요청입니다.',
+  },
 } as const;
