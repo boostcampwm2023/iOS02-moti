@@ -9,7 +9,7 @@ import UIKit
 
 final class GroupInfoTableViewDataSource: NSObject, UITableViewDataSource {
     private var sectionHeaders = ["그룹"]
-    private var cellTexts = [["그룹원", "탈퇴"]]
+    private var cellTexts = [["그룹원", "차단 관리", "탈퇴"]]
     
     // MARK: Methods
     func appendLeaderSection() {
@@ -17,12 +17,16 @@ final class GroupInfoTableViewDataSource: NSObject, UITableViewDataSource {
         cellTexts.append(["그룹원 관리"])
     }
     
-    func isDropCell(indexPath: IndexPath) -> Bool {
+    func isGroupMemberCell(indexPath: IndexPath) -> Bool {
+        return indexPath.section == 0 && indexPath.row == 0
+    }
+    
+    func isBlockCell(indexPath: IndexPath) -> Bool {
         return indexPath.section == 0 && indexPath.row == 1
     }
     
-    func isGroupMemberCell(indexPath: IndexPath) -> Bool {
-        return indexPath.section == 0 && indexPath.row == 0
+    func isDropCell(indexPath: IndexPath) -> Bool {
+        return indexPath.section == 0 && indexPath.row == 2
     }
     
     func isLeaderCell(indexPath: IndexPath) -> Bool {

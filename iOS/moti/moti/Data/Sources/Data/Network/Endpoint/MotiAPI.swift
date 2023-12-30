@@ -44,6 +44,7 @@ enum MotiAPI: EndpointProtocol {
     // 차단
     case blockingUser(userCode: String)
     case blockingAchievement(achievementId: Int, groupId: Int)
+    case fetchBlockedUserList
     // 이모지
     case fetchEmojis(achievementId: Int, groupId: Int)
     case toggleEmoji(achievementId: Int, groupId: Int, emojiId: String)
@@ -114,6 +115,8 @@ extension MotiAPI {
             return "/groups/\(groupId)/participation"
         case .joinGroup:
             return "/groups/participation"
+        case .fetchBlockedUserList:
+            return "/users/reject"
         }
     }
     
@@ -152,6 +155,7 @@ extension MotiAPI {
         case .toggleEmoji: return .post
         case .dropGroup: return .delete
         case .joinGroup: return .post
+        case .fetchBlockedUserList: return .get
         }
     }
     
