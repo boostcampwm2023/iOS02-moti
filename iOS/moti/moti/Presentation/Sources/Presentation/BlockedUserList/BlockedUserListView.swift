@@ -7,13 +7,13 @@
 
 import UIKit
 
-final class BlockUserView: UIView {
+final class BlockedUserListView: UIView {
     
     // MARK: - Views
     private(set) lazy var blockUserCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout())
         collectionView.backgroundColor = .motiBackground
-        collectionView.register(with: BlockUserCollectionViewCell.self)
+        collectionView.register(with: BlockedUserListCollectionViewCell.self)
         return collectionView
     }()
     
@@ -37,7 +37,7 @@ final class BlockUserView: UIView {
     }
 }
 
-private extension BlockUserView {
+private extension BlockedUserListView {
     func makeCollectionViewLayout() -> UICollectionViewLayout {
         let itemPadding: CGFloat = 20
         let itemSize = NSCollectionLayoutSize(

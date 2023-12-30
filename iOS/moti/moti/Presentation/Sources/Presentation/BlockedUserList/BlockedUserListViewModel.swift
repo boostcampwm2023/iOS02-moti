@@ -10,7 +10,7 @@ import Domain
 import Core
 import Combine
 
-final class BlockUserViewModel {
+final class BlockedUserListViewModel {
     enum BlockUserViewModelAction {
         case fetchBlockedUserList
         case unblockUser

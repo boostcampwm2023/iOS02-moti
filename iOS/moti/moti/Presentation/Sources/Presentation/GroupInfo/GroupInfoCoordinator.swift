@@ -41,7 +41,7 @@ final class GroupInfoCoordinator: Coordinator {
     }
     
     func moveToBlockUserViewController(group: Group) {
-        let blockUserCoordinator = BlockUserCoordinator(navigationController, self)
+        let blockUserCoordinator = BlockedUserListCoordinator(navigationController, self)
         blockUserCoordinator.start(group: group)
         childCoordinators.append(blockUserCoordinator)
     }

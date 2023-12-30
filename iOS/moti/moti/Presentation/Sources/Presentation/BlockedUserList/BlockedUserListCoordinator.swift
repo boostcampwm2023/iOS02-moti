@@ -10,7 +10,7 @@ import Core
 import Domain
 import Data
 
-final class BlockUserCoordinator: Coordinator {
+final class BlockedUserListCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
@@ -27,10 +27,10 @@ final class BlockUserCoordinator: Coordinator {
     
     func start(group: Group) {
         let blockingRepository = BlockingRepository(groupId: group.id)
-        let blockUserVM = BlockUserViewModel(
+        let blockUserVM = BlockedUserListViewModel(
             fetchBlockedUserListUseCase: .init(blockingRepository: blockingRepository)
         )
-        let blockUserVC = BlockUserViewController(viewModel: blockUserVM)
+        let blockUserVC = BlockedUserListViewController(viewModel: blockUserVM)
         blockUserVC.coordinator = self
         navigationController.pushViewController(blockUserVC, animated: true)
     }

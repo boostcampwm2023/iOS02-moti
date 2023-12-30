@@ -10,15 +10,15 @@ import Domain
 import Jeongfisher
 import Design
 
-protocol BlockUserCollectionViewCellDelegate: AnyObject {
+protocol BlockedUserListCollectionViewCellDelegate: AnyObject {
     func unblockButtonDidClicked()
 }
 
-final class BlockUserCollectionViewCell: UICollectionViewCell {
+final class BlockedUserListCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
     private let iconSize: CGFloat = 60
-    weak var delegate: BlockUserCollectionViewCellDelegate?
+    weak var delegate: BlockedUserListCollectionViewCellDelegate?
     
     // MARK: - Views
     private lazy var iconImageView = {
@@ -88,7 +88,7 @@ final class BlockUserCollectionViewCell: UICollectionViewCell {
 }
 
 // MARK: - Setup
-private extension BlockUserCollectionViewCell {
+private extension BlockedUserListCollectionViewCell {
     func setupUI() {
         self.layer.cornerRadius = CornerRadius.big
         self.layer.borderWidth = 1

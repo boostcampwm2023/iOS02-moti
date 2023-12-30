@@ -10,15 +10,15 @@ import Combine
 import Core
 import Domain
 
-final class BlockUserViewController: BaseViewController<BlockUserView>, HiddenTabBarViewController {
+final class BlockedUserListViewController: BaseViewController<BlockedUserListView>, HiddenTabBarViewController {
 
     // MARK: - Properties
-    weak var coordinator: BlockUserCoordinator?
-    private let viewModel: BlockUserViewModel
+    weak var coordinator: BlockedUserListCoordinator?
+    private let viewModel: BlockedUserListViewModel
     private var cancellables: Set<AnyCancellable> = []
     
     // MARK: - Init
-    init(viewModel: BlockUserViewModel) {
+    init(viewModel: BlockedUserListViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
@@ -37,27 +37,27 @@ final class BlockUserViewController: BaseViewController<BlockUserView>, HiddenTa
     
     private func setupBlockUserDataSource() {
         layoutView.blockUserCollectionView.delegate = self
-        let dataSource = BlockUserViewModel.BlockUserDataSource.DataSource(
+        let dataSource = BlockedUserListViewModel.BlockUserDataSource.DataSource(
             collectionView: layoutView.blockUserCollectionView,
             cellProvider: { [weak self] collectionView, indexPath, item in
                 guard let self else { return UICollectionViewCell() }
-                let cell: BlockUserCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
+                let cell: BlockedUserListCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
                 cell.configure(with: item)
                 cell.delegate = self
                 return cell
             }
         )
         
-        let diffableDataSource = BlockUserViewModel.BlockUserDataSource(dataSource: dataSource)
+        let diffableDataSource = BlockedUserListViewModel.BlockUserDataSource(dataSource: dataSource)
         viewModel.setupDataSource(diffableDataSource)
     }
 }
 
-extension BlockUserViewController: UICollectionViewDelegate {
+extension BlockedUserListViewController: UICollectionViewDelegate {
     
 }
 
-extension BlockUserViewController: BlockUserCollectionViewCellDelegate {
+extension BlockedUserListViewController: BlockedUserListCollectionViewCellDelegate {
     func unblockButtonDidClicked() {
         print("차단 해제 버튼 눌림!")
         // viewModel.action(.unblock)
