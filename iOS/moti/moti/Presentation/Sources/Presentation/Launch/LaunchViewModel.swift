@@ -11,7 +11,7 @@ import Core
 
 final class LaunchViewModel {
     enum LaunchViewModelAction {
-        case launch
+        case fetchVersion
         case autoLogin
     }
     
@@ -25,7 +25,9 @@ final class LaunchViewModel {
     enum VersionState {
         case none
         case loading
-        case finish(version: Version)
+        case checkVersion
+        case finish
+        case requiredUpdate
         case error(message: String)
     }
     
@@ -45,7 +47,7 @@ final class LaunchViewModel {
     
     func action(_ action: LaunchViewModelAction) {
         switch action {
-        case .launch:
+        case .fetchVersion:
             fetchVersion()
         case .autoLogin:
             requestAutoLogin()
@@ -60,7 +62,12 @@ final class LaunchViewModel {
                 let version = try await fetchVersionUseCase.execute()
                 Logger.debug("version: \(String(describing: version))")
                 
-                versionState = .finish(version: version)
+                versionState = .checkVersion
+                if version.isNeedForcedUpdate {
+                    versionState = .requiredUpdate
+                } else {
+                    versionState = .finish
+                }
             } catch {
                 Logger.debug("version error: \(error)")
                 versionState = .error(message: error.localizedDescription)

@@ -38,4 +38,8 @@ export class User {
     ++this.categoryCount;
     return new Category(this, categoryName, ++this.categorySequence);
   }
+
+  deleteCategory() {
+    this.categoryCount--;
+  }
 }

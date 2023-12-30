@@ -17,6 +17,7 @@ import { GroupCategoryMetadata } from '../../group/category/dto/group-category-m
 import { NotFoundCategoryException } from '../exception/not-found-category.exception';
 import { CategoryRelocateRequest } from '../dto/category-relocate.request';
 import { InvalidCategoryRelocateException } from '../exception/Invalid-Category-Relocate.exception';
+import { CategoryNotFoundException } from '../exception/category-not-found.exception';
 
 describe('CategoryController Test', () => {
   let app: INestApplication;
@@ -412,6 +413,77 @@ describe('CategoryController Test', () => {
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ order: 1 })
         .expect(400);
+    });
+  });
+
+  describe('deleteCategory는 카테고리를 삭제할 수 있다.', () => {
+    it('카테고리 삭제에 성공하면 204을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(mockCategoryService.deleteCategory(anyOfClass(User), 1)).thenResolve(
+        undefined,
+      );
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete(`/api/v1/categories/1`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(204);
+    });
+
+    it('카테고리 삭제에 실패하면 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(mockCategoryService.deleteCategory(anyOfClass(User), 1)).thenThrow(
+        new CategoryNotFoundException(),
+      );
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete(`/api/v1/categories/1`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(404)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('카테고리를 찾을 수 없습니다.');
+        });
+    });
+
+    it('잘못된 인증시 401을 반환한다.', async () => {
+      // given
+      const accessToken = 'abcd.abcd.efgh';
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .get(`/api/v1/categories/1006`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('잘못된 토큰입니다.');
+        });
+    });
+
+    it('만료된 인증정보에 401을 반환한다.', async () => {
+      // given
+      const { accessToken } =
+        await authFixture.getExpiredAccessTokenUser('ABC');
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .delete(`/api/v1/categories/1`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('만료된 토큰입니다.');
+        });
     });
   });
 });

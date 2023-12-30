@@ -10,10 +10,15 @@ import Core
 import Domain
 import Data
 
+protocol ManageCategoryCoordinatorDelegate: AnyObject {
+    func doneButtonDidClicked()
+}
+
 final class ManageCategoryCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
+    weak var delegate: ManageCategoryCoordinatorDelegate?
     
     init(
         _ navigationController: UINavigationController,
@@ -26,8 +31,10 @@ final class ManageCategoryCoordinator: Coordinator {
     func start() { }
     
     func start(categories: [CategoryItem]) {
+        let categoryRepository = CategoryRepository()
         let manageCategoryVM = ManageCategoryViewModel(
-            categories: categories
+            categories: categories,
+            reorderCategoriesUseCase: .init(repository: categoryRepository)
         )
         let manageCategoryVC = ManageCategoryViewController(viewModel: manageCategoryVM)
         manageCategoryVC.coordinator = self
@@ -43,6 +50,7 @@ extension ManageCategoryCoordinator: ManageCategoryViewControllerDelegate {
     }
     
     func doneButtonDidClicked() {
+        delegate?.doneButtonDidClicked()
         parentCoordinator?.dismiss(child: self, animated: true)
     }
 }

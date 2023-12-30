@@ -39,7 +39,7 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
         setupAchievementDataSource()
         setupCategoryDataSource()
         
-        viewModel.action(.launch)
+        viewModel.action(.fetchCategoryList)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -162,6 +162,10 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
     
     func blockedUser(_ userCode: String) {
         viewModel.action(.deleteUserDataSourceItem(userCode: userCode))
+    }
+    
+    func fetchCategoryList() {
+        viewModel.action(.fetchCategoryList)
     }
     
     private func showCelebrate(with achievement: Achievement) {

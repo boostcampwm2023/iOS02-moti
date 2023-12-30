@@ -20,6 +20,7 @@ enum MotiAPI: EndpointProtocol {
     case fetchCategory(categoryId: Int)
     case fetchCategoryList
     case addCategory(requestValue: AddCategoryRequestValue)
+    case reorderCategories(requestValue: ReorderCategoriesRequestValue)
     case fetchDetailAchievement(requestValue: FetchDetailAchievementRequestValue)
     case deleteAchievement(achievementId: Int)
     case updateAchievement(requestValue: UpdateAchievementRequestValue)
@@ -43,6 +44,7 @@ enum MotiAPI: EndpointProtocol {
     // 차단
     case blockingUser(userCode: String)
     case blockingAchievement(achievementId: Int, groupId: Int)
+    case fetchBlockedUserList
     // 이모지
     case fetchEmojis(achievementId: Int, groupId: Int)
     case toggleEmoji(achievementId: Int, groupId: Int, emojiId: String)
@@ -71,6 +73,7 @@ extension MotiAPI {
         case .fetchCategory(let categoryId): return "/categories/\(categoryId)"
         case .fetchCategoryList: return "/categories"
         case .addCategory: return "/categories"
+        case .reorderCategories: return "/categories"
         case .fetchDetailAchievement(let requestValue): return "/achievements/\(requestValue.id)"
         case .saveImage: return "/images"
         case .deleteAchievement(let achievementId): return "/achievements/\(achievementId)"
@@ -112,6 +115,8 @@ extension MotiAPI {
             return "/groups/\(groupId)/participation"
         case .joinGroup:
             return "/groups/participation"
+        case .fetchBlockedUserList:
+            return "/users/reject"
         }
     }
     
@@ -125,6 +130,7 @@ extension MotiAPI {
         case .fetchCategory: return .get
         case .fetchCategoryList: return .get
         case .addCategory: return .post
+        case .reorderCategories: return .put
         case .fetchDetailAchievement: return .get
         case .saveImage: return .post
         case .deleteAchievement: return .delete
@@ -149,6 +155,7 @@ extension MotiAPI {
         case .toggleEmoji: return .post
         case .dropGroup: return .delete
         case .joinGroup: return .post
+        case .fetchBlockedUserList: return .get
         }
     }
     
@@ -172,6 +179,8 @@ extension MotiAPI {
         case .revoke(let requestValue):
             return requestValue
         case .addCategory(let requestValue):
+            return requestValue
+        case .reorderCategories(let requestValue):
             return requestValue
         case .updateAchievement(let requestValue):
             return requestValue.body

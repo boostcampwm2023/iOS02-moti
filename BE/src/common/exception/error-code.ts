@@ -155,4 +155,8 @@ export const ERROR_INFO = {
     statusCode: 403,
     message: '접근할 수 없는 요청입니다.',
   },
+  CATEGORY_NOT_FOUND: {
+    statusCode: 404,
+    message: '카테고리를 찾을 수 없습니다.',
+  },
 } as const;

@@ -10,4 +10,5 @@ import Foundation
 public protocol BlockingRepositoryProtocol {
     func blockingUser(userCode: String) async throws -> Bool
     func blockingAchievement(achievementId: Int) async throws -> Bool
+    func fetchBlockedUserList() async throws -> [User]
 }

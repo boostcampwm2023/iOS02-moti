@@ -10,7 +10,7 @@ import Domain
 
 extension HomeViewModel {
     enum HomeViewModelAction {
-        case launch
+        case fetchCategoryList
         case fetchCurrentCategoryInfo
         case fetchCategoryInfo(categoryId: Int)
         case addCategory(name: String)

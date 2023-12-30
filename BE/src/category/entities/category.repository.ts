@@ -46,6 +46,7 @@ export class CategoryRepository extends TransactionalRepository<CategoryEntity> 
       .addSelect('COUNT(achievement.id)', 'achievementCount')
       .leftJoin('category.achievements', 'achievement')
       .where('category.user_id = :user', { user: user.id })
+      .andWhere('category.deletedAt is NULL')
       .orderBy('category.seq', 'ASC')
       .groupBy('category.id')
       .getRawMany<ICategoryMetaData>();
@@ -126,5 +127,9 @@ export class CategoryRepository extends TransactionalRepository<CategoryEntity> 
       .getMany();
 
     return categories.map((c) => c.toModel());
+  }
+
+  async deleteCategory(category: Category) {
+    await this.repository.softDelete(category.id);
   }
 }

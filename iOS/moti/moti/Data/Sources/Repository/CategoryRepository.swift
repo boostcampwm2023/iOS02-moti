@@ -38,4 +38,12 @@ public struct CategoryRepository: CategoryRepositoryProtocol {
         guard let categoryDTO = responseDTO.data else { throw NetworkError.decode }
         return CategoryItem(dto: categoryDTO)
     }
+    
+    public func reorderCategories(requestValue: ReorderCategoriesRequestValue) async throws -> Bool {
+        let endpoint = MotiAPI.reorderCategories(requestValue: requestValue)
+        let responseDTO = try await provider.request(with: endpoint, type: SimpleResponseDTO.self)
+        
+        guard let isSuccess = responseDTO.success else { throw NetworkError.decode }
+        return isSuccess
+    }
 }

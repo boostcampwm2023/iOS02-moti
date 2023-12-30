@@ -45,7 +45,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
         setupAchievementDataSource()
         setupCategoryDataSource()
         
-        viewModel.action(.launch)
+        viewModel.action(.fetchCategoryList)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -74,6 +74,10 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
         viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.postAchievement(newAchievement: newAchievement))
         showCelebrate(with: newAchievement)
+    }
+    
+    func fetchCategoryList() {
+        viewModel.action(.fetchCategoryList)
     }
     
     private func addTargets() {
