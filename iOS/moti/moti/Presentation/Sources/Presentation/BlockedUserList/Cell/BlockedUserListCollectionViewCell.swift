@@ -23,7 +23,6 @@ final class BlockedUserListCollectionViewCell: UICollectionViewCell {
     // MARK: - Views
     private lazy var iconImageView = {
         let imageView = UIImageView()
-        imageView.isAccessibilityElement = true
         imageView.image = SymbolImage.personProfile
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
