@@ -1,5 +1,5 @@
 //
-//  BlockUserCollectionViewCell.swift
+//  BlockedUserListCollectionViewCell.swift
 //
 //
 //  Created by Kihyun Lee on 12/29/23.

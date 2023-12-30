@@ -67,7 +67,7 @@ extension GroupInfoViewController: UITableViewDelegate {
                 }
             }
         } else if dataSource.isBlockCell(indexPath: indexPath) {
-            coordinator?.moveToBlockUserViewController(group: group)
+            coordinator?.moveToBlockedUserListViewController(group: group)
         }
     }
 }

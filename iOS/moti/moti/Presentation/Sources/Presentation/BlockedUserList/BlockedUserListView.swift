@@ -10,7 +10,7 @@ import UIKit
 final class BlockedUserListView: UIView {
     
     // MARK: - Views
-    private(set) lazy var blockUserCollectionView: UICollectionView = {
+    private(set) lazy var blockedUserListCollectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeCollectionViewLayout())
         collectionView.backgroundColor = .motiBackground
         collectionView.register(with: BlockedUserListCollectionViewCell.self)
@@ -29,8 +29,8 @@ final class BlockedUserListView: UIView {
     }
     
     private func setupUI() {
-        addSubview(blockUserCollectionView)
-        blockUserCollectionView.atl
+        addSubview(blockedUserListCollectionView)
+        blockedUserListCollectionView.atl
             .top(equalTo: safeAreaLayoutGuide.topAnchor)
             .bottom(equalTo: bottomAnchor)
             .horizontal(equalTo: safeAreaLayoutGuide)

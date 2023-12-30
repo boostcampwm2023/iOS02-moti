@@ -21,10 +21,10 @@ final class BlockedUserListViewModel {
         case failed(message: String)
     }
     
-    typealias BlockUserDataSource = ListDiffableDataSource<BlockedUser>
+    typealias BlockedUserListDataSource = ListDiffableDataSource<BlockedUser>
     
     // MARK: - Properties
-    private var blockUserDataSource: BlockUserDataSource?
+    private var blockUserDataSource: BlockedUserListDataSource?
     private var blockedUsers: [BlockedUser] = [] {
         didSet {
             blockUserDataSource?.update(data: blockedUsers)
@@ -41,7 +41,7 @@ final class BlockedUserListViewModel {
         self.fetchBlockedUserListUseCase = fetchBlockedUserListUseCase
     }
     
-    func setupDataSource(_ dataSource: BlockUserDataSource) {
+    func setupDataSource(_ dataSource: BlockedUserListDataSource) {
         self.blockUserDataSource = dataSource
         blockUserDataSource?.update(data: [])
     }

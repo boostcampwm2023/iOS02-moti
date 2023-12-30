@@ -1,5 +1,5 @@
 //
-//  BlockUserViewController.swift
+//  BlockedUserListViewController.swift
 //
 //
 //  Created by Kihyun Lee on 12/29/23.
@@ -31,14 +31,14 @@ final class BlockedUserListViewController: BaseViewController<BlockedUserListVie
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "차단 관리"
-        setupBlockUserDataSource()
+        setupBlockedUserListDataSource()
         viewModel.action(.fetchBlockedUserList)
     }
     
-    private func setupBlockUserDataSource() {
-        layoutView.blockUserCollectionView.delegate = self
-        let dataSource = BlockedUserListViewModel.BlockUserDataSource.DataSource(
-            collectionView: layoutView.blockUserCollectionView,
+    private func setupBlockedUserListDataSource() {
+        layoutView.blockedUserListCollectionView.delegate = self
+        let dataSource = BlockedUserListViewModel.BlockedUserListDataSource.DataSource(
+            collectionView: layoutView.blockedUserListCollectionView,
             cellProvider: { [weak self] collectionView, indexPath, item in
                 guard let self else { return UICollectionViewCell() }
                 let cell: BlockedUserListCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
@@ -48,7 +48,7 @@ final class BlockedUserListViewController: BaseViewController<BlockedUserListVie
             }
         )
         
-        let diffableDataSource = BlockedUserListViewModel.BlockUserDataSource(dataSource: dataSource)
+        let diffableDataSource = BlockedUserListViewModel.BlockedUserListDataSource(dataSource: dataSource)
         viewModel.setupDataSource(diffableDataSource)
     }
 }
