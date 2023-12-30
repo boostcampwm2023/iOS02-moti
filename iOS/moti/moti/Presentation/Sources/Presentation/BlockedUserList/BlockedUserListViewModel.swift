@@ -17,6 +17,7 @@ final class BlockedUserListViewModel {
     }
     
     enum FetchBlockedUserListState {
+        case loading
         case success
         case failed(message: String)
     }
@@ -58,6 +59,7 @@ final class BlockedUserListViewModel {
     private func fetchBlockedUserList() {
         Task {
             do {
+                fetchBlockedUserListState.send(.loading)
                 let blockedUsers = try await fetchBlockedUserListUseCase.execute()
                 self.blockedUsers = blockedUsers
                 fetchBlockedUserListState.send(.success)

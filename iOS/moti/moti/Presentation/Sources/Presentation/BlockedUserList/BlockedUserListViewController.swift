@@ -10,7 +10,7 @@ import Combine
 import Core
 import Domain
 
-final class BlockedUserListViewController: BaseViewController<BlockedUserListView>, HiddenTabBarViewController {
+final class BlockedUserListViewController: BaseViewController<BlockedUserListView>, LoadingIndicator, HiddenTabBarViewController {
 
     // MARK: - Properties
     weak var coordinator: BlockedUserListCoordinator?
@@ -31,8 +31,27 @@ final class BlockedUserListViewController: BaseViewController<BlockedUserListVie
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "차단 관리"
+        bind()
         setupBlockedUserListDataSource()
         viewModel.action(.fetchBlockedUserList)
+    }
+    
+    private func bind() {
+        viewModel.fetchBlockedUserListState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .success:
+                    hideLoadingIndicator()
+                case .failed:
+                    hideLoadingIndicator()
+                    showErrorAlert(message: "차단한 사용자 리스트를 불러오는 데에 실패했습니다.")
+                }
+            }
+            .store(in: &cancellables)
     }
     
     private func setupBlockedUserListDataSource() {
