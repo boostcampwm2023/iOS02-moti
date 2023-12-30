@@ -15,6 +15,8 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { redisModuleOptions } from '../config/redis';
 import type { RedisClientOptions } from 'redis';
 import { AvatarHolder } from './application/avatar.holder';
+import { AdminTokenGuard } from './guard/admin-token.guard';
+import { AdminPageTokenGuard } from './guard/admin-page-token.guard';
 
 @Global()
 @Module({
@@ -34,7 +36,9 @@ import { AvatarHolder } from './application/avatar.holder';
     UserCodeGenerator,
     AccessTokenGuard,
     AvatarHolder,
+    AdminTokenGuard,
+    AdminPageTokenGuard,
   ],
-  exports: [JwtUtils, AccessTokenGuard],
+  exports: [JwtUtils, AccessTokenGuard, AdminTokenGuard, AdminPageTokenGuard],
 })
 export class AuthModule {}

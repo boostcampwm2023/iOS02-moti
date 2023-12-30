@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="kr">
+<head>
+  <link rel="stylesheet" href="/main.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="icon" href="/AppIcon.png" type="image/x-icon">
+  <script src="/js/logout.js"></script>
+
+  <title>관리자 로그인</title>
+</head>
+<body>
+  <nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" href="/operate">
+      <img src="/AppIcon.png" width="30" height="30" alt="" class="rounded">
+      Moti
+    </a>
+    <button id="logout" class="btn">로그아웃</button>
+  </nav>
+
+  <div class="container mt-5">
+    <header class="header">
+      <h1>관리자 계정 로그인</h1>
+    </header>
+    <div>
+      <div class="form-group">
+        <label for="email">아이디</label>
+        <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="email">
+      </div>
+      <div class="form-group">
+        <label for="password">비밀번호</label>
+        <input type="password" class="form-control" id="password" placeholder="Password">
+      </div>
+      <button id="login-submit" type="submit" class="btn btn-primary">로그인</button>
+    </div>
+  </div>
+
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script>
+    const loginButton = document.getElementById('login-submit');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const loginPath = '/api/v1/admin/login'
+
+    loginButton.addEventListener('click', async () => {
+      const email = emailInput.value;
+      const password = passwordInput.value;
+
+      try {
+        const response = await fetch(loginPath, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          localStorage.setItem('token', data.data.accessToken);
+          alert('로그인 성공!');
+          window.location.href = '/operate';
+        } else {
+          alert('로그인 실패');
+        }
+      }catch (e){
+        alert('로그인에 실패했습니다.')
+      }
+    })
+  </script>
+</body>
+</html>
