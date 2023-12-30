@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<html lang="kr">
+<head>
+  <link rel="stylesheet" href="/main.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="icon" href="/AppIcon.png" type="image/x-icon">
+  <script src="/js/logout.js"></script>
+
+  <title>운영정책</title>
+</head>
+<body>
+  <nav class="navbar navbar-light bg-light">
+    <a class="navbar-brand" href="/operate">
+      <img src="/AppIcon.png" width="30" height="30" alt="" class="rounded">
+      Moti
+    </a>
+    <button id="logout" class="btn">로그아웃</button>
+  </nav>
+  <div class="container mt-5">
+    <div class="d-flex justify-content-between">
+      <h1><%= head %></h1>
+      <div>
+        <a class="btn" href="/operate/update">수정하기</a></button>
+      </div>
+    </div>
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <% key.forEach((item) => { %>
+          <th scope="col"><%= item %></th>
+        <% }); %>
+      </tr>
+      </thead>
+      <tbody class="table-group-divider">
+      <% content.forEach((record, i) => { %>
+        <tr>
+          <th scope="row"><%= i + 1 %></th>
+          <% key.forEach((item) => { %>
+            <td><%= record[item] %></td>
+          <% }) %>
+        </tr>
+      <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
