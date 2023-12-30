@@ -11,7 +11,7 @@ import Core
 import Combine
 
 final class BlockedUserListViewModel {
-    enum BlockUserViewModelAction {
+    enum BlockedUserListViewModelAction {
         case fetchBlockedUserList
         case unblockUser
     }
@@ -47,7 +47,7 @@ final class BlockedUserListViewModel {
         blockUserDataSource?.update(data: [])
     }
     
-    func action(_ action: BlockUserViewModelAction) {
+    func action(_ action: BlockedUserListViewModelAction) {
         switch action {
         case .fetchBlockedUserList:
             fetchBlockedUserList()
