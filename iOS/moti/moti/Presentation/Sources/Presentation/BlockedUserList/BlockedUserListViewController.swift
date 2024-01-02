@@ -62,6 +62,7 @@ final class BlockedUserListViewController: BaseViewController<BlockedUserListVie
                     showLoadingIndicator()
                 case .success:
                     hideLoadingIndicator()
+                    coordinator?.delegate?.unblockUserIsSuccess()
                 case .failed:
                     hideLoadingIndicator()
                     showErrorAlert(message: "사용자 차단 해제에 실패했습니다.")

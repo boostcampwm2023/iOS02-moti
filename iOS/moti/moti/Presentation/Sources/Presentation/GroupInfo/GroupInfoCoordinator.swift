@@ -10,10 +10,15 @@ import Core
 import Domain
 import Data
 
+protocol GroupInfoCoordinatorDelegate: AnyObject {
+    func unblockUserIsSuccess()
+}
+
 final class GroupInfoCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
+    var delegate: GroupInfoCoordinatorDelegate?
     
     init(
         _ navigationController: UINavigationController,
@@ -42,7 +47,14 @@ final class GroupInfoCoordinator: Coordinator {
     
     func moveToBlockedUserListViewController(group: Group) {
         let blockedUserListCoordinator = BlockedUserListCoordinator(navigationController, self)
+        blockedUserListCoordinator.delegate = self
         blockedUserListCoordinator.start(group: group)
         childCoordinators.append(blockedUserListCoordinator)
+    }
+}
+
+extension GroupInfoCoordinator: BlockedUserListCoordinatorDelegate {
+    func unblockUserIsSuccess() {
+        delegate?.unblockUserIsSuccess()
     }
 }

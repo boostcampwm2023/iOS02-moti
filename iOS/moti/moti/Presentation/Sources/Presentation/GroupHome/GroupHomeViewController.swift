@@ -84,7 +84,7 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
         present(textFieldAlertVC, animated: true)
     }
     
-    @objc private func refreshAchievementList() {
+    @objc func refreshAchievementList() {
         viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.refreshAchievementList)
     }

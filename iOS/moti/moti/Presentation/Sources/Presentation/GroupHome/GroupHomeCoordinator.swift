@@ -57,6 +57,7 @@ final class GroupHomeCoordinator: Coordinator {
     
     func moveToGroupInfoViewController(group: Group) {
         let groupInfoCoordinator = GroupInfoCoordinator(navigationController, self)
+        groupInfoCoordinator.delegate = self
         groupInfoCoordinator.start(group: group)
         childCoordinators.append(groupInfoCoordinator)
     }
@@ -125,5 +126,12 @@ extension GroupHomeCoordinator: CaptureCoordinatorDelegate { }
 extension GroupHomeCoordinator: ManageCategoryCoordinatorDelegate {
     func doneButtonDidClicked() {
         currentViewController?.fetchCategoryList()
+    }
+}
+
+// MARK: - GroupInfoCoordinatorDelegate
+extension GroupHomeCoordinator: GroupInfoCoordinatorDelegate {
+    func unblockUserIsSuccess() {
+        currentViewController?.refreshAchievementList()
     }
 }

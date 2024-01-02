@@ -10,10 +10,15 @@ import Core
 import Domain
 import Data
 
+protocol BlockedUserListCoordinatorDelegate: AnyObject {
+    func unblockUserIsSuccess()
+}
+
 final class BlockedUserListCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
+    var delegate: BlockedUserListCoordinatorDelegate?
     
     init(
         _ navigationController: UINavigationController,
