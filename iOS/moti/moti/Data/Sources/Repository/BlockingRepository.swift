@@ -36,4 +36,10 @@ public struct BlockingRepository: BlockingRepositoryProtocol {
         guard let blockedUserListDTO = responseDTO.data?.data else { throw NetworkError.decode }
         return blockedUserListDTO.map { User(dto: $0) }
     }
+    
+    public func unblockUser(userCode: String) async throws -> Bool {
+        let endpoint = MotiAPI.unblockUser(userCode: userCode)
+        let responseDTO = try await provider.request(with: endpoint, type: BlockingDTO.self)
+        return responseDTO.success ?? false
+    }
 }
