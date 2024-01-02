@@ -13,10 +13,16 @@ import Combine
 final class BlockedUserListViewModel {
     enum BlockedUserListViewModelAction {
         case fetchBlockedUserList
-        case unblockUser
+        case unblockUser(userCode: String)
     }
     
     enum FetchBlockedUserListState {
+        case loading
+        case success
+        case failed(message: String)
+    }
+    
+    enum UnblockUserState {
         case loading
         case success
         case failed(message: String)
@@ -33,13 +39,17 @@ final class BlockedUserListViewModel {
     }
     
     private let fetchBlockedUserListUseCase: FetchBlockedUserListUseCase
+    private let unblockUserUseCase: UnblockUserUseCase
     
     private(set) var fetchBlockedUserListState = PassthroughSubject<FetchBlockedUserListState, Never>()
+    private(set) var unblockUserState = PassthroughSubject<UnblockUserState, Never>()
     
     init(
-        fetchBlockedUserListUseCase: FetchBlockedUserListUseCase
+        fetchBlockedUserListUseCase: FetchBlockedUserListUseCase,
+        unblockUserUseCase: UnblockUserUseCase
     ) {
         self.fetchBlockedUserListUseCase = fetchBlockedUserListUseCase
+        self.unblockUserUseCase = unblockUserUseCase
     }
     
     func setupDataSource(_ dataSource: BlockedUserListDataSource) {
@@ -51,8 +61,8 @@ final class BlockedUserListViewModel {
         switch action {
         case .fetchBlockedUserList:
             fetchBlockedUserList()
-        case .unblockUser:
-            break
+        case .unblockUser(let userCode):
+            unblockUser(userCode: userCode)
         }
     }
     
@@ -68,5 +78,27 @@ final class BlockedUserListViewModel {
                 fetchBlockedUserListState.send(.failed(message: error.localizedDescription))
             }
         }
+    }
+    
+    private func unblockUser(userCode: String) {
+        Task {
+            do {
+                unblockUserState.send(.loading)
+                let isSuccess = try await unblockUserUseCase.execute(userCode: userCode)
+                if isSuccess {
+                    unblockUserState.send(.success)
+                    deleteOfDataSource(userCode: userCode)
+                } else {
+                    unblockUserState.send(.failed(message: "사용자 차단 해제에 실패했습니다."))
+                }
+            } catch {
+                Logger.debug("unblock user error: \(error)")
+                unblockUserState.send(.failed(message: error.localizedDescription))
+            }
+        }
+    }
+    
+    func deleteOfDataSource(userCode: String) {
+        blockedUsers = blockedUsers.filter { $0.code != userCode }
     }
 }
