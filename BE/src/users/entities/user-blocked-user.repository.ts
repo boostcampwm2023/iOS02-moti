@@ -33,4 +33,15 @@ export class UserBlockedUserRepository extends TransactionalRepository<UserBlock
 
     return userBlockedUserEntity?.toModel();
   }
+
+  async deleteByUserIdAndBlockedUserId(userId: number, blockedUserId: number) {
+    await this.repository
+      .createQueryBuilder()
+      .delete()
+      .where('userId = :userId AND blockedUserId = :blockedUserId', {
+        userId: userId,
+        blockedUserId: blockedUserId,
+      })
+      .execute();
+  }
 }

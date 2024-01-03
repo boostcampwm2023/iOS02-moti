@@ -99,4 +99,28 @@ describe('UserBlockedUserRepository Test', () => {
       expect(userBlockedUser.blockedUser.id).toEqual(user2.id);
     });
   });
+
+  test('유저차단을 해제한다.', async () => {
+    // await transactionTest(dataSource, async () => {
+    // given
+    const user1 = await usersFixture.getUser('ABC');
+    const user2 = await usersFixture.getUser('DEF');
+    await userBlockedUserRepository.saveUserBlockedUser(
+      new UserBlockedUser(user1, user2),
+    );
+
+    // when
+    await userBlockedUserRepository.deleteByUserIdAndBlockedUserId(
+      user1.id,
+      user2.id,
+    );
+
+    // then
+    const expected =
+      await userBlockedUserRepository.findByUserIdAndBlockedUserCode(
+        user1.id,
+        user2.userCode,
+      );
+    expect(expected).toBeUndefined();
+  });
 });

@@ -51,7 +51,10 @@ export class UsersService {
         userCode,
       );
     if (!userBlockedUser) throw new InvalidAllowRequestException();
-    await this.userBlockedUserRepository.repository.delete(userBlockedUser);
+    await this.userBlockedUserRepository.deleteByUserIdAndBlockedUserId(
+      user.id,
+      blockedUser.id,
+    );
     return AllowUserResponse.from(userBlockedUser);
   }
 
