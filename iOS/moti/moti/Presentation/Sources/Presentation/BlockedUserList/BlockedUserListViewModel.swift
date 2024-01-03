@@ -71,7 +71,7 @@ final class BlockedUserListViewModel {
             do {
                 fetchBlockedUserListState.send(.loading)
                 let blockedUsers = try await fetchBlockedUserListUseCase.execute()
-                self.blockedUsers = blockedUsers
+                self.blockedUsers = blockedUsers.sorted { $0.blockedDate ?? .now > $1.blockedDate ?? .now }
                 fetchBlockedUserListState.send(.success)
             } catch {
                 Logger.debug("blocked users fetch error: \(error)")
