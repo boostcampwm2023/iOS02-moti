@@ -54,7 +54,7 @@ final class GroupInfoCoordinator: Coordinator {
 }
 
 extension GroupInfoCoordinator: BlockedUserListCoordinatorDelegate {
-    func unblockUserIsSuccess() {
+    func unblockedUser() {
         delegate?.unblockUserIsSuccess()
     }
 }

@@ -11,7 +11,7 @@ import Domain
 import Data
 
 protocol BlockedUserListCoordinatorDelegate: AnyObject {
-    func unblockUserIsSuccess()
+    func unblockedUser()
 }
 
 final class BlockedUserListCoordinator: Coordinator {
