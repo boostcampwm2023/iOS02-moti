@@ -18,7 +18,7 @@ final class BlockedUserListCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
-    var delegate: BlockedUserListCoordinatorDelegate?
+    weak var delegate: BlockedUserListCoordinatorDelegate?
     
     init(
         _ navigationController: UINavigationController,

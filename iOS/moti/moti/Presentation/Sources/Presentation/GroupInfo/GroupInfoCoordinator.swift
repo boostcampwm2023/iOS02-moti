@@ -18,7 +18,7 @@ final class GroupInfoCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
-    var delegate: GroupInfoCoordinatorDelegate?
+    weak var delegate: GroupInfoCoordinatorDelegate?
     
     init(
         _ navigationController: UINavigationController,
