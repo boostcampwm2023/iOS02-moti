@@ -54,10 +54,11 @@ final class BlockedUserListCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private var unblockButton = {
+    private lazy var unblockButton = {
         let button = UIButton(type: .system)
         button.setTitle("차단 해제", for: .normal)
         button.setTitleColor(.red, for: .normal)
+        button.addTarget(self, action: #selector(unblockButtonDidClicked), for: .touchUpInside)
         return button
     }()
     
@@ -81,7 +82,6 @@ final class BlockedUserListCollectionViewCell: UICollectionViewCell {
         userCodeLabel.text = "@" + user.code
         guard let blockedDate = user.blockedDate else { return }
         blockedDateLabel.text = blockedDate.convertStringYYYY년_MM월_dd일() + " 차단"
-        unblockButton.addTarget(self, action: #selector(unblockButtonDidClicked), for: .touchUpInside)
     }
     
     @objc private func unblockButtonDidClicked() {
