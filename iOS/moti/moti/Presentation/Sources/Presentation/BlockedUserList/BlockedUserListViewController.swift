@@ -97,9 +97,10 @@ extension BlockedUserListViewController: UICollectionViewDelegate {
 }
 
 extension BlockedUserListViewController: BlockedUserListCollectionViewCellDelegate {
-    func unblockButtonDidClicked(userCode: String) {
+    func unblockButtonDidClicked(cell: UICollectionViewCell) {
+        guard let indexPathOfClickedCell = layoutView.blockedUserListCollectionView.indexPath(for: cell) else { return }
         showTwoButtonAlert(title: "정말 차단 해제하시겠습니까?", okTitle: "차단 해제", okAction: {
-            self.viewModel.action(.unblockUser(userCode: userCode))
+            self.viewModel.action(.unblockUser(indexPath: indexPathOfClickedCell))
         })
     }
 }

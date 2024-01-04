@@ -13,7 +13,7 @@ import Combine
 final class BlockedUserListViewModel {
     enum BlockedUserListViewModelAction {
         case fetchBlockedUserList
-        case unblockUser(userCode: String)
+        case unblockUser(indexPath: IndexPath)
     }
     
     enum FetchBlockedUserListState {
@@ -61,8 +61,8 @@ final class BlockedUserListViewModel {
         switch action {
         case .fetchBlockedUserList:
             fetchBlockedUserList()
-        case .unblockUser(let userCode):
-            unblockUser(userCode: userCode)
+        case .unblockUser(let indexPath):
+            unblockUser(indexPath: indexPath)
         }
     }
     
@@ -80,14 +80,15 @@ final class BlockedUserListViewModel {
         }
     }
     
-    private func unblockUser(userCode: String) {
+    private func unblockUser(indexPath: IndexPath) {
+        let willUnblockedUser = blockedUsers[indexPath.row]
         Task {
             do {
                 unblockUserState.send(.loading)
-                let isSuccess = try await unblockUserUseCase.execute(userCode: userCode)
+                let isSuccess = try await unblockUserUseCase.execute(userCode: willUnblockedUser.code)
                 if isSuccess {
                     unblockUserState.send(.success)
-                    deleteOfDataSource(userCode: userCode)
+                    deleteOfDataSource(user: willUnblockedUser)
                 } else {
                     unblockUserState.send(.failed(message: "사용자 차단 해제에 실패했습니다."))
                 }
@@ -98,7 +99,7 @@ final class BlockedUserListViewModel {
         }
     }
     
-    func deleteOfDataSource(userCode: String) {
-        blockedUsers = blockedUsers.filter { $0.code != userCode }
+    func deleteOfDataSource(user: User) {
+        blockedUsers = blockedUsers.filter { $0 != user }
     }
 }

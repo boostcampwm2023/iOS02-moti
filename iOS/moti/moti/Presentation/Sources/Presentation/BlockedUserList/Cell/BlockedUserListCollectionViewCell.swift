@@ -11,7 +11,7 @@ import Jeongfisher
 import Design
 
 protocol BlockedUserListCollectionViewCellDelegate: AnyObject {
-    func unblockButtonDidClicked(userCode: String)
+    func unblockButtonDidClicked(cell: UICollectionViewCell)
 }
 
 final class BlockedUserListCollectionViewCell: UICollectionViewCell {
@@ -19,7 +19,6 @@ final class BlockedUserListCollectionViewCell: UICollectionViewCell {
     // MARK: - Properties
     private let iconSize: CGFloat = 60
     weak var delegate: BlockedUserListCollectionViewCellDelegate?
-    private var user: User?
     
     // MARK: - Views
     private lazy var iconImageView = {
@@ -75,7 +74,6 @@ final class BlockedUserListCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Methods
     func configure(with user: User) {
-        self.user = user
         if let url = user.avatarURL {
             iconImageView.jk.setImage(with: url, downsamplingScale: 1.5)
         }
@@ -85,8 +83,7 @@ final class BlockedUserListCollectionViewCell: UICollectionViewCell {
     }
     
     @objc private func unblockButtonDidClicked() {
-        guard let user else { return }
-        delegate?.unblockButtonDidClicked(userCode: user.code)
+        delegate?.unblockButtonDidClicked(cell: self)
     }
     
     func cancelDownloadImage() {
