@@ -10,10 +10,15 @@ import Core
 import Domain
 import Data
 
+protocol BlockedUserListCoordinatorDelegate: AnyObject {
+    func unblockedUser()
+}
+
 final class BlockedUserListCoordinator: Coordinator {
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
+    weak var delegate: BlockedUserListCoordinatorDelegate?
     
     init(
         _ navigationController: UINavigationController,
@@ -28,7 +33,8 @@ final class BlockedUserListCoordinator: Coordinator {
     func start(group: Group) {
         let blockingRepository = BlockingRepository(groupId: group.id)
         let blockedUserListVM = BlockedUserListViewModel(
-            fetchBlockedUserListUseCase: .init(blockingRepository: blockingRepository)
+            fetchBlockedUserListUseCase: .init(blockingRepository: blockingRepository),
+            unblockUserUseCase: .init(blockingRepository: blockingRepository)
         )
         let blockedUserListVC = BlockedUserListViewController(viewModel: blockedUserListVM)
         blockedUserListVC.coordinator = self

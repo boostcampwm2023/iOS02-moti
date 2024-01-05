@@ -52,6 +52,23 @@ final class BlockedUserListViewController: BaseViewController<BlockedUserListVie
                 }
             }
             .store(in: &cancellables)
+        
+        viewModel.unblockUserState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .success:
+                    hideLoadingIndicator()
+                    coordinator?.delegate?.unblockedUser()
+                case .failed:
+                    hideLoadingIndicator()
+                    showErrorAlert(message: "사용자 차단 해제에 실패했습니다.")
+                }
+            }
+            .store(in: &cancellables)
     }
     
     private func setupBlockedUserListDataSource() {
@@ -80,8 +97,10 @@ extension BlockedUserListViewController: UICollectionViewDelegate {
 }
 
 extension BlockedUserListViewController: BlockedUserListCollectionViewCellDelegate {
-    func unblockButtonDidClicked() {
-        Logger.debug("차단 해제 버튼 눌림!")
-        // viewModel.action(.unblock)
+    func unblockButtonDidClicked(cell: UICollectionViewCell) {
+        guard let indexPathOfClickedCell = layoutView.blockedUserListCollectionView.indexPath(for: cell) else { return }
+        showTwoButtonAlert(title: "정말 차단 해제하시겠습니까?", okTitle: "차단 해제", okAction: {
+            self.viewModel.action(.unblockUser(indexPath: indexPathOfClickedCell))
+        })
     }
 }
