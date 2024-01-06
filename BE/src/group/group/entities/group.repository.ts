@@ -6,6 +6,7 @@ import { IGroupPreview } from '../index';
 import { GroupPreview } from '../dto/group-preview.dto';
 import { User } from '../../../users/domain/user.domain';
 import { UserGroupGrade } from '../domain/user-group-grade';
+import { In } from 'typeorm';
 
 @CustomRepository(GroupEntity)
 export class GroupRepository extends TransactionalRepository<GroupEntity> {
@@ -26,14 +27,18 @@ export class GroupRepository extends TransactionalRepository<GroupEntity> {
         'group.avatarUrl as avatarUrl',
         'group.groupCode as groupCode',
         'user_group.grade as grade',
+        'user_group.seq as seq',
       ])
       .addSelect('COUNT(achievements.id)', 'continued')
       .addSelect('MAX(achievements.created_at)', 'lastChallenged')
       .where('user_group.user_id = :userId', { userId })
+      .orderBy('user_group.seq')
       .groupBy('group.id')
       .addGroupBy('user_group.grade')
+      .addGroupBy('user_group.seq')
       .getRawMany<IGroupPreview>();
 
+    console.log(groupPreviews);
     return groupPreviews.map((groupPreview) => new GroupPreview(groupPreview));
   }
 
@@ -88,5 +93,18 @@ export class GroupRepository extends TransactionalRepository<GroupEntity> {
 
   async existByGroupCode(groupCode: string) {
     return await this.repository.exist({ where: { groupCode: groupCode } });
+  }
+
+  async findAllByIdAndUser(userId: number, ids: number[]): Promise<Group[]> {
+    const groups = await this.repository
+      .createQueryBuilder('g')
+      .where('g.user_id = :userId')
+      .andWhere({ id: In(ids) })
+      .setParameter('userId', userId)
+      .orderBy(`FIELD(g.id, :...ids)`)
+      .setParameter('ids', ids)
+      .getMany();
+
+    return groups.map((g) => g.toModel());
   }
 }

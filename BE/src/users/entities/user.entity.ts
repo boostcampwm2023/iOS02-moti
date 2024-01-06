@@ -26,6 +26,12 @@ export class UserEntity extends BaseTimeEntity {
   @Column({ default: 0 })
   categoryCount: number;
 
+  @Column({ default: 0 })
+  groupCount: number;
+
+  @Column({ default: 0 })
+  groupSequence: number;
+
   @OneToMany(() => UsersRoleEntity, (userRole) => userRole.user, {
     cascade: ['insert'],
   })
@@ -50,6 +56,8 @@ export class UserEntity extends BaseTimeEntity {
     userEntity.userCode = user.userCode;
     userEntity.categorySequence = user.categorySequence;
     userEntity.categoryCount = user.categoryCount;
+    userEntity.groupCount = user.groupCount;
+    userEntity.groupSequence = user.groupSequence;
     userEntity.userRoles = user.roles?.map((role) => {
       return new UsersRoleEntity(userEntity, role);
     });
@@ -65,6 +73,8 @@ export class UserEntity extends BaseTimeEntity {
     user.id = this.id;
     user.categorySequence = this.categorySequence;
     user.categoryCount = this.categoryCount;
+    user.groupCount = this.groupCount;
+    user.groupSequence = this.groupSequence;
     user.roles = this.userRoles?.map((userRole) => userRole.role);
     return user;
   }

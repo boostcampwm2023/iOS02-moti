@@ -159,4 +159,8 @@ export const ERROR_INFO = {
     statusCode: 404,
     message: '카테고리를 찾을 수 없습니다.',
   },
+  INVALID_GROUP_RELOCATE: {
+    statusCode: 400,
+    message: '잘못된 그룹 순서 변경 요청입니다.',
+  },
 } as const;

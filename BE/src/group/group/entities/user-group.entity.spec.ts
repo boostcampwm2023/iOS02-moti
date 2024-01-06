@@ -14,7 +14,12 @@ describe('UserGroupEntity Test', () => {
       user.id = 1;
       const group = GroupFixture.group();
       group.id = 2;
-      const userGroup = new UserGroup(user, group, UserGroupGrade.PARTICIPANT);
+      const userGroup = new UserGroup(
+        user,
+        group,
+        UserGroupGrade.PARTICIPANT,
+        user.groupSequence,
+      );
 
       // when
       const userGroupEntity = UserGroupEntity.from(userGroup);
@@ -28,7 +33,12 @@ describe('UserGroupEntity Test', () => {
 
     it('user와 group이 없는 경우에도 변환이 가능하다.', () => {
       // given
-      const userGroup = new UserGroup(null, null, UserGroupGrade.PARTICIPANT);
+      const userGroup = new UserGroup(
+        null,
+        null,
+        UserGroupGrade.PARTICIPANT,
+        0,
+      );
 
       // when
       const userGroupEntity = UserGroupEntity.from(userGroup);
@@ -72,8 +82,8 @@ describe('UserGroupEntity Test', () => {
 
       // then
       expect(userGroup).toBeInstanceOf(UserGroup);
-      expect(userGroup.user).toBeNull();
-      expect(userGroup.group).toBeNull();
+      expect(userGroup.user).toBeUndefined();
+      expect(userGroup.group).toBeUndefined();
       expect(userGroup.grade).toBe(userGroupEntity.grade);
     });
   });

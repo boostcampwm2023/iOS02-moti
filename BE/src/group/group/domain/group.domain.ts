@@ -16,7 +16,10 @@ export class Group {
   }
 
   addMember(user: User, userGrade: UserGroupGrade) {
-    this.userGroups.push(new UserGroup(user, this, userGrade));
+    user.groupCount++;
+    this.userGroups.push(
+      new UserGroup(user, this, userGrade, ++user.groupSequence),
+    );
   }
 
   assignAvatarUrl(url: string) {

@@ -25,6 +25,9 @@ export class UserGroupEntity extends BaseTimeEntity {
   @JoinColumn({ name: 'group_id', referencedColumnName: 'id' })
   group: GroupEntity;
 
+  @Column()
+  seq: number;
+
   @Column({
     type: 'simple-enum',
     enum: UserGroupGrade,
@@ -34,9 +37,10 @@ export class UserGroupEntity extends BaseTimeEntity {
 
   toModel(): UserGroup {
     const usergroup = new UserGroup(
-      this.user?.toModel() || null,
-      this.group?.toModel() || null,
+      this.user?.toModel(),
+      this.group?.toModel(),
       this.grade,
+      this.seq,
     );
     usergroup.id = this.id;
     return usergroup;
@@ -49,6 +53,7 @@ export class UserGroupEntity extends BaseTimeEntity {
     userGroupEntity.user = UserEntity.from(userGroup.user);
     userGroupEntity.group = GroupEntity.strictFrom(userGroup.group);
     userGroupEntity.grade = userGroup.grade;
+    userGroupEntity.seq = userGroup.seq;
     return userGroupEntity;
   }
 
@@ -56,6 +61,7 @@ export class UserGroupEntity extends BaseTimeEntity {
     const userGroupEntity = new UserGroupEntity();
     userGroupEntity.user = UserEntity.from(userGroup.user);
     userGroupEntity.grade = userGroup.grade;
+    userGroupEntity.seq = userGroup.seq;
     return userGroupEntity;
   }
 }

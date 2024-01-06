@@ -45,4 +45,21 @@ export class UserGroupRepository extends TransactionalRepository<UserGroupEntity
       .getOne();
     return userGroupEntity?.toModel();
   }
+
+  async findAllByIdAndUser(
+    userId: number,
+    ids: number[],
+  ): Promise<UserGroup[]> {
+    const userGroups = await this.repository
+      .createQueryBuilder('ug')
+      .where('ug.user_id = :userId')
+      .andWhere('ug.group_id in (:...ids)')
+      .setParameter('ids', ids)
+      .setParameter('userId', userId)
+      .orderBy(`FIELD(ug.group_id, :...ids)`)
+      .setParameter('ids', ids)
+      .getMany();
+    console.log(userGroups);
+    return userGroups.map((g) => g.toModel());
+  }
 }

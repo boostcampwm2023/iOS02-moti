@@ -30,7 +30,12 @@ describe('GroupEntity Test', () => {
 
       group.userGroups = [];
       group.userGroups.push(
-        new UserGroup(user, group, UserGroupGrade.PARTICIPANT),
+        new UserGroup(
+          user,
+          group,
+          UserGroupGrade.PARTICIPANT,
+          user.groupSequence,
+        ),
       );
 
       // when
@@ -66,7 +71,12 @@ describe('GroupEntity Test', () => {
       // given
       const group = new Group('group', 'avatarUrl');
       const user = UsersFixture.user('ABC');
-      const userGroup = new UserGroup(user, group, UserGroupGrade.PARTICIPANT);
+      const userGroup = new UserGroup(
+        user,
+        group,
+        UserGroupGrade.PARTICIPANT,
+        user.groupSequence,
+      );
 
       const groupEntity = GroupEntity.from(group);
       const userGroupEntity = UserGroupEntity.from(userGroup);
