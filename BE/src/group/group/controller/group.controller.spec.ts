@@ -37,6 +37,8 @@ import { JoinGroupRequest } from '../dto/join-group-request.dto';
 import { JoinGroupResponse } from '../dto/join-group-response.dto';
 import { NoSucGroupException } from '../exception/no-such-group.exception';
 import { DuplicatedJoinException } from '../exception/duplicated-join.exception';
+import { GroupRelocateRequest } from '../dto/group-relocate-request';
+import { InvalidGroupRelocateException } from '../exception/Invalid-Group-Relocate.exception';
 
 describe('GroupController', () => {
   let app: INestApplication;
@@ -249,9 +251,9 @@ describe('GroupController', () => {
 
       const groupLeaveResponse = new GroupLeaveResponse(1, 1);
 
-      when(mockGroupService.removeUser(anyNumber(), anyNumber())).thenResolve(
-        groupLeaveResponse,
-      );
+      when(
+        mockGroupService.removeUser(anyOfClass(User), anyNumber()),
+      ).thenResolve(groupLeaveResponse);
 
       // when
       // then
@@ -267,13 +269,14 @@ describe('GroupController', () => {
           });
         });
     });
+
     it('사용자가 속한 그룹이 아닌 경우 400을 반환한다.', async () => {
       // given
       const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
 
-      when(mockGroupService.removeUser(anyNumber(), anyNumber())).thenThrow(
-        new NoSuchUserGroupException(),
-      );
+      when(
+        mockGroupService.removeUser(anyOfClass(User), anyNumber()),
+      ).thenThrow(new NoSuchUserGroupException());
 
       // when
       // then
@@ -290,9 +293,9 @@ describe('GroupController', () => {
       // given
       const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
 
-      when(mockGroupService.removeUser(anyNumber(), anyNumber())).thenThrow(
-        new LeaderNotAllowedToLeaveException(),
-      );
+      when(
+        mockGroupService.removeUser(anyOfClass(User), anyNumber()),
+      ).thenThrow(new LeaderNotAllowedToLeaveException());
 
       // when
       // then
@@ -796,6 +799,87 @@ describe('GroupController', () => {
         .post('/api/v1/groups/participation')
         .set('Authorization', `Bearer ${accessToken}`)
         .send(new JoinGroupRequest('GWEGAQ1'))
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('만료된 토큰입니다.');
+        });
+    });
+  });
+
+  describe('그룹의 순서를 변경할 수 있다.', () => {
+    it('성공 시 204을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABCD');
+
+      when(
+        mockGroupService.relocatedGroup(
+          anyOfClass(User),
+          anyOfClass(GroupRelocateRequest),
+        ),
+      ).thenResolve(undefined);
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .put('/api/v1/groups')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ order: [1, 2, 3] })
+        .expect(204);
+    });
+
+    it('잘못된 그룹 순서 변경 요청은 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABCD');
+
+      when(
+        mockGroupService.relocatedGroup(
+          anyOfClass(User),
+          anyOfClass(GroupRelocateRequest),
+        ),
+      ).thenThrow(new InvalidGroupRelocateException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .put('/api/v1/groups')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ order: [1, 2, 3] })
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(false);
+          expect(res.body.message).toEqual('잘못된 그룹 순서 변경 요청입니다.');
+        });
+    });
+
+    it('잘못된 인증시 401을 반환한다.', async () => {
+      // given
+      const accessToken = 'abcd.abcd.efgh';
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .put('/api/v1/groups')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ order: [1, 2, 3] })
+        .expect(401)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe('잘못된 토큰입니다.');
+        });
+    });
+
+    it('만료된 인증정보에 401을 반환한다.', async () => {
+      // given
+      const { accessToken } =
+        await authFixture.getExpiredAccessTokenUser('ABC');
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .put('/api/v1/groups')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ order: [1, 2, 3] })
         .expect(401)
         .expect((res: request.Response) => {
           expect(res.body.success).toBe(false);

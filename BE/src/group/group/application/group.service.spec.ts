@@ -30,6 +30,9 @@ import { OnlyLeaderAllowedAssignGradeException } from '../exception/only-leader-
 import { JoinGroupRequest } from '../dto/join-group-request.dto';
 import { NoSucGroupException } from '../exception/no-such-group.exception';
 import { DuplicatedJoinException } from '../exception/duplicated-join.exception';
+import { GroupRelocateRequest } from '../dto/group-relocate-request';
+import { GroupListResponse } from '../dto/group-list-response';
+import { InvalidGroupRelocateException } from '../exception/Invalid-Group-Relocate.exception';
 
 describe('GroupSerivce Test', () => {
   let groupService: GroupService;
@@ -195,10 +198,7 @@ describe('GroupSerivce Test', () => {
       await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
 
       // when
-      const groupLeaveResponse = await groupService.removeUser(
-        user2.id,
-        group.id,
-      );
+      const groupLeaveResponse = await groupService.removeUser(user2, group.id);
       // then
       expect(groupLeaveResponse.groupId).toEqual(group.id);
       expect(groupLeaveResponse.userId).toEqual(user2.id);
@@ -215,7 +215,7 @@ describe('GroupSerivce Test', () => {
 
       // when
       // then
-      await expect(groupService.removeUser(user1.id, group.id)).rejects.toThrow(
+      await expect(groupService.removeUser(user1, group.id)).rejects.toThrow(
         LeaderNotAllowedToLeaveException,
       );
     });
@@ -232,7 +232,7 @@ describe('GroupSerivce Test', () => {
 
       // when
       // then
-      await expect(groupService.removeUser(user3.id, group.id)).rejects.toThrow(
+      await expect(groupService.removeUser(user3, group.id)).rejects.toThrow(
         NoSuchUserGroupException,
       );
     });
@@ -534,6 +534,66 @@ describe('GroupSerivce Test', () => {
       await expect(
         groupService.join(user2, new JoinGroupRequest(group.groupCode)),
       ).rejects.toThrow(DuplicatedJoinException);
+    });
+  });
+
+  describe('relocatedGroup는 그룹의 순서를 변경할 수 있다.', () => {
+    it('그룹의 순서를 변경한다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser('ABCDE');
+        const group1 = await groupFixture.createGroup('group1', user);
+        const group2 = await groupFixture.createGroup('group2', user);
+        const group3 = await groupFixture.createGroup('group3', user);
+        const group4 = await groupFixture.createGroup('group4', user);
+        const group5 = await groupFixture.createGroup('group5', user);
+
+        const groupRelocateRequest = new GroupRelocateRequest();
+        groupRelocateRequest.order = [
+          group4.id,
+          group5.id,
+          group1.id,
+          group3.id,
+          group2.id,
+        ];
+
+        // when
+        await groupService.relocatedGroup(user, groupRelocateRequest);
+        const groups: GroupListResponse = await groupService.getGroups(user.id);
+
+        // then
+        expect(groups.data.length).toBe(5);
+        expect(groups.data[0].id).toEqual(group4.id);
+        expect(groups.data[1].id).toEqual(group5.id);
+        expect(groups.data[2].id).toEqual(group1.id);
+        expect(groups.data[3].id).toEqual(group3.id);
+        expect(groups.data[4].id).toEqual(group2.id);
+      });
+    });
+
+    it('모든 그룹을 요청하지 않으면 에러를 던진다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const user = await usersFixture.getUser(1);
+        const group1 = await groupFixture.createGroup('group1', user);
+        const group2 = await groupFixture.createGroup('group2', user);
+        const group3 = await groupFixture.createGroup('group3', user);
+        const group4 = await groupFixture.createGroup('group4', user);
+        const group5 = await groupFixture.createGroup('group5', user);
+
+        const groupRelocateRequest = new GroupRelocateRequest();
+        groupRelocateRequest.order = [
+          group4.id,
+          group5.id,
+          group1.id,
+          group3.id,
+        ];
+
+        // when
+        await expect(
+          groupService.relocatedGroup(user, groupRelocateRequest),
+        ).rejects.toThrow(InvalidGroupRelocateException);
+      });
     });
   });
 });

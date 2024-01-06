@@ -122,7 +122,12 @@ describe('UserGroupRepository Test', () => {
 
       // when
       const userGroup = await userGroupRepository.saveUserGroup(
-        new UserGroup(user2, group, UserGroupGrade.PARTICIPANT),
+        new UserGroup(
+          user2,
+          group,
+          UserGroupGrade.PARTICIPANT,
+          user2.groupSequence,
+        ),
       );
 
       // then

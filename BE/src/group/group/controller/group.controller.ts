@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -33,6 +34,7 @@ import { AssignGradeRequest } from '../dto/assign-grade-request.dto';
 import { AssignGradeResponse } from '../dto/assign-grade-response.dto';
 import { JoinGroupRequest } from '../dto/join-group-request.dto';
 import { JoinGroupResponse } from '../dto/join-group-response.dto';
+import { GroupRelocateRequest } from '../dto/group-relocate-request';
 
 @Controller('/api/v1/groups')
 @ApiTags('그룹 API')
@@ -92,9 +94,7 @@ export class GroupController {
     @AuthenticatedUser() user: User,
     @Param('groupId', ParseIntPipe) groupId: number,
   ) {
-    return ApiData.success(
-      await this.groupService.removeUser(user.id, groupId),
-    );
+    return ApiData.success(await this.groupService.removeUser(user, groupId));
   }
 
   @ApiOperation({
@@ -186,5 +186,24 @@ export class GroupController {
       inviteGroupRequest,
     );
     return ApiData.success(assignGradeResponse);
+  }
+
+  @ApiOperation({
+    summary: '그룹 순서 변경 API',
+    description: '그룹의 순서를 변경한다.',
+  })
+  @ApiOkResponse({
+    description: '그룹원 순서 수정',
+    type: AssignGradeResponse,
+  })
+  @ApiBearerAuth('accessToken')
+  @Put()
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async relocatedGroup(
+    @AuthenticatedUser() user: User,
+    @Body() groupRelocatedRequest: GroupRelocateRequest,
+  ) {
+    await this.groupService.relocatedGroup(user, groupRelocatedRequest);
   }
 }
