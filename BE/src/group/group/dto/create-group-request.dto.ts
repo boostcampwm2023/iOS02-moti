@@ -18,6 +18,6 @@ export class CreateGroupRequest {
   }
 
   toModel(): Group {
-    return new Group(this.name, this.avatarUrl);
+    return new Group(this.name, this.avatarUrl, 0, 0);
   }
 }

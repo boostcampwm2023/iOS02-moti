@@ -9,7 +9,7 @@ describe('GroupEntity Test', () => {
   describe('from으로 Group 대한 GroupEntity를 만들 수 있다.', () => {
     it('userGroups를 가지고 있지 않은 경우에 변환이 가능하다.', () => {
       // given
-      const group = new Group('group', 'avatarUrl');
+      const group = new Group('group', 'avatarUrl', 0, 0);
       group.assignGroupCode('ABCDEF1');
 
       // when
@@ -25,7 +25,7 @@ describe('GroupEntity Test', () => {
 
     it('userGroups를 가지고 있는 경우에 변환이 가능하다.', () => {
       // given
-      const group = new Group('group', 'avatarUrl');
+      const group = new Group('group', 'avatarUrl', 0, 0);
       const user = UsersFixture.user('ABC');
 
       group.userGroups = [];
@@ -52,7 +52,7 @@ describe('GroupEntity Test', () => {
   describe('toModel으로 GroupEntity를 Group 도메인 객체로 변환할 수 있다.', () => {
     it('userGroups를 가지고 있지 않은 경우에 변환이 가능하다.', () => {
       // given
-      const group = new Group('group', 'avatarUrl');
+      const group = new Group('group', 'avatarUrl', 0, 0);
       group.assignGroupCode('ABCDEF1');
       const groupEntity = GroupEntity.from(group);
 
@@ -69,7 +69,7 @@ describe('GroupEntity Test', () => {
 
     it('userGroups를 가지고 있는 경우에 변환이 가능하다.', () => {
       // given
-      const group = new Group('group', 'avatarUrl');
+      const group = new Group('group', 'avatarUrl', 0, 0);
       const user = UsersFixture.user('ABC');
       const userGroup = new UserGroup(
         user,

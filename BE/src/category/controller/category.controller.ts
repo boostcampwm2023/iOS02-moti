@@ -113,9 +113,9 @@ export class CategoryController {
 
   @ApiBearerAuth('accessToken')
   @ApiOperation({
-    summary: '카테고리 순서 변경 API',
+    summary: '카테고리 삭제 API',
     description:
-      '변경될 카테고리 순서로 카테고리 아이디를 배열의 형태로 요청한다.',
+      '카테고리를 삭제한다.',
   })
   @Delete('/:categoryId')
   @UseGuards(AccessTokenGuard)

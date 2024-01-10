@@ -1,6 +1,6 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AuthFixture } from '../../../../test/auth/auth-fixture';
-import { anyOfClass, instance, mock, when } from 'ts-mockito';
+import { anyNumber, anyOfClass, instance, mock, when } from 'ts-mockito';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from '../../../app.module';
 import { AuthTestModule } from '../../../../test/auth/auth-test.module';
@@ -16,6 +16,8 @@ import { GroupCategoryFixture } from '../../../../test/group/category/group-cate
 import { UnauthorizedGroupCategoryException } from '../exception/unauthorized-group-category.exception';
 import { GroupCategoryMetadata } from '../dto/group-category-metadata';
 import { UnauthorizedApproachGroupCategoryException } from '../exception/unauthorized-approach-group-category.exception';
+import { InvalidCategoryRelocateException } from '../../../category/exception/Invalid-Category-Relocate.exception';
+import { GroupCategoryRelocateRequest } from '../dto/group-category-relocate';
 
 describe('GroupCategoryController Test', () => {
   let app: INestApplication;
@@ -517,6 +519,77 @@ describe('GroupCategoryController Test', () => {
           expect(res.body.success).toBe(false);
           expect(res.body.message).toBe('만료된 토큰입니다.');
         });
+    });
+  });
+
+  describe('카테고리의 순서를 변경할 수 있다.', () => {
+    it('카테고리의 순서를 변경할 수 있다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupCategoryService.relocateCategory(
+          anyOfClass(User),
+          anyNumber(),
+          anyOfClass(GroupCategoryRelocateRequest),
+        ),
+      ).thenResolve(undefined);
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .put(`/api/v1/groups/1/categories`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ order: [1, 2, 3] })
+        .expect(204);
+    });
+
+    it('카테고리의 개수가 일치하지 않으면 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupCategoryService.relocateCategory(
+          anyOfClass(User),
+          anyNumber(),
+          anyOfClass(GroupCategoryRelocateRequest),
+        ),
+      ).thenThrow(new InvalidCategoryRelocateException());
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .put(`/api/v1/groups/1/categories`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ order: [1, 2, 3] })
+        .expect(400)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(false);
+          expect(res.body.message).toBe(
+            '잘못된 카테고리 순서 변경 요청입니다.',
+          );
+        });
+    });
+
+    it('카테고리의 순서가 배열의 형태가 아니면 400을 반환한다.', async () => {
+      // given
+      const { accessToken } = await authFixture.getAuthenticatedUser('ABC');
+
+      when(
+        mockGroupCategoryService.relocateCategory(
+          anyOfClass(User),
+          anyNumber(),
+          anyOfClass(GroupCategoryRelocateRequest),
+        ),
+      ).thenResolve(undefined);
+
+      // when
+      // then
+      return request(app.getHttpServer())
+        .put(`/api/v1/categories`)
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send({ order: 1 })
+        .expect(400);
     });
   });
 });

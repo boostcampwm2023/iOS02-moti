@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { GroupCategoryService } from '../application/group-category.service';
 import { AccessTokenGuard } from '../../../auth/guard/access-token.guard';
 import { AuthenticatedUser } from '../../../auth/decorator/athenticated-user.decorator';
@@ -15,6 +25,8 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { CategoryRelocateRequest } from '../../../category/dto/category-relocate.request';
+import { GroupCategoryRelocateRequest } from "../dto/group-category-relocate";
 
 @ApiTags('그룹 카테고리 API')
 @Controller('/api/v1/groups/:groupId/categories')
@@ -90,5 +102,22 @@ export class GroupCategoryController {
         categoryId,
       );
     return ApiData.success(new GroupCategoryListElementResponse(groupCategory));
+  }
+
+  @ApiBearerAuth('accessToken')
+  @ApiOperation({
+    summary: '그룹 카테고리 순서 변경 API',
+    description:
+      '변경될 그룹의 카테고리 순서로 카테고리 아이디를 배열의 형태로 요청한다.',
+  })
+  @Put()
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async relocateCategory(
+    @Body() categoryRelocateRequest: GroupCategoryRelocateRequest,
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @AuthenticatedUser() user: User,
+  ) {
+    return this.groupCategoryService.relocateCategory(user, groupId, categoryRelocateRequest);
   }
 }

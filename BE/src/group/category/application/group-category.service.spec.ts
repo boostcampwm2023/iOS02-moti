@@ -18,6 +18,8 @@ import { GroupCategoryFixture } from '../../../../test/group/category/group-cate
 import { GroupAchievementTestModule } from '../../../../test/group/achievement/group-achievement-test.module';
 import { GroupAchievementFixture } from '../../../../test/group/achievement/group-achievement-fixture';
 import { UnauthorizedApproachGroupCategoryException } from '../exception/unauthorized-approach-group-category.exception';
+import { CategoryRelocateRequest } from '../../../category/dto/category-relocate.request';
+import { InvalidCategoryRelocateException } from '../../../category/exception/Invalid-Category-Relocate.exception';
 
 describe('GroupCategoryService test', () => {
   let groupCategoryService: GroupCategoryService;
@@ -695,6 +697,108 @@ describe('GroupCategoryService test', () => {
         expect(category.categoryId).toEqual(0);
         expect(category.achievementCount).toEqual(45);
         expect(category.insertedAt).toBeDefined();
+      });
+    });
+  });
+
+  describe('relocateCategory는 카테고리 순서를 재배열할 수 있다.', () => {
+    it('카테고리 순서를 변경한다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+
+        const group = await groupFixture.createGroups(leader);
+
+        const groupCategory1 = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리1',
+        );
+        const groupCategory2 = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리2',
+        );
+        const groupCategory3 = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리3',
+        );
+        const groupCategory4 = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리4',
+        );
+
+        const categoryRelocateRequest = new CategoryRelocateRequest();
+        categoryRelocateRequest.order = [
+          groupCategory4.id,
+          groupCategory3.id,
+          groupCategory1.id,
+          groupCategory2.id,
+        ];
+
+        // when
+        await groupCategoryService.relocateCategory(
+          leader,
+          group.id,
+          categoryRelocateRequest,
+        );
+        const categories = await groupCategoryService.retrieveCategoryMetadata(
+          leader,
+          group.id,
+        );
+
+        // then
+        expect(categories.length).toBe(5);
+        expect(categories[0].categoryId).toBe(-1);
+        expect(categories[1].categoryId).toBe(groupCategory4.id);
+        expect(categories[2].categoryId).toBe(groupCategory3.id);
+        expect(categories[3].categoryId).toBe(groupCategory1.id);
+        expect(categories[4].categoryId).toBe(groupCategory2.id);
+      });
+    });
+
+    it('모든 카테고리를 요청하지 않으면 에러를 던진다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+
+        const group = await groupFixture.createGroups(leader);
+
+        const groupCategory1 = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리1',
+        );
+        const groupCategory2 = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리2',
+        );
+        const groupCategory3 = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리3',
+        );
+        const groupCategory4 = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리4',
+        );
+
+        const categoryRelocateRequest = new CategoryRelocateRequest();
+        categoryRelocateRequest.order = [groupCategory4.id, groupCategory3.id];
+
+        // when
+        // then
+        await expect(
+          groupCategoryService.relocateCategory(
+            leader,
+            group.id,
+            categoryRelocateRequest,
+          ),
+        ).rejects.toThrow(InvalidCategoryRelocateException);
       });
     });
   });

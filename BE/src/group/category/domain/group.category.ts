@@ -6,10 +6,12 @@ export class GroupCategory {
   user: User;
   group: Group;
   name: string;
+  seq: number;
 
-  constructor(user: User, group: Group, name: string) {
+  constructor(user: User, group: Group, name: string, seq: number) {
     this.user = user;
     this.group = group;
     this.name = name;
+    this.seq = seq;
   }
 }

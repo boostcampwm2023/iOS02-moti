@@ -2,9 +2,15 @@ import { CustomTypeOrmModule } from '../../../src/config/typeorm/custom-typeorm.
 import { Module } from '@nestjs/common';
 import { GroupCategoryRepository } from '../../../src/group/category/entities/group-category.repository';
 import { GroupCategoryFixture } from './group-category-fixture';
+import { GroupRepository } from '../../../src/group/group/entities/group.repository';
 
 @Module({
-  imports: [CustomTypeOrmModule.forCustomRepository([GroupCategoryRepository])],
+  imports: [
+    CustomTypeOrmModule.forCustomRepository([
+      GroupCategoryRepository,
+      GroupRepository,
+    ]),
+  ],
   providers: [GroupCategoryFixture],
   exports: [GroupCategoryFixture],
 })
