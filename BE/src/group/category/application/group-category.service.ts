@@ -7,6 +7,8 @@ import { GroupRepository } from '../../group/entities/group.repository';
 import { UnauthorizedGroupCategoryException } from '../exception/unauthorized-group-category.exception';
 import { GroupCategory } from '../domain/group.category';
 import { UnauthorizedApproachGroupCategoryException } from '../exception/unauthorized-approach-group-category.exception';
+import { GroupCategoryRelocateRequest } from '../dto/group-category-relocate';
+import { InvalidCategoryRelocateException } from '../../../category/exception/Invalid-Category-Relocate.exception';
 
 @Injectable()
 export class GroupCategoryService {
@@ -23,6 +25,7 @@ export class GroupCategoryService {
   ): Promise<GroupCategory> {
     const group = await this.getGroupByLeader(user, groupId);
     const groupCategory = groupCtgCreate.toModel(user, group);
+    await this.groupRepository.saveGroup(group);
     return this.groupCategoryRepository.saveGroupCategory(groupCategory);
   }
 
@@ -45,6 +48,29 @@ export class GroupCategoryService {
       throw new UnauthorizedApproachGroupCategoryException();
 
     return categoryMetaData;
+  }
+
+  @Transactional()
+  async relocateCategory(
+    user: User,
+    groupId: number,
+    categoryRelocateRequest: GroupCategoryRelocateRequest,
+  ) {
+    const group = await this.getGroup(user, groupId);
+    if (group.categoryCount != categoryRelocateRequest.getCategoryCount())
+      throw new InvalidCategoryRelocateException();
+
+    const groupCategories =
+      await this.groupCategoryRepository.findAllByIdAndGroup(
+        groupId,
+        categoryRelocateRequest.order,
+      );
+
+    for (let index = 0; index < groupCategories.length; index++) {
+      const category = groupCategories[index];
+      category.seq = index + 1;
+      await this.groupCategoryRepository.saveGroupCategory(category);
+    }
   }
 
   private async getGroupByLeader(user: User, groupId: number) {

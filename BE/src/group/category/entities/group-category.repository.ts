@@ -8,7 +8,7 @@ import { ICategoryMetaData } from '../../../category';
 import { CategoryMetaData } from '../../../category/dto/category-metadata';
 import { Group } from '../../group/domain/group.domain';
 import { GroupAchievementEntity } from '../../achievement/entities/group-achievement.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 @CustomRepository(GroupCategoryEntity)
 export class GroupCategoryRepository extends TransactionalRepository<GroupCategoryEntity> {
@@ -71,6 +71,7 @@ export class GroupCategoryRepository extends TransactionalRepository<GroupCatego
         { userId: user.id },
       )
       .groupBy('groupCategory.id')
+      .orderBy('groupCategory.seq')
       .getRawMany<ICategoryMetaData>();
 
     return categories.map((category) => new CategoryMetaData(category));
@@ -128,5 +129,21 @@ export class GroupCategoryRepository extends TransactionalRepository<GroupCatego
       .getRawOne<ICategoryMetaData>();
 
     return new CategoryMetaData(category);
+  }
+
+  async findAllByIdAndGroup(
+    groupId: number,
+    ids: number[],
+  ): Promise<GroupCategory[]> {
+    const groupCategories = await this.repository
+      .createQueryBuilder('gc')
+      .where('gc.group_id = :groupId')
+      .andWhere({ id: In(ids) })
+      .setParameter('groupId', groupId)
+      .orderBy('FIELD(gc.id, :...ids)')
+      .setParameter('ids', ids)
+      .getMany();
+
+    return groupCategories.map((gc) => gc.toModel());
   }
 }

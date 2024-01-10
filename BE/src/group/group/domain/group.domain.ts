@@ -7,12 +7,21 @@ export class Group {
   name: string;
   avatarUrl: string;
   groupCode: string;
+  categoryCount: number;
+  categorySequence: number;
   userGroups: UserGroup[];
 
-  constructor(name: string, avatarUrl: string) {
+  constructor(
+    name: string,
+    avatarUrl: string,
+    categoryCount: number,
+    categorySequence: number,
+  ) {
     this.name = name;
     this.avatarUrl = avatarUrl;
     this.userGroups = [];
+    this.categoryCount = categoryCount;
+    this.categorySequence = categorySequence;
   }
 
   addMember(user: User, userGrade: UserGroupGrade) {

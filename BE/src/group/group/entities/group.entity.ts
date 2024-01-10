@@ -24,6 +24,12 @@ export class GroupEntity extends BaseTimeEntity {
   })
   userGroups: UserGroupEntity[];
 
+  @Column()
+  categoryCount: number;
+
+  @Column()
+  categorySequence: number;
+
   @OneToMany(
     () => GroupAchievementEntity,
     (groupAchievement) => groupAchievement.group,
@@ -31,7 +37,12 @@ export class GroupEntity extends BaseTimeEntity {
   achievements: GroupAchievementEntity[];
 
   toModel(): Group {
-    const group = new Group(this.name, this.avatarUrl);
+    const group = new Group(
+      this.name,
+      this.avatarUrl,
+      this.categoryCount,
+      this.categorySequence,
+    );
     group.id = this.id;
     group.groupCode = this.groupCode;
     group.userGroups = this.userGroups
@@ -50,6 +61,8 @@ export class GroupEntity extends BaseTimeEntity {
       ? group.userGroups.map((ug) => UserGroupEntity.strictFrom(ug))
       : undefined;
     groupEntity.avatarUrl = group.avatarUrl;
+    groupEntity.categorySequence = group.categorySequence;
+    groupEntity.categoryCount = group.categoryCount;
     return groupEntity;
   }
 
@@ -60,6 +73,8 @@ export class GroupEntity extends BaseTimeEntity {
     groupEntity.name = group.name;
     groupEntity.groupCode = group.groupCode;
     groupEntity.avatarUrl = group.avatarUrl;
+    groupEntity.categorySequence = group.categorySequence;
+    groupEntity.categoryCount = group.categoryCount;
     return groupEntity;
   }
 }

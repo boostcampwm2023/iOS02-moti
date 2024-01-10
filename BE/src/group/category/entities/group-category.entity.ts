@@ -29,6 +29,9 @@ export class GroupCategoryEntity extends BaseTimeEntity {
   @Column({ name: 'name' })
   name: string;
 
+  @Column()
+  seq: number;
+
   @OneToMany(
     () => GroupAchievementEntity,
     (achievements) => achievements.groupCategory,
@@ -40,6 +43,7 @@ export class GroupCategoryEntity extends BaseTimeEntity {
       this.user?.toModel(),
       this.group?.toModel(),
       this.name,
+      this.seq,
     );
     group.id = this.id;
 
@@ -54,6 +58,7 @@ export class GroupCategoryEntity extends BaseTimeEntity {
     groupCategoryEntity.user = UserEntity.from(groupCategory?.user);
     groupCategoryEntity.group = GroupEntity.from(groupCategory?.group);
     groupCategoryEntity.name = groupCategory.name;
+    groupCategoryEntity.seq = groupCategory.seq;
     return groupCategoryEntity;
   }
 }

@@ -38,7 +38,6 @@ export class GroupRepository extends TransactionalRepository<GroupEntity> {
       .addGroupBy('user_group.seq')
       .getRawMany<IGroupPreview>();
 
-    console.log(groupPreviews);
     return groupPreviews.map((groupPreview) => new GroupPreview(groupPreview));
   }
 
