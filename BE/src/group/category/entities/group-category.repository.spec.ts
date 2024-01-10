@@ -74,7 +74,7 @@ describe('GroupCategoryRepository test', () => {
         // given
         const user = await userFixture.getUser('ABC');
         const group = await groupFixture.createGroups(user);
-        const groupCategory = new GroupCategory(user, group, '카테고리1');
+        const groupCategory = new GroupCategory(user, group, '카테고리1', 0);
 
         // when
         const saved =

@@ -6,7 +6,7 @@ describe('Group Domain Test', () => {
   test('유저를 추가할 수 있다.', () => {
     //given
     //when
-    const group = new Group('Test Group', 'avatarUrl');
+    const group = new Group('Test Group', 'avatarUrl', 0, 0);
     const user = new User();
     group.addMember(user, UserGroupGrade.PARTICIPANT);
 
@@ -19,7 +19,7 @@ describe('Group Domain Test', () => {
   test('그룹 로고를 설정할 수 있다.', () => {
     //given
     //when
-    const group = new Group('Test Group', null);
+    const group = new Group('Test Group', null, 0, 0);
     group.assignAvatarUrl('https://image.site/image/group-1.jpg');
 
     //then

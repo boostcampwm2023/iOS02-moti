@@ -32,7 +32,7 @@ describe('GroupCategoryEntity Test', () => {
 
     it('user와 group이 없는 경우에도 변환이 가능하다.', () => {
       // given
-      const groupCategory = new GroupCategory(null, null, '#1');
+      const groupCategory = new GroupCategory(null, null, '#1',0);
 
       // when
       const groupCategoryEntity = GroupCategoryEntity.from(groupCategory);
