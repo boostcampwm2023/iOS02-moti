@@ -59,7 +59,7 @@ export class UserGroupRepository extends TransactionalRepository<UserGroupEntity
       .orderBy(`FIELD(ug.group_id, :...ids)`)
       .setParameter('ids', ids)
       .getMany();
-    console.log(userGroups);
+
     return userGroups.map((g) => g.toModel());
   }
 }

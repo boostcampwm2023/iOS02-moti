@@ -20,6 +20,7 @@ import { GroupAchievementFixture } from '../../../../test/group/achievement/grou
 import { UnauthorizedApproachGroupCategoryException } from '../exception/unauthorized-approach-group-category.exception';
 import { CategoryRelocateRequest } from '../../../category/dto/category-relocate.request';
 import { InvalidCategoryRelocateException } from '../../../category/exception/Invalid-Category-Relocate.exception';
+import { GroupCategoryMetadata } from '../dto/group-category-metadata';
 
 describe('GroupCategoryService test', () => {
   let groupCategoryService: GroupCategoryService;
@@ -799,6 +800,73 @@ describe('GroupCategoryService test', () => {
             categoryRelocateRequest,
           ),
         ).rejects.toThrow(InvalidCategoryRelocateException);
+      });
+    });
+  });
+
+  describe('deleteCategory는 카테고리를 삭제할 수 있다.', () => {
+    it('그룹의 카테고리를 삭제할 수 있다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+
+        const group = await groupFixture.createGroups(leader);
+        const category = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리1',
+        );
+
+        // when
+        await groupCategoryService.deleteCategory(
+          leader,
+          group.id,
+          category.id,
+        );
+        const categoryMetaData: GroupCategoryMetadata[] =
+          await groupCategoryService.retrieveCategoryMetadata(leader, group.id);
+        // then
+
+        expect(categoryMetaData.length).toBe(0);
+      });
+    });
+
+    it('카테고리를 삭제해도 기존 순서가 유지된다.', async () => {
+      await transactionTest(dataSource, async () => {
+        // given
+        const leader = await usersFixture.getUser('ABC');
+
+        const group = await groupFixture.createGroups(leader);
+        const category1 = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리1',
+        );
+        const category2 = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리2',
+        );
+        const category3 = await groupCategoryFixture.createCategory(
+          leader,
+          group,
+          '카테고리3',
+        );
+
+        // when
+        await groupCategoryService.deleteCategory(
+          leader,
+          group.id,
+          category2.id,
+        );
+        const categoryMetaData: GroupCategoryMetadata[] =
+          await groupCategoryService.retrieveCategoryMetadata(leader, group.id);
+
+        // then
+        expect(categoryMetaData.length).toBe(3);
+        expect(categoryMetaData[0].categoryId).toBe(-1);
+        expect(categoryMetaData[1].categoryId).toBe(category1.id);
+        expect(categoryMetaData[2].categoryId).toBe(category3.id);
       });
     });
   });

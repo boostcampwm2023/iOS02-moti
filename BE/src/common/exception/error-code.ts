@@ -81,7 +81,7 @@ export const ERROR_INFO = {
   },
   UNAUTHORIZED_GROUP_CATEGORY: {
     statusCode: 400,
-    message: '그룹에 카테고리를 만들 수 없습니다.',
+    message: '그룹에 카테고리에 대한 권한이 없습니다.',
   },
   NO_SUCH_GROUP: {
     statusCode: 404,

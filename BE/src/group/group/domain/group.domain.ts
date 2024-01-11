@@ -38,4 +38,8 @@ export class Group {
   assignGroupCode(groupCode: string) {
     this.groupCode = groupCode;
   }
+
+  deleteCategory() {
+    this.categoryCount--;
+  }
 }

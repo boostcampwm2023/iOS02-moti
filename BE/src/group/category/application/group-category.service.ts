@@ -73,6 +73,25 @@ export class GroupCategoryService {
     }
   }
 
+  @Transactional()
+  async deleteCategory(user: User, groupId: number, categoryId: number) {
+    const group =
+      await this.groupRepository.findGroupByIdAndLeaderOrManagerUser(
+        user,
+        groupId,
+      );
+    if (!group) throw new UnauthorizedGroupCategoryException();
+
+    const groupCategory = await this.groupCategoryRepository.findByIdAndGroup(
+      group.id,
+      categoryId,
+    );
+    group.deleteCategory();
+
+    await this.groupRepository.saveGroup(group);
+    await this.groupCategoryRepository.deleteCategory(groupCategory);
+  }
+
   private async getGroupByLeader(user: User, groupId: number) {
     const group = await this.groupRepository.findGroupByIdAndLeaderUser(
       user,

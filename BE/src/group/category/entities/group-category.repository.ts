@@ -26,6 +26,7 @@ export class GroupCategoryRepository extends TransactionalRepository<GroupCatego
     });
     return groupCategoryEntity?.toModel();
   }
+
   async findByIdAndGroup(groupId: number, ctgId: number) {
     const groupCategoryEntity = await this.repository.findOneBy({
       group: { id: groupId },
@@ -145,5 +146,9 @@ export class GroupCategoryRepository extends TransactionalRepository<GroupCatego
       .getMany();
 
     return groupCategories.map((gc) => gc.toModel());
+  }
+
+  async deleteCategory(groupCategory: GroupCategory) {
+    await this.repository.softDelete(groupCategory.id);
   }
 }

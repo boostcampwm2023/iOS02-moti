@@ -1,12 +1,12 @@
-import { TransactionalRepository } from '../../../config/transaction-manager/transactional-repository';
-import { GroupEntity } from './group.entity';
-import { CustomRepository } from '../../../config/typeorm/custom-repository.decorator';
-import { Group } from '../domain/group.domain';
-import { IGroupPreview } from '../index';
-import { GroupPreview } from '../dto/group-preview.dto';
-import { User } from '../../../users/domain/user.domain';
-import { UserGroupGrade } from '../domain/user-group-grade';
-import { In } from 'typeorm';
+import { TransactionalRepository } from "../../../config/transaction-manager/transactional-repository";
+import { GroupEntity } from "./group.entity";
+import { CustomRepository } from "../../../config/typeorm/custom-repository.decorator";
+import { Group } from "../domain/group.domain";
+import { IGroupPreview } from "../index";
+import { GroupPreview } from "../dto/group-preview.dto";
+import { User } from "../../../users/domain/user.domain";
+import { UserGroupGrade } from "../domain/user-group-grade";
+import { In } from "typeorm";
 
 @CustomRepository(GroupEntity)
 export class GroupRepository extends TransactionalRepository<GroupEntity> {
@@ -59,6 +59,25 @@ export class GroupRepository extends TransactionalRepository<GroupEntity> {
             id: user.id,
           },
           grade: UserGroupGrade.LEADER,
+        },
+      },
+      relations: ['userGroups.user'],
+    });
+    return group?.toModel();
+  }
+
+  async findGroupByIdAndLeaderOrManagerUser(
+    user: User,
+    id: number,
+  ): Promise<Group> {
+    const group = await this.repository.findOne({
+      where: {
+        id: id,
+        userGroups: {
+          user: {
+            id: user.id,
+          },
+          grade: In([UserGroupGrade.LEADER, UserGroupGrade.MANAGER]),
         },
       },
       relations: ['userGroups.user'],
