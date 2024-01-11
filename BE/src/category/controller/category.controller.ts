@@ -114,8 +114,7 @@ export class CategoryController {
   @ApiBearerAuth('accessToken')
   @ApiOperation({
     summary: '카테고리 삭제 API',
-    description:
-      '카테고리를 삭제한다.',
+    description: '카테고리를 삭제한다.',
   })
   @Delete('/:categoryId')
   @UseGuards(AccessTokenGuard)

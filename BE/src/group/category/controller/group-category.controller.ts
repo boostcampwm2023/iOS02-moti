@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -25,8 +26,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { CategoryRelocateRequest } from '../../../category/dto/category-relocate.request';
-import { GroupCategoryRelocateRequest } from "../dto/group-category-relocate";
+import { GroupCategoryRelocateRequest } from '../dto/group-category-relocate';
 
 @ApiTags('그룹 카테고리 API')
 @Controller('/api/v1/groups/:groupId/categories')
@@ -118,6 +118,26 @@ export class GroupCategoryController {
     @Param('groupId', ParseIntPipe) groupId: number,
     @AuthenticatedUser() user: User,
   ) {
-    return this.groupCategoryService.relocateCategory(user, groupId, categoryRelocateRequest);
+    return this.groupCategoryService.relocateCategory(
+      user,
+      groupId,
+      categoryRelocateRequest,
+    );
+  }
+
+  @ApiBearerAuth('accessToken')
+  @ApiOperation({
+    summary: '카테고리 삭제 API',
+    description: '카테고리를 삭제한다.',
+  })
+  @Delete('/:categoryId')
+  @UseGuards(AccessTokenGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deleteCategory(
+    @Param('groupId', ParseIntPipe) groupId: number,
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+    @AuthenticatedUser() user: User,
+  ) {
+    return this.groupCategoryService.deleteCategory(user, groupId, categoryId);
   }
 }
