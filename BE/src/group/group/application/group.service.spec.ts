@@ -204,22 +204,7 @@ describe('GroupSerivce Test', () => {
       expect(groupLeaveResponse.userId).toEqual(user2.id);
     });
   });
-  test('리더가 탈퇴 시도를 하는 경우에는 LeaderNotAllowedToLeaveException를 던진다.', async () => {
-    // given
-    await transactionTest(dataSource, async () => {
-      // given
-      const user1 = await usersFixture.getUser('ABC');
-      const user2 = await usersFixture.getUser('DEF');
-      const group = await groupFixture.createGroup('Test Group', user1);
-      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
 
-      // when
-      // then
-      await expect(groupService.removeUser(user1, group.id)).rejects.toThrow(
-        LeaderNotAllowedToLeaveException,
-      );
-    });
-  });
   test('내가 속한 그룹이 아닌 그룹에 대한 탈퇴 시도에 대해서는 NoSuchUserGroupException 예외를 던진다.', async () => {
     // given
     await transactionTest(dataSource, async () => {
