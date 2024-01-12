@@ -596,4 +596,41 @@ describe('GroupSerivce Test', () => {
       });
     });
   });
+
+  test('리더가 탈퇴하면 남아있는 멤버중 가입일이 가장 오래된 멤버가 리더가 된다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const leader = await usersFixture.getUser('ABC');
+      const group = await groupFixture.createGroup('Test Group', leader);
+      const firstMember = await usersFixture.getUser('DEF');
+      const secondMember = await usersFixture.getUser('EFG');
+      const thirdMember = await usersFixture.getUser('FGH');
+      await groupFixture.addMember(
+        group,
+        firstMember,
+        UserGroupGrade.PARTICIPANT,
+      );
+      await groupFixture.addMember(
+        group,
+        secondMember,
+        UserGroupGrade.PARTICIPANT,
+      );
+      await groupFixture.addMember(
+        group,
+        thirdMember,
+        UserGroupGrade.PARTICIPANT,
+      );
+
+      // when
+      await groupService.removeUser(leader, group.id);
+
+      // then
+      const newLeader = await userGroupRepository.findOneByUserIdAndGroupId(
+        firstMember.id,
+        group.id,
+      );
+
+      expect(newLeader.grade).toEqual(UserGroupGrade.LEADER);
+    });
+  });
 });

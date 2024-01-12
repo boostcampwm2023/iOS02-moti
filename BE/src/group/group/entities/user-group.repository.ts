@@ -2,6 +2,7 @@ import { TransactionalRepository } from '../../../config/transaction-manager/tra
 import { CustomRepository } from '../../../config/typeorm/custom-repository.decorator';
 import { UserGroupEntity } from './user-group.entity';
 import { UserGroup } from '../domain/user-group.doamin';
+import { Not } from 'typeorm';
 
 @CustomRepository(UserGroupEntity)
 export class UserGroupRepository extends TransactionalRepository<UserGroupEntity> {
@@ -61,5 +62,21 @@ export class UserGroupRepository extends TransactionalRepository<UserGroupEntity
       .getMany();
 
     return userGroups.map((g) => g.toModel());
+  }
+
+  async findAllByGroupIdAndUserIdNotOrderByCreatedAtAsc(
+    groupId: number,
+    userId: number,
+  ) {
+    const userGroupEntities = await this.repository
+      .createQueryBuilder('ug')
+      .leftJoin('ug.user', 'user')
+      .addSelect('user.id')
+      .where('ug.group_id = :groupId', { groupId })
+      .andWhere('ug.user_id != :userId', { userId })
+      .orderBy('ug.createdAt', 'ASC')
+      .getMany();
+
+    return userGroupEntities.map((ug) => ug.toModel());
   }
 }

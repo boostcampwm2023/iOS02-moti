@@ -136,4 +136,31 @@ describe('UserGroupRepository Test', () => {
       expect(userGroup.group.id).toEqual(group.id);
     });
   });
+
+  test('특정 유저를 제외하고 가입일이 가장 오래된 유저를 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const leader = await usersFixture.getUser('ABC');
+      const group = await groupFixture.createGroup('Test Group', leader);
+      const user1 = await usersFixture.getUser('DEF');
+      const user2 = await usersFixture.getUser('EFG');
+      const user3 = await usersFixture.getUser('FGH');
+      await groupFixture.addMember(group, user1, UserGroupGrade.PARTICIPANT);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+      await groupFixture.addMember(group, user3, UserGroupGrade.PARTICIPANT);
+
+      // when
+      const userGroups =
+        await userGroupRepository.findAllByGroupIdAndUserIdNotOrderByCreatedAtAsc(
+          group.id,
+          leader.id,
+        );
+
+      // then
+      expect(userGroups.length).toEqual(3);
+      expect(userGroups[0].user.id).toEqual(user1.id);
+      expect(userGroups[1].user.id).toEqual(user2.id);
+      expect(userGroups[2].user.id).toEqual(user3.id);
+    });
+  });
 });

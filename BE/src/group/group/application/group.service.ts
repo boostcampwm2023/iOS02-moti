@@ -9,7 +9,6 @@ import { GroupListResponse } from '../dto/group-list-response';
 import { GroupAvatarHolder } from './group-avatar.holder';
 import { UserGroupRepository } from '../entities/user-group.repository';
 import { GroupLeaveResponse } from '../dto/group-leave-response.dto';
-import { LeaderNotAllowedToLeaveException } from '../exception/leader-not-allowed-to-leave.exception';
 import { NoSuchUserGroupException } from '../exception/no-such-user-group.exception';
 import { InviteGroupRequest } from '../dto/invite-group-request.dto';
 import { UserRepository } from '../../../users/entities/user.repository';
@@ -61,8 +60,9 @@ export class GroupService {
   @Transactional()
   async removeUser(user: User, groupId: number) {
     const userGroup = await this.getUserGroup(user.id, groupId);
-    if (userGroup.grade === UserGroupGrade.LEADER)
-      throw new LeaderNotAllowedToLeaveException();
+    if (userGroup.grade === UserGroupGrade.LEADER) {
+      await this.assignNextLeader(groupId, user.id);
+    }
     user.leaveGroup();
 
     await this.userRepository.updateUser(user);
@@ -189,5 +189,21 @@ export class GroupService {
       userGroup.grade !== UserGroupGrade.MANAGER
     )
       throw new InvitePermissionDeniedException();
+  }
+
+  private async assignNextLeader(groupId: number, userId: number) {
+    const members =
+      await this.userGroupRepository.findAllByGroupIdAndUserIdNotOrderByCreatedAtAsc(
+        groupId,
+        userId,
+      );
+    if (members) {
+      const nextLeader = members[0];
+      nextLeader.grade = UserGroupGrade.LEADER;
+      await this.userGroupRepository.repository.update(
+        nextLeader.id,
+        nextLeader,
+      );
+    }
   }
 }
