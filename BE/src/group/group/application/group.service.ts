@@ -77,6 +77,14 @@ export class GroupService {
   }
 
   @Transactional()
+  async removeUserFromAllGroup(user: User) {
+    const userGroups = await this.userGroupRepository.findAllByUserId(user.id);
+    for (const userGroup of userGroups) {
+      await this.removeUser(user, userGroup.group.id);
+    }
+  }
+
+  @Transactional()
   async invite(
     user: User,
     groupId: number,

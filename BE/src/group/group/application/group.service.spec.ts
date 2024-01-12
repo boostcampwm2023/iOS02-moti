@@ -21,7 +21,6 @@ import { GroupAchievementFixture } from '../../../../test/group/achievement/grou
 import { GroupAchievementTestModule } from '../../../../test/group/achievement/group-achievement-test.module';
 import { GroupCategoryTestModule } from '../../../../test/group/category/group-category-test.module';
 import { dateFormat } from '../../../common/utils/date-formatter';
-import { LeaderNotAllowedToLeaveException } from '../exception/leader-not-allowed-to-leave.exception';
 import { NoSuchUserGroupException } from '../exception/no-such-user-group.exception';
 import { InviteGroupRequest } from '../dto/invite-group-request.dto';
 import { InvitePermissionDeniedException } from '../exception/invite-permission-denied.exception';
@@ -631,6 +630,35 @@ describe('GroupSerivce Test', () => {
       // then
       const expected = await groupRepository.findById(group.id);
       expect(expected).toBeUndefined();
+    });
+  });
+
+  test('멤버가 속한 모든 그룹에 대해서 그룹 탈퇴를 할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+
+      const group1 = await groupFixture.createGroup('Test Group1', user1);
+      const group2 = await groupFixture.createGroup('Test Group2', user1);
+      const group3 = await groupFixture.createGroup('Test Group3', user1);
+      const group4 = await groupFixture.createGroup('Test Group4', user1);
+
+      await groupFixture.addMember(group2, user2, UserGroupGrade.PARTICIPANT);
+
+      // when
+      await groupService.removeUserFromAllGroup(user1);
+
+      // then
+      const removed1 = await groupRepository.findById(group1.id);
+      const expected = await groupRepository.findById(group2.id);
+      const removed2 = await groupRepository.findById(group3.id);
+      const removed3 = await groupRepository.findById(group4.id);
+
+      expect(removed1).toBeUndefined();
+      expect(expected).not.toBeUndefined();
+      expect(removed2).toBeUndefined();
+      expect(removed3).toBeUndefined();
     });
   });
 });

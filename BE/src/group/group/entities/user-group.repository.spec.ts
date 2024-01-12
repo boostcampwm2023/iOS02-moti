@@ -186,4 +186,21 @@ describe('UserGroupRepository Test', () => {
       expect(rest).toEqual(3);
     });
   });
+
+  test('유저가 속한 모든 그룹에 대해 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      await groupFixture.createGroup('Test Group1', user);
+      await groupFixture.createGroup('Test Group2', user);
+      await groupFixture.createGroup('Test Group3', user);
+      await groupFixture.createGroup('Test Group4', user);
+
+      // when
+      const userGroups = await userGroupRepository.findAllByUserId(user.id);
+
+      // then
+      expect(userGroups.length).toEqual(4);
+    });
+  });
 });

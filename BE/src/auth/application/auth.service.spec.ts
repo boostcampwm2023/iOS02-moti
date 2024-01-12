@@ -28,6 +28,7 @@ import { InvalidIdentifierException } from '../exception/invalid-identifier.exce
 import { RevokeRequestFailException } from '../exception/revoke-request-fail.exception';
 import { transactionTest } from '../../../test/common/transaction-test';
 import { DataSource } from 'typeorm';
+import { GroupModule } from '../../group/group/group.module';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -44,6 +45,7 @@ describe('AuthService', () => {
       imports: [
         HttpModule,
         CacheModule.register(),
+        GroupModule,
         AuthTestModule,
         UsersTestModule,
         JwtModule.register({}),

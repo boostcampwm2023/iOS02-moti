@@ -86,4 +86,17 @@ export class UserGroupRepository extends TransactionalRepository<UserGroupEntity
       .andWhere('ug.user_id != :userId', { userId })
       .getCount();
   }
+
+  async findAllByUserId(userId: number): Promise<UserGroup[]> {
+    const userGroups = await this.repository
+      .createQueryBuilder('ug')
+      .leftJoin('ug.user', 'user')
+      .leftJoin('ug.group', 'group')
+      .addSelect(['user.id', 'group.id'])
+      .where('ug.user_id = :userId', { userId })
+      .andWhere('ug.group_id IS NOT NULL')
+      .orderBy('ug.createdAt', 'ASC')
+      .getMany();
+    return userGroups.map((ug) => ug.toModel());
+  }
 }
