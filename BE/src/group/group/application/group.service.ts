@@ -60,11 +60,16 @@ export class GroupService {
   @Transactional()
   async removeUser(user: User, groupId: number) {
     const userGroup = await this.getUserGroup(user.id, groupId);
+
+    if (await this.isLastMember(groupId, user.id)) {
+      await this.groupRepository.repository.delete(groupId);
+      return new GroupLeaveResponse(user.id, groupId);
+    }
+
     if (userGroup.grade === UserGroupGrade.LEADER) {
       await this.assignNextLeader(groupId, user.id);
     }
     user.leaveGroup();
-
     await this.userRepository.updateUser(user);
     await this.userGroupRepository.repository.softDelete(userGroup);
 
@@ -205,5 +210,14 @@ export class GroupService {
         nextLeader,
       );
     }
+  }
+
+  private async isLastMember(groupId: number, userId: number) {
+    return (
+      (await this.userGroupRepository.findCountByGroupIdAndUserIdNot(
+        groupId,
+        userId,
+      )) === 0
+    );
   }
 }

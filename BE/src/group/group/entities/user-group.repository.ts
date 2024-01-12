@@ -79,4 +79,11 @@ export class UserGroupRepository extends TransactionalRepository<UserGroupEntity
 
     return userGroupEntities.map((ug) => ug.toModel());
   }
+  async findCountByGroupIdAndUserIdNot(groupId: number, userId: number) {
+    return await this.repository
+      .createQueryBuilder('ug')
+      .where('ug.group_id = :groupId', { groupId })
+      .andWhere('ug.user_id != :userId', { userId })
+      .getCount();
+  }
 }

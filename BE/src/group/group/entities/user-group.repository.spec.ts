@@ -163,4 +163,27 @@ describe('UserGroupRepository Test', () => {
       expect(userGroups[2].user.id).toEqual(user3.id);
     });
   });
+
+  test('특정 유저를 제외한 멤버수를 조회할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const leader = await usersFixture.getUser('ABC');
+      const group = await groupFixture.createGroup('Test Group', leader);
+      const user1 = await usersFixture.getUser('DEF');
+      const user2 = await usersFixture.getUser('EFG');
+      const user3 = await usersFixture.getUser('FGH');
+      await groupFixture.addMember(group, user1, UserGroupGrade.PARTICIPANT);
+      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
+      await groupFixture.addMember(group, user3, UserGroupGrade.PARTICIPANT);
+
+      // when
+      const rest = await userGroupRepository.findCountByGroupIdAndUserIdNot(
+        group.id,
+        leader.id,
+      );
+
+      // then
+      expect(rest).toEqual(3);
+    });
+  });
 });

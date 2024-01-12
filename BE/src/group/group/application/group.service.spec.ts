@@ -618,4 +618,19 @@ describe('GroupSerivce Test', () => {
       expect(newLeader.grade).toEqual(UserGroupGrade.LEADER);
     });
   });
+
+  test('마지막 멤버가 탈퇴하면 그룹은 삭제된다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const group = await groupFixture.createGroup('Test Group', user);
+
+      // when
+      await groupService.removeUser(user, group.id);
+
+      // then
+      const expected = await groupRepository.findById(group.id);
+      expect(expected).toBeUndefined();
+    });
+  });
 });
