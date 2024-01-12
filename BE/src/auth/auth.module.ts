@@ -17,6 +17,7 @@ import type { RedisClientOptions } from 'redis';
 import { AvatarHolder } from './application/avatar.holder';
 import { AdminTokenGuard } from './guard/admin-token.guard';
 import { AdminPageTokenGuard } from './guard/admin-page-token.guard';
+import { GroupModule } from '../group/group/group.module';
 
 @Global()
 @Module({
@@ -25,6 +26,7 @@ import { AdminPageTokenGuard } from './guard/admin-page-token.guard';
     JwtModule.register({}),
     CacheModule.registerAsync<RedisClientOptions>(redisModuleOptions),
     CustomTypeOrmModule.forCustomRepository([UserRepository]),
+    GroupModule,
     forwardRef(() => UsersModule),
   ],
   controllers: [AuthController],

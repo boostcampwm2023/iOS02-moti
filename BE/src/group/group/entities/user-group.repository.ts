@@ -2,6 +2,7 @@ import { TransactionalRepository } from '../../../config/transaction-manager/tra
 import { CustomRepository } from '../../../config/typeorm/custom-repository.decorator';
 import { UserGroupEntity } from './user-group.entity';
 import { UserGroup } from '../domain/user-group.doamin';
+import { Not } from 'typeorm';
 
 @CustomRepository(UserGroupEntity)
 export class UserGroupRepository extends TransactionalRepository<UserGroupEntity> {
@@ -61,5 +62,41 @@ export class UserGroupRepository extends TransactionalRepository<UserGroupEntity
       .getMany();
 
     return userGroups.map((g) => g.toModel());
+  }
+
+  async findAllByGroupIdAndUserIdNotOrderByCreatedAtAsc(
+    groupId: number,
+    userId: number,
+  ) {
+    const userGroupEntities = await this.repository
+      .createQueryBuilder('ug')
+      .leftJoin('ug.user', 'user')
+      .addSelect('user.id')
+      .where('ug.group_id = :groupId', { groupId })
+      .andWhere('ug.user_id != :userId', { userId })
+      .orderBy('ug.createdAt', 'ASC')
+      .getMany();
+
+    return userGroupEntities.map((ug) => ug.toModel());
+  }
+  async findCountByGroupIdAndUserIdNot(groupId: number, userId: number) {
+    return await this.repository
+      .createQueryBuilder('ug')
+      .where('ug.group_id = :groupId', { groupId })
+      .andWhere('ug.user_id != :userId', { userId })
+      .getCount();
+  }
+
+  async findAllByUserId(userId: number): Promise<UserGroup[]> {
+    const userGroups = await this.repository
+      .createQueryBuilder('ug')
+      .leftJoin('ug.user', 'user')
+      .leftJoin('ug.group', 'group')
+      .addSelect(['user.id', 'group.id'])
+      .where('ug.user_id = :userId', { userId })
+      .andWhere('ug.group_id IS NOT NULL')
+      .orderBy('ug.createdAt', 'ASC')
+      .getMany();
+    return userGroups.map((ug) => ug.toModel());
   }
 }

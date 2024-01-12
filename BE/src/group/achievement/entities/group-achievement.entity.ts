@@ -30,7 +30,7 @@ export class GroupAchievementEntity extends BaseTimeEntity {
   @JoinColumn({ name: 'group_id', referencedColumnName: 'id' })
   group: GroupEntity;
 
-  @ManyToOne(() => GroupCategoryEntity)
+  @ManyToOne(() => GroupCategoryEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'group_category_id', referencedColumnName: 'id' })
   groupCategory: GroupCategoryEntity;
 

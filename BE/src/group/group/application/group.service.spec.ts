@@ -21,7 +21,6 @@ import { GroupAchievementFixture } from '../../../../test/group/achievement/grou
 import { GroupAchievementTestModule } from '../../../../test/group/achievement/group-achievement-test.module';
 import { GroupCategoryTestModule } from '../../../../test/group/category/group-category-test.module';
 import { dateFormat } from '../../../common/utils/date-formatter';
-import { LeaderNotAllowedToLeaveException } from '../exception/leader-not-allowed-to-leave.exception';
 import { NoSuchUserGroupException } from '../exception/no-such-user-group.exception';
 import { InviteGroupRequest } from '../dto/invite-group-request.dto';
 import { InvitePermissionDeniedException } from '../exception/invite-permission-denied.exception';
@@ -204,22 +203,7 @@ describe('GroupSerivce Test', () => {
       expect(groupLeaveResponse.userId).toEqual(user2.id);
     });
   });
-  test('리더가 탈퇴 시도를 하는 경우에는 LeaderNotAllowedToLeaveException를 던진다.', async () => {
-    // given
-    await transactionTest(dataSource, async () => {
-      // given
-      const user1 = await usersFixture.getUser('ABC');
-      const user2 = await usersFixture.getUser('DEF');
-      const group = await groupFixture.createGroup('Test Group', user1);
-      await groupFixture.addMember(group, user2, UserGroupGrade.PARTICIPANT);
 
-      // when
-      // then
-      await expect(groupService.removeUser(user1, group.id)).rejects.toThrow(
-        LeaderNotAllowedToLeaveException,
-      );
-    });
-  });
   test('내가 속한 그룹이 아닌 그룹에 대한 탈퇴 시도에 대해서는 NoSuchUserGroupException 예외를 던진다.', async () => {
     // given
     await transactionTest(dataSource, async () => {
@@ -594,6 +578,87 @@ describe('GroupSerivce Test', () => {
           groupService.relocatedGroup(user, groupRelocateRequest),
         ).rejects.toThrow(InvalidGroupRelocateException);
       });
+    });
+  });
+
+  test('리더가 탈퇴하면 남아있는 멤버중 가입일이 가장 오래된 멤버가 리더가 된다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const leader = await usersFixture.getUser('ABC');
+      const group = await groupFixture.createGroup('Test Group', leader);
+      const firstMember = await usersFixture.getUser('DEF');
+      const secondMember = await usersFixture.getUser('EFG');
+      const thirdMember = await usersFixture.getUser('FGH');
+      await groupFixture.addMember(
+        group,
+        firstMember,
+        UserGroupGrade.PARTICIPANT,
+      );
+      await groupFixture.addMember(
+        group,
+        secondMember,
+        UserGroupGrade.PARTICIPANT,
+      );
+      await groupFixture.addMember(
+        group,
+        thirdMember,
+        UserGroupGrade.PARTICIPANT,
+      );
+
+      // when
+      await groupService.removeUser(leader, group.id);
+
+      // then
+      const newLeader = await userGroupRepository.findOneByUserIdAndGroupId(
+        firstMember.id,
+        group.id,
+      );
+
+      expect(newLeader.grade).toEqual(UserGroupGrade.LEADER);
+    });
+  });
+
+  test('마지막 멤버가 탈퇴하면 그룹은 삭제된다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user = await usersFixture.getUser('ABC');
+      const group = await groupFixture.createGroup('Test Group', user);
+
+      // when
+      await groupService.removeUser(user, group.id);
+
+      // then
+      const expected = await groupRepository.findById(group.id);
+      expect(expected).toBeUndefined();
+    });
+  });
+
+  test('멤버가 속한 모든 그룹에 대해서 그룹 탈퇴를 할 수 있다.', async () => {
+    await transactionTest(dataSource, async () => {
+      // given
+      const user1 = await usersFixture.getUser('ABC');
+      const user2 = await usersFixture.getUser('DEF');
+
+      const group1 = await groupFixture.createGroup('Test Group1', user1);
+      const group2 = await groupFixture.createGroup('Test Group2', user1);
+      const group3 = await groupFixture.createGroup('Test Group3', user1);
+      const group4 = await groupFixture.createGroup('Test Group4', user1);
+
+      await groupFixture.addMember(group2, user2, UserGroupGrade.PARTICIPANT);
+
+      // when
+      await groupService.removeUserFromAllGroup(user1);
+
+      // then
+      const removed1 = await groupRepository.findById(group1.id);
+      const expected = await groupRepository.findById(group2.id);
+      const removed2 = await groupRepository.findById(group3.id);
+      const removed3 = await groupRepository.findById(group4.id);
+
+      expect(removed1).toBeUndefined();
+      expect(expected).not.toBeUndefined();
+      expect(removed2).toBeUndefined();
+      expect(removed3).toBeUndefined();
     });
   });
 });

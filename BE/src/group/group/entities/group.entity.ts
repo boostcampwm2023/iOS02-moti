@@ -33,6 +33,7 @@ export class GroupEntity extends BaseTimeEntity {
   @OneToMany(
     () => GroupAchievementEntity,
     (groupAchievement) => groupAchievement.group,
+    { cascade: true },
   )
   achievements: GroupAchievementEntity[];
 

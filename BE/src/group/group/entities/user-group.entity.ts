@@ -21,7 +21,7 @@ export class UserGroupEntity extends BaseTimeEntity {
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: UserEntity;
 
-  @ManyToOne(() => GroupEntity)
+  @ManyToOne(() => GroupEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'group_id', referencedColumnName: 'id' })
   group: GroupEntity;
 

@@ -18,5 +18,6 @@ import { GroupCodeGenerator } from './application/group-code-generator';
   ],
   controllers: [GroupController],
   providers: [GroupService, GroupAvatarHolder, GroupCodeGenerator],
+  exports: [GroupService],
 })
 export class GroupModule {}
