@@ -25,6 +25,7 @@ enum MotiAPI: EndpointProtocol {
     case deleteAchievement(achievementId: Int)
     case updateAchievement(requestValue: UpdateAchievementRequestValue)
     case postAchievement(requestValue: PostAchievementRequestValue)
+    case deleteCategory(categoryId: Int)
     // 그룹
     case fetchGroupList
     case createGroup(requestValue: CreateGroupRequestValue)
@@ -41,6 +42,7 @@ enum MotiAPI: EndpointProtocol {
     case invite(requestValue: InviteMemberRequestValue, groupId: Int)
     case dropGroup(groupId: Int)
     case joinGroup(requestValue: JoinGroupRequestValue)
+    case deleteGroupCategory(groupId: Int, categoryId: Int)
     // 차단
     case blockingUser(userCode: String)
     case blockingAchievement(achievementId: Int, groupId: Int)
@@ -70,6 +72,7 @@ extension MotiAPI {
         case .login: return "/auth/login"
         case .autoLogin: return "/auth/refresh"
         case .revoke: return "/auth/revoke"
+        // 개인
         case .fetchAchievementList: return "/achievements"
         case .fetchCategory(let categoryId): return "/categories/\(categoryId)"
         case .fetchCategoryList: return "/categories"
@@ -80,6 +83,9 @@ extension MotiAPI {
         case .deleteAchievement(let achievementId): return "/achievements/\(achievementId)"
         case .updateAchievement(let requestValue): return "/achievements/\(requestValue.id)"
         case .postAchievement: return "/achievements"
+        case .deleteCategory(let categoryId):
+            return "/categories/\(categoryId)"
+        // 그룹
         case .fetchGroupList: return "/groups"
         case .createGroup: return "/groups"
         case .fetchGroupAchievementList(_, let groupId):
@@ -116,6 +122,8 @@ extension MotiAPI {
             return "/groups/\(groupId)/participation"
         case .joinGroup:
             return "/groups/participation"
+        case .deleteGroupCategory(let groupId, let categoryId):
+            return "/groups/\(groupId)/categories/\(categoryId)"
         case .fetchBlockedUserList:
             return "/users/reject"
         case .unblockUser(let userCode):
@@ -129,6 +137,7 @@ extension MotiAPI {
         case .login: return .post
         case .autoLogin: return .post
         case .revoke: return .delete
+        // 개인
         case .fetchAchievementList: return .get
         case .fetchCategory: return .get
         case .fetchCategoryList: return .get
@@ -139,6 +148,8 @@ extension MotiAPI {
         case .deleteAchievement: return .delete
         case .updateAchievement: return .put
         case .postAchievement: return .post
+        case .deleteCategory: return .delete
+        // 그룹
         case .fetchGroupList: return .get
         case .createGroup: return .post
         case .fetchGroupAchievementList: return .get
@@ -158,6 +169,7 @@ extension MotiAPI {
         case .toggleEmoji: return .post
         case .dropGroup: return .delete
         case .joinGroup: return .post
+        case .deleteGroupCategory: return .delete
         case .fetchBlockedUserList: return .get
         case .unblockUser: return .delete
         }
