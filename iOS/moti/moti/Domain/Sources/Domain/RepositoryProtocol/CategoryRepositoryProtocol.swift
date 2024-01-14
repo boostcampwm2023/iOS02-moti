@@ -12,4 +12,5 @@ public protocol CategoryRepositoryProtocol {
     func fetchCategoryList() async throws -> [CategoryItem]
     func addCategory(requestValue: AddCategoryRequestValue) async throws -> CategoryItem
     func reorderCategories(requestValue: ReorderCategoriesRequestValue) async throws -> Bool
+    func deleteCategory(categoryId: Int) async throws -> Bool
 }
