@@ -42,6 +42,7 @@ enum MotiAPI: EndpointProtocol {
     case invite(requestValue: InviteMemberRequestValue, groupId: Int)
     case dropGroup(groupId: Int)
     case joinGroup(requestValue: JoinGroupRequestValue)
+    case reorderGroupCategories(groupId: Int, requestValue: ReorderCategoriesRequestValue)
     case deleteGroupCategory(groupId: Int, categoryId: Int)
     // 차단
     case blockingUser(userCode: String)
@@ -122,6 +123,8 @@ extension MotiAPI {
             return "/groups/\(groupId)/participation"
         case .joinGroup:
             return "/groups/participation"
+        case .reorderGroupCategories(let groupId, _):
+            return "/groups/\(groupId)/categories"
         case .deleteGroupCategory(let groupId, let categoryId):
             return "/groups/\(groupId)/categories/\(categoryId)"
         case .fetchBlockedUserList:
@@ -169,6 +172,7 @@ extension MotiAPI {
         case .toggleEmoji: return .post
         case .dropGroup: return .delete
         case .joinGroup: return .post
+        case .reorderGroupCategories: return .put
         case .deleteGroupCategory: return .delete
         case .fetchBlockedUserList: return .get
         case .unblockUser: return .delete
@@ -215,6 +219,8 @@ extension MotiAPI {
         case .updateGrade(_, _, let requestValue):
             return requestValue
         case .joinGroup(let requestValue):
+            return requestValue
+        case .reorderGroupCategories(_, let requestValue):
             return requestValue
         default:
             return nil

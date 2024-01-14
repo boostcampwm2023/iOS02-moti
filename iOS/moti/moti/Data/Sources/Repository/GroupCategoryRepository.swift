@@ -44,7 +44,7 @@ public struct GroupCategoryRepository: CategoryRepositoryProtocol {
     }
     
     public func reorderCategories(requestValue: ReorderCategoriesRequestValue) async throws -> Bool {
-        let endpoint = MotiAPI.reorderCategories(requestValue: requestValue)
+        let endpoint = MotiAPI.reorderGroupCategories(groupId: groupId, requestValue: requestValue)
         let responseDTO = try await provider.request(with: endpoint, type: SimpleResponseDTO.self)
         
         guard let isSuccess = responseDTO.success else { throw NetworkError.decode }
