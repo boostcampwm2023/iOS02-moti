@@ -224,8 +224,9 @@ private extension GroupHomeViewController {
         })
         
         var children: [UIAction] = []
+        children.append(manageCategoryAction)
         if group.grade == .leader || group.grade == .manager {
-            children.append(manageCategoryAction)
+//            children.append(manageCategoryAction)
             children.append(inviteInfoAction)
         }
         children.append(contentsOf: [appInfoAction, logoutAction])

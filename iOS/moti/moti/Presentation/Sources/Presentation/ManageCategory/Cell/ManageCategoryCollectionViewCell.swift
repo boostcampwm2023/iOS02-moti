@@ -9,9 +9,18 @@ import UIKit
 import Domain
 import Design
 
+protocol ManageCategoryCollectionViewCellDelegate: AnyObject {
+    func deleteCategoryButtonDidClicked(cell: UICollectionViewCell)
+}
+
 final class ManageCategoryCollectionViewCell: UICollectionViewCell {
+    
+    // MARK: - Properties
+    private let iconSize: CGFloat = 44
+    weak var delegate: ManageCategoryCollectionViewCellDelegate?
+    
     // MARK: - Views
-    private(set) var deleteCategoryButton = {
+    private lazy var deleteCategoryButton = {
         let button = UIButton(type: .system)
         button.setImage(.init(systemName: "minus.circle"), for: .normal)
         button.tintColor = .red
@@ -62,6 +71,11 @@ final class ManageCategoryCollectionViewCell: UICollectionViewCell {
     func configure(with category: CategoryItem) {
         categoryNameLabel.text = category.name
         categoryInfoLabel.text = "총 \(category.continued)회 달성 | " + (category.lastChallenged?.relativeDateString() ?? "없음")
+        deleteCategoryButton.addTarget(self, action: #selector(deleteCategoryButtonDidClicked), for: .touchUpInside)
+    }
+    
+    @objc private func deleteCategoryButtonDidClicked() {
+        delegate?.deleteCategoryButtonDidClicked(cell: self)
     }
 }
 
@@ -78,9 +92,9 @@ private extension ManageCategoryCollectionViewCell {
     }
     
     func setupDeleteCategoryButton() {
-        addSubview(deleteCategoryButton)
+        contentView.addSubview(deleteCategoryButton)
         deleteCategoryButton.atl
-            .size(width: 44, height: 44)
+            .size(width: iconSize, height: iconSize)
             .centerY(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor)
             .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 10)
     }
@@ -89,7 +103,7 @@ private extension ManageCategoryCollectionViewCell {
         labelStackView.addArrangedSubview(categoryNameLabel)
         labelStackView.addArrangedSubview(categoryInfoLabel)
         
-        addSubview(labelStackView)
+        contentView.addSubview(labelStackView)
         labelStackView.atl
             .centerY(equalTo: deleteCategoryButton.centerYAnchor)
             .left(equalTo: deleteCategoryButton.rightAnchor, constant: 10)
@@ -97,9 +111,9 @@ private extension ManageCategoryCollectionViewCell {
     }
     
     func setupReorderButton() {
-        addSubview(reorderButton)
+        contentView.addSubview(reorderButton)
         reorderButton.atl
-            .size(width: 44, height: 44)
+            .size(width: iconSize, height: iconSize)
             .centerY(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor)
             .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -10)
     }

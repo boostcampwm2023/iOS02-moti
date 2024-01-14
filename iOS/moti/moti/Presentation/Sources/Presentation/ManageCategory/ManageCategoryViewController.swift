@@ -67,11 +67,10 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
         let dataSource = ManageCategoryViewModel.CategoryDataSource.DataSource(
             collectionView: layoutView.manageCategoryCollectionView,
             cellProvider: { [weak self] collectionView, indexPath, item in
-                guard let self else {
-                    return UICollectionViewCell()
-                }
+                guard let self else { return UICollectionViewCell() }
                 let cell: ManageCategoryCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
                 cell.configure(with: item)
+                cell.delegate = self
                 return cell
             }
         )
@@ -160,5 +159,20 @@ extension ManageCategoryViewController: UICollectionViewDropDelegate {
             return UICollectionViewDropProposal(operation: .forbidden)
         }
         return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+    }
+}
+
+extension ManageCategoryViewController: ManageCategoryCollectionViewCellDelegate {
+    func deleteCategoryButtonDidClicked(cell: UICollectionViewCell) {
+        guard let indexPathOfClickedCell = layoutView.manageCategoryCollectionView.indexPath(for: cell) else { return }
+        
+        showTwoButtonAlert(
+            title: "정말 삭제하시겠습니까?",
+            message: "모든 도전 기록이 미설정 카테고리로 이동합니다.",
+            okTitle: "삭제",
+            okAction: {
+
+            }
+        )
     }
 }
