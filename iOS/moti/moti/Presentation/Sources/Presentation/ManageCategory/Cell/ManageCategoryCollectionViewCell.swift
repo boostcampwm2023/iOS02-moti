@@ -11,6 +11,13 @@ import Design
 
 final class ManageCategoryCollectionViewCell: UICollectionViewCell {
     // MARK: - Views
+    private(set) var deleteCategoryButton = {
+        let button = UIButton(type: .system)
+        button.setImage(.init(systemName: "minus.circle"), for: .normal)
+        button.tintColor = .red
+        return button
+    }()
+    
     private var labelStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -33,17 +40,10 @@ final class ManageCategoryCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private var accessoryButton = {
+    private let reorderButton = {
         let button = UIButton(type: .system)
-        button.setTitle("삭제", for: .normal)
-        button.setTitleColor(.red, for: .normal)
         button.setImage(.init(systemName: "line.3.horizontal"), for: .normal)
         button.tintColor = .lightGray
-        
-        button.configuration = .plain()
-        button.configuration?.imagePlacement = .trailing
-        button.configuration?.imagePadding = 10
-        button.configuration?.contentInsets = .init(top: 0, leading: 0, bottom: 0, trailing: -5)
         return button
     }()
     
@@ -72,8 +72,17 @@ private extension ManageCategoryCollectionViewCell {
         self.layer.borderWidth = 1
         self.layer.borderColor = UIColor.primaryDarkGray.cgColor
         
+        setupDeleteCategoryButton()
+        setupReorderButton()
         setupStackView()
-        setupAccessoryButton()
+    }
+    
+    func setupDeleteCategoryButton() {
+        addSubview(deleteCategoryButton)
+        deleteCategoryButton.atl
+            .size(width: 44, height: 44)
+            .centerY(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor)
+            .left(equalTo: safeAreaLayoutGuide.leftAnchor, constant: 10)
     }
     
     func setupStackView() {
@@ -82,14 +91,16 @@ private extension ManageCategoryCollectionViewCell {
         
         addSubview(labelStackView)
         labelStackView.atl
-            .centerY(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor)
-            .left(equalTo: contentView.safeAreaLayoutGuide.leftAnchor, constant: 20)
+            .centerY(equalTo: deleteCategoryButton.centerYAnchor)
+            .left(equalTo: deleteCategoryButton.rightAnchor, constant: 10)
+            .right(equalTo: reorderButton.leftAnchor, constant: -10)
     }
     
-    func setupAccessoryButton() {
-        addSubview(accessoryButton)
-        accessoryButton.atl
-            .centerY(equalTo: labelStackView.centerYAnchor)
-            .right(equalTo: contentView.safeAreaLayoutGuide.rightAnchor, constant: -15)
+    func setupReorderButton() {
+        addSubview(reorderButton)
+        reorderButton.atl
+            .size(width: 44, height: 44)
+            .centerY(equalTo: contentView.safeAreaLayoutGuide.centerYAnchor)
+            .right(equalTo: safeAreaLayoutGuide.rightAnchor, constant: -10)
     }
 }
