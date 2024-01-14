@@ -289,7 +289,6 @@ private extension EditAchievementViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 guard let self else { return }
-                print("Save Image: \(state)")
                 switch state {
                 case .none: break
                 case .loading:

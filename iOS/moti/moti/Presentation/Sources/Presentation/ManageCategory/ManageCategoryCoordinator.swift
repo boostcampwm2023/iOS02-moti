@@ -34,7 +34,8 @@ final class ManageCategoryCoordinator: Coordinator {
         let categoryRepository = CategoryRepository()
         let manageCategoryVM = ManageCategoryViewModel(
             categories: categories,
-            reorderCategoriesUseCase: .init(repository: categoryRepository)
+            reorderCategoriesUseCase: .init(repository: categoryRepository),
+            deleteCategoryUseCase: .init(repository: categoryRepository)
         )
         let manageCategoryVC = ManageCategoryViewController(viewModel: manageCategoryVM)
         manageCategoryVC.coordinator = self
@@ -47,7 +48,8 @@ final class ManageCategoryCoordinator: Coordinator {
         let categoryRepository = GroupCategoryRepository(groupId: group.id)
         let manageCategoryVM = ManageCategoryViewModel(
             categories: categories,
-            reorderCategoriesUseCase: .init(repository: categoryRepository)
+            reorderCategoriesUseCase: .init(repository: categoryRepository),
+            deleteCategoryUseCase: .init(repository: categoryRepository)
         )
         let manageCategoryVC = ManageCategoryViewController(viewModel: manageCategoryVM)
         manageCategoryVC.coordinator = self
