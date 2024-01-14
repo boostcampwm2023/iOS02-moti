@@ -15,7 +15,7 @@ protocol ManageCategoryViewControllerDelegate: AnyObject {
     func doneButtonDidClicked()
 }
 
-final class ManageCategoryViewController: BaseViewController<ManageCategoryView>, HiddenTabBarViewController {
+final class ManageCategoryViewController: BaseViewController<ManageCategoryView>, HiddenTabBarViewController, LoadingIndicator {
 
     // MARK: - Properties
     weak var coordinator: ManageCategoryCoordinator?
@@ -54,7 +54,7 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
     }
     
     @objc private func doneButtonDidClicked() {
-        viewModel.action(.reorderCategories)
+        delegate?.doneButtonDidClicked()
     }
     
     private func setupManageCategoryCollectionView() {
@@ -67,11 +67,10 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
         let dataSource = ManageCategoryViewModel.CategoryDataSource.DataSource(
             collectionView: layoutView.manageCategoryCollectionView,
             cellProvider: { [weak self] collectionView, indexPath, item in
-                guard let self else {
-                    return UICollectionViewCell()
-                }
+                guard let self else { return UICollectionViewCell() }
                 let cell: ManageCategoryCollectionViewCell = collectionView.dequeueReusableCell(for: indexPath)
                 cell.configure(with: item)
+                cell.delegate = self
                 return cell
             }
         )
@@ -95,11 +94,27 @@ private extension ManageCategoryViewController {
                 guard let self else { return }
                 switch state {
                 case .success:
-                    delegate?.doneButtonDidClicked()
+                    break
                 case .failed(_):
                     showErrorAlert(message: "카테고리 순서 변경에 실패했습니다.")
                 }
                 
+            }
+            .store(in: &cancellables)
+        
+        viewModel.deleteCategoryState
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                switch state {
+                case .loading:
+                    showLoadingIndicator()
+                case .success:
+                    hideLoadingIndicator()
+                case.failed(let message):
+                    hideLoadingIndicator()
+                    showErrorAlert(message: message)
+                }
             }
             .store(in: &cancellables)
     }
@@ -140,15 +155,17 @@ extension ManageCategoryViewController: UICollectionViewDropDelegate {
         else { return }
         
         collectionView.performBatchUpdates { [weak self] in
-            self?.move(sourceIndexPath: sourceIndexPath, destinationIndexPath: destinationIndexPath)
+//            self?.move(sourceIndexPath: sourceIndexPath, destinationIndexPath: destinationIndexPath)
         } completion: { finish in
             coordinator.drop(sourceItem.dragItem, toItemAt: destinationIndexPath)
+            self.move(sourceIndexPath: sourceIndexPath, destinationIndexPath: destinationIndexPath)
         }
     }
     
     private func move(sourceIndexPath: IndexPath, destinationIndexPath: IndexPath) {
         let (sourceIndex, destinationIndex) = (sourceIndexPath.item, destinationIndexPath.item)
         viewModel.swap(sourceIndex: sourceIndex, destinationIndex: destinationIndex)
+        viewModel.action(.reorderCategories)
     }
     
     func collectionView(
@@ -160,5 +177,20 @@ extension ManageCategoryViewController: UICollectionViewDropDelegate {
             return UICollectionViewDropProposal(operation: .forbidden)
         }
         return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+    }
+}
+
+extension ManageCategoryViewController: ManageCategoryCollectionViewCellDelegate {
+    func deleteCategoryButtonDidClicked(cell: UICollectionViewCell) {
+        guard let indexPath = layoutView.manageCategoryCollectionView.indexPath(for: cell) else { return }
+        
+        showTwoButtonAlert(
+            title: "정말 삭제하시겠습니까?",
+            message: "모든 도전 기록이 미설정 카테고리로 이동합니다.",
+            okTitle: "삭제",
+            okAction: {
+                self.viewModel.action(.deleteCategory(index: indexPath.row))
+            }
+        )
     }
 }

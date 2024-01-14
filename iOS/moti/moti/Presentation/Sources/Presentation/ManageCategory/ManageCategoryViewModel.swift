@@ -13,9 +13,16 @@ import Combine
 final class ManageCategoryViewModel {
     enum ManageCategoryViewModelAction {
         case reorderCategories
+        case deleteCategory(index: Int)
     }
     
     enum ReorderCategoriesState {
+        case success
+        case failed(message: String)
+    }
+    
+    enum DeleteCategoryState {
+        case loading
         case success
         case failed(message: String)
     }
@@ -31,15 +38,19 @@ final class ManageCategoryViewModel {
     }
     
     private let reorderCategoriesUseCase: ReorderCategoriesUseCase
+    private let deleteCategoryUseCase: DeleteCategoryUseCase
     
     private(set) var reorderCategoriesState = PassthroughSubject<ReorderCategoriesState, Never>()
+    private(set) var deleteCategoryState = PassthroughSubject<DeleteCategoryState, Never>()
     
     init(
         categories: [CategoryItem],
-        reorderCategoriesUseCase: ReorderCategoriesUseCase
+        reorderCategoriesUseCase: ReorderCategoriesUseCase,
+        deleteCategoryUseCase: DeleteCategoryUseCase
     ) {
         self.categories = categories.filter { !$0.isWhole && !$0.isUnset }
         self.reorderCategoriesUseCase = reorderCategoriesUseCase
+        self.deleteCategoryUseCase = deleteCategoryUseCase
     }
     
     func setupDataSource(_ dataSource: CategoryDataSource) {
@@ -56,10 +67,15 @@ final class ManageCategoryViewModel {
         switch action {
         case .reorderCategories:
             reorderCategories()
+        case .deleteCategory(let index):
+            deleteCategory(categoryId: categories[index].id)
         }
     }
-    
-    private func reorderCategories() {
+}
+
+// MARK: - Actions
+private extension ManageCategoryViewModel {
+    func reorderCategories() {
         Task {
             do {
                 let requestValue = ReorderCategoriesRequestValue(order: categories.map { $0.id })
@@ -67,14 +83,30 @@ final class ManageCategoryViewModel {
                 if isSuccess {
                     reorderCategoriesState.send(.success)
                 } else {
-                    reorderCategoriesState.send(.failed(message: "카테고리 순서 변경에 실패했습니다."))
+                    reorderCategoriesState.send(.failed(message: "카테고리 순서 변경을 실패했습니다."))
                 }
             } catch {
                 Logger.debug("reorder categories error: \(error)")
-                
-                // response가 비어있어서 204가 오는데, catch 문으로 넘어온다. 응답을 넣어주시면 없앤다.
                 reorderCategoriesState.send(.success)
 //                reorderCategoriesState.send(.failed(message: error.localizedDescription))
+            }
+        }
+    }
+    
+    func deleteCategory(categoryId: Int) {
+        Task {
+            do {
+                deleteCategoryState.send(.loading)
+                let isSuccess = try await deleteCategoryUseCase.execute(categoryId: categoryId)
+                if isSuccess {
+                    reorderCategoriesState.send(.success)
+                } else {
+                    reorderCategoriesState.send(.failed(message: "카테고리 삭제를 실패했습니다."))
+                }
+                deleteCategoryState.send(.success)
+            } catch {
+                Logger.debug("reorder categories error: \(error)")
+                deleteCategoryState.send(.failed(message: error.localizedDescription))
             }
         }
     }
