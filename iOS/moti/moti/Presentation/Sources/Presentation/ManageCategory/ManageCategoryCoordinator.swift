@@ -42,6 +42,19 @@ final class ManageCategoryCoordinator: Coordinator {
         let navVC = UINavigationController(rootViewController: manageCategoryVC)
         navigationController.present(navVC, animated: true)
     }
+    
+    func start(group: Group, categories: [CategoryItem]) {
+        let categoryRepository = GroupCategoryRepository(groupId: group.id)
+        let manageCategoryVM = ManageCategoryViewModel(
+            categories: categories,
+            reorderCategoriesUseCase: .init(repository: categoryRepository)
+        )
+        let manageCategoryVC = ManageCategoryViewController(viewModel: manageCategoryVM)
+        manageCategoryVC.coordinator = self
+        manageCategoryVC.delegate = self
+        let navVC = UINavigationController(rootViewController: manageCategoryVC)
+        navigationController.present(navVC, animated: true)
+    }
 }
 
 extension ManageCategoryCoordinator: ManageCategoryViewControllerDelegate {
