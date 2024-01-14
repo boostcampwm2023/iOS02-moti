@@ -46,4 +46,12 @@ public struct CategoryRepository: CategoryRepositoryProtocol {
         guard let isSuccess = responseDTO.success else { throw NetworkError.decode }
         return isSuccess
     }
+    
+    public func deleteCategory(categoryId: Int) async throws -> Bool {
+        let endpoint = MotiAPI.deleteCategory(categoryId: categoryId)
+        let responseDTO = try await provider.request(with: endpoint, type: SimpleResponseDTO.self)
+        
+        guard let isSuccess = responseDTO.success else { throw NetworkError.decode }
+        return isSuccess
+    }
 }
