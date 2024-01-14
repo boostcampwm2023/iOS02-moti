@@ -87,8 +87,7 @@ private extension ManageCategoryViewModel {
                 }
             } catch {
                 Logger.debug("reorder categories error: \(error)")
-                reorderCategoriesState.send(.success)
-//                reorderCategoriesState.send(.failed(message: error.localizedDescription))
+                reorderCategoriesState.send(.failed(message: error.localizedDescription))
             }
         }
     }
@@ -99,13 +98,12 @@ private extension ManageCategoryViewModel {
                 deleteCategoryState.send(.loading)
                 let isSuccess = try await deleteCategoryUseCase.execute(categoryId: categoryId)
                 if isSuccess {
-                    reorderCategoriesState.send(.success)
+                    deleteCategoryState.send(.success)
                 } else {
-                    reorderCategoriesState.send(.failed(message: "카테고리 삭제를 실패했습니다."))
+                    deleteCategoryState.send(.failed(message: "카테고리 삭제를 실패했습니다."))
                 }
-                deleteCategoryState.send(.success)
             } catch {
-                Logger.debug("reorder categories error: \(error)")
+                Logger.debug("delete categories error: \(error)")
                 deleteCategoryState.send(.failed(message: error.localizedDescription))
             }
         }
