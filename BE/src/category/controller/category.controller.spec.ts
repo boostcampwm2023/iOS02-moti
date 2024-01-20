@@ -366,7 +366,10 @@ describe('CategoryController Test', () => {
         .put(`/api/v1/categories`)
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ order: [1, 2, 3] })
-        .expect(204);
+        .expect(200)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(true);
+        });
     });
 
     it('카테고리의 개수가 일치하지 않으면 400을 반환한다.', async () => {
@@ -430,7 +433,10 @@ describe('CategoryController Test', () => {
       return request(app.getHttpServer())
         .delete(`/api/v1/categories/1`)
         .set('Authorization', `Bearer ${accessToken}`)
-        .expect(204);
+        .expect(200)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toBe(true);
+        });
     });
 
     it('카테고리 삭제에 실패하면 400을 반환한다.', async () => {
