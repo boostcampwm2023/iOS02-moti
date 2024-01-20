@@ -103,12 +103,17 @@ export class CategoryController {
   })
   @Put()
   @UseGuards(AccessTokenGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async relocateCategory(
     @Body() categoryRelocateRequest: CategoryRelocateRequest,
     @AuthenticatedUser() user: User,
   ) {
-    return this.categoryService.relocateCategory(user, categoryRelocateRequest);
+    return ApiData.success(
+      await this.categoryService.relocateCategory(
+        user,
+        categoryRelocateRequest,
+      ),
+    );
   }
 
   @ApiBearerAuth('accessToken')
@@ -118,11 +123,13 @@ export class CategoryController {
   })
   @Delete('/:categoryId')
   @UseGuards(AccessTokenGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteCategory(
     @Param('categoryId', ParseIntPipe) categoryId: number,
     @AuthenticatedUser() user: User,
   ) {
-    return this.categoryService.deleteCategory(user, categoryId);
+    return ApiData.success(
+      await this.categoryService.deleteCategory(user, categoryId),
+    );
   }
 }

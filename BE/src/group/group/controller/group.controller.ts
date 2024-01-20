@@ -199,11 +199,13 @@ export class GroupController {
   @ApiBearerAuth('accessToken')
   @Put()
   @UseGuards(AccessTokenGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async relocatedGroup(
     @AuthenticatedUser() user: User,
     @Body() groupRelocatedRequest: GroupRelocateRequest,
   ) {
-    await this.groupService.relocatedGroup(user, groupRelocatedRequest);
+    return ApiData.success(
+      await this.groupService.relocatedGroup(user, groupRelocatedRequest),
+    );
   }
 }

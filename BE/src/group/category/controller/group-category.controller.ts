@@ -112,16 +112,18 @@ export class GroupCategoryController {
   })
   @Put()
   @UseGuards(AccessTokenGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async relocateCategory(
     @Body() categoryRelocateRequest: GroupCategoryRelocateRequest,
     @Param('groupId', ParseIntPipe) groupId: number,
     @AuthenticatedUser() user: User,
   ) {
-    return this.groupCategoryService.relocateCategory(
-      user,
-      groupId,
-      categoryRelocateRequest,
+    return ApiData.success(
+      await this.groupCategoryService.relocateCategory(
+        user,
+        groupId,
+        categoryRelocateRequest,
+      ),
     );
   }
 
@@ -132,12 +134,14 @@ export class GroupCategoryController {
   })
   @Delete('/:categoryId')
   @UseGuards(AccessTokenGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   async deleteCategory(
     @Param('groupId', ParseIntPipe) groupId: number,
     @Param('categoryId', ParseIntPipe) categoryId: number,
     @AuthenticatedUser() user: User,
   ) {
-    return this.groupCategoryService.deleteCategory(user, groupId, categoryId);
+    return ApiData.success(
+      await this.groupCategoryService.deleteCategory(user, groupId, categoryId),
+    );
   }
 }

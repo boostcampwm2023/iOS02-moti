@@ -808,7 +808,7 @@ describe('GroupController', () => {
   });
 
   describe('그룹의 순서를 변경할 수 있다.', () => {
-    it('성공 시 204을 반환한다.', async () => {
+    it('성공 시 200을 반환한다.', async () => {
       // given
       const { accessToken } = await authFixture.getAuthenticatedUser('ABCD');
 
@@ -825,7 +825,10 @@ describe('GroupController', () => {
         .put('/api/v1/groups')
         .set('Authorization', `Bearer ${accessToken}`)
         .send({ order: [1, 2, 3] })
-        .expect(204);
+        .expect(200)
+        .expect((res: request.Response) => {
+          expect(res.body.success).toEqual(true);
+        });
     });
 
     it('잘못된 그룹 순서 변경 요청은 400을 반환한다.', async () => {
