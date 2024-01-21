@@ -11,8 +11,7 @@ import Core
 import Domain
 
 protocol ManageCategoryViewControllerDelegate: AnyObject {
-    func cancelButtonDidClicked()
-    func doneButtonDidClicked()
+    func manageCategoryDidCompleted()
 }
 
 final class ManageCategoryViewController: BaseViewController<ManageCategoryView>, HiddenTabBarViewController, LoadingIndicator {
@@ -41,20 +40,19 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
         setupManageCategoryCollectionView()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        delegate?.manageCategoryDidCompleted()
+    }
+    
     private func setupNavigationBar() {
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "취소", style: .plain, target: self, 
-                                                           action: #selector(cancelButtonDidClicked))
-        
         let doneButton = UIBarButtonItem(title: "완료", style: .plain, target: self, action: #selector(doneButtonDidClicked))
         navigationItem.rightBarButtonItems = [doneButton]
     }
     
-    @objc private func cancelButtonDidClicked() {
-        delegate?.cancelButtonDidClicked()
-    }
-    
     @objc private func doneButtonDidClicked() {
-        delegate?.doneButtonDidClicked()
+        delegate?.manageCategoryDidCompleted()
+        coordinator?.finish()
     }
     
     private func setupManageCategoryCollectionView() {
@@ -154,8 +152,8 @@ extension ManageCategoryViewController: UICollectionViewDropDelegate {
             let sourceIndexPath = sourceItem.sourceIndexPath
         else { return }
         
-        collectionView.performBatchUpdates { [weak self] in
-//            self?.move(sourceIndexPath: sourceIndexPath, destinationIndexPath: destinationIndexPath)
+        collectionView.performBatchUpdates {
+            
         } completion: { finish in
             coordinator.drop(sourceItem.dragItem, toItemAt: destinationIndexPath)
             self.move(sourceIndexPath: sourceIndexPath, destinationIndexPath: destinationIndexPath)

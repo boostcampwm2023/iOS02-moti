@@ -98,6 +98,7 @@ private extension ManageCategoryViewModel {
                 deleteCategoryState.send(.loading)
                 let isSuccess = try await deleteCategoryUseCase.execute(categoryId: categoryId)
                 if isSuccess {
+                    categories.removeAll(where: { $0.id == categoryId })
                     deleteCategoryState.send(.success)
                 } else {
                     deleteCategoryState.send(.failed(message: "카테고리 삭제를 실패했습니다."))
