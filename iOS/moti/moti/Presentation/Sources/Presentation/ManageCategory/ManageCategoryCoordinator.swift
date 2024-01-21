@@ -57,15 +57,14 @@ final class ManageCategoryCoordinator: Coordinator {
         let navVC = UINavigationController(rootViewController: manageCategoryVC)
         navigationController.present(navVC, animated: true)
     }
+    
+    func finish(animated: Bool = true) {
+        parentCoordinator?.dismiss(child: self, animated: animated)
+    }
 }
 
 extension ManageCategoryCoordinator: ManageCategoryViewControllerDelegate {
-    func cancelButtonDidClicked() {
-        parentCoordinator?.dismiss(child: self, animated: true)
-    }
-    
-    func doneButtonDidClicked() {
+    func manageCategoryDidCompleted() {
         delegate?.doneButtonDidClicked()
-        parentCoordinator?.dismiss(child: self, animated: true)
     }
 }
