@@ -8,6 +8,7 @@
 import Foundation
 
 public enum EmojiType: String, Codable {
+
     case like = "LIKE"
     case fire = "FIRE"
     case smile = "SMILE"
@@ -27,6 +28,7 @@ public enum EmojiType: String, Codable {
 }
 
 extension EmojiType: CustomStringConvertible {
+
     public var description: String {
         switch self {
         case .like:
@@ -40,6 +42,7 @@ extension EmojiType: CustomStringConvertible {
 }
 
 public struct Emoji {
+
     public let id: EmojiType
     public var isSelected: Bool
     public var count: Int

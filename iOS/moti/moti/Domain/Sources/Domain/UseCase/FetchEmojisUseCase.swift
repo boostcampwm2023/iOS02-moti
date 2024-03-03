@@ -8,6 +8,7 @@
 import Foundation
 
 public struct FetchEmojisUseCase {
+
     private let repository: EmojiRepositoryProtocol
     
     public init(repository: EmojiRepositoryProtocol) {

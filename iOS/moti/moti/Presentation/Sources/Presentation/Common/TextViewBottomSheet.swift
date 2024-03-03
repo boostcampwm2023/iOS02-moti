@@ -97,6 +97,7 @@ final class TextViewBottomSheet: UIViewController {
 }
 
 extension TextViewBottomSheet: UITextViewDelegate {
+
     func textViewDidBeginEditing(_ textView: UITextView) {
         doneButton.isHidden = false
         if isPlaceHolder {
@@ -113,10 +114,12 @@ extension TextViewBottomSheet: UITextViewDelegate {
 }
 
 extension UISheetPresentationController.Detent.Identifier {
+
     static let small = UISheetPresentationController.Detent.Identifier("small")
 }
 
 extension UISheetPresentationController.Detent {
+
     class func small() -> UISheetPresentationController.Detent {
         if #available(iOS 16.0, *) {
             return UISheetPresentationController.Detent.custom(identifier: .small) { 0.15 * $0.maximumDetentValue }

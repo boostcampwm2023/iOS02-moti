@@ -8,6 +8,7 @@
 import Foundation
 
 public struct JoinGroupRequestValue: RequestValue {
+
     public let groupCode: String
     
     public init(groupCode: String) {
@@ -16,6 +17,7 @@ public struct JoinGroupRequestValue: RequestValue {
 }
 
 public struct JoinGroupUseCase {
+
     private let groupRepository: GroupRepositoryProtocol
     
     public init(groupRepository: GroupRepositoryProtocol) {

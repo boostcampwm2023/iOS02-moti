@@ -9,6 +9,7 @@ import Foundation
 import Domain
 
 public struct GroupMemberRepository: GroupMemberRepositoryProtocol {
+
     private let provider: ProviderProtocol
     public let groupId: Int
     

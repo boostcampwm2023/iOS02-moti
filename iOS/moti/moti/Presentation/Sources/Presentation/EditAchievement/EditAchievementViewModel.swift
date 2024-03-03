@@ -12,6 +12,7 @@ import Core
 final class EditAchievementViewModel {
     
     enum Action {
+
         case saveImage(data: Data)
         case retrySaveImage
         case fetchCategories
@@ -20,12 +21,14 @@ final class EditAchievementViewModel {
     }
     
     enum CategoryState {
+
         case none
         case loading
         case finish
     }
     
     enum SaveImageState {
+
         case none
         case loading
         case finish
@@ -33,6 +36,7 @@ final class EditAchievementViewModel {
     }
     
     enum UpdateAchievementState {
+
         case none
         case loading
         case finish(updatedAchievement: Achievement)
@@ -40,6 +44,7 @@ final class EditAchievementViewModel {
     }
     
     enum PostAchievementState {
+
         case none
         case loading
         case finish(newAchievement: Achievement)
@@ -147,8 +152,7 @@ final class EditAchievementViewModel {
             } catch {
                 saveImageState = .error
             }
-        }
-        
+        }        
     }
     
     private func updateAchievement(updatedAchievement: Achievement) {

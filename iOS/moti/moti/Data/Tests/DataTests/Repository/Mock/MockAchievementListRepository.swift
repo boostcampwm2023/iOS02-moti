@@ -10,6 +10,7 @@ import Foundation
 @testable import Data
 
 public struct MockAchievementListRepository: AchievementListRepositoryProtocol {
+
     private let json: String
     
     public init(json: String) {

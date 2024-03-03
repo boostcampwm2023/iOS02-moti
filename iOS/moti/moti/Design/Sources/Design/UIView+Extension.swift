@@ -8,6 +8,7 @@
 import UIKit
 
 public extension UIView {
+
     @objc open func applyHighlightUI() {
         backgroundColor = .primaryBlue
         layer.borderColor = UIColor.primaryBlue.cgColor

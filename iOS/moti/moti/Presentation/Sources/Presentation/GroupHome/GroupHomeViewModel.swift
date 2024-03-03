@@ -12,6 +12,7 @@ import Combine
 import Data
 
 final class GroupHomeViewModel {
+
     typealias AchievementDataSource = ListDiffableDataSource<Achievement>
     typealias CategoryDataSource = ListDiffableDataSource<CategoryItem>
     
@@ -155,6 +156,7 @@ final class GroupHomeViewModel {
 
 // MARK: - Actions
 private extension GroupHomeViewModel {
+
     /// 카테고리 리스트를 가져오는 액션
     func fetchCategories() {
         Task {
@@ -322,6 +324,7 @@ private extension GroupHomeViewModel {
 
 // MARK: - Methods
 private extension GroupHomeViewModel {
+
     /// 도전 기록을 가져오는 메서드
     func fetchAchievementList(requestValue: FetchAchievementListRequestValue? = nil) {
         if requestValue?.whereIdLessThan == nil {

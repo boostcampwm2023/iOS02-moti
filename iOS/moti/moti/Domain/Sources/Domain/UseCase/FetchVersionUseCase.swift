@@ -8,6 +8,7 @@
 import Foundation
 
 public struct FetchVersionUseCase {
+
     private let repository: VersionRepositoryProtocol
     
     public init(repository: VersionRepositoryProtocol) {

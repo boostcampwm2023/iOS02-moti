@@ -11,13 +11,16 @@ import Core
 import Data
 
 final class DetailAchievementViewModel {
+
     enum DetailAchievementViewModelAction {
+        
         case launch
         case delete
         case update(updatedAchievement: Achievement)
     }
     
     enum LaunchState {
+
         case none
         case initial(title: String)
         case success(achievement: Achievement)
@@ -25,6 +28,7 @@ final class DetailAchievementViewModel {
     }
     
     enum DeleteState {
+
         case initial
         case success(achievementId: Int)
         case failed(message: String)

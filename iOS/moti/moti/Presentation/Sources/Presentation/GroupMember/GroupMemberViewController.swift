@@ -59,11 +59,10 @@ final class GroupMemberViewController: BaseViewController<GroupMemberView>, Hidd
     }
 }
 
-extension GroupMemberViewController: UICollectionViewDelegate {
-    
-}
+extension GroupMemberViewController: UICollectionViewDelegate { }
 
 extension GroupMemberViewController: GroupMemberCollectionViewCellDelegate {
+
     func menuDidClicked(groupMember: GroupMember, newGroupGrade: GroupGrade) {
         showTwoButtonAlert(title: "\(newGroupGrade.description) 권한으로 수정하시겠습니까?", okTitle: "수정", okAction: {
             self.viewModel.action(.updateGrade(groupMember: groupMember, newGroupGrade: newGroupGrade))

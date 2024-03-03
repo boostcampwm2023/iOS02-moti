@@ -12,6 +12,7 @@ import Data
 import JKImageCache
 
 final class DetailAchievementView: UIView {
+
     
     // MARK: - Views
     let scrollView: UIScrollView = {
@@ -110,6 +111,7 @@ final class DetailAchievementView: UIView {
 
 // MARK: - setup
 private extension DetailAchievementView {
+
     private func setupUI() {
         setupScrollView()
         
@@ -197,7 +199,5 @@ private extension DetailAchievementView {
             .horizontal(equalTo: safeAreaLayoutGuide)
             .top(equalTo: view.bottomAnchor, constant: 9)
             .height(constant: 1)
-        
     }
-    
 }

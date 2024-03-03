@@ -8,6 +8,7 @@
 import Foundation
 
 public struct SaveImageRequestValue: RequestValue {
+
     public let boundary: String
     public let contentType: String
     public let imageData: Data
@@ -20,6 +21,7 @@ public struct SaveImageRequestValue: RequestValue {
 }
 
 public struct SaveImageUseCase {
+
     private let repository: ImageRepositoryProtocol
     
     public init(repository: ImageRepositoryProtocol) {

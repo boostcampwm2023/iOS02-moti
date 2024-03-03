@@ -10,6 +10,7 @@ import Domain
 import Core
 
 public struct AchievementRepository: AchievementRepositoryProtocol {
+
     private let provider: ProviderProtocol
     
     public init(provider: ProviderProtocol = Provider()) {

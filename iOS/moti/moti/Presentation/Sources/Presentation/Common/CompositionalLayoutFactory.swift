@@ -8,6 +8,7 @@
 import UIKit
 
 enum CompositionalLayoutFactory {
+
     static func makeVerticalCompositionalLayout(
         itemSize: NSCollectionLayoutSize,
         itemInset: NSDirectionalEdgeInsets? = nil,

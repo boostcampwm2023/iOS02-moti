@@ -8,6 +8,7 @@
 import Foundation
 
 public protocol AchievementRepositoryProtocol {
+
     func fetchAchievementList(
         requestValue: FetchAchievementListRequestValue?
     ) async throws -> AchievementListItem
@@ -30,5 +31,6 @@ public protocol AchievementRepositoryProtocol {
 }
 
 public protocol GroupAchievementRepositoryProtocol: AchievementRepositoryProtocol {
+
     var groupId: Int { get }
 }

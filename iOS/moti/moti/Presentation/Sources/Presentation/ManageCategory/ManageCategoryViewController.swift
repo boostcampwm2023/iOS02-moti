@@ -11,10 +11,12 @@ import Core
 import Domain
 
 protocol ManageCategoryViewControllerDelegate: AnyObject {
+
     func manageCategoryDidCompleted()
 }
 
 final class ManageCategoryViewController: BaseViewController<ManageCategoryView>, HiddenTabBarViewController, LoadingIndicator {
+
 
     // MARK: - Properties
     weak var coordinator: ManageCategoryCoordinator?
@@ -85,6 +87,7 @@ final class ManageCategoryViewController: BaseViewController<ManageCategoryView>
 }
 
 private extension ManageCategoryViewController {
+
     func bind() {
         viewModel.reorderCategoriesState
             .receive(on: RunLoop.main)
@@ -96,7 +99,6 @@ private extension ManageCategoryViewController {
                 case .failed(_):
                     showErrorAlert(message: "카테고리 순서 변경에 실패했습니다.")
                 }
-                
             }
             .store(in: &cancellables)
         
@@ -118,11 +120,10 @@ private extension ManageCategoryViewController {
     }
 }
 
-extension ManageCategoryViewController: UICollectionViewDelegate {
-    
-}
+extension ManageCategoryViewController: UICollectionViewDelegate { }
 
 extension ManageCategoryViewController: UICollectionViewDragDelegate {
+
     func collectionView(
         _ collectionView: UICollectionView,
         itemsForBeginning session: UIDragSession, 
@@ -133,6 +134,7 @@ extension ManageCategoryViewController: UICollectionViewDragDelegate {
 }
 
 extension ManageCategoryViewController: UICollectionViewDropDelegate {
+
     func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
         var destinationIndexPath: IndexPath
         if let indexPath = coordinator.destinationIndexPath {
@@ -153,7 +155,6 @@ extension ManageCategoryViewController: UICollectionViewDropDelegate {
         else { return }
         
         collectionView.performBatchUpdates {
-            
         } completion: { finish in
             coordinator.drop(sourceItem.dragItem, toItemAt: destinationIndexPath)
             self.move(sourceIndexPath: sourceIndexPath, destinationIndexPath: destinationIndexPath)
@@ -179,6 +180,7 @@ extension ManageCategoryViewController: UICollectionViewDropDelegate {
 }
 
 extension ManageCategoryViewController: ManageCategoryCollectionViewCellDelegate {
+
     func deleteCategoryButtonDidClicked(cell: UICollectionViewCell) {
         guard let indexPath = layoutView.manageCategoryCollectionView.indexPath(for: cell) else { return }
         

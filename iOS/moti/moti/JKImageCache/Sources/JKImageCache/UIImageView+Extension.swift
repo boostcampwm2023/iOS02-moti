@@ -9,10 +9,12 @@ import UIKit
 import Jeongfisher
 
 private struct JKAssociatedKeys {
+
     static var downloadUrl = "downloadUrl"
 }
 
 extension JKImageCacheWrapper where Base: UIImageView {
+
     
     /// UIImageView가 사용한 URL
     private var downloadUrl: String? {
@@ -80,6 +82,7 @@ extension JKImageCacheWrapper where Base: UIImageView {
 }
 
 private extension JKImageCacheWrapper where Base: UIImageView {
+
     /// PlaceHolder를 보여주는 타이머 생성.
     /// 스크롤 도중에도 PlaceHolder를 보여줘야 하므로 DispatchQueue 사용
     /// - Parameters:
@@ -104,6 +107,8 @@ private extension JKImageCacheWrapper where Base: UIImageView {
 }
 
 private extension JKImageCacheWrapper {
+
+    // swiftlint:disable:next no_get_method
     func getAssociatedObject<T>(_ object: Any, _ key: UnsafeRawPointer) -> T? {
         return objc_getAssociatedObject(object, key) as? T
     }

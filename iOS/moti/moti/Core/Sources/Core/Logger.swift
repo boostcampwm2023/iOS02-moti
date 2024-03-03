@@ -9,6 +9,7 @@ import Foundation
 import OSLog
 
 public enum Logger {
+
     public static func debug<T>(_ object: T?) {
         #if DEBUG
         let message = object != nil ? "\(object!)" : "nil"

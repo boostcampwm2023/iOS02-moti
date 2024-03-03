@@ -11,10 +11,12 @@ import Combine
 import Domain
 
 protocol LoginViewControllerDelegate: AnyObject {
+
     func didLogin()
 }
 
 final class LoginViewController: BaseViewController<LoginView> {
+
 
     // MARK: - Properties
     weak var delegate: LoginViewControllerDelegate?
@@ -101,6 +103,7 @@ final class LoginViewController: BaseViewController<LoginView> {
 }
 
 extension LoginViewController: AppleLoginRequesterDelegate {
+
     func success(token: String, authorizationCode: String) {
         viewModel.action(.login(identityToken: token))
     }

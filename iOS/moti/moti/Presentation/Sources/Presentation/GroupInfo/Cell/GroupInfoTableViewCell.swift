@@ -8,6 +8,7 @@
 import UIKit
 
 final class GroupInfoTableViewCell: UITableViewCell {
+
     
     // MARK: - Views
     private let label: UILabel = {
@@ -34,6 +35,7 @@ final class GroupInfoTableViewCell: UITableViewCell {
 
 // MARK: - Setup
 private extension GroupInfoTableViewCell {
+
     func setupUI() {
         backgroundColor = .motiBackground
         accessoryType = .disclosureIndicator

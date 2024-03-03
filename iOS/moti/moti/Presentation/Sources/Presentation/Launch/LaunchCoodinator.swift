@@ -11,11 +11,13 @@ import Data
 import Domain
 
 public protocol LaunchCoodinatorDelegate: AnyObject {
+
     func successAutoLogin(_ coordinator: LaunchCoodinator)
     func failedAutoLogin(_ coordinator: LaunchCoodinator)
 }
 
 public final class LaunchCoodinator: Coordinator {
+
     public let parentCoordinator: Coordinator?
     public var childCoordinators: [Coordinator] = []
     public let navigationController: UINavigationController
@@ -46,6 +48,7 @@ public final class LaunchCoodinator: Coordinator {
 }
 
 extension LaunchCoodinator: LaunchViewControllerDelegate {
+
     func viewControllerDidLogin(isSuccess: Bool) {
         if isSuccess {
             delegate?.successAutoLogin(self)

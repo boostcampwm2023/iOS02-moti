@@ -10,6 +10,7 @@ import Foundation
 public protocol EndpointProtocol: Requestable { }
 
 public struct Endpoint: EndpointProtocol {
+
     public var baseURL: String
     public var path: String
     public var method: HttpMethod
@@ -35,6 +36,7 @@ public struct Endpoint: EndpointProtocol {
 }
 
 public enum HttpMethod: String {
+
     case get = "GET"
     case post = "POST"
     case put = "PUT"

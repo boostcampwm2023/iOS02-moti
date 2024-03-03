@@ -9,6 +9,7 @@ import Foundation
 import Domain
 
 public struct BlockingRepository: BlockingRepositoryProtocol {
+
     private let provider: ProviderProtocol
     private let groupId: Int
     

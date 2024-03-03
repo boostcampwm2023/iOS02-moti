@@ -8,6 +8,7 @@
 import UIKit
 
 open class NormalButton: UIButton {
+
     public init(title: String? = nil, image: UIImage? = nil) {
         super.init(frame: .zero)
         

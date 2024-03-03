@@ -8,6 +8,7 @@
 import Foundation
 
 public struct InviteMemberRequestValue: RequestValue {
+
     public let userCode: String
     
     public init(userCode: String) {
@@ -16,6 +17,7 @@ public struct InviteMemberRequestValue: RequestValue {
 }
 
 public struct InviteMemberUseCase {
+
     private let repository: GroupMemberRepositoryProtocol
     
     public init(repository: GroupMemberRepositoryProtocol) {

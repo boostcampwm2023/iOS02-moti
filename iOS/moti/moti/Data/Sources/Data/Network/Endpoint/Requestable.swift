@@ -8,6 +8,7 @@
 import Foundation
 
 public protocol Requestable {
+
     var baseURL: String { get }
     var path: String { get }
     var method: HttpMethod { get }
@@ -17,6 +18,7 @@ public protocol Requestable {
 }
 
 extension Requestable {
+
     func makeURLRequest() throws -> URLRequest {
         guard let url = try makeURL() else { throw NetworkError.url }
         

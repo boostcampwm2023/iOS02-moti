@@ -11,6 +11,7 @@ import Domain
 
 final class AppInfoViewController: BaseViewController<AppInfoView>, LoadingIndicator {
 
+
     // MARK: - Properties
     let viewModel: AppInfoViewModel
     private var cancellables: Set<AnyCancellable> = []
@@ -114,6 +115,7 @@ final class AppInfoViewController: BaseViewController<AppInfoView>, LoadingIndic
 }
 
 extension AppInfoViewController: AppleLoginRequesterDelegate {
+
     func success(token: String, authorizationCode: String) {
         viewModel.action(.revoke(identityToken: token, authorizationCode: authorizationCode))
     }

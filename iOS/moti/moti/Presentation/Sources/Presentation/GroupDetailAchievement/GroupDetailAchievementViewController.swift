@@ -12,11 +12,13 @@ import Combine
 import Domain
 
 protocol GroupDetailAchievementViewControllerDelegate: DetailAchievementViewControllerDelegate {
+
     func blockingAchievementMenuDidClicked(achievementId: Int)
     func blockingUserMenuDidClicked(userCode: String)
 }
 
 final class GroupDetailAchievementViewController: BaseViewController<GroupDetailAchievementView>, HiddenTabBarViewController, VibrationViewController {
+
 
     // MARK: - Properties
     weak var coordinator: GroupDetailAchievementCoordinator?
@@ -69,6 +71,7 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
     
     @objc private func removeButtonDidClicked() {
         showDestructiveTwoButtonAlert(title: "정말로 삭제하시겠습니까?", message: "삭제된 도전 기록은 되돌릴 수 없습니다.") { [weak self] in
+
             guard let self else { return }
             viewModel.action(.delete)
         }
@@ -122,10 +125,12 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         
         // 작성자 본인, 관리자, 그룹장에게 표시
         let deleteAction = UIAction(title: "삭제", attributes: .destructive, handler: { _ in
+
             self.removeButtonDidClicked()
         })
         // 작성자가 아닌 유저에게만 표시
         let blockingAchievementAction = UIAction(title: "도전기록 차단", attributes: .destructive, handler: { _ in
+
             self.showDestructiveTwoButtonAlert(
                 title: "도전기록 차단",
                 message: "더이상 해당 도전기록을 볼 수 없습니다.\n정말 차단하시겠습니까?",
@@ -137,6 +142,7 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         })
         // 작성자가 아닌 유저에게만 표시
         let blockingUserAction = UIAction(title: "사용자 차단", attributes: .destructive, handler: { _ in
+
             self.showDestructiveTwoButtonAlert(
                 title: "사용자 차단",
                 message: "더이상 해당 사용자의 모든 도전기록을 볼 수 없습니다.\n정말 차단하시겠습니까?",
@@ -148,6 +154,7 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
         })
         // 신고
         let reportAction = UIAction(title: "신고", attributes: .destructive, handler: { _ in
+
             self.showOneButtonAlert(title: "신고 완료", message: "신고 처리되었습니다.")
         })
         
@@ -172,6 +179,7 @@ final class GroupDetailAchievementViewController: BaseViewController<GroupDetail
 
 // MARK: - Binding
 extension GroupDetailAchievementViewController: LoadingIndicator {
+
     private func bind() {
         viewModel.launchState
             .receive(on: RunLoop.main)

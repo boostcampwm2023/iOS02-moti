@@ -10,11 +10,13 @@ import Core
 import Domain
 
 public protocol ProviderProtocol {
+
     func request<R: ResponseDTO, E: EndpointProtocol>(with endpoint: E, type: R.Type) async throws -> R
     func requestMutipartFormData<R: ResponseDTO, E: Requestable>(with endpoint: E, type: R.Type, bodyData: Data) async throws -> R
 }
 
 public struct Provider: ProviderProtocol {
+
     private let session: URLSession
     private let encoder: JSONEncoder = {
         let encoder = JSONEncoder()

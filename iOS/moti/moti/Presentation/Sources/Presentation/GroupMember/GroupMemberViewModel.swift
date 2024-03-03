@@ -11,17 +11,21 @@ import Core
 import Combine
 
 final class GroupMemberViewModel {
+
     enum GroupMemberViewModelAction {
+        
         case launch
         case updateGrade(groupMember: GroupMember, newGroupGrade: GroupGrade)
     }
     
     enum GroupMemberListState {
+
         case success
         case failed(message: String)
     }
     
     enum UpdateGradeState {
+
         case success
         case failed(message: String)
     }

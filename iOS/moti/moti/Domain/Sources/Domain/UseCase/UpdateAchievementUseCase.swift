@@ -8,6 +8,7 @@
 import Foundation
 
 public struct UpdateAchievementRequestValue: RequestValue {
+
     public let id: Int
     public let body: UpdateAchievementRequestBody
     
@@ -18,6 +19,7 @@ public struct UpdateAchievementRequestValue: RequestValue {
 }
 
 public struct UpdateAchievementRequestBody: RequestValue {
+
     public let title: String
     public let content: String
     public let categoryId: Int
@@ -30,6 +32,7 @@ public struct UpdateAchievementRequestBody: RequestValue {
 }
 
 public struct UpdateAchievementUseCase {
+
     private let repository: AchievementRepositoryProtocol
     
     public init(repository: AchievementRepositoryProtocol) {

@@ -12,11 +12,13 @@ import Combine
 import Domain
 
 protocol EditAchievementViewControllerDelegate: AnyObject {
+
     func doneButtonDidClickedFromDetailView(updatedAchievement: Achievement)
     func doneButtonDidClickedFromCaptureView(newAchievement: Achievement)
 }
 
 final class EditAchievementViewController: BaseViewController<EditAchievementView> {
+
     
     // MARK: - Properties
     weak var coordinator: EditAchievementCoordinator?
@@ -118,6 +120,7 @@ final class EditAchievementViewController: BaseViewController<EditAchievementVie
 }
 
 extension EditAchievementViewController: UITextFieldDelegate {
+
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let text = textField.text else { return true }
         let newLength = text.count + string.count - range.length
@@ -127,6 +130,7 @@ extension EditAchievementViewController: UITextFieldDelegate {
 
 // MARK: - Bottom Sheet
 private extension EditAchievementViewController {
+
     func showBottomSheet() {
         bottomSheet.modalPresentationStyle = .pageSheet
 
@@ -149,6 +153,7 @@ private extension EditAchievementViewController {
 
 // MARK: - Category PickerView
 extension EditAchievementViewController {
+
     private func setupCategoryPickerView() {
         layoutView.categoryPickerView.delegate = self
         layoutView.categoryPickerView.dataSource = self
@@ -166,6 +171,7 @@ extension EditAchievementViewController {
 }
 
 extension EditAchievementViewController: UIPickerViewDelegate {
+
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         guard let category = viewModel.findCategory(at: row) else { return }
         layoutView.update(category: category.name)
@@ -173,6 +179,7 @@ extension EditAchievementViewController: UIPickerViewDelegate {
 }
 
 extension EditAchievementViewController: UIPickerViewDataSource {
+
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1
     }
@@ -189,6 +196,7 @@ extension EditAchievementViewController: UIPickerViewDataSource {
 
 // MARK: - Navigationbar
 private extension EditAchievementViewController {
+
     func setupNavigationBar() {
         navigationItem.rightBarButtonItems = [doneButton]
     }
@@ -258,6 +266,7 @@ private extension EditAchievementViewController {
 
 // MARK: - Binding
 private extension EditAchievementViewController {
+
     func bind() {
         bindAchievement()
         
@@ -360,5 +369,4 @@ private extension EditAchievementViewController {
             }
             .store(in: &cancellables)
     }
-    
 }

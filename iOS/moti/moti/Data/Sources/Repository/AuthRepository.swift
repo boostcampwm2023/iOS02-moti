@@ -10,6 +10,7 @@ import Domain
 import Core
 
 public struct AuthRepository: AuthRepositoryProtocol {
+
     private let provider: ProviderProtocol
     
     public init(provider: ProviderProtocol = Provider()) {

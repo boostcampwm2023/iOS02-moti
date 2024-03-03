@@ -10,6 +10,7 @@ import AuthenticationServices
 import Core
 
 protocol AppleLoginRequesterDelegate: AnyObject {
+
     func success(token: String, authorizationCode: String)
     func failed(message: String)
 }
@@ -36,6 +37,7 @@ final class AppleLoginRequester: NSObject, LoginRequester {
 }
 
 extension AppleLoginRequester: ASAuthorizationControllerDelegate {
+
     // 인증 성공
     func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
         guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential else { return }
@@ -66,6 +68,7 @@ extension AppleLoginRequester: ASAuthorizationControllerDelegate {
 }
 
 extension AppleLoginRequester: ASAuthorizationControllerPresentationContextProviding {
+
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         return window
     }

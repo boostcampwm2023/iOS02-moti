@@ -8,6 +8,7 @@
 import Foundation
 
 enum NetworkError: LocalizedError {
+
     case url
     case components
     case encode

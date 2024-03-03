@@ -8,6 +8,7 @@
 import Foundation
 
 public struct PostAchievementRequestValue: RequestValue {
+
     public let title: String
     public let content: String
     public let categoryId: Int
@@ -22,6 +23,7 @@ public struct PostAchievementRequestValue: RequestValue {
 }
 
 public struct PostAchievementUseCase {
+
     private let repository: AchievementRepositoryProtocol
     
     public init(repository: AchievementRepositoryProtocol) {

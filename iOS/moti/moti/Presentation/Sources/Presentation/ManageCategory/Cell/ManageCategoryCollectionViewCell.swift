@@ -10,10 +10,12 @@ import Domain
 import Design
 
 protocol ManageCategoryCollectionViewCellDelegate: AnyObject {
+
     func deleteCategoryButtonDidClicked(cell: UICollectionViewCell)
 }
 
 final class ManageCategoryCollectionViewCell: UICollectionViewCell {
+
     
     // MARK: - Properties
     private let iconSize: CGFloat = 44
@@ -81,6 +83,7 @@ final class ManageCategoryCollectionViewCell: UICollectionViewCell {
 
 // MARK: - Setup
 private extension ManageCategoryCollectionViewCell {
+
     func setupUI() {
         self.layer.cornerRadius = CornerRadius.big
         self.layer.borderWidth = 1

@@ -9,6 +9,7 @@ import UIKit
 import Core
 
 extension UIImage {
+
     /// 이미지를 정사각형으로 Crop하는 메서드
     func cropToSquare() -> UIImage? {
         guard let upImage = self.fixedOrientation(),

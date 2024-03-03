@@ -9,6 +9,7 @@ import UIKit
 import Design
 
 class BaseViewController<LayoutView: UIView>: UIViewController {
+
     var layoutView = LayoutView()
     
     override func loadView() {
@@ -35,6 +36,7 @@ class BaseViewController<LayoutView: UIView>: UIViewController {
 
 // MARK: - Alert
 extension BaseViewController {
+
     /// 에러 상황일 때 호출하는 Alert
     func showErrorAlert(
         title: String = "에러",

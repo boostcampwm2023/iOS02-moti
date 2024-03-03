@@ -12,11 +12,13 @@ import Combine
 import Domain
 
 protocol DetailAchievementViewControllerDelegate: AnyObject {
+
     func editButtonDidClicked(achievement: Achievement)
     func deleteButtonDidClicked(achievementId: Int)
 }
 
 final class DetailAchievementViewController: BaseViewController<DetailAchievementView>, HiddenTabBarViewController {
+
     weak var coordinator: DetailAchievementCoordinator?
     weak var delegate: DetailAchievementViewControllerDelegate?
     
@@ -60,6 +62,7 @@ final class DetailAchievementViewController: BaseViewController<DetailAchievemen
     
     @objc private func removeButtonDidClicked() {
         showDestructiveTwoButtonAlert(title: "정말로 삭제하시겠습니까?", message: "삭제된 도전 기록은 되돌릴 수 없습니다.") { [weak self] in
+
             guard let self else { return }
             viewModel.action(.delete)
         }

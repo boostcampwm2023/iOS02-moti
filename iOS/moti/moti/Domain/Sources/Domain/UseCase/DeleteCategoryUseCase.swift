@@ -8,6 +8,7 @@
 import Foundation
 
 public struct DeleteCategoryUseCase {
+
     private let repository: CategoryRepositoryProtocol
     
     public init(repository: CategoryRepositoryProtocol) {

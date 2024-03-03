@@ -10,6 +10,7 @@ import Design
 import Domain
 
 final class CelebrateViewController: UIViewController, VibrationViewController {
+
     
     // MARK: - Properties
     private let achievement: Achievement

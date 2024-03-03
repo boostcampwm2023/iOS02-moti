@@ -8,5 +8,6 @@
 import Foundation
 
 public protocol VersionRepositoryProtocol {
+
     func fetchVersion() async throws -> Version
 }

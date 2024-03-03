@@ -26,11 +26,11 @@ final class GroupListView: UIView {
         super.init(coder: coder)
         setupUI()
     }
-
 }
 
 // MARK: - Setup
 private extension GroupListView {
+
     private func setupUI() {
         addSubview(groupListCollectionView)
         groupListCollectionView.atl
@@ -41,6 +41,7 @@ private extension GroupListView {
 }
 
 private extension GroupListView {
+
     func makeCollectionViewLayout() -> UICollectionViewLayout {
         let itemPadding: CGFloat = 20
         let itemSize = NSCollectionLayoutSize(

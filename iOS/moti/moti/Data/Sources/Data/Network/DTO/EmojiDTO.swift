@@ -9,18 +9,21 @@ import Foundation
 import Domain
 
 struct FetchEmojisDTO: ResponseDataDTO {
+
     let success: Bool?
     let message: String?
     let data: [EmojiDTO]?
 }
 
 struct EmojiDTO: Codable {
+
     let id: EmojiType
     let isSelected: Bool?
     let count: Int?
 }
 
 extension Emoji {
+
     init(dto: EmojiDTO) {
         self.init(
             id: dto.id,

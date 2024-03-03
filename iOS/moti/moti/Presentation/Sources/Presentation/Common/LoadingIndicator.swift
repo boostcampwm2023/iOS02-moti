@@ -8,11 +8,13 @@
 import UIKit
 
 protocol LoadingIndicator: UIViewController {
+
     func showLoadingIndicator()
     func hideLoadingIndicator()
 }
 
 extension LoadingIndicator {
+
     func showLoadingIndicator() {
         DispatchQueue.main.async {
             let loadingIndicatorView: UIActivityIndicatorView

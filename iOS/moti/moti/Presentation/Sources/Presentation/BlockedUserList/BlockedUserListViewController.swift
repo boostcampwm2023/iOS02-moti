@@ -12,6 +12,7 @@ import Domain
 
 final class BlockedUserListViewController: BaseViewController<BlockedUserListView>, LoadingIndicator, HiddenTabBarViewController {
 
+
     // MARK: - Properties
     weak var coordinator: BlockedUserListCoordinator?
     private let viewModel: BlockedUserListViewModel
@@ -90,6 +91,7 @@ final class BlockedUserListViewController: BaseViewController<BlockedUserListVie
 }
 
 extension BlockedUserListViewController: UICollectionViewDelegate {
+
     func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let cell = cell as? BlockedUserListCollectionViewCell else { return }
         cell.cancelDownloadImage()
@@ -97,6 +99,7 @@ extension BlockedUserListViewController: UICollectionViewDelegate {
 }
 
 extension BlockedUserListViewController: BlockedUserListCollectionViewCellDelegate {
+
     func unblockButtonDidClicked(cell: UICollectionViewCell) {
         guard let indexPathOfClickedCell = layoutView.blockedUserListCollectionView.indexPath(for: cell) else { return }
         showTwoButtonAlert(title: "정말 차단 해제하시겠습니까?", okTitle: "차단 해제", okAction: {

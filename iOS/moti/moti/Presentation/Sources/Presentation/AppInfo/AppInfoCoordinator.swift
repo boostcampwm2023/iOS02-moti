@@ -11,6 +11,7 @@ import Domain
 import Data
 
 final class AppInfoCoordinator: Coordinator {
+
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController

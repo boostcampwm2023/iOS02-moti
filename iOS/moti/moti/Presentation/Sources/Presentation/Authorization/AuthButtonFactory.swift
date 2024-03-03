@@ -10,6 +10,7 @@ import AuthenticationServices
 import Design
 
 enum AuthButtonFactory {
+
     static func makeAppleLoginButton() -> ASAuthorizationAppleIDButton {
         let appleLoginButton = ASAuthorizationAppleIDButton(type: .default, style: .whiteOutline)
         return appleLoginButton

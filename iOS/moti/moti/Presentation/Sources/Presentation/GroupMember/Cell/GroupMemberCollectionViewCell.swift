@@ -11,10 +11,12 @@ import Jeongfisher
 import Design
 
 protocol GroupMemberCollectionViewCellDelegate: AnyObject {
+
     func menuDidClicked(groupMember: GroupMember, newGroupGrade: GroupGrade)
 }
 
 final class GroupMemberCollectionViewCell: UICollectionViewCell {
+
     
     // MARK: - Properties
     private let iconSize: CGFloat = 60
@@ -126,6 +128,7 @@ final class GroupMemberCollectionViewCell: UICollectionViewCell {
 
 // MARK: - Setup
 private extension GroupMemberCollectionViewCell {
+
     func setupUI() {
         self.layer.cornerRadius = CornerRadius.big
         self.layer.borderWidth = 1

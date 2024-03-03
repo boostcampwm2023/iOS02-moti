@@ -8,6 +8,7 @@
 import Foundation
 
 public struct RevokeRequestValue: RequestValue {
+
     public let identityToken: String
     public let authorizationCode: String
     
@@ -18,6 +19,7 @@ public struct RevokeRequestValue: RequestValue {
 }
 
 public struct RevokeUseCase {
+
     private let repository: AuthRepositoryProtocol
     
     public init(repository: AuthRepositoryProtocol) {

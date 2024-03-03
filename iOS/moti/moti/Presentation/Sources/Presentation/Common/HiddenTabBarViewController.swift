@@ -8,11 +8,13 @@
 import UIKit
 
 protocol HiddenTabBarViewController: UIViewController {
+
     func showTabBar()
     func hideTabBar()
 }
 
 extension HiddenTabBarViewController {
+
     func showTabBar() {
         if let tabBarController = tabBarController as? TabBarViewController {
             tabBarController.showTabBar()

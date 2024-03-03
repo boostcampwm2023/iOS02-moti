@@ -12,6 +12,7 @@ import Domain
 import Design
 
 public final class HomeCoordinator: Coordinator {
+
     public let parentCoordinator: Coordinator?
     public var childCoordinators: [Coordinator] = []
     public let navigationController: UINavigationController
@@ -79,6 +80,7 @@ public final class HomeCoordinator: Coordinator {
 }
 
 extension HomeCoordinator: HomeViewControllerDelegate {
+
     func editMenuDidClicked(achievement: Achievement) {
         moveToEditAchievementViewController(achievement: achievement)
     }
@@ -86,6 +88,7 @@ extension HomeCoordinator: HomeViewControllerDelegate {
 
 // MARK: - DetailAchievementCoordinatorDelegate
 extension HomeCoordinator: DetailAchievementCoordinatorDelegate {
+
     func deleteButtonDidClicked(achievementId: Int) {
         currentViewController?.deleteAchievementDataSourceItem(achievementId: achievementId)
     }
@@ -101,6 +104,7 @@ extension HomeCoordinator: DetailAchievementCoordinatorDelegate {
 
 // MARK: - EditAchievementCoordinatorDelegate
 extension HomeCoordinator: EditAchievementCoordinatorDelegate {
+
     func doneButtonDidClicked(achievement: Achievement) {
         currentViewController?.updateAchievement(updatedAchievement: achievement)
     }
@@ -109,8 +113,10 @@ extension HomeCoordinator: EditAchievementCoordinatorDelegate {
 // MARK: - CaptureCoordinatorDelegate
 extension HomeCoordinator: CaptureCoordinatorDelegate { }
 
+
 // MARK: - ManageCategoryCoordinatorDelegate
 extension HomeCoordinator: ManageCategoryCoordinatorDelegate {
+
     func doneButtonDidClicked() {
         currentViewController?.fetchCategoryList()
     }

@@ -6,6 +6,7 @@ import Jeongfisher
 
 // Jeong주 & Ki현 이미지 캐시
 final class JKImageCache {
+
     public static let shared = JKImageCache()
     private init() { }
     

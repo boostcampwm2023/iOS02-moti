@@ -11,10 +11,12 @@ import Domain
 import Data
 
 protocol GroupInfoCoordinatorDelegate: AnyObject {
+
     func unblockUserIsSuccess()
 }
 
 final class GroupInfoCoordinator: Coordinator {
+
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
@@ -54,6 +56,7 @@ final class GroupInfoCoordinator: Coordinator {
 }
 
 extension GroupInfoCoordinator: BlockedUserListCoordinatorDelegate {
+
     func unblockedUser() {
         delegate?.unblockUserIsSuccess()
     }

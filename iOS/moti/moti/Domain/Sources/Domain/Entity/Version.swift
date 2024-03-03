@@ -8,6 +8,7 @@
 import Foundation
 
 public struct Version: Equatable {
+
     public let current: String
     public let latest: String
     public let required: String
@@ -22,6 +23,7 @@ public struct Version: Equatable {
 }
 
 public extension Version {
+
     /// 업데이트 가능 여부
     var canUpdate: Bool {
         compareVersion(curruent: current, compare: latest)

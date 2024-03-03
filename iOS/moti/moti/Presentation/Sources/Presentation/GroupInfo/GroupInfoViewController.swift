@@ -12,6 +12,7 @@ import Combine
 
 final class GroupInfoViewController: BaseViewController<GroupInfoView>, HiddenTabBarViewController {
 
+
     // MARK: - Properties
     weak var coordinator: GroupInfoCoordinator?
     private let group: Group
@@ -51,6 +52,7 @@ final class GroupInfoViewController: BaseViewController<GroupInfoView>, HiddenTa
 }
 
 extension GroupInfoViewController: UITableViewDelegate {
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         if dataSource.isGroupMemberCell(indexPath: indexPath) {
@@ -62,6 +64,7 @@ extension GroupInfoViewController: UITableViewDelegate {
                 showErrorAlert(title: "그룹장은 탈퇴할 수 없습니다.")
             } else {
                 showDestructiveTwoButtonAlert(title: "그룹에서 탈퇴하시겠습니까?", okTitle: "탈퇴") { [weak self] in
+
                     guard let self else { return }
                     viewModel.action(.dropGroup(groupId: group.id))
                 }
@@ -74,6 +77,7 @@ extension GroupInfoViewController: UITableViewDelegate {
 
 // MARK: - bind
 extension GroupInfoViewController: LoadingIndicator {
+
     private func bind() {
         viewModel.dropGroupState
             .receive(on: DispatchQueue.main)

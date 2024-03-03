@@ -9,17 +9,20 @@ import Foundation
 import Domain
 
 struct UserTokenDTO: Codable {
+
     let accessToken: String?
     let refreshToken: String?
     let user: UserDTO?
 }
 
 struct UserDTO: Codable {
+
     let userCode: String?
     let avatarUrl: URL?
 }
 
 extension UserToken {
+
     init(dto: UserTokenDTO) {
         self.init(
             accessToken: dto.accessToken ?? "",
@@ -29,6 +32,7 @@ extension UserToken {
 }
 
 extension User {
+
     init(dto: UserDTO) {
         self.init(code: dto.userCode ?? "", avatarURL: dto.avatarUrl)
     }

@@ -8,6 +8,7 @@
 import UIKit
 
 public final class EmojiButton: BounceButton, CAAnimationDelegate {
+
     public let emoji: String
     private var isSelectedEmoji = false {
         didSet {

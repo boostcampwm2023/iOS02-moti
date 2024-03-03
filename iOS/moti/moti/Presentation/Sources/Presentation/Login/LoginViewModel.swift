@@ -12,10 +12,12 @@ import Domain
 final class LoginViewModel {
     
     enum LoginViewModelAction {
+
         case login(identityToken: String)
     }
     
     enum LoginState {
+
         case none
         case loading
         case success

@@ -8,6 +8,7 @@
 import UIKit
 
 final class ManageCategoryView: UIView {
+
     
     // MARK: - Views
     private(set) lazy var manageCategoryCollectionView: UICollectionView = {
@@ -38,6 +39,7 @@ final class ManageCategoryView: UIView {
 }
 
 private extension ManageCategoryView {
+
     func makeCollectionViewLayout() -> UICollectionViewLayout {
         let itemPadding: CGFloat = 20
         let itemSize = NSCollectionLayoutSize(

@@ -11,10 +11,12 @@ import Domain
 import Data
 
 protocol ManageCategoryCoordinatorDelegate: AnyObject {
+
     func doneButtonDidClicked()
 }
 
 final class ManageCategoryCoordinator: Coordinator {
+
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
@@ -64,6 +66,7 @@ final class ManageCategoryCoordinator: Coordinator {
 }
 
 extension ManageCategoryCoordinator: ManageCategoryViewControllerDelegate {
+
     func manageCategoryDidCompleted() {
         delegate?.doneButtonDidClicked()
     }

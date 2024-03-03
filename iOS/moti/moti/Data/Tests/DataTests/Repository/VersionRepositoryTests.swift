@@ -34,5 +34,4 @@ final class VersionRepositoryTests: XCTestCase {
         
         wait(for: [expectation], timeout: 3)
     }
-
 }

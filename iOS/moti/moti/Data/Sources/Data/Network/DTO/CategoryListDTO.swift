@@ -9,18 +9,21 @@ import Foundation
 import Domain
 
 struct CategoryResponseDataDTO: ResponseDataDTO {
+
     let success: Bool?
     let message: String?
     let data: CategoryDTO?
 }
 
 struct CategoryListResponseDTO: ResponseDataDTO {
+
     let success: Bool?
     let message: String?
     let data: [CategoryDTO]?
 }
 
 struct CategoryDTO: Codable {
+
     let id: Int?
     let name: String?
     let continued: Int?
@@ -28,6 +31,7 @@ struct CategoryDTO: Codable {
 }
 
 extension CategoryItem {
+
     init(dto: CategoryDTO) {
         self.init(
             id: dto.id ?? -1,

@@ -8,6 +8,7 @@
 import Foundation
 
 public struct DeleteAchievementUseCase {
+
     private let repository: AchievementRepositoryProtocol
     
     public init(repository: AchievementRepositoryProtocol) {

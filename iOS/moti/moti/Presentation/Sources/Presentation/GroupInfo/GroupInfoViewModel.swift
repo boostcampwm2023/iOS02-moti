@@ -11,11 +11,14 @@ import Core
 import Combine
 
 final class GroupInfoViewModel {
+
     enum GroupInfoViewModelAction {
+        
         case dropGroup(groupId: Int)
     }
     
     enum DropGroupState {
+
         case loading
         case finish
         case error(message: String)

@@ -8,6 +8,7 @@
 import Foundation
 
 public enum UserDefaultsKey: String {
+
     // String
     case requiredVersion
     case latestVersion
@@ -17,10 +18,12 @@ public enum UserDefaultsKey: String {
 }
 
 public enum UserDefaultsBoolKey: String {
+
     case highQualityUpload
 }
 
 public extension UserDefaults {
+
     func saveString(key: UserDefaultsKey, string: String) {
         UserDefaults.standard.setValue(string, forKey: key.rawValue)
     }

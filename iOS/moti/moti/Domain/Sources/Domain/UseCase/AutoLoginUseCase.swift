@@ -8,6 +8,7 @@
 import Foundation
 
 public struct AutoLoginRequestValue: RequestValue {
+
     public let refreshToken: String
     
     public init(refreshToken: String) {
@@ -16,6 +17,7 @@ public struct AutoLoginRequestValue: RequestValue {
 }
 
 public struct AutoLoginUseCase {
+
     private let repository: AuthRepositoryProtocol
     private let keychainStorage: KeychainStorageProtocol
     

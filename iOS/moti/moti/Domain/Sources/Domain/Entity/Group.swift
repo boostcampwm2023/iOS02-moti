@@ -8,6 +8,7 @@
 import Foundation
 
 public enum GroupGrade: String, CustomStringConvertible {
+
     case leader = "LEADER"// 그룹장
     case manager = "MANAGER"// 관리자
     case participant = "PARTICIPANT"// 참가자
@@ -22,6 +23,7 @@ public enum GroupGrade: String, CustomStringConvertible {
 }
 
 public struct Group: Hashable {
+
     public let id: Int
     public let code: String
     public let name: String

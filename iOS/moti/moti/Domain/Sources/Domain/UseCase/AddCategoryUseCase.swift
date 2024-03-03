@@ -8,6 +8,7 @@
 import Foundation
 
 public struct AddCategoryRequestValue: RequestValue {
+
     public let name: String
     
     public init(name: String) {
@@ -16,6 +17,7 @@ public struct AddCategoryRequestValue: RequestValue {
 }
 
 public struct AddCategoryUseCase {
+
     private let repository: CategoryRepositoryProtocol
     
     public init(repository: CategoryRepositoryProtocol) {

@@ -11,6 +11,7 @@ import Jeongfisher
 import JKImageCache
 
 final class AchievementCollectionViewCell: UICollectionViewCell {
+
     private let imageView = {
         let imageView = UIImageView()
         imageView.isAccessibilityElement = true

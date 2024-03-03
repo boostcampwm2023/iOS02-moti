@@ -11,10 +11,12 @@ import Data
 import Domain
 
 protocol EditAchievementCoordinatorDelegate: AnyObject {
+
     func doneButtonDidClicked(achievement: Achievement)
 }
 
 final class EditAchievementCoordinator: Coordinator {
+
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
@@ -28,9 +30,7 @@ final class EditAchievementCoordinator: Coordinator {
         self.parentCoordinator = parentCoordinator
     }
     
-    func start() {
-        
-    }
+    func start() { }
     
     func start(achievement: Achievement, group: Group? = nil) {
         // VM 생성
@@ -120,6 +120,7 @@ final class EditAchievementCoordinator: Coordinator {
 }
 
 extension EditAchievementCoordinator: EditAchievementViewControllerDelegate {
+
     func doneButtonDidClickedFromDetailView(updatedAchievement: Achievement) {
         parentCoordinator?.dismiss(child: self, animated: true)
         delegate?.doneButtonDidClicked(achievement: updatedAchievement)

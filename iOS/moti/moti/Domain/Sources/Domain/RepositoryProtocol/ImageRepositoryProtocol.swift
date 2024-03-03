@@ -8,5 +8,6 @@
 import Foundation
 
 public protocol ImageRepositoryProtocol {
+
     func saveImage(requestValue: SaveImageRequestValue) async throws -> (Bool, Int)
 }

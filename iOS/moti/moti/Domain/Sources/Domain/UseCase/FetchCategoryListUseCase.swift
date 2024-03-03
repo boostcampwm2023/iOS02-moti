@@ -8,6 +8,7 @@
 import Foundation
 
 public struct FetchCategoryUseCase {
+
     private let repository: CategoryRepositoryProtocol
     
     public init(repository: CategoryRepositoryProtocol) {
@@ -20,6 +21,7 @@ public struct FetchCategoryUseCase {
 }
 
 public struct FetchCategoryListUseCase {
+
     private let repository: CategoryRepositoryProtocol
     
     public init(repository: CategoryRepositoryProtocol) {

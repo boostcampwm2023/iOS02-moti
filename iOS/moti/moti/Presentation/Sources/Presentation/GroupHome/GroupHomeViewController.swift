@@ -12,6 +12,7 @@ import Combine
 import Domain
 
 final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndicator, VibrationViewController {
+
     
     // MARK: - Properties
     weak var coordinator: GroupHomeCoordinator?
@@ -177,6 +178,7 @@ final class GroupHomeViewController: BaseViewController<HomeView>, LoadingIndica
 
 // MARK: - Setup NavigationBar
 private extension GroupHomeViewController {
+
     func setupNavigationBar(with group: Group) {
         navigationItem.title = group.name
         
@@ -280,8 +282,8 @@ private extension GroupHomeViewController {
 
 // MARK: - UICollectionViewDelegate
 extension GroupHomeViewController: UICollectionViewDelegate {
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
         if let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell {
             // 카테고리 셀을 눌렀을 때
             categoryCellDidSelected(cell: cell, row: indexPath.row)
@@ -354,6 +356,7 @@ extension GroupHomeViewController: UICollectionViewDelegate {
             })
             // 작성자 본인, 관리자, 그룹장에게 표시
             let deleteAction = UIAction(title: "삭제", attributes: .destructive, handler: { _ in
+
                 self?.showDestructiveTwoButtonAlert(
                     title: "정말로 삭제하시겠습니까?",
                     message: "삭제된 도전 기록은 되돌릴 수 없습니다."
@@ -363,6 +366,7 @@ extension GroupHomeViewController: UICollectionViewDelegate {
             })
             // 작성자가 아닌 유저에게만 표시
             let blockingAchievementAction = UIAction(title: "도전기록 차단", attributes: .destructive, handler: { _ in
+
                 self?.showDestructiveTwoButtonAlert(
                     title: "도전기록 차단",
                     message: "더이상 해당 도전기록을 볼 수 없습니다.\n정말 차단하시겠습니까?",
@@ -373,6 +377,7 @@ extension GroupHomeViewController: UICollectionViewDelegate {
             })
             // 작성자가 아닌 유저에게만 표시
             let blockingUserAction = UIAction(title: "사용자 차단", attributes: .destructive, handler: { _ in
+
                 self?.showDestructiveTwoButtonAlert(
                     title: "사용자 차단",
                     message: "더이상 해당 사용자의 모든 도전기록을 볼 수 없습니다.\n정말 차단하시겠습니까?",
@@ -402,7 +407,6 @@ extension GroupHomeViewController: UICollectionViewDelegate {
         }
 
         return config
-
     }
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
@@ -443,6 +447,7 @@ extension GroupHomeViewController: UICollectionViewDelegate {
 
 // MARK: - Binding
 private extension GroupHomeViewController {
+
     private func bind() {
         bindAchievement()
         bindCategory()
@@ -560,7 +565,6 @@ private extension GroupHomeViewController {
                 }
             }
             .store(in: &cancellables)
-
     }
     
     func bindGroup() {
@@ -585,6 +589,7 @@ private extension GroupHomeViewController {
 
 // MARK: - UITextFieldDelegate
 extension GroupHomeViewController: UITextFieldDelegate {
+
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let text = textField.text else { return true }
         let newLength = text.count + string.count - range.length

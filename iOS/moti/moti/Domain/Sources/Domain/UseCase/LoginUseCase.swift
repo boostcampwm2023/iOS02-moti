@@ -8,6 +8,7 @@
 import Foundation
 
 public struct LoginRequestValue: RequestValue {
+
     public let identityToken: String
     
     public init(identityToken: String) {
@@ -16,6 +17,7 @@ public struct LoginRequestValue: RequestValue {
 }
 
 public struct LoginUseCase {
+
     private let repository: AuthRepositoryProtocol
     private let keychainStorage: KeychainStorageProtocol
     

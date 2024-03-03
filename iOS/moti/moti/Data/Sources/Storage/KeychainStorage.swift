@@ -9,6 +9,7 @@ import Foundation
 import Domain
 
 public final class KeychainStorage: KeychainStorageProtocol {
+
     public static let shared = KeychainStorage()
     
     private init() { }

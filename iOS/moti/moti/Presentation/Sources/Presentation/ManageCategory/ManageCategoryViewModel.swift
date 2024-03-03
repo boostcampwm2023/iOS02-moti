@@ -11,17 +11,21 @@ import Core
 import Combine
 
 final class ManageCategoryViewModel {
+
     enum ManageCategoryViewModelAction {
+        
         case reorderCategories
         case deleteCategory(index: Int)
     }
     
     enum ReorderCategoriesState {
+
         case success
         case failed(message: String)
     }
     
     enum DeleteCategoryState {
+
         case loading
         case success
         case failed(message: String)
@@ -75,6 +79,7 @@ final class ManageCategoryViewModel {
 
 // MARK: - Actions
 private extension ManageCategoryViewModel {
+
     func reorderCategories() {
         Task {
             do {

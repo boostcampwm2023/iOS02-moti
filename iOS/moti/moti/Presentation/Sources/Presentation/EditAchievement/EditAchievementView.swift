@@ -11,6 +11,7 @@ import Domain
 import Jeongfisher
 
 final class EditAchievementView: UIView {
+
     // MARK: - Views
     private let resultImageView: UIImageView = {
         let imageView = UIImageView()
@@ -115,6 +116,7 @@ final class EditAchievementView: UIView {
 
 // MARK: - Setup
 extension EditAchievementView {
+
     private func setupUI() {
         setupResultImageView()
         setupTitleTextField()
@@ -169,6 +171,7 @@ extension EditAchievementView {
 
 // MARK: - UITextFieldDelegate
 extension EditAchievementView: UITextFieldDelegate {
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true

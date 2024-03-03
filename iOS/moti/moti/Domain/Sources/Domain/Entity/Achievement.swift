@@ -8,6 +8,7 @@
 import Foundation
 
 public struct Achievement: Hashable {
+
     public let id: Int
     public var category: CategoryItem? {
         didSet {
@@ -83,6 +84,7 @@ public struct Achievement: Hashable {
 }
 
 public extension Achievement {
+
     static func makeSkeleton(id: Int) -> Achievement {
         let id = id < 0 ? id : -id
         return .init(id: id, title: "", imageURL: nil, categoryId: 0, user: nil)

@@ -11,6 +11,7 @@ import Domain
 import Core
 
 final class GroupDetailAchievementViewModel {
+
     // MARK: - UseCase
     private let fetchDetailAchievementUseCase: FetchDetailAchievementUseCase
     private let deleteAchievementUseCase: DeleteAchievementUseCase
@@ -79,6 +80,7 @@ final class GroupDetailAchievementViewModel {
 
 // MARK: - Actions
 extension GroupDetailAchievementViewModel {
+
     private func initTitle() {
         launchState.send(.initial(title: achievement.title))
     }

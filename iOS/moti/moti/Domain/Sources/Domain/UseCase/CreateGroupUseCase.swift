@@ -8,6 +8,7 @@
 import Foundation
 
 public struct CreateGroupRequestValue: RequestValue {
+
     private let name: String
     private let avatarUrl: URL?
     
@@ -18,6 +19,7 @@ public struct CreateGroupRequestValue: RequestValue {
 }
 
 public struct CreateGroupUseCase {
+
     private let groupRepository: GroupRepositoryProtocol
     
     public init(groupRepository: GroupRepositoryProtocol) {

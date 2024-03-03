@@ -8,6 +8,7 @@
 import UIKit
 
 final class DetailInfoListView: UIView {
+
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "정보"
@@ -80,6 +81,7 @@ final class DetailInfoListView: UIView {
 }
 
 final class DetailInfoListItemView: UIView {
+
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 1

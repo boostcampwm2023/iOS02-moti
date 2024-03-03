@@ -9,6 +9,7 @@ import UIKit
 import Design
 
 final class LaunchView: UIView {
+
     
     // MARK: - Views
     private let logoImageView = {
