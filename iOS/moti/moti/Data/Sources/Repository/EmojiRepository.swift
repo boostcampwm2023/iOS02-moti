@@ -9,6 +9,7 @@ import Foundation
 import Domain
 
 public struct EmojiRepository: EmojiRepositoryProtocol {
+
     private let provider: ProviderProtocol
     private let groupId: Int
     

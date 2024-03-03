@@ -8,6 +8,7 @@
 import Foundation
 
 public struct FetchBlockedUserListUseCase {
+
     private let blockingRepository: BlockingRepositoryProtocol
     
     public init(blockingRepository: BlockingRepositoryProtocol) {

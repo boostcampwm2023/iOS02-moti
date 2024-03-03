@@ -9,6 +9,7 @@ import Foundation
 import Domain
 
 struct CreateGroupDTO: ResponseDataDTO {
+
     let success: Bool?
     let message: String?
     let data: GroupDTO?

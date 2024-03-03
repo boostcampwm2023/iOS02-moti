@@ -8,6 +8,7 @@
 import UIKit
 
 public enum AlertFactory {
+
     public static func makeOneButtonAlert(
         title: String? = "알림",
         message: String? = nil,
@@ -52,6 +53,7 @@ public enum AlertFactory {
     ) -> UIAlertController {
         let alertVC = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let okAlert = UIAlertAction(title: okTitle, style: .destructive) { _ in
+
             okAction?()
         }
         let cancelAlert = UIAlertAction(title: "취소", style: .cancel)

@@ -8,6 +8,7 @@
 import Foundation
 
 public struct ToggleEmojiUseCase {
+
     private let repository: EmojiRepositoryProtocol
     
     public init(repository: EmojiRepositoryProtocol) {

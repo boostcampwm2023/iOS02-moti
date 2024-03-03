@@ -11,6 +11,7 @@ import Foundation
 @testable import Core
 
 public struct MockLoginRepository: AuthRepositoryProtocol {
+
     private var json = """
         {
             "success": true,

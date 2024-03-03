@@ -8,6 +8,7 @@
 import Foundation
 
 struct SimpleResponseDTO: ResponseDTO {
+
     let success: Bool?
     let message: String?
 }

@@ -8,6 +8,7 @@
 import UIKit
 
 public struct JKImageCacheWrapper<Base> {
+
     public let base: Base
     
     public init(base: Base) {
@@ -19,6 +20,7 @@ public struct JKImageCacheWrapper<Base> {
 public protocol JKImageCacheCompatible: AnyObject { }
 
 extension JKImageCacheCompatible {
+
     /// Wrapping Value
     public var jk: JKImageCacheWrapper<Self> {
         return JKImageCacheWrapper(base: self)

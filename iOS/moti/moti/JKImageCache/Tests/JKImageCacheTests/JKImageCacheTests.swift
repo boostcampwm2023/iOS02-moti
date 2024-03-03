@@ -2,6 +2,7 @@ import XCTest
 @testable import JKImageCache
 
 final class JKImageCacheTests: XCTestCase {
+
     func testExample() throws {
         // XCTest Documentation
         // https://developer.apple.com/documentation/xctest

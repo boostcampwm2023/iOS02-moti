@@ -11,6 +11,7 @@ import Core
 import Domain
 
 final class AppCoordinator: Coordinator {
+
     let parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     let navigationController: UINavigationController
@@ -66,6 +67,7 @@ final class AppCoordinator: Coordinator {
 }
 
 extension AppCoordinator: LaunchCoodinatorDelegate {
+
     func successAutoLogin(_ coordinator: LaunchCoodinator) {
         moveHomeViewController()
     }
@@ -76,6 +78,7 @@ extension AppCoordinator: LaunchCoodinatorDelegate {
 }
 
 extension AppCoordinator: LoginCoordinatorDelegate {
+
     func finishLogin() {
         Logger.info("Success Login. 홈 화면으로 이동")
         moveHomeViewController()

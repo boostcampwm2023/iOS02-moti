@@ -9,6 +9,7 @@ import Foundation
 import Domain
 
 struct LoginResponseDTO: ResponseDataDTO {
+
     var success: Bool?
     var message: String?
     var data: UserTokenDTO?

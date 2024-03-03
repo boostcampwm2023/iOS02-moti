@@ -9,6 +9,7 @@ import UIKit
 import Design
 
 final class TabBarViewController: UITabBarController, VibrationViewController {
+
     
     // MARK: - Views
     let captureButton = CaptureButton()
@@ -117,6 +118,7 @@ final class TabBarViewController: UITabBarController, VibrationViewController {
 
 // MARK: - Setup UI
 private extension TabBarViewController {
+
     func setupUI() {
         tabBar.layer.cornerRadius = CornerRadius.big
         tabBar.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]

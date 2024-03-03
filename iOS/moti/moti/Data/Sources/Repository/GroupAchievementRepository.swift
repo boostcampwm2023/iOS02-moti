@@ -10,6 +10,7 @@ import Domain
 import Core
 
 public struct GroupAchievementRepository: GroupAchievementRepositoryProtocol {
+
     private let provider: ProviderProtocol
     public let groupId: Int
     

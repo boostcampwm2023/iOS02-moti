@@ -2,6 +2,7 @@ import XCTest
 @testable import Design
 
 final class DesignTests: XCTestCase {
+
     func testExample() throws {
         // XCTest Documentation
         // https://developer.apple.com/documentation/xctest

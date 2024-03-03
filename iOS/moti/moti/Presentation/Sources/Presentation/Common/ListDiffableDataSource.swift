@@ -9,10 +9,12 @@ import UIKit
 
 /// 섹션이 1개인 CollectionView를 위한 DiffableDataSource
 struct ListDiffableDataSource<T: Hashable> {
+
     typealias DataSource = UICollectionViewDiffableDataSource<Section, T>
     typealias SnapShot = NSDiffableDataSourceSnapshot<Section, T>
     
     enum Section: Int, CaseIterable {
+
         case main
     }
     

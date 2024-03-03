@@ -10,6 +10,7 @@ import Domain
 import Core
 
 public struct VersionRepository: VersionRepositoryProtocol {
+
     private let provider: ProviderProtocol
     
     public init(provider: ProviderProtocol = Provider()) {

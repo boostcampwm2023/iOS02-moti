@@ -8,6 +8,7 @@
 import Foundation
 
 struct InviteMemberDTO: ResponseDTO {
+
     let success: Bool?
     let message: String?
 }

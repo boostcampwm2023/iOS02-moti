@@ -8,6 +8,7 @@
 import Foundation
 
 public struct DropGroupUseCase {
+
     private let groupRepository: GroupRepositoryProtocol
     
     public init(groupRepository: GroupRepositoryProtocol) {

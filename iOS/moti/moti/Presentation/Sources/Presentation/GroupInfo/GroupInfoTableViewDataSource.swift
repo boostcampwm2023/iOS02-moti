@@ -8,6 +8,7 @@
 import UIKit
 
 final class GroupInfoTableViewDataSource: NSObject, UITableViewDataSource {
+
     private var sectionHeaders = ["그룹"]
     private var cellTexts = [["그룹원", "차단 관리", "탈퇴"]]
     

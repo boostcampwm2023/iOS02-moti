@@ -11,6 +11,7 @@ import Jeongfisher
 import Design
 
 final class GroupListCollectionViewCell: UICollectionViewCell {
+
     
     // MARK: - Properties
     private let iconSize: CGFloat = 60
@@ -88,13 +89,9 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
         lastChallengedLabel.text = group.lastChallenged?.relativeDateString() ?? "없음"
     }
     
-    func showSkeleton() {
-        
-    }
+    func showSkeleton() { }
     
-    func hideSkeleton() {
-        
-    }
+    func hideSkeleton() { }
     
     func cancelDownloadImage() {
         iconImageView.jk.cancelDownloadImage()
@@ -103,6 +100,7 @@ final class GroupListCollectionViewCell: UICollectionViewCell {
 
 // MARK: - Setup
 private extension GroupListCollectionViewCell {
+
     func setupUI() {
         self.layer.cornerRadius = CornerRadius.big
         self.layer.borderWidth = 1

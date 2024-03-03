@@ -10,7 +10,7 @@ import Design
 import Domain
 
 final class GroupInfoView: UIView {
-    
+
     let imageViewSize: CGFloat = 130
     let cameraIconSize: CGFloat = 35
     
@@ -84,10 +84,10 @@ final class GroupInfoView: UIView {
     func cancelDownloadImage() {
         imageView.jk.cancelDownloadImage()
     }
-    
 }
 
 extension GroupInfoView {
+
     private func setupUI() {
         // TODO: 그룹 프로필 편집 도입시 보여야 함
         cameraIcon.isHidden = true

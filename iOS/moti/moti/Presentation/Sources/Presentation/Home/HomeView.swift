@@ -11,6 +11,7 @@ import Domain
 import Core
 
 final class HomeView: UIView {
+
     
     // MARK: - Views
     // 카테고리 추가 버튼
@@ -110,6 +111,7 @@ final class HomeView: UIView {
 
 // MARK: - SetUp
 private extension HomeView {
+
     private func setupUI() {
         setupCategoryAddButton()
         setupCategoryCollectionView()
@@ -157,6 +159,7 @@ private extension HomeView {
 }
 
 private extension HomeView {
+
     func makeAchievementCollectionView() -> UICollectionViewLayout {
         let count: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 7 : 3
         let itemPadding: CGFloat = 1

@@ -9,6 +9,7 @@ import UIKit
 import Domain
 
 final class HeaderView: UICollectionViewCell {
+
     
     // MARK: - View
     private var categoryLabel: UILabel = {

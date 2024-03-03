@@ -8,6 +8,7 @@
 import Foundation
 
 public struct ReorderCategoriesRequestValue: RequestValue {
+
     public let order: [Int]
     
     public init(order: [Int]) {
@@ -16,6 +17,7 @@ public struct ReorderCategoriesRequestValue: RequestValue {
 }
 
 public struct ReorderCategoriesUseCase {
+
     private let repository: CategoryRepositoryProtocol
     
     public init(repository: CategoryRepositoryProtocol) {

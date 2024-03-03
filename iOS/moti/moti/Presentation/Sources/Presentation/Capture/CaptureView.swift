@@ -10,6 +10,7 @@ import Design
 import AVFoundation
 
 final class CaptureView: UIView {
+
     
     // MARK: - Views
     // VC에서 액션을 달아주기 위해 private 제거
@@ -125,6 +126,7 @@ final class CaptureView: UIView {
 
 // MARK: - Setup
 private extension CaptureView {
+
     func setupUI() {
         setupPreview()
         

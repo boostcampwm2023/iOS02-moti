@@ -9,6 +9,7 @@ import Foundation
 import Domain
 
 enum MotiAPI: EndpointProtocol {
+
     // 공용
     case version
     case login(requestValue: LoginRequestValue)
@@ -59,6 +60,7 @@ enum MotiAPI: EndpointProtocol {
 }
 
 extension MotiAPI {
+
     var version: String {
         return "v1"
     }

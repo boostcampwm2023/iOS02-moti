@@ -8,14 +8,17 @@
 import UIKit
 
 struct AutoLayoutWrapper {
+
     let view: UIView
 }
 
 protocol AutoLayoutCompatible: UIView {
+
     var atl: AutoLayoutWrapper { get }
 }
 
 extension AutoLayoutCompatible {
+
     var atl: AutoLayoutWrapper {
         return AutoLayoutWrapper(view: self)
     }

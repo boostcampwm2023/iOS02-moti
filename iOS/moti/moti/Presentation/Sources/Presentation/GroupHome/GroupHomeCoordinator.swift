@@ -11,6 +11,7 @@ import Domain
 import Data
 
 final class GroupHomeCoordinator: Coordinator {
+
     public let parentCoordinator: Coordinator?
     public var childCoordinators: [Coordinator] = []
     public let navigationController: UINavigationController
@@ -92,6 +93,7 @@ final class GroupHomeCoordinator: Coordinator {
 
 // MARK: - EditAchievementCoordinatorDelegate
 extension GroupHomeCoordinator: EditAchievementCoordinatorDelegate {
+
     func doneButtonDidClicked(achievement: Achievement) {
         currentViewController?.updateAchievement(updatedAchievement: achievement)
     }
@@ -99,6 +101,7 @@ extension GroupHomeCoordinator: EditAchievementCoordinatorDelegate {
 
 // MARK: - GroupDetailAchievementCoordinatorDelegate
 extension GroupHomeCoordinator: GroupDetailAchievementCoordinatorDelegate {
+
     func deleteButtonDidClicked(achievementId: Int) {
         currentViewController?.deleteAchievementDataSourceItem(achievementId: achievementId)
     }
@@ -124,6 +127,7 @@ extension GroupHomeCoordinator: GroupDetailAchievementCoordinatorDelegate {
 extension GroupHomeCoordinator: CaptureCoordinatorDelegate { }
 
 extension GroupHomeCoordinator: ManageCategoryCoordinatorDelegate {
+
     func doneButtonDidClicked() {
         currentViewController?.fetchCategoryList()
     }
@@ -131,6 +135,7 @@ extension GroupHomeCoordinator: ManageCategoryCoordinatorDelegate {
 
 // MARK: - GroupInfoCoordinatorDelegate
 extension GroupHomeCoordinator: GroupInfoCoordinatorDelegate {
+
     func unblockUserIsSuccess() {
         currentViewController?.refreshAchievementList()
     }

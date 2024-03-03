@@ -9,7 +9,9 @@ import Foundation
 import Domain
 
 extension HomeViewModel {
+
     enum HomeViewModelAction {
+        
         case fetchCategoryList
         case fetchCurrentCategoryInfo
         case fetchCategoryInfo(categoryId: Int)
@@ -26,18 +28,21 @@ extension HomeViewModel {
     }
     
     enum CategoryListState {
+
         case initial
         case finish
         case error(message: String)
     }
     
     enum CategoryInfoState {
+
         case loading
         case success(category: CategoryItem)
         case failed(message: String)
     }
     
     enum AddCategoryState {
+
         case none
         case loading
         case finish
@@ -45,6 +50,7 @@ extension HomeViewModel {
     }
     
     enum AchievementListState {
+
         case initial
         case loading
         case isEmpty
@@ -53,6 +59,7 @@ extension HomeViewModel {
     }
     
     enum FetchDetailAchievementState {
+
         case none
         case loading
         case finish(achievement: Achievement)
@@ -60,6 +67,7 @@ extension HomeViewModel {
     }
     
     enum DeleteAchievementState {
+
         case none
         case loading
         case success

@@ -8,6 +8,7 @@
 import UIKit
 
 public protocol Coordinator: AnyObject {
+
     var parentCoordinator: Coordinator? { get }
     var childCoordinators: [Coordinator] { get set }
     var navigationController: UINavigationController { get }
@@ -24,6 +25,7 @@ public protocol Coordinator: AnyObject {
 }
 
 public extension Coordinator {
+
     func finish(animated: Bool = true) {
         parentCoordinator?.pop(child: self, animated: animated)
     }

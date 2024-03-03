@@ -8,5 +8,6 @@
 import Foundation
 
 public protocol UpdateAchievementRepositoryProtocol {
+
     func updateAchievement(requestValue: UpdateAchievementRequestValue) async throws -> Bool
 }

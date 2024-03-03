@@ -139,5 +139,4 @@ final class AchievementListRepositoryTests: XCTestCase {
         
         wait(for: [expectation], timeout: 3)
     }
-
 }

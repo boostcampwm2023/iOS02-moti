@@ -10,10 +10,12 @@ import Combine
 import Core
 
 protocol LaunchViewControllerDelegate: AnyObject {
+
     func viewControllerDidLogin(isSuccess: Bool)
 }
 
 final class LaunchViewController: BaseViewController<LaunchView> {
+
     
     // MARK: - Properties
     weak var coordinator: LaunchCoodinator?
@@ -71,6 +73,7 @@ final class LaunchViewController: BaseViewController<LaunchView> {
 }
 
 private extension LaunchViewController {
+
     func bind() {
         viewModel.$versionState
             .receive(on: RunLoop.main)

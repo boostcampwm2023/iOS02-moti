@@ -9,6 +9,7 @@ import Foundation
 
 /// moti 앱에서 사용하는 CornerRadius 종류
 public enum CornerRadius {
+
     /// 작은 곡선
     public static let small = 5.0
     

@@ -8,6 +8,7 @@
 import Foundation
 
 public struct FetchDetailAchievementRequestValue: RequestValue {
+
     public let id: Int
     
     public init(id: Int) {
@@ -16,6 +17,7 @@ public struct FetchDetailAchievementRequestValue: RequestValue {
 }
 
 public struct FetchDetailAchievementUseCase {
+
     private let repository: AchievementRepositoryProtocol
     
     public init(repository: AchievementRepositoryProtocol) {

@@ -11,12 +11,14 @@ import Data
 import Domain
 
 protocol DetailAchievementCoordinatorDelegate: AnyObject {
+
     func deleteButtonDidClicked(achievementId: Int)
     func updateAchievement(updatedAchievement: Achievement)
     func achievementDidPosted(newAchievement: Achievement)
 }
 
 public final class DetailAchievementCoordinator: Coordinator {
+
     public var parentCoordinator: Coordinator?
     public var childCoordinators: [Coordinator] = []
     public var navigationController: UINavigationController
@@ -31,9 +33,7 @@ public final class DetailAchievementCoordinator: Coordinator {
         self.parentCoordinator = parentCoordinator
     }
     
-    public func start() {
-        
-    }
+    public func start() { }
     
     public func start(achievement: Achievement) {
         let detailAchievementVC = DetailAchievementViewController(
@@ -58,6 +58,7 @@ public final class DetailAchievementCoordinator: Coordinator {
 }
 
 extension DetailAchievementCoordinator: DetailAchievementViewControllerDelegate {
+
     func editButtonDidClicked(achievement: Achievement) {
         moveEditAchievementViewController(achievement: achievement)
     }
@@ -69,6 +70,7 @@ extension DetailAchievementCoordinator: DetailAchievementViewControllerDelegate 
 }
 
 extension DetailAchievementCoordinator: EditAchievementCoordinatorDelegate {
+
     func doneButtonDidClicked(achievement: Achievement) {
         detailAchievementViewController?.update(updatedAchievement: achievement)
         delegate?.updateAchievement(updatedAchievement: achievement)

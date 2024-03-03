@@ -8,6 +8,7 @@
 import UIKit
 
 public enum EmojiImage {
+
     public static let fire = UIImage(resource: .fire)
     public static let like = UIImage(resource: .like)
     public static let party = UIImage(resource: .party)

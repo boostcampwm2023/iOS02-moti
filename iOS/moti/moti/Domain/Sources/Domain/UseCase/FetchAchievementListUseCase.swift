@@ -8,6 +8,7 @@
 import Foundation
 
 public struct FetchAchievementListRequestValue: RequestValue {
+
     public let categoryId: Int
     public let take: Int?
     public let whereIdLessThan: Int?
@@ -20,6 +21,7 @@ public struct FetchAchievementListRequestValue: RequestValue {
 }
 
 public struct AchievementListItem {
+
     public let achievements: [Achievement]
     public let next: FetchAchievementListRequestValue?
     public let category: CategoryItem?
@@ -36,6 +38,7 @@ public struct AchievementListItem {
 }
 
 public struct FetchAchievementListUseCase {
+
     private let repository: AchievementRepositoryProtocol
     
     public init(repository: AchievementRepositoryProtocol) {

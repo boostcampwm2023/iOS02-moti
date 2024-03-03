@@ -13,6 +13,7 @@ import JKImageCache
 
 final class GroupListViewController: BaseViewController<GroupListView> {
 
+
     // MARK: - Properties
     weak var coordinator: GroupListCoordinator?
     private let viewModel: GroupListViewModel
@@ -116,6 +117,7 @@ final class GroupListViewController: BaseViewController<GroupListView> {
 
 // MARK: - Setup
 private extension GroupListViewController {
+
     func setupUI() {
         setupNavigationBar()
     }
@@ -175,6 +177,7 @@ private extension GroupListViewController {
 }
 
 extension GroupListViewController: UICollectionViewDelegate {
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let cell = collectionView.cellForItem(at: indexPath) as? GroupListCollectionViewCell else {
             return
@@ -195,6 +198,7 @@ extension GroupListViewController: UICollectionViewDelegate {
 
 // MARK: - UITextFieldDelegate
 extension GroupListViewController: UITextFieldDelegate {
+
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let text = textField.text else { return true }
         let newLength = text.count + string.count - range.length
@@ -204,6 +208,7 @@ extension GroupListViewController: UITextFieldDelegate {
 
 // MARK: - Bind
 extension GroupListViewController: LoadingIndicator {
+
     func bind() {
         bindGroupList()
         bindGroup()
@@ -250,7 +255,6 @@ extension GroupListViewController: LoadingIndicator {
                 }
             }
             .store(in: &cancellables)
-        
     }
     
     func bindGroup() {

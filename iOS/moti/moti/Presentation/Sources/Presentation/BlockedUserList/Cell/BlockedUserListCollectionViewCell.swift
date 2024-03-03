@@ -11,10 +11,12 @@ import Jeongfisher
 import Design
 
 protocol BlockedUserListCollectionViewCellDelegate: AnyObject {
+
     func unblockButtonDidClicked(cell: UICollectionViewCell)
 }
 
 final class BlockedUserListCollectionViewCell: UICollectionViewCell {
+
     
     // MARK: - Properties
     private let iconSize: CGFloat = 60
@@ -93,6 +95,7 @@ final class BlockedUserListCollectionViewCell: UICollectionViewCell {
 
 // MARK: - Setup
 private extension BlockedUserListCollectionViewCell {
+
     func setupUI() {
         self.layer.cornerRadius = CornerRadius.big
         self.layer.borderWidth = 1

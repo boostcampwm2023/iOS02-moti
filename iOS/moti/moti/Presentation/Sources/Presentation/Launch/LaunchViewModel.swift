@@ -10,12 +10,15 @@ import Domain
 import Core
 
 final class LaunchViewModel {
+
     enum LaunchViewModelAction {
+        
         case fetchVersion
         case autoLogin
     }
     
     enum AutoLoginState {
+
         case none
         case loading
         case success
@@ -23,6 +26,7 @@ final class LaunchViewModel {
     }
     
     enum VersionState {
+
         case none
         case loading
         case checkVersion

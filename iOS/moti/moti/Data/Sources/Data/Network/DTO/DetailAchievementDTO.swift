@@ -9,12 +9,14 @@ import Foundation
 import Domain
 
 struct DetailAchievementResponseDTO: ResponseDataDTO {
+
     let success: Bool?
     let message: String?
     let data: DetailAchievementDTO?
 }
 
 struct DetailAchievementDTO: Codable {
+
     let id: Int?
     let title: String?
     let content: String?
@@ -25,12 +27,14 @@ struct DetailAchievementDTO: Codable {
 }
 
 struct CategorySimpleDTO: Codable {
+
     let id: Int?
     let name: String?
     let achieveCount: Int?
 }
 
 extension Achievement {
+
     init(dto: DetailAchievementDTO) {
         self.init(
             id: dto.id ?? -1,

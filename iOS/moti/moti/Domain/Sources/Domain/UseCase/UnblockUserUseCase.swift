@@ -9,6 +9,7 @@ import Foundation
 import Core
 
 public struct UnblockUserUseCase {
+
     private let blockingRepository: BlockingRepositoryProtocol
     
     public init(blockingRepository: BlockingRepositoryProtocol) {

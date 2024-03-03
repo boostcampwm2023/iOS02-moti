@@ -12,7 +12,9 @@ import Data
 import Domain
 
 public final class TabBarCoordinator: Coordinator {
+
     enum TabItemType: CaseIterable {
+        
         case individual, capture, group
         
         var title: String {
@@ -56,6 +58,7 @@ public final class TabBarCoordinator: Coordinator {
 
 // MARK: - Make Child ViewControllers
 private extension TabBarCoordinator {
+
     func makeIndividualTabPage() -> UINavigationController {
         let navVC = UINavigationController()
         navVC.tabBarItem.image = SymbolImage.individualTabItem

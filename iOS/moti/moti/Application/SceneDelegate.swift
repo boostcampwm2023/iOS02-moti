@@ -10,6 +10,7 @@ import Presentation
 import Core
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+
     var window: UIWindow?
     var appCoordinator: AppCoordinator?
     
@@ -35,6 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 // MARK: - Notification
 extension SceneDelegate {
+
     private func addNotificationObservers() {
         NotificationCenter.default.addObserver(
             self,

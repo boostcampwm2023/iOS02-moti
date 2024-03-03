@@ -9,18 +9,21 @@ import Foundation
 import Domain
 
 struct VersionResponseDTO: ResponseDataDTO, CustomStringConvertible {
+
     var success: Bool?
     var message: String?
     var data: VersionDTO?
 }
 
 struct VersionDTO: Codable {
+
     let latest: String?
     let required: String?
     let privacyPolicy: String?
 }
 
 extension Version {
+
     init(dto: VersionDTO) {
         self.init(
             latest: dto.latest ?? "",

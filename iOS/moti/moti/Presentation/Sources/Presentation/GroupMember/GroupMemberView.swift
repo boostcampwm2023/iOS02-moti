@@ -8,6 +8,7 @@
 import UIKit
 
 final class GroupMemberView: UIView {
+
     
     // MARK: - Views
     private(set) lazy var groupMemberCollectionView: UICollectionView = {
@@ -38,6 +39,7 @@ final class GroupMemberView: UIView {
 }
 
 private extension GroupMemberView {
+
     func makeCollectionViewLayout() -> UICollectionViewLayout {
         let itemPadding: CGFloat = 20
         let itemSize = NSCollectionLayoutSize(

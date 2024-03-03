@@ -8,6 +8,7 @@
 import Foundation
 
 public struct FetchGroupListUseCase {
+
     private let groupRepository: GroupRepositoryProtocol
     
     public init(groupRepository: GroupRepositoryProtocol) {

@@ -11,18 +11,22 @@ import Core
 import Combine
 
 final class BlockedUserListViewModel {
+
     enum BlockedUserListViewModelAction {
+        
         case fetchBlockedUserList
         case unblockUser(indexPath: IndexPath)
     }
     
     enum FetchBlockedUserListState {
+
         case loading
         case success
         case failed(message: String)
     }
     
     enum UnblockUserState {
+
         case loading
         case success
         case failed(message: String)

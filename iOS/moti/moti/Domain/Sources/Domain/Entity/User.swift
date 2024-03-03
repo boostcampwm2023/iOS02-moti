@@ -8,6 +8,7 @@
 import Foundation
 
 public struct UserToken: Equatable {
+
     public let accessToken: String
     public let refreshToken: String?
     public let user: User
@@ -20,6 +21,7 @@ public struct UserToken: Equatable {
 }
 
 public struct User: Hashable {
+
     public let code: String
     public let avatarURL: URL?
     public let blockedDate: Date?

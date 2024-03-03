@@ -14,10 +14,12 @@ import Domain
 import Jeongfisher
 
 protocol CaptureViewControllerDelegate: AnyObject {
+
     func didCapture(image: UIImage, currentCategoryId: Int?)
 }
 
 final class CaptureViewController: BaseViewController<CaptureView>, VibrationViewController {
+
     
     // MARK: - Properties
     weak var delegate: CaptureViewControllerDelegate?
@@ -164,6 +166,7 @@ final class CaptureViewController: BaseViewController<CaptureView>, VibrationVie
 
 // MARK: - Camera
 private extension CaptureViewController {
+
     func checkCameraPermissions() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .notDetermined: // 첫 권한 요청
@@ -347,6 +350,7 @@ private extension CaptureViewController {
 }
 
 extension CaptureViewController: AVCapturePhotoCaptureDelegate {
+
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         // 카메라 세션 끊기, 끊지 않으면 여러번 사진 찍기 가능
         if let session = session, 
@@ -363,6 +367,7 @@ extension CaptureViewController: AVCapturePhotoCaptureDelegate {
 
 // MARK: - Album
 extension CaptureViewController: PHPickerViewControllerDelegate {
+
     @objc func showPHPicker() {
         var configuration = PHPickerConfiguration()
         configuration.selectionLimit = 1

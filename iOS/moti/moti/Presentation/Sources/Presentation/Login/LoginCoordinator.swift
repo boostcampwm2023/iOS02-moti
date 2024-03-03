@@ -11,10 +11,12 @@ import Data
 import Domain
 
 public protocol LoginCoordinatorDelegate: AnyObject {
+
     func finishLogin()
 }
 
 public final class LoginCoordinator: Coordinator {
+
     public weak var delegate: LoginCoordinatorDelegate?
     
     public let parentCoordinator: Coordinator?
@@ -51,6 +53,7 @@ public final class LoginCoordinator: Coordinator {
 }
 
 extension LoginCoordinator: LoginViewControllerDelegate {
+
     func didLogin() {
         delegate?.finishLogin()
     }

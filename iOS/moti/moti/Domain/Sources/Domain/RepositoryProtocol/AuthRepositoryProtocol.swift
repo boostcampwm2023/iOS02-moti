@@ -8,6 +8,7 @@
 import Foundation
 
 public protocol AuthRepositoryProtocol {
+
     func autoLogin(requestValue: AutoLoginRequestValue) async throws -> UserToken
     func login(requestValue: LoginRequestValue) async throws -> UserToken
     func revoke(requestValue: RevokeRequestValue) async throws -> Bool

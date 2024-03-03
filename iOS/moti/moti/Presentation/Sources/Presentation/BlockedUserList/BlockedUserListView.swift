@@ -8,6 +8,7 @@
 import UIKit
 
 final class BlockedUserListView: UIView {
+
     
     // MARK: - Views
     private(set) lazy var blockedUserListCollectionView: UICollectionView = {
@@ -38,6 +39,7 @@ final class BlockedUserListView: UIView {
 }
 
 private extension BlockedUserListView {
+
     func makeCollectionViewLayout() -> UICollectionViewLayout {
         let itemPadding: CGFloat = 20
         let itemSize = NSCollectionLayoutSize(

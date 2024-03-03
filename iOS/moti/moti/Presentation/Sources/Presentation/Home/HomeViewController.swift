@@ -13,10 +13,12 @@ import Design
 import Domain
 
 protocol HomeViewControllerDelegate: AnyObject {
+
     func editMenuDidClicked(achievement: Achievement)
 }
 
 final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, VibrationViewController {
+
 
     // MARK: - Properties
     weak var coordinator: HomeCoordinator?
@@ -182,6 +184,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
 
 // MARK: - NavigationBar
 private extension HomeViewController {
+
     func setupNavigationBar() {
         let logoItem = UIImageView(image: MotiImage.logoBlue)
         logoItem.isAccessibilityElement = true
@@ -269,8 +272,8 @@ private extension HomeViewController {
 
 // MARK: - UICollectionViewDelegate
 extension HomeViewController: UICollectionViewDelegate {
+
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
         if let cell = collectionView.cellForItem(at: indexPath) as? CategoryCollectionViewCell {
             // 카테고리 셀을 눌렀을 때
             categoryCellDidSelected(cell: cell, row: indexPath.row)
@@ -337,6 +340,7 @@ extension HomeViewController: UICollectionViewDelegate {
             }
             
             let deleteAchievementAction = UIAction(title: "삭제", attributes: .destructive) { _ in
+
                 self?.showDestructiveTwoButtonAlert(
                     title: "정말로 삭제하시겠습니까?",
                     message: "삭제된 도전 기록은 되돌릴 수 없습니다."
@@ -393,6 +397,7 @@ extension HomeViewController: UICollectionViewDelegate {
 
 // MARK: - Binding
 private extension HomeViewController {
+
     func bind() {
         bindAchievement()
         bindCategory()
@@ -419,7 +424,6 @@ private extension HomeViewController {
                     Logger.error("Fetch Achievement Error: \(message)")
                 default: break
                 }
-                
             }
             .store(in: &cancellables)
         
@@ -517,6 +521,7 @@ private extension HomeViewController {
 
 // MARK: - UITextFieldDelegate
 extension HomeViewController: UITextFieldDelegate {
+
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let text = textField.text else { return true }
         let newLength = text.count + string.count - range.length

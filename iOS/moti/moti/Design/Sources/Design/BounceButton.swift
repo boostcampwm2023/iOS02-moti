@@ -8,6 +8,7 @@
 import UIKit
 
 open class BounceButton: UIButton {
+
     open override var isHighlighted: Bool {
         didSet {
             highlightAction()

@@ -9,6 +9,7 @@ import UIKit
 
 /// moti 앱에서 쓰는 SFSymbol 이미지
 public enum SymbolImage {
+
     /// 􀅼. 카테고리 추가에 사용됨
     public static let plus = UIImage(systemName: "plus")
     

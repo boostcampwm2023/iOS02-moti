@@ -10,6 +10,7 @@ import UIKit
 /// 동그란 촬영 버튼.
 /// 기본 크기를 원한다면 defaultSize를 사용하세요.
 public final class CaptureButton: UIButton {
+
     public static let defaultSize: CGFloat = 75
     
     // MARK: - Views

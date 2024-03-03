@@ -11,11 +11,13 @@ import Domain
 import Data
 
 protocol GroupDetailAchievementCoordinatorDelegate: DetailAchievementCoordinatorDelegate {
+
     func blockingAchievementMenuDidClicked(achievementId: Int)
     func blockingUserMenuDidClicked(userCode: String)
 }
 
 final class GroupDetailAchievementCoordinator: Coordinator {
+
     var parentCoordinator: Coordinator?
     var childCoordinators: [Coordinator] = []
     var navigationController: UINavigationController
@@ -79,6 +81,7 @@ final class GroupDetailAchievementCoordinator: Coordinator {
 }
 
 extension GroupDetailAchievementCoordinator: GroupDetailAchievementViewControllerDelegate {
+
     func editButtonDidClicked(achievement: Achievement) {
         moveEditAchievementViewController(achievement: achievement)
     }
@@ -100,6 +103,7 @@ extension GroupDetailAchievementCoordinator: GroupDetailAchievementViewControlle
 }
 
 extension GroupDetailAchievementCoordinator: EditAchievementCoordinatorDelegate {
+
     func doneButtonDidClicked(achievement: Achievement) {
         currentViewController?.update(updatedAchievement: achievement)
         delegate?.updateAchievement(updatedAchievement: achievement)

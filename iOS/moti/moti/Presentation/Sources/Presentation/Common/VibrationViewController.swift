@@ -9,16 +9,19 @@ import UIKit
 import AVFoundation
 
 enum Vibration {
+
     case soft
     case heavy
     case selection
 }
 
 protocol VibrationViewController: UIViewController {
+
     func vibration(_ type: Vibration)
 }
 
 extension VibrationViewController {
+
     func vibration(_ type: Vibration) {
         switch type {
         case .soft:

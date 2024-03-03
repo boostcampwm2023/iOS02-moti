@@ -8,6 +8,7 @@
 import Foundation
 
 public extension Notification.Name {
+
     static let accessTokenDidExpired = Notification.Name("accessTokenDidExpired")
     static let logout = Notification.Name("logout")
 }

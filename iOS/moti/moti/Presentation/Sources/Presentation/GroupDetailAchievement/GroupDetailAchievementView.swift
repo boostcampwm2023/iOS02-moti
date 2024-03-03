@@ -11,6 +11,7 @@ import Domain
 import Data
 
 final class GroupDetailAchievementView: UIView {
+
     
     // MARK: - Views
     let scrollView: UIScrollView = {
@@ -163,6 +164,7 @@ final class GroupDetailAchievementView: UIView {
 
 // MARK: - setup
 private extension GroupDetailAchievementView {
+
     private func setupUI() {
         setupScrollView()
         
@@ -260,7 +262,5 @@ private extension GroupDetailAchievementView {
             .horizontal(equalTo: safeAreaLayoutGuide)
             .top(equalTo: view.bottomAnchor, constant: 9)
             .height(constant: 1)
-        
     }
-    
 }

@@ -8,6 +8,7 @@
 import Foundation
 
 public struct UpdateGradeRequestValue: RequestValue {
+
     public let grade: String
     
     public init(grade: String) {
@@ -16,6 +17,7 @@ public struct UpdateGradeRequestValue: RequestValue {
 }
 
 public struct UpdateGradeUseCase {
+
     private let repository: GroupMemberRepositoryProtocol
     
     public init(repository: GroupMemberRepositoryProtocol) {

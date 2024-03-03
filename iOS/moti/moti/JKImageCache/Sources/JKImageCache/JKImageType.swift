@@ -8,6 +8,7 @@
 import Foundation
 
 public enum JKImageType {
+
     case thumbnail
     case original
     

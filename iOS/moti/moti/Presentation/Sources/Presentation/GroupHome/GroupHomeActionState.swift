@@ -9,7 +9,9 @@ import Foundation
 import Domain
 
 extension GroupHomeViewModel {
+
     enum GroupHomeViewModelAction {
+        
         case fetchCategoryList
         case fetchCurrentCategoryInfo
         case fetchCategoryInfo(categoryId: Int)
@@ -30,24 +32,28 @@ extension GroupHomeViewModel {
     }
     
     enum CategoryListState {
+
         case loading
         case finish
         case error(message: String)
     }
     
     enum CategoryInfoState {
+
         case loading
         case success(category: CategoryItem)
         case failed(message: String)
     }
     
     enum AddCategoryState {
+
         case loading
         case finish
         case error(message: String)
     }
     
     enum AchievementListState {
+
         case loading
         case isEmpty
         case finish
@@ -55,12 +61,14 @@ extension GroupHomeViewModel {
     }
     
     enum FetchDetailAchievementState {
+
         case loading
         case finish(achievement: Achievement)
         case error(message: String)
     }
     
     enum DeleteAchievementState {
+
         case loading
         case success
         case failed
@@ -68,6 +76,7 @@ extension GroupHomeViewModel {
     }
     
     enum InviteMemberState {
+
         case loading
         case success(userCode: String)
         case error(message: String)

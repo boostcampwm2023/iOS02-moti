@@ -11,7 +11,9 @@ import Core
 import Combine
 
 final class GroupListViewModel {
+
     enum GroupListViewModelAction {
+        
         case launch
         case createGroup(groupName: String)
         case dropGroup(groupId: Int)
@@ -20,6 +22,7 @@ final class GroupListViewModel {
     }
     
     enum GroupListState {
+
         case none
         case loading
         case finish
@@ -27,18 +30,21 @@ final class GroupListViewModel {
     }
     
     enum CreateGroupState {
+
         case loading
         case finish
         case error(message: String)
     }
     
     enum DropGroupState {
+
         case loading
         case finish
         case error(message: String)
     }
     
     enum RefetchGroupListState {
+
         case loading
         case finishSame
         case finishDecreased
@@ -47,6 +53,7 @@ final class GroupListViewModel {
     }
     
     enum JoinGroupState {
+
         case loading
         case finish
         case error(message: String)
@@ -113,6 +120,7 @@ final class GroupListViewModel {
 
 // MARK: - Action
 extension GroupListViewModel {
+
     private func fetchGroupList() {
         Task {
             groupListState = .loading

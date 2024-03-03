@@ -8,6 +8,7 @@
 import Foundation
 
 public struct GroupMember: Hashable {
+
     public let user: User
     public var lastChallenged: Date?
     public var grade: GroupGrade

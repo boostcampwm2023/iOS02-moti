@@ -11,11 +11,14 @@ import Data
 import Combine
 
 struct AppInfoViewModel {
+
     enum AppInfoViewModelAction {
+        
         case revoke(identityToken: String, authorizationCode: String)
     }
     
     enum RevokeState {
+
         case loading
         case finish
         case error(message: String)
@@ -39,6 +42,7 @@ struct AppInfoViewModel {
 }
 
 private extension AppInfoViewModel {
+
     /// 회원 탈퇴 액션
     func revoke(identityToken: String, authorizationCode: String) {
         Task {

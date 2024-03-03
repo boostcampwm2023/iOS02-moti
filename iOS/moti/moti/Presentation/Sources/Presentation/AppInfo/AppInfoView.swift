@@ -10,6 +10,7 @@ import Design
 import Domain
 
 final class AppInfoView: UIView {
+
     
     // MARK: - Views
     private(set) var closeButton = {
@@ -96,6 +97,7 @@ final class AppInfoView: UIView {
 
 // MARK: - Setup
 private extension AppInfoView {
+
     func setupUI() {
         setupCloseButton()
         setupIconImage()

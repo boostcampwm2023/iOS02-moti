@@ -9,16 +9,19 @@ import Foundation
 import Domain
 
 struct FetchGroupMemberListResponseDTO: ResponseDataDTO {
+
     let success: Bool?
     let message: String?
     let data: FetchGroupMemberListDTO?
 }
 
 struct FetchGroupMemberListDTO: Codable {
+
     let data: [GroupMemberDTO]?
 }
 
 struct GroupMemberDTO: Codable {
+
     let userCode: String
     let avatarUrl: URL?
     let lastChallenged: Date?
@@ -26,6 +29,7 @@ struct GroupMemberDTO: Codable {
 }
 
 extension GroupMember {
+
     init(dto: GroupMemberDTO) {
         self.init(
             user: .init(code: dto.userCode, avatarURL: dto.avatarUrl),

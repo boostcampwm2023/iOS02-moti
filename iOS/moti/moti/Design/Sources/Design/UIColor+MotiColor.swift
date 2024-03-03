@@ -8,6 +8,7 @@
 import UIKit
 
 public extension UIColor {
+
     /// 005CFD. 파란색
     static let primaryBlue = UIColor(resource: .primaryBlue)
     

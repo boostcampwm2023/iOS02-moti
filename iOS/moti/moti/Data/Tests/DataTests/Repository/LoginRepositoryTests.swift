@@ -16,14 +16,6 @@ final class LoginRepositoryTests: XCTestCase {
     private lazy var sourceUserToken = UserToken(accessToken: "testAccessToken", refreshToken: "testRefreshToken", user: sourceUser)
     private let sourceUser = User(code: "ABCDEFG", avatarURL: URL(string: "https://test.com"))
 
-    override func setUpWithError() throws {
-
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func test_형식에_맞는_json을_디코딩하면_userToken_반환() throws {
         let repository = MockLoginRepository()
         let expectation = XCTestExpectation(description: "test_형식에_맞는_json을_디코딩하면_userToken_반환")
@@ -52,7 +44,6 @@ final class LoginRepositoryTests: XCTestCase {
                     "userCode": "ABCDEFG",
                     "avatar_url": "https://test.com",
                 }
-            
         }
         """
         let repository = MockLoginRepository(json: failedJSON)
