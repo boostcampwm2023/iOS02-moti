@@ -21,13 +21,17 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
 
 
     // MARK: - Properties
+    
     weak var coordinator: HomeCoordinator?
     weak var delegate: HomeViewControllerDelegate?
+    
     private let viewModel: HomeViewModel
     private var cancellables: Set<AnyCancellable> = []
     private var isFetchingNextPage = false
     
+    
     // MARK: - Init
+    
     init(viewModel: HomeViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -37,7 +41,9 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
         fatalError()
     }
     
+    
     // MARK: - Life Cycles
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
@@ -57,7 +63,9 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
         }
     }
 
+    
     // MARK: - Methods
+    
     func deleteAchievementDataSourceItem(achievementId: Int) {
         viewModel.action(.fetchCurrentCategoryInfo)
         viewModel.action(.deleteAchievementDataSourceItem(achievementId: achievementId))
@@ -91,34 +99,7 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
         layoutView.refreshControl.addTarget(self, action: #selector(refreshAchievementList), for: .valueChanged)
     }
     
-    @objc private func captureButtonDidClicked() {
-        if let tabBarController = tabBarController as? TabBarViewController,
-           tabBarController.selectedIndex == 0 {
-            coordinator?.moveToCaptureViewController(currentCategoryId: viewModel.currentCategory?.id)
-        }
-    }
     
-    @objc private func showCreateCategoryAlert() {
-        let textFieldAlertVC = AlertFactory.makeTextFieldAlert(
-            title: "추가할 카테고리 이름을 입력하세요.",
-            okTitle: "생성",
-            placeholder: "카테고리 이름은 최대 10글자입니다.",
-            okAction: { [weak self] text in
-                guard let self, let text else { return }
-                viewModel.action(.addCategory(name: text))
-            })
-        
-        if let textField = textFieldAlertVC.textFields?.first {
-            textField.delegate = self
-        }
-        
-        present(textFieldAlertVC, animated: true)
-    }
-    
-    @objc private func refreshAchievementList() {
-        viewModel.action(.fetchCurrentCategoryInfo)
-        viewModel.action(.refreshAchievementList)
-    }
     
     private func showCelebrate(with achievement: Achievement) {
         let celebrateVC = CelebrateViewController(achievement: achievement)
@@ -126,7 +107,9 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
         present(celebrateVC, animated: true)
     }
     
+    
     // MARK: - Setup
+    
     private func setupAchievementDataSource() {
         layoutView.achievementCollectionView.delegate = self
         let dataSource = HomeViewModel.AchievementDataSource.DataSource(
@@ -182,7 +165,47 @@ final class HomeViewController: BaseViewController<HomeView>, LoadingIndicator, 
     }
 }
 
+
+// MARK: - Action
+
+private extension HomeViewController {
+    
+    @objc
+    private func captureButtonDidClicked() {
+        if let tabBarController = tabBarController as? TabBarViewController,
+           tabBarController.selectedIndex == 0 {
+            coordinator?.moveToCaptureViewController(currentCategoryId: viewModel.currentCategory?.id)
+        }
+    }
+    
+    @objc
+    private func showCreateCategoryAlert() {
+        let textFieldAlertVC = AlertFactory.makeTextFieldAlert(
+            title: "추가할 카테고리 이름을 입력하세요.",
+            okTitle: "생성",
+            placeholder: "카테고리 이름은 최대 10글자입니다.",
+            okAction: { [weak self] text in
+                guard let self, let text else { return }
+                viewModel.action(.addCategory(name: text))
+            })
+        
+        if let textField = textFieldAlertVC.textFields?.first {
+            textField.delegate = self
+        }
+        
+        present(textFieldAlertVC, animated: true)
+    }
+    
+    @objc
+    private func refreshAchievementList() {
+        viewModel.action(.fetchCurrentCategoryInfo)
+        viewModel.action(.refreshAchievementList)
+    }
+}
+
+
 // MARK: - NavigationBar
+
 private extension HomeViewController {
 
     func setupNavigationBar() {
@@ -270,7 +293,9 @@ private extension HomeViewController {
     }
 }
 
+
 // MARK: - UICollectionViewDelegate
+
 extension HomeViewController: UICollectionViewDelegate {
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -395,7 +420,9 @@ extension HomeViewController: UICollectionViewDelegate {
     }
 }
 
+
 // MARK: - Binding
+
 private extension HomeViewController {
 
     func bind() {
@@ -519,7 +546,9 @@ private extension HomeViewController {
     }
 }
 
+
 // MARK: - UITextFieldDelegate
+
 extension HomeViewController: UITextFieldDelegate {
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
