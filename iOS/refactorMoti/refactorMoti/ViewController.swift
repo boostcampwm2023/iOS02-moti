@@ -1,8 +1,8 @@
 //
 //  ViewController.swift
-//  re:moti
+//  refactorMoti
 //
-//  Created by 유정주 on 4/15/24.
+//  Created by 유정주 on 4/20/24.
 //
 
 import UIKit
